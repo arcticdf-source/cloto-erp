@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Склад · Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#080c14; --bg2:#0d1320;
+      --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07);
+      --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
+      --cyan:#3de8c7; --gold:#f5c842; --red:#ff5e7d;
+      --green:#48bb78; --blue:#63b3ed; --orange:#f6ad55; --pink:#ed64a6;
+      --text:#e8eaf0; --muted:#6b7491; --radius:16px;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+    .bg-grid { position:fixed; inset:0; z-index:0;
+      background-image:linear-gradient(rgba(99,179,237,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,179,237,.03) 1px,transparent 1px);
+      background-size:48px 48px; pointer-events:none; }
+    .bg-orb { position:fixed; border-radius:50%; filter:blur(120px); pointer-events:none; z-index:0; }
+    .bg-orb-1 { width:600px; height:600px; background:radial-gradient(circle,rgba(99,179,237,.09) 0%,transparent 70%); top:-200px; right:-100px; animation:o1 18s ease-in-out infinite; }
+    .bg-orb-2 { width:500px; height:500px; background:radial-gradient(circle,rgba(72,187,120,.07) 0%,transparent 70%); bottom:-100px; left:-80px; animation:o2 22s ease-in-out infinite; }
+    @keyframes o1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,70px)} }
+    @keyframes o2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(70px,-50px)} }
+    .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
+    .sidebar { width:250px; min-height:100vh; background:rgba(13,19,32,.9); backdrop-filter:blur(24px);
+      border-right:1px solid var(--border); display:flex; flex-direction:column; padding:28px 0;
+      position:sticky; top:0; height:100vh; flex-shrink:0; overflow-y:auto; }
+    .logo { display:flex; align-items:center; gap:12px; padding:0 22px 28px; border-bottom:1px solid var(--border); }
+    .logo-back { width:32px; height:32px; border-radius:8px; background:var(--surface2); border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px;
+      cursor:pointer; transition:all .2s; text-decoration:none; flex-shrink:0; }
+    .logo-back:hover { background:rgba(99,179,237,.15); color:var(--blue); border-color:rgba(99,179,237,.3); }
+    .logo-text { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;
+      background:linear-gradient(135deg,var(--blue),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .logo-sub { font-size:10px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-top:1px; }
+    .nav { padding:16px 10px; flex:1; display:flex; flex-direction:column; gap:2px; }
+    .nav-label { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 12px 5px; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:9px 13px; border-radius:10px;
+      color:var(--muted); font-size:13.5px; font-weight:500; cursor:pointer; transition:all .2s; text-decoration:none; position:relative; }
+    .nav-item:hover { background:var(--surface2); color:var(--text); }
+    .nav-item.active { background:rgba(99,179,237,.10); color:var(--blue); border:1px solid rgba(99,179,237,.22); }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:25%; bottom:25%; width:3px; border-radius:0 3px 3px 0; background:var(--blue); }
+    .nav-icon { width:18px; text-align:center; font-size:15px; flex-shrink:0; }
+    .hist-list { padding:0 10px; display:flex; flex-direction:column; gap:2px; max-height:180px; overflow-y:auto; }
+    .hist-item { padding:7px 12px; border-radius:8px; font-size:12px; color:var(--muted); cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:6px; }
+    .hist-item:hover { background:var(--surface2); color:var(--text); }
+    .hist-item.cur { background:rgba(99,179,237,.08); color:var(--blue); font-weight:600; }
+    .sidebar-user { margin:0 10px 4px; padding:13px; border-radius:12px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:#fff; flex-shrink:0; }
+    .user-name { font-size:12.5px; font-weight:600; }
+    .user-role { font-size:11px; color:var(--muted); }
+    .main { flex:1; padding:36px 40px; overflow-y:auto; display:flex; flex-direction:column; gap:24px; min-width:0; }
+    .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .page-title { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;
+      background:linear-gradient(135deg,#fff 30%,var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .page-sub { color:var(--muted); font-size:13px; margin-top:4px; }
+    .date-nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .dnav-btn { width:32px; height:32px; border-radius:8px; background:var(--surface); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; cursor:pointer; transition:all .15s; font-family:inherit; }
+    .dnav-btn:hover { background:var(--surface2); color:var(--text); border-color:var(--border2); }
+    .date-box { display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:7px 14px; }
+    .date-label { font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; white-space:nowrap; }
+    .date-input { background:transparent; border:none; outline:none; color:var(--text); font-size:13.5px; font-family:'Space Grotesk',sans-serif; font-weight:600; cursor:pointer; min-width:120px; }
+    .date-input::-webkit-calendar-picker-indicator { filter:invert(.5); cursor:pointer; }
+    .today-btn { padding:7px 13px; border-radius:9px; background:rgba(99,179,237,.1); border:1px solid rgba(99,179,237,.25); color:var(--blue); font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .2s; white-space:nowrap; }
+    .today-btn:hover { background:rgba(99,179,237,.18); }
+    .unsaved-dot { width:7px; height:7px; border-radius:50%; background:var(--orange); display:inline-block; animation:blink 1.4s ease infinite; flex-shrink:0; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; transition:all .2s; border:none; font-family:inherit; white-space:nowrap; }
+    .btn-primary { background:linear-gradient(135deg,var(--blue),var(--cyan)); color:#1a2040; box-shadow:0 4px 16px rgba(99,179,237,.3); }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(99,179,237,.45); }
+    .btn-ghost { background:var(--surface); border:1px solid var(--border); color:var(--muted); }
+    .btn-ghost:hover { background:var(--surface2); color:var(--text); border-color:var(--border2); }
+    .btn-sm { padding:5px 12px; font-size:12px; border-radius:8px; }
+    .summary-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .sum-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; position:relative; overflow:hidden; }
+    .sum-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:var(--radius) var(--radius) 0 0; }
+    .sc-all::before   { background:linear-gradient(90deg,var(--blue),var(--cyan)); }
+    .sc-prod::before  { background:linear-gradient(90deg,var(--gold),#f6ad55); }
+    .sc-syryo::before { background:linear-gradient(90deg,var(--green),#68d391); }
+    .sc-mat::before   { background:linear-gradient(90deg,var(--orange),var(--gold)); }
+    .sum-label { font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px; }
+    .sum-val { font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; line-height:1; }
+    .sum-sub { font-size:11px; color:var(--muted); margin-top:4px; }
+    .sc-all .sum-val { color:var(--blue); }  .sc-prod .sum-val { color:var(--gold); }
+    .sc-syryo .sum-val { color:var(--green); } .sc-mat .sum-val { color:var(--orange); }
+    .toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .search-box { position:relative; flex:1; min-width:200px; max-width:350px; }
+    .search-box input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:9px 14px 9px 36px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none; transition:border-color .2s; }
+    .search-box input:focus { border-color:rgba(99,179,237,.4); }
+    .search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px; pointer-events:none; }
+    .search-box input::placeholder { color:var(--muted); }
+    .filter-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; font-size:12.5px; font-weight:600; border:1px solid var(--border); background:var(--surface); color:var(--muted); cursor:pointer; transition:all .15s; font-family:inherit; white-space:nowrap; }
+    .filter-btn:hover { background:var(--surface2); color:var(--text); }
+    .filter-btn.tab-all.active   { border-color:rgba(99,179,237,.4); background:rgba(99,179,237,.09); color:var(--blue); }
+    .filter-btn.tab-prod.active  { border-color:rgba(245,200,66,.4); background:rgba(245,200,66,.09); color:var(--gold); }
+    .filter-btn.tab-syryo.active { border-color:rgba(72,187,120,.4); background:rgba(72,187,120,.09); color:var(--green); }
+    .filter-btn.tab-mat.active   { border-color:rgba(246,173,85,.4); background:rgba(246,173,85,.09); color:var(--orange); }
+    .tbl-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .tbl-card-header { display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid var(--border); gap:10px; flex-wrap:wrap; }
+    .tbl-card-title { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+    .tbl-card-count { font-size:12px; color:var(--muted); }
+    .tbl-wrap { overflow-x:auto; }
+    table.sk { width:100%; border-collapse:collapse; min-width:920px; }
+    table.sk thead th { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
+      padding:10px 10px 10px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap;
+      position:sticky; top:0; background:rgba(8,12,20,.95); z-index:2; }
+    table.sk thead th.r { text-align:right; }
+    table.sk thead th.c { text-align:center; }
+    table.sk thead .th-sub { font-size:9px; color:var(--muted); opacity:.5; font-weight:400; display:block; letter-spacing:0; text-transform:none; margin-top:2px; }
+    table.sk tbody td { padding:7px 10px; font-size:13px; border-bottom:1px solid rgba(255,255,255,.03); vertical-align:middle; }
+    table.sk tbody tr:last-child td { border-bottom:none; }
+    table.sk tbody tr:hover td { background:rgba(255,255,255,.016); }
+    .nv { text-align:right; font-family:'Space Grotesk',sans-serif; font-weight:600; }
+    .nv-pos  { color:var(--green); }
+    .nv-zero { color:var(--muted); }
+    .nv-neg  { color:var(--red); }
+    .nv-text { color:var(--text); }
+    .idx-b { display:inline-block; background:var(--surface2); border-radius:5px; padding:1px 6px; font-size:11px; font-family:'Space Grotesk',sans-serif; color:var(--muted); min-width:24px; text-align:center; }
+    .tag { display:inline-block; border-radius:5px; padding:2px 7px; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; }
+    .tag-prod  { background:rgba(245,200,66,.1);  color:var(--gold);   border:1px solid rgba(245,200,66,.22); }
+    .tag-syryo { background:rgba(72,187,120,.1);  color:var(--green);  border:1px solid rgba(72,187,120,.22); }
+    .tag-mat   { background:rgba(246,173,85,.1);  color:var(--orange); border:1px solid rgba(246,173,85,.22); }
+    /* EDITABLE INPUTS */
+    .num-inp { background:transparent; border:none; border-bottom:1px dashed rgba(255,255,255,.12); color:var(--muted);
+      font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; text-align:right;
+      width:80px; outline:none; padding:3px 2px; transition:all .15s; -moz-appearance:textfield; display:block; margin-left:auto; }
+    .num-inp::-webkit-inner-spin-button,.num-inp::-webkit-outer-spin-button { -webkit-appearance:none; }
+    .num-inp:focus { border-bottom-color:var(--cyan); color:var(--text); background:rgba(61,232,199,.04); border-radius:4px 4px 0 0; }
+    .num-inp.has-v      { color:var(--cyan);   border-bottom-color:rgba(61,232,199,.35); }
+    .num-inp.has-v-cons { color:var(--orange); border-bottom-color:rgba(246,173,85,.35); }
+    .num-inp.has-v-ship { color:var(--pink);   border-bottom-color:rgba(237,100,166,.35); }
+    .note-inp { background:transparent; border:none; color:var(--muted); font-family:inherit; font-size:11px;
+      width:100%; min-width:80px; outline:none; padding:2px 0; font-style:italic; }
+    .note-inp:focus { color:var(--text); font-style:normal; }
+    .close-cell { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; text-align:right; white-space:nowrap; }
+    /* TOAST */
+    .toast { position:fixed; bottom:28px; right:28px; z-index:999; font-size:13px; font-weight:600;
+      padding:12px 20px; border-radius:12px; backdrop-filter:blur(12px);
+      opacity:0; transform:translateY(12px); transition:all .3s; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast-ok   { background:rgba(99,179,237,.12); border:1px solid rgba(99,179,237,.35); color:var(--blue); }
+    .toast-save { background:rgba(72,187,120,.12); border:1px solid rgba(72,187,120,.35); color:var(--green); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp .4s ease both; }
+    .du-1{animation-delay:.04s} .du-2{animation-delay:.10s} .du-3{animation-delay:.16s} .du-4{animation-delay:.22s}
+    @media(max-width:1100px) { .summary-row{grid-template-columns:1fr 1fr} }
+    @media(max-width:900px)  { .sidebar{display:none} .main{padding:20px} }
+    @media(max-width:600px)  { .summary-row{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <a class="logo-back" href="portal.html">←</a>
+      <div>
+        <div class="logo-text">Склад · Клото</div>
+        <div class="logo-sub">Центральный склад</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Разделы</div>
+      <a class="nav-item active" id="navlnk-all"   href="#" onclick="setTab('all');return false"><span class="nav-icon">📦</span> Все позиции</a>
+      <a class="nav-item"        id="navlnk-prod"  href="#" onclick="setTab('prod');return false"><span class="nav-icon">🏷️</span> Продукция</a>
+      <a class="nav-item"        id="navlnk-syryo" href="#" onclick="setTab('syryo');return false"><span class="nav-icon">🧪</span> Сырьё</a>
+      <a class="nav-item"        id="navlnk-mat"   href="#" onclick="setTab('mat');return false"><span class="nav-icon">🔩</span> Материалы</a>
+      <div class="nav-label">История</div>
+      <div class="hist-list" id="hist-list"></div>
+      <div class="nav-label">Связанные</div>
+      <a class="nav-item" href="syryo.html"><span class="nav-icon">🧪</span> Справочник сырья</a>
+      <a class="nav-item" href="sebescost.html"><span class="nav-icon">🧮</span> Себестоимость</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="avatar">АК</div>
+      <div><div class="user-name">Андрей К.</div><div class="user-role">Руководитель</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar fade-up du-1">
+      <div>
+        <div class="page-title">📦 Склад · Центральный</div>
+        <div class="page-sub" id="page-sub">Ежедневные остатки</div>
+      </div>
+      <div class="date-nav">
+        <button class="dnav-btn" onclick="gotoPrev()" title="Предыдущий день">◀</button>
+        <div class="date-box">
+          <span class="date-label">Дата:</span>
+          <input class="date-input" type="date" id="report-date" onchange="onDateInputChange()" />
+          <span id="unsaved-dot" class="unsaved-dot" style="display:none"></span>
+        </div>
+        <button class="dnav-btn" onclick="gotoNext()" title="Следующий день">▶</button>
+        <button class="today-btn" onclick="gotoToday()">Сегодня</button>
+        <button class="btn btn-primary btn-sm" onclick="manualSave()">💾 Сохранить</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ CSV</button>
+      </div>
+    </div>
+
+    <div class="summary-row fade-up du-2">
+      <div class="sum-card sc-all">
+        <div class="sum-label">Всего позиций с остатком</div>
+        <div class="sum-val" id="cnt-all">—</div>
+        <div class="sum-sub">на конец дня</div>
+      </div>
+      <div class="sum-card sc-prod">
+        <div class="sum-label">Продукция</div>
+        <div class="sum-val" id="cnt-prod">—</div>
+        <div class="sum-sub">ненулевых позиций</div>
+      </div>
+      <div class="sum-card sc-syryo">
+        <div class="sum-label">Сырьё</div>
+        <div class="sum-val" id="cnt-syryo">—</div>
+        <div class="sum-sub">ненулевых позиций</div>
+      </div>
+      <div class="sum-card sc-mat">
+        <div class="sum-label">Материалы</div>
+        <div class="sum-val" id="cnt-mat">—</div>
+        <div class="sum-sub">ненулевых позиций</div>
+      </div>
+    </div>
+
+    <div class="toolbar fade-up du-3">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-inp" placeholder="Поиск по наименованию..." oninput="applyFilter()" />
+      </div>
+      <button class="filter-btn tab-all active"  id="btn-all"   onclick="setTab('all')">Все</button>
+      <button class="filter-btn tab-prod"        id="btn-prod"  onclick="setTab('prod')">🏷️ Продукция</button>
+      <button class="filter-btn tab-syryo"       id="btn-syryo" onclick="setTab('syryo')">🧪 Сырьё</button>
+      <button class="filter-btn tab-mat"         id="btn-mat"   onclick="setTab('mat')">🔩 Материалы</button>
+    </div>
+
+    <div class="tbl-card fade-up du-4">
+      <div class="tbl-card-header">
+        <div class="tbl-card-title" id="tbl-title">📋 Все остатки</div>
+        <div class="tbl-card-count">Показано: <b id="visible-count">—</b></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="sk">
+          <thead>
+            <tr>
+              <th style="width:38px">№</th>
+              <th>Наименование</th>
+              <th class="c" style="width:52px">Ед.</th>
+              <th class="r" style="width:115px">На начало<span class="th-sub" id="th-open-date">—</span></th>
+              <th class="r" style="width:90px">Приход<span class="th-sub">↑ редакт.</span></th>
+              <th class="r" style="width:90px">Расход пр-во<span class="th-sub">↓ редакт.</span></th>
+              <th class="r" style="width:90px">Отгрузка<span class="th-sub">↓ редакт.</span></th>
+              <th class="r" style="width:115px">На конец<span class="th-sub" id="th-close-date">—</span></th>
+              <th class="c" style="width:70px">Раздел</th>
+              <th style="min-width:100px">Примечание</th>
+            </tr>
+          </thead>
+          <tbody id="sk-tbody">
+            <tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">Загрузка...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  BASE CLOSE — остатки на конец 10 апреля 2026 (из Excel)
+//  Используются как начальное сальдо при первом запуске
+// ═══════════════════════════════════════════════
+var BASE_CLOSE = [
+  {cat:'prod',  idx:'1',  name:'Стабилайт II - бум 25,0 кг',                            unit:'мешок', c:800},
+  {cat:'prod',  idx:'2',  name:'Стабилайт II - п/проп обезл 25,0 кг',                   unit:'мешок', c:0},
+  {cat:'prod',  idx:'3',  name:'Стабилайт II - п/проп обезл 22,7 кг',                   unit:'мешок', c:0},
+  {cat:'prod',  idx:'4',  name:'Сульф асф - п/проп обезл 25,0 кг',                      unit:'мешок', c:0},
+  {cat:'prod',  idx:'5',  name:'Сульф асф - бум 25,0 кг',                               unit:'мешок', c:1720},
+  {cat:'prod',  idx:'6',  name:'BaraFLC - бум 25,0 кг',                                 unit:'мешок', c:0},
+  {cat:'prod',  idx:'7',  name:'BURFLC - бум 25,0 кг',                                  unit:'мешок', c:0},
+  {cat:'prod',  idx:'8',  name:'BaraFLC(0) - бум 22,68 кг',                             unit:'мешок', c:0},
+  {cat:'prod',  idx:'9',  name:'СУЛЬФОБИТ - бум 25,0 кг',                               unit:'мешок', c:2400},
+  {cat:'prod',  idx:'10', name:'LG-DRILL - п/проп 25,0 кг',                             unit:'мешок', c:0},
+  {cat:'prod',  idx:'11', name:'СБМСУЛЬФ - бум 25,0 кг',                                unit:'мешок', c:0},
+  {cat:'prod',  idx:'12', name:'АСФАСОЛ - бум 25,0 кг',                                 unit:'мешок', c:0},
+  {cat:'prod',  idx:'13', name:'ASPHO-SLIDE - бум 25,0 кг',                             unit:'мешок', c:0},
+  {cat:'prod',  idx:'14', name:'Petro ASF - бум 25,0 кг',                               unit:'мешок', c:0},
+  {cat:'prod',  idx:'15', name:'Atren SL - бум 25,0 кг',                                unit:'мешок', c:0},
+  {cat:'prod',  idx:'16', name:'UNITROL - п/проп 25,0 кг',                              unit:'мешок', c:0},
+  {cat:'prod',  idx:'17', name:'КЛОТОНЕКС - бум 25,0 кг',                               unit:'мешок', c:0},
+  {cat:'prod',  idx:'18', name:'DURATONE - бум 25,0 кг',                                unit:'мешок', c:0},
+  {cat:'prod',  idx:'19', name:'СТАБИЛАЙТ РУО - бум 25,0 кг',                           unit:'мешок', c:0},
+  {cat:'prod',  idx:'20', name:'СБМОЙЛБЛОК (Ст РУО) - бум 25,0 кг',                    unit:'мешок', c:0},
+  {cat:'prod',  idx:'21', name:'VERSATROL M (Ст РУО) - бум 22,68 кг',                  unit:'мешок', c:0},
+  {cat:'prod',  idx:'22', name:'ТЕРРАПАН - бум 25,0 кг',                                unit:'мешок', c:220},
+  {cat:'prod',  idx:'23', name:'ТЕРРАПАН - бум 20,0 кг',                                unit:'мешок', c:0},
+  {cat:'prod',  idx:'24', name:'POLYAC PLUS R - бум 22,68 кг',                          unit:'мешок', c:0},
+  {cat:'prod',  idx:'25', name:'Petro STAB - бум 25,0 кг',                              unit:'мешок', c:0},
+  {cat:'prod',  idx:'26', name:'ПОЛИКАП - бум 25,0 кг',                                 unit:'мешок', c:26},
+  {cat:'prod',  idx:'27', name:'EZ-BUR DP (Поликап) - бум 25,0 кг',                    unit:'мешок', c:0},
+  {cat:'prod',  idx:'28', name:'РЕОМОД п - бум 18,0 кг',                                unit:'мешок', c:80},
+  {cat:'prod',  idx:'29', name:'ТЕРМАВИС РУО - бум 20,0 кг',                            unit:'мешок', c:0},
+  {cat:'prod',  idx:'30', name:'EWO GEL (Термавис РУО) - бум 20,0 кг',                 unit:'мешок', c:0},
+  {cat:'prod',  idx:'31', name:'ТАНАТИН - бум 20,0 кг',                                 unit:'мешок', c:0},
+  {cat:'prod',  idx:'32', name:'СБМТАН (Танатин) - бум 20,0 кг',                        unit:'мешок', c:0},
+  {cat:'prod',  idx:'33', name:'АДВАНТА п - бум 14,0 кг',                               unit:'мешок', c:0},
+  {cat:'prod',  idx:'34', name:'ШЕЙЛ-ИКС п - бум 25,0 кг',                             unit:'мешок', c:0},
+  {cat:'prod',  idx:'35', name:'КЛСП - бум 20,0 кг',                                   unit:'мешок', c:0},
+  {cat:'prod',  idx:'36', name:'Оптитрол П - бум 20,0 кг',                              unit:'мешок', c:0},
+  {cat:'prod',  idx:'37', name:'ТЕРРАПАН ж - 200 кг мет',                               unit:'бочка', c:112},
+  {cat:'prod',  idx:'38', name:'Реагент В - 55 кг п/эт бочонок',                        unit:'шт',    c:0},
+  {cat:'prod',  idx:'39', name:'Оптитрол Ж - 25 кг канистра',                           unit:'шт',    c:0},
+  {cat:'prod',  idx:'40', name:'ОПТИБУР - 200 кг п/эт',                                 unit:'бочка', c:0},
+  {cat:'prod',  idx:'41', name:'Оптитрол Ж - 200 кг п/эт',                              unit:'бочка', c:2},
+  {cat:'prod',  idx:'42', name:'ВЕЛЛБОНД - 190 кг п/эт',                                unit:'бочка', c:0},
+  {cat:'prod',  idx:'43', name:'ЛИКВИТРОЛ - 180 кг мет',                                unit:'бочка', c:0},
+  {cat:'prod',  idx:'44', name:'СБМОЙЛФИЛЬТР (Ликвитрол) - 190 п/эт',                  unit:'бочка', c:0},
+  {cat:'prod',  idx:'45', name:'EWO MUL2 - 200 кг п/эт',                                unit:'бочка', c:0},
+  {cat:'syryo', idx:'—',  name:'Уголь бурый в штабеле (Красноярск)',                   unit:'кг',    c:943320},
+  {cat:'syryo', idx:'—',  name:'Уголь бурый в штабеле (Казахстан)',                    unit:'кг',    c:665740},
+  {cat:'syryo', idx:'1',  name:'УЩР (собственный) "БУРСЕРВИС"',                        unit:'кг',    c:0},
+  {cat:'syryo', idx:'2',  name:'УЩР (собственный) МОЛОТЫЙ',                            unit:'кг',    c:0},
+  {cat:'syryo', idx:'3',  name:'УЩР (собственный) СУХОЙ',                              unit:'кг',    c:530400},
+  {cat:'syryo', idx:'4',  name:'УЩР (собственный) ОТСЕВ',                              unit:'кг',    c:0},
+  {cat:'syryo', idx:'5',  name:'Битум 70/30',                                           unit:'кг',    c:0},
+  {cat:'syryo', idx:'6',  name:'Сода каустическая',                                     unit:'кг',    c:0},
+  {cat:'syryo', idx:'7',  name:'Сода кальцинированная',                                 unit:'кг',    c:165000},
+  {cat:'syryo', idx:'8',  name:'Сода пищевая',                                          unit:'кг',    c:0},
+  {cat:'syryo', idx:'9',  name:'КМЦ (1 мешок 15 кг)',                                   unit:'кг',    c:0},
+  {cat:'syryo', idx:'10', name:'Мел МТД-2',                                             unit:'кг',    c:0},
+  {cat:'syryo', idx:'11', name:'Барит',                                                 unit:'кг',    c:0},
+  {cat:'syryo', idx:'12', name:'Топливо дизельное ЕМКОСТЬ 15 м3 ЦС',                   unit:'кг',    c:11470},
+  {cat:'syryo', idx:'13', name:'Топливо дизельное ГОРЕЛКА',                             unit:'кг',    c:0},
+  {cat:'syryo', idx:'14', name:'Топливо дизельное ПОГРУЗЧИК',                           unit:'кг',    c:0},
+  {cat:'syryo', idx:'15', name:'Топливо дизельное ТЕХНОЛОГИЯ',                          unit:'кг',    c:0},
+  {cat:'syryo', idx:'16', name:'Топливо дизельное А/МАШИНЫ',                            unit:'кг',    c:0},
+  {cat:'syryo', idx:'17', name:'ОТП + УЩР + Гильсонит',                                unit:'кг',    c:0},
+  {cat:'syryo', idx:'18', name:'ОТП с УЩР (плитка)',                                    unit:'кг',    c:0},
+  {cat:'syryo', idx:'19', name:'ОТП с УЩР для DURATONE размолотый',                     unit:'кг',    c:0},
+  {cat:'syryo', idx:'20', name:'Диэтаноламин',                                          unit:'кг',    c:8800},
+  {cat:'syryo', idx:'21', name:'Триэталонамин (мыло техническое)',                       unit:'кг',    c:0},
+  {cat:'syryo', idx:'22', name:'Гильсонит Navsonit',                                    unit:'кг',    c:0},
+  {cat:'syryo', idx:'23', name:'Кубовая жидкость колонны очистки КЖКОЭГ',               unit:'кг',    c:0},
+  {cat:'syryo', idx:'24', name:'Полигликоли "СИБУР"',                                   unit:'кг',    c:0},
+  {cat:'syryo', idx:'25', name:'Полигликоли "ХИМТРАСТ"',                                unit:'кг',    c:0},
+  {cat:'syryo', idx:'26', name:'Масло талловое сырое (СТМ, ЛТМ)',                       unit:'кг',    c:0},
+  {cat:'syryo', idx:'27', name:'Масло талловое дистиллированное (ДТМ)',                  unit:'кг',    c:11123},
+  {cat:'syryo', idx:'28', name:'Пеногаситель-Антивспениватель',                         unit:'кг',    c:0},
+  {cat:'syryo', idx:'29', name:'ЖКТМ (Жирные кислоты таллового масла)',                  unit:'кг',    c:0},
+  {cat:'syryo', idx:'30', name:'Стеариновая кислота',                                   unit:'кг',    c:0},
+  {cat:'syryo', idx:'31', name:'Полиэлектролит Силфок-2540',                            unit:'кг',    c:1050},
+  {cat:'syryo', idx:'32', name:'Сульфат натрия',                                        unit:'кг',    c:15000},
+  {cat:'syryo', idx:'33', name:'Реагент ВПРГ молотый',                                  unit:'кг',    c:37820},
+  {cat:'syryo', idx:'34', name:'Реагент ГЕОСПАН-П',                                     unit:'кг',    c:13616},
+  {cat:'syryo', idx:'35', name:'RADIACID RD 0982',                                      unit:'кг',    c:0},
+  {cat:'syryo', idx:'36', name:'Буровая смазка RADIAGREEN EBL 7857',                    unit:'кг',    c:0},
+  {cat:'syryo', idx:'37', name:'Нефтесодержащая жидкость Р1 (масло тёмное)',            unit:'кг',    c:0},
+  {cat:'syryo', idx:'38', name:'Диталакс-4705',                                         unit:'кг',    c:0},
+  {cat:'syryo', idx:'39', name:'Диталакс-4704',                                         unit:'кг',    c:0},
+  {cat:'syryo', idx:'40', name:'Этиленгликоль',                                         unit:'кг',    c:0},
+  {cat:'syryo', idx:'41', name:'Органофильная глина "Spartagel"',                        unit:'кг',    c:0},
+  {cat:'syryo', idx:'42', name:'Мимоза ME',                                             unit:'кг',    c:0},
+  {cat:'syryo', idx:'43', name:'Лигносульфонат',                                        unit:'кг',    c:0},
+  {cat:'mat',   idx:'1',  name:'Мешки BURFLC',                                          unit:'шт',    c:10009},
+  {cat:'mat',   idx:'2',  name:'Мешки BARA (О)',                                        unit:'шт',    c:9421},
+  {cat:'mat',   idx:'3',  name:'Мешки СТАБИЛАЙТ II марк - бум',                         unit:'шт',    c:17600},
+  {cat:'mat',   idx:'4',  name:'Мешки ОБЕЗЛИЧ п/проп',                                  unit:'шт',    c:25000},
+  {cat:'mat',   idx:'5',  name:'Мешки п/п 45×75 см ВС упл. Белые',                      unit:'шт',    c:3000},
+  {cat:'mat',   idx:'6',  name:'Мешки ОБЕЗЛИЧ бум увелич',                              unit:'шт',    c:32500},
+  {cat:'mat',   idx:'7',  name:'Мешки РЕАСОЛТ',                                         unit:'шт',    c:19261},
+  {cat:'mat',   idx:'8',  name:'Мешки MEX-ASR',                                         unit:'шт',    c:4790},
+  {cat:'mat',   idx:'9',  name:'Мешки UNITROL',                                         unit:'шт',    c:9762},
+  {cat:'mat',   idx:'10', name:'Мешки R2D2',                                             unit:'шт',    c:29500},
+  {cat:'mat',   idx:'11', name:'Мешки DURATONE',                                         unit:'шт',    c:11839},
+  {cat:'mat',   idx:'12', name:'Мешки КЛСП',                                             unit:'шт',    c:10057},
+  {cat:'mat',   idx:'13', name:'Мешки Polyac+',                                          unit:'шт',    c:15186},
+  {cat:'mat',   idx:'14', name:'Мешки EZ-MUD DP',                                        unit:'шт',    c:1814},
+  {cat:'mat',   idx:'15', name:'Поддоны 1200×1000',                                      unit:'шт',    c:350},
+  {cat:'mat',   idx:'16', name:'Поддоны 1140×1140',                                      unit:'шт',    c:609},
+  {cat:'mat',   idx:'17', name:'Стретч-пленка',                                          unit:'шт',    c:681},
+  {cat:'mat',   idx:'18', name:'Пленка парниковая',                                      unit:'п.м.',  c:6350},
+  {cat:'mat',   idx:'19', name:'Мешки п/эт (доп. упаковка)',                             unit:'шт',    c:3350},
+  {cat:'mat',   idx:'20', name:'Чехол п/эт (доп. упаковка)',                             unit:'шт',    c:5},
+  {cat:'mat',   idx:'21', name:'Уголок защитный',                                        unit:'шт',    c:634},
+  {cat:'mat',   idx:'22', name:'ДВП (упаковка)',                                          unit:'шт',    c:899},
+  {cat:'mat',   idx:'23', name:'Пиломатериал (для контейнеров и вагонов)',                unit:'м³',    c:2.459},
+  {cat:'mat',   idx:'24', name:'Скрепы для полиэстеровой ленты',                         unit:'шт',    c:5800},
+  {cat:'mat',   idx:'25', name:'Лента ПЭТ',                                              unit:'рул',   c:21},
+  {cat:'mat',   idx:'26', name:'Биг беги Клапан',                                        unit:'шт',    c:250},
+  {cat:'mat',   idx:'27', name:'Бочки мет 200 л пробка СИНЯЯ',                           unit:'шт',    c:103},
+  {cat:'mat',   idx:'28', name:'Бочки мет 200 л пробка ЧЕРНАЯ',                          unit:'шт',    c:145},
+  {cat:'mat',   idx:'29', name:'Бочки мет 200 л ОБРУЧ',                                  unit:'шт',    c:23},
+  {cat:'mat',   idx:'30', name:'Бочки мет 200 л б/у',                                    unit:'шт',    c:23},
+  {cat:'mat',   idx:'31', name:'Бочка п/э 227 л., крышка Обруч (Фиолетовая) ЗТИ',       unit:'шт',    c:0},
+  {cat:'mat',   idx:'32', name:'Бочка п/э 227 л., крышка Обруч (Синяя) РОДЕМОС',        unit:'шт',    c:0},
+  {cat:'mat',   idx:'33', name:'Бочка п/э 227 л., крышка Обруч ДИЗЕЛЬПЛАСТ',            unit:'шт',    c:16},
+  {cat:'mat',   idx:'34', name:'Респираторы',                                            unit:'шт',    c:8160},
+  {cat:'mat',   idx:'35', name:'Еврокуб Новый 1000 л.',                                  unit:'шт',    c:7},
+  {cat:'mat',   idx:'36', name:'Канистра 31,5 дм³',                                      unit:'шт',    c:1747},
+  {cat:'mat',   idx:'37', name:'Бочка п/э 227 л., синяя, 2 горловины (Тосол-Синтез-Инвест)', unit:'шт', c:84},
+  {cat:'mat',   idx:'38', name:'Защитный уголок полиамидный (чёрный)',                   unit:'шт',    c:1000},
+  {cat:'mat',   idx:'39', name:'Пряжка проволочная 5/8 для ленты ПЭТ',                  unit:'шт',    c:1000},
+  {cat:'mat',   idx:'40', name:'Крышка-пломба 3/4"',                                    unit:'шт',    c:594},
+  {cat:'mat',   idx:'41', name:'Гофролист 1200×1000',                                   unit:'шт',    c:1925},
+  {cat:'mat',   idx:'42', name:'Пломба для п/э бочек Тосол',                            unit:'шт',    c:0}
+];
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+var PFXK = 'cloto_sklad_';
+var currentData = null;  // {date, rows:[{cat,idx,name,unit,open,inc,cons,ship,note}]}
+var currentTab  = 'all';
+var saveTimer   = null;
+
+// ═══════════════════════════════════════════════
+//  DATE UTILS
+// ═══════════════════════════════════════════════
+function pad2(n) { return ('0'+n).slice(-2); }
+function todayISO() {
+  var d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+}
+function shiftDay(iso, delta) {
+  var d = new Date(iso + 'T12:00:00');
+  d.setDate(d.getDate() + delta);
+  return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+}
+function isoToRU(iso) {
+  if (!iso) return '';
+  var p = iso.split('-');
+  var m = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  return parseInt(p[2]) + ' ' + m[parseInt(p[1])-1] + ' ' + p[0];
+}
+
+// ═══════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════
+function dKey(iso) { return PFXK + iso; }
+function getAllSavedDates() {
+  var dates = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.indexOf(PFXK) === 0) dates.push(k.slice(PFXK.length));
+  }
+  return dates.sort();
+}
+function findPrevSaved(iso) {
+  var dates = getAllSavedDates().filter(function(d) { return d < iso; });
+  return dates.length ? dates[dates.length - 1] : null;
+}
+function tryLoad(iso) {
+  try { var r = localStorage.getItem(dKey(iso)); return r ? JSON.parse(r) : null; } catch(e) { return null; }
+}
+function saveData(data) {
+  try {
+    localStorage.setItem(dKey(data.date), JSON.stringify(data));
+    document.getElementById('unsaved-dot').style.display = 'none';
+  } catch(e) {}
+}
+function debounceSave() {
+  document.getElementById('unsaved-dot').style.display = 'inline-block';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function() { if (currentData) { saveData(currentData); updateHistList(); } }, 1500);
+}
+
+// ═══════════════════════════════════════════════
+//  DATA CREATION
+// ═══════════════════════════════════════════════
+function makeRow(b, openVal) {
+  return {cat:b.cat, idx:b.idx, name:b.name, unit:b.unit, open:openVal, inc:0, cons:0, ship:0, note:''};
+}
+function createFromBase(iso) {
+  return {date:iso, rows:BASE_CLOSE.map(function(b) { return makeRow(b, b.c); })};
+}
+function createFromPrev(prevData, iso) {
+  return {date:iso, rows:prevData.rows.map(function(r) {
+    var cl = (r.open||0) + (r.inc||0) - (r.cons||0) - (r.ship||0);
+    return makeRow(r, cl);
+  })};
+}
+function loadOrCreate(iso) {
+  var saved = tryLoad(iso);
+  if (saved) return saved;
+  var prev = findPrevSaved(iso);
+  if (prev) { var pd = tryLoad(prev); if (pd) return createFromPrev(pd, iso); }
+  return createFromBase(iso);
+}
+
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtN(n) {
+  var v = +n;
+  if (!v && v !== 0) return '—';
+  if (v === 0) return '—';
+  return v.toLocaleString('ru');
+}
+function closeCls(n) { return n > 0 ? 'nv-pos' : n < 0 ? 'nv-neg' : 'nv-zero'; }
+function openCls(n)  { return n > 0 ? 'nv-text': n < 0 ? 'nv-neg'  : 'nv-zero'; }
+function tagHtml(cat) {
+  var m = {prod:['tag-prod','Прод.'], syryo:['tag-syryo','Сырьё'], mat:['tag-mat','Матер.']};
+  var d = m[cat] || ['','?']; return '<span class="tag '+d[0]+'">'+d[1]+'</span>';
+}
+function inpV(v)          { return (v && +v !== 0) ? +v : ''; }
+function inpCls(v, type) {
+  if (!v || +v === 0) return 'num-inp';
+  if (type === 'cons') return 'num-inp has-v-cons';
+  if (type === 'ship') return 'num-inp has-v-ship';
+  return 'num-inp has-v';
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════
+function renderTable() {
+  var html = '';
+  currentData.rows.forEach(function(r, i) {
+    var cl = (r.open||0) + (r.inc||0) - (r.cons||0) - (r.ship||0);
+    html +=
+      '<tr data-i="'+i+'" data-cat="'+r.cat+'">' +
+      '<td><span class="idx-b">'+esc(r.idx)+'</span></td>' +
+      '<td style="font-weight:500;max-width:280px;word-break:break-word">'+esc(r.name)+'</td>' +
+      '<td style="text-align:center;font-size:11.5px;color:var(--muted)">'+esc(r.unit)+'</td>' +
+      '<td class="nv '+openCls(r.open||0)+'">'+fmtN(r.open)+'</td>' +
+      '<td class="nv"><input class="'+inpCls(r.inc,'inc')+'" type="number" min="0" step="any" placeholder="—" value="'+inpV(r.inc)+'" oninput="onRowChange('+i+',\'inc\',this)" /></td>' +
+      '<td class="nv"><input class="'+inpCls(r.cons,'cons')+'" type="number" min="0" step="any" placeholder="—" value="'+inpV(r.cons)+'" oninput="onRowChange('+i+',\'cons\',this)" /></td>' +
+      '<td class="nv"><input class="'+inpCls(r.ship,'ship')+'" type="number" min="0" step="any" placeholder="—" value="'+inpV(r.ship)+'" oninput="onRowChange('+i+',\'ship\',this)" /></td>' +
+      '<td class="close-cell '+closeCls(cl)+'" id="cl-'+i+'">'+(cl?cl.toLocaleString('ru'):'—')+'</td>' +
+      '<td style="text-align:center">'+tagHtml(r.cat)+'</td>' +
+      '<td><input class="note-inp" type="text" placeholder="—" value="'+esc(r.note||'')+'" oninput="onRowChange('+i+',\'note\',this)" /></td>' +
+      '</tr>';
+  });
+  var tb = document.getElementById('sk-tbody');
+  tb.innerHTML = html || '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">—</td></tr>';
+  applyFilter();
+  updateSummary();
+}
+
+function onRowChange(i, field, el) {
+  if (!currentData || !currentData.rows[i]) return;
+  var r = currentData.rows[i];
+  if (field === 'note') {
+    r.note = el.value;
+  } else {
+    var num = parseFloat(el.value) || 0;
+    r[field] = num;
+    el.className = inpCls(num, field);
+    var cl = (r.open||0) + (r.inc||0) - (r.cons||0) - (r.ship||0);
+    var cell = document.getElementById('cl-'+i);
+    if (cell) { cell.textContent = cl ? cl.toLocaleString('ru') : '—'; cell.className = 'close-cell '+closeCls(cl); }
+    updateSummary();
+  }
+  debounceSave();
+}
+
+function applyFilter() {
+  var q = (document.getElementById('search-inp').value || '').toLowerCase();
+  var rows = document.querySelectorAll('#sk-tbody tr[data-i]');
+  var vis = 0;
+  rows.forEach(function(tr) {
+    var i = parseInt(tr.dataset.i);
+    var r = currentData.rows[i];
+    var show = (currentTab === 'all' || r.cat === currentTab) && (!q || r.name.toLowerCase().indexOf(q) !== -1);
+    tr.style.display = show ? '' : 'none';
+    if (show) vis++;
+  });
+  var el = document.getElementById('visible-count');
+  if (el) el.textContent = vis;
+}
+
+function updateSummary() {
+  if (!currentData) return;
+  var cnt = {all:0, prod:0, syryo:0, mat:0};
+  currentData.rows.forEach(function(r) {
+    var cl = (r.open||0) + (r.inc||0) - (r.cons||0) - (r.ship||0);
+    if (cl > 0) { cnt.all++; cnt[r.cat] = (cnt[r.cat]||0) + 1; }
+  });
+  ['all','prod','syryo','mat'].forEach(function(k) {
+    var el = document.getElementById('cnt-'+k); if (el) el.textContent = cnt[k]||0;
+  });
+}
+
+function updateDateUI() {
+  if (!currentData) return;
+  var iso = currentData.date;
+  document.getElementById('report-date').value = iso;
+  document.getElementById('th-open-date').textContent = isoToRU(shiftDay(iso, -1));
+  document.getElementById('th-close-date').textContent = isoToRU(iso);
+  document.getElementById('page-sub').textContent = 'Остатки на ' + isoToRU(iso);
+  document.title = 'Склад · ' + isoToRU(iso) + ' · Клото';
+}
+
+function updateHistList() {
+  var dates = getAllSavedDates().reverse().slice(0, 12);
+  var cur = currentData ? currentData.date : '';
+  var html = dates.map(function(d) {
+    return '<div class="hist-item'+(d===cur?' cur':'')+'" onclick="gotoDate(\''+d+'\')">'+(d===cur?'● ':'○ ')+isoToRU(d)+'</div>';
+  }).join('');
+  var el = document.getElementById('hist-list');
+  if (el) el.innerHTML = html || '<div style="color:var(--muted);font-size:11px;padding:6px 12px">Нет записей</div>';
+}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function gotoDate(iso) {
+  if (currentData) saveData(currentData);
+  currentData = loadOrCreate(iso);
+  updateDateUI();
+  renderTable();
+  updateHistList();
+}
+function gotoToday()         { gotoDate(todayISO()); }
+function gotoPrev()          { if (currentData) gotoDate(shiftDay(currentData.date, -1)); }
+function gotoNext()          { if (currentData) gotoDate(shiftDay(currentData.date, +1)); }
+function onDateInputChange() { var v = document.getElementById('report-date').value; if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) gotoDate(v); }
+
+// ═══════════════════════════════════════════════
+//  TAB
+// ═══════════════════════════════════════════════
+function setTab(tab) {
+  currentTab = tab;
+  ['all','prod','syryo','mat'].forEach(function(t) {
+    var b = document.getElementById('btn-'+t); if (b) b.classList.toggle('active', t===tab);
+    var n = document.getElementById('navlnk-'+t); if (n) n.classList.toggle('active', t===tab);
+  });
+  var titles = {all:'📋 Все остатки', prod:'📋 Продукция', syryo:'📋 Сырьё', mat:'📋 Материалы'};
+  var el = document.getElementById('tbl-title'); if (el) el.textContent = titles[tab]||'📋 Остатки';
+  applyFilter();
+}
+
+// ═══════════════════════════════════════════════
+//  SAVE / EXPORT
+// ═══════════════════════════════════════════════
+function manualSave() {
+  if (currentData) saveData(currentData);
+  updateHistList();
+  showToast('✓ Данные сохранены', 'save');
+}
+function exportCSV() {
+  if (!currentData) return;
+  var catN = {prod:'Продукция', syryo:'Сырьё', mat:'Материалы'};
+  var hdr = ['№','Наименование','Ед.','Начало','Приход','Расход пр-во','Отгрузка','Конец','Раздел','Примечание'];
+  var rows = currentData.rows.filter(function(r) { return currentTab === 'all' || r.cat === currentTab; });
+  var lines = [hdr.join(';')];
+  rows.forEach(function(r) {
+    var cl = (r.open||0)+(r.inc||0)-(r.cons||0)-(r.ship||0);
+    lines.push([r.idx,'"'+r.name+'"',r.unit,r.open||0,r.inc||0,r.cons||0,r.ship||0,cl,catN[r.cat]||r.cat,'"'+(r.note||'')+'"'].join(';'));
+  });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')], {type:'text/csv;charset=utf-8'}));
+  a.download = 'sklad_'+currentData.date+'.csv';
+  a.click();
+  showToast('⬇ CSV сохранён', 'ok');
+}
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast toast-'+(type||'ok')+' show';
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+// ═══════════════════════════════════════════════
+//  INIT — открываем сегодняшний день
+// ═══════════════════════════════════════════════
+gotoDate(todayISO());
+</script>
+</body>
+</html>

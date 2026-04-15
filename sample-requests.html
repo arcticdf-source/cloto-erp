@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Заявки на образцы — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080c14;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);
+      --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#e8eaf0;--muted:#6b7491;
+      --cyan:#3de8c7;--gold:#f5c842;--green:#48bb78;--red:#ff5e7d;--radius:16px;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    .bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:linear-gradient(rgba(61,232,199,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(61,232,199,.03) 1px,transparent 1px);
+      background-size:48px 48px}
+    .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:28px 22px 40px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+    .title{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;
+      background:linear-gradient(135deg,#fff 25%,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .sub{font-size:13px;color:var(--muted);margin-top:4px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:10px;background:var(--surface);
+      border:1px solid var(--border);color:var(--text);text-decoration:none;font-size:12px;font-weight:600;transition:all .18s}
+    .btn:hover{background:var(--surface2);border-color:var(--border2)}
+    .btn-main{background:rgba(61,232,199,.14);border-color:rgba(61,232,199,.35);color:var(--cyan)}
+    .btn-main:hover{background:rgba(61,232,199,.22);border-color:rgba(61,232,199,.5)}
+
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+    .k{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+    .k-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .k-v{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;margin-top:4px}
+
+    .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:820px}
+    th{padding:11px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border)}
+    td{padding:12px;border-bottom:1px solid rgba(255,255,255,.03);font-size:12.5px}
+    tr:last-child td{border-bottom:none}
+    .badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+    .b-wip{background:rgba(245,200,66,.16);color:var(--gold)}
+    .b-ready{background:rgba(72,187,120,.16);color:var(--green)}
+    .b-delay{background:rgba(255,94,125,.16);color:var(--red)}
+
+    @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.kpis{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="title">📦 Заявки на образцы</div>
+        <div class="sub">Рабочая страница модуля: регистрация, статусы, контроль SLA.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn-main" href="sample-request-form.html">Отправить заявку в лабораторию</a>
+        <a class="btn" href="laboratory.html">← В Лабораторию</a>
+        <a class="btn" href="portal.html">На главную</a>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="k"><div class="k-l">Новые</div><div class="k-v" style="color:var(--cyan)">12</div></div>
+      <div class="k"><div class="k-l">В работе</div><div class="k-v" style="color:var(--gold)">27</div></div>
+      <div class="k"><div class="k-l">Готовы</div><div class="k-v" style="color:var(--green)">19</div></div>
+      <div class="k"><div class="k-l">Просрочка SLA</div><div class="k-v" style="color:var(--red)">2</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Клиент</th>
+            <th>Продукт</th>
+            <th>Дата</th>
+            <th>Статус</th>
+            <th>Ответственный</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>OBR-241</td><td>Комар эпокси</td><td>Stabilight</td><td>12.04.2026</td><td><span class="badge b-ready">Готово</span></td><td>И. Петров</td></tr>
+          <tr><td>OBR-240</td><td>БурСервис</td><td>Blacktrol</td><td>12.04.2026</td><td><span class="badge b-wip">Сборка</span></td><td>Н. Орлова</td></tr>
+          <tr><td>OBR-239</td><td>ССК</td><td>Optitrol</td><td>11.04.2026</td><td><span class="badge b-ready">Отгружено</span></td><td>А. Сидоров</td></tr>
+          <tr><td>OBR-238</td><td>Сургутнефтегаз</td><td>Maksflex</td><td>11.04.2026</td><td><span class="badge b-delay">Задержка</span></td><td>И. Петров</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>

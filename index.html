@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent:  #7c5cfc;
+      --accent2: #b07dff;
+      --gold:    #f5c842;
+      --cyan:    #3de8c7;
+      --text:    #e8eaf0;
+      --muted:   #9aa0b8;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ═══ BACKGROUND LAYER ═══ */
+    #bg-layer {
+      position: fixed; inset: 0; z-index: 0;
+      background-color: #080c14;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image .6s ease;
+    }
+
+    /* dark overlay over the image so text is always readable */
+    #bg-layer::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(8,12,20,0.82) 0%,
+        rgba(8,12,20,0.60) 50%,
+        rgba(8,12,20,0.75) 100%
+      );
+      transition: opacity .4s;
+    }
+
+    /* when custom bg is set, deepen overlay slightly */
+    #bg-layer.has-image::after {
+      background: linear-gradient(
+        135deg,
+        rgba(5,8,15,0.88) 0%,
+        rgba(5,8,15,0.65) 50%,
+        rgba(5,8,15,0.82) 100%
+      );
+    }
+
+    /* default animated orbs (hidden when custom bg is active) */
+    .bg-orbs { position: fixed; inset: 0; z-index: 0; pointer-events: none; transition: opacity .5s; }
+    #bg-layer.has-image ~ .bg-orbs { opacity: 0; }
+
+    .orb { position: absolute; border-radius: 50%; filter: blur(110px); }
+    .orb-1 {
+      width: 650px; height: 650px;
+      background: radial-gradient(circle, rgba(124,92,252,.22) 0%, transparent 70%);
+      top: -180px; left: -180px;
+      animation: oa 18s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 550px; height: 550px;
+      background: radial-gradient(circle, rgba(61,232,199,.14) 0%, transparent 70%);
+      bottom: -120px; right: -80px;
+      animation: ob 22s ease-in-out infinite;
+    }
+    .orb-3 {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(245,200,66,.10) 0%, transparent 70%);
+      top: 35%; left: 50%;
+      animation: oc 14s ease-in-out infinite;
+    }
+    @keyframes oa { 0%,100%{transform:translate(0,0)} 50%{transform:translate(70px,60px)} }
+    @keyframes ob { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-50px,-70px)} }
+    @keyframes oc { 0%,100%{transform:translate(0,0)} 50%{transform:translate(35px,-35px)} }
+
+    /* grid lines */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(124,92,252,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,252,.035) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+
+    /* ═══ CONTENT ═══ */
+    .page {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 100vh;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    /* logo mark */
+    .logo-ring {
+      width: 80px; height: 80px; border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--cyan) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px; font-weight: 800; color: #fff;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 0 60px rgba(124,92,252,.45);
+      margin-bottom: 28px;
+      animation: logoIn .7s cubic-bezier(.175,.885,.32,1.275) both;
+    }
+    @keyframes logoIn { from{opacity:0;transform:scale(.6) rotate(-12deg)} to{opacity:1;transform:scale(1) rotate(0)} }
+
+    /* company name */
+    .company-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(52px, 8vw, 96px);
+      font-weight: 800; line-height: 1;
+      letter-spacing: -.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2) 65%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: fadeUp .6s .1s ease both;
+    }
+
+    .company-tagline {
+      font-size: clamp(14px, 2vw, 18px);
+      color: var(--muted); font-weight: 400;
+      margin-top: 14px; letter-spacing: .01em;
+      max-width: 460px;
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    /* divider line */
+    .divider {
+      width: 60px; height: 2px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      margin: 32px auto;
+      animation: fadeUp .6s .25s ease both;
+    }
+
+    /* Admin button */
+    .btn-admin {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 16px 40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, #6040e0 100%);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px; font-weight: 600;
+      text-decoration: none;
+      border: none; cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(124,92,252,.4), 0 8px 32px rgba(124,92,252,.4);
+      transition: all .25s;
+      position: relative; overflow: hidden;
+      animation: fadeUp .6s .35s ease both;
+    }
+    .btn-admin::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 60%);
+      opacity: 0; transition: opacity .25s;
+    }
+    .btn-admin:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 0 1px rgba(124,92,252,.6), 0 14px 48px rgba(124,92,252,.55);
+    }
+    .btn-admin:hover::before { opacity: 1; }
+    .btn-admin:active { transform: translateY(0); }
+    .btn-icon { font-size: 20px; }
+    .btn-arrow {
+      font-size: 18px; opacity: .7;
+      transition: transform .2s;
+    }
+    .btn-admin:hover .btn-arrow { transform: translateX(4px); opacity: 1; }
+
+    /* version badge */
+    .version-tag {
+      margin-top: 20px;
+      font-size: 12px; color: rgba(255,255,255,.25);
+      letter-spacing: .06em; text-transform: uppercase;
+      animation: fadeUp .6s .45s ease both;
+    }
+
+    /* ═══ BOTTOM BAR ═══ */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 2;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 28px;
+      background: rgba(8,12,20,.7);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    .bottom-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,.35);
+      letter-spacing: .06em; text-transform: uppercase;
+    }
+
+    /* change background button */
+    .bg-change-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.5);
+      font-size: 12.5px; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+    }
+    .bg-change-btn:hover {
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.2);
+      color: #fff;
+    }
+    .bg-change-btn.has-bg {
+      border-color: rgba(61,232,199,.3);
+      color: var(--cyan);
+    }
+
+    /* hidden file input */
+    #bg-file-input { display: none; }
+
+    /* reset bg button */
+    .bg-reset-btn {
+      display: none;
+      align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px;
+      background: rgba(255,94,125,.08);
+      border: 1px solid rgba(255,94,125,.2);
+      color: rgba(255,94,125,.7);
+      font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all .2s; margin-left: 8px;
+    }
+    .bg-reset-btn.visible { display: flex; }
+    .bg-reset-btn:hover { background: rgba(255,94,125,.15); color: #ff5e7d; }
+
+    .bottom-right { display: flex; align-items: center; }
+
+    /* ═══ ANIMATIONS ═══ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background layer -->
+<div id="bg-layer"></div>
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="bg-grid"></div>
+
+<!-- Main content -->
+<div class="page">
+  <div class="logo-ring">К</div>
+  <div class="company-name">Клото</div>
+  <div class="company-tagline">Единая внутренняя платформа — все процессы компании в одном месте</div>
+  <div class="divider"></div>
+  <a class="btn-admin" href="portal.html">
+    <span class="btn-icon">🔐</span>
+    Войти как Admin
+    <span class="btn-arrow">→</span>
+  </a>
+  <div class="version-tag">Внутренний портал · v1.0</div>
+</div>
+
+<!-- Bottom bar -->
+<div class="bottom-bar">
+  <div class="bottom-brand">© 2026 Клото</div>
+  <div class="bottom-right">
+    <button class="bg-change-btn" id="bg-btn" onclick="document.getElementById('bg-file-input').click()">
+      <span>🖼️</span> Сменить фон
+    </button>
+    <button class="bg-reset-btn" id="bg-reset-btn" onclick="resetBg()">
+      ✕ Сбросить
+    </button>
+  </div>
+</div>
+
+<!-- Hidden file input for background -->
+<input type="file" id="bg-file-input" accept="image/*" onchange="handleBgUpload(event)" />
+
+<script>
+  const BG_KEY = 'cloto_landing_bg';
+  const bgLayer = document.getElementById('bg-layer');
+  const bgBtn   = document.getElementById('bg-btn');
+  const resetBtn = document.getElementById('bg-reset-btn');
+
+  // Load saved background on startup
+  (function init() {
+    const saved = localStorage.getItem(BG_KEY);
+    if (saved) applyBg(saved);
+  })();
+
+  function handleBgUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const dataUrl = ev.target.result;
+      localStorage.setItem(BG_KEY, dataUrl);
+      applyBg(dataUrl);
+    };
+    reader.readAsDataURL(file);
+    // reset input so same file can be re-selected
+    e.target.value = '';
+  }
+
+  function applyBg(dataUrl) {
+    bgLayer.style.backgroundImage = `url(${dataUrl})`;
+    bgLayer.classList.add('has-image');
+    bgBtn.classList.add('has-bg');
+    bgBtn.innerHTML = '<span>🖼️</span> Изменить фон';
+    resetBtn.classList.add('visible');
+  }
+
+  function resetBg() {
+    localStorage.removeItem(BG_KEY);
+    bgLayer.style.backgroundImage = '';
+    bgLayer.classList.remove('has-image');
+    bgBtn.classList.remove('has-bg');
+    bgBtn.innerHTML = '<span>🖼️</span> Сменить фон';
+    resetBtn.classList.remove('visible');
+  }
+</script>
+
+</body>
+</html>

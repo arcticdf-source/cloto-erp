@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Блэктрол — Себестоимость · Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#080c14; --bg2:#0d1320;
+      --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07);
+      --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
+      --cyan:#3de8c7; --gold:#f5c842; --red:#ff5e7d;
+      --green:#48bb78; --blue:#63b3ed; --orange:#f6ad55; --pink:#ed64a6;
+      --act:#b07dff;
+      --text:#e8eaf0; --muted:#6b7491; --radius:16px;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+    .bg-grid { position:fixed; inset:0; z-index:0;
+      background-image: linear-gradient(rgba(176,125,255,.03) 1px,transparent 1px), linear-gradient(90deg,rgba(176,125,255,.03) 1px,transparent 1px);
+      background-size:48px 48px; pointer-events:none; }
+    .bg-orb { position:fixed; border-radius:50%; filter:blur(120px); pointer-events:none; z-index:0; }
+    .bg-orb-1 { width:600px; height:600px; background:radial-gradient(circle,rgba(176,125,255,.09) 0%,transparent 70%); top:-200px; right:-100px; animation:o1 18s ease-in-out infinite; }
+    .bg-orb-2 { width:500px; height:500px; background:radial-gradient(circle,rgba(124,92,252,.10) 0%,transparent 70%); bottom:-100px; left:-80px; animation:o2 22s ease-in-out infinite; }
+    @keyframes o1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,70px)} }
+    @keyframes o2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(70px,-50px)} }
+    .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
+    .sidebar { width:250px; min-height:100vh; background:rgba(13,19,32,.9); backdrop-filter:blur(24px);
+      border-right:1px solid var(--border); display:flex; flex-direction:column; padding:28px 0;
+      position:sticky; top:0; height:100vh; flex-shrink:0; overflow-y:auto; }
+    .logo { display:flex; align-items:center; gap:12px; padding:0 22px 28px; border-bottom:1px solid var(--border); }
+    .logo-back { width:32px; height:32px; border-radius:8px; background:var(--surface2); border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px;
+      cursor:pointer; transition:all .2s; text-decoration:none; flex-shrink:0; }
+    .logo-back:hover { background:rgba(176,125,255,.15); color:var(--act); border-color:rgba(176,125,255,.3); }
+    .logo-text { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px;
+      background:linear-gradient(135deg,var(--act),#d6bcfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .logo-sub { font-size:10px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-top:1px; }
+    .nav { padding:16px 10px; flex:1; display:flex; flex-direction:column; gap:2px; }
+    .nav-label { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 12px 5px; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:9px 13px; border-radius:10px;
+      color:var(--muted); font-size:13.5px; font-weight:500; cursor:pointer; transition:all .2s; text-decoration:none; position:relative; }
+    .nav-item:hover { background:var(--surface2); color:var(--text); }
+    .nav-item.active { background:rgba(176,125,255,.10); color:var(--act); border:1px solid rgba(176,125,255,.22); }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:25%; bottom:25%; width:3px; border-radius:0 3px 3px 0; background:var(--act); }
+    .nav-icon { width:18px; text-align:center; font-size:15px; flex-shrink:0; }
+    .sidebar-user { margin:0 10px 4px; padding:13px; border-radius:12px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--act),#7c5cfc); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:#fff; flex-shrink:0; }
+    .user-name { font-size:12.5px; font-weight:600; }
+    .user-role { font-size:11px; color:var(--muted); }
+    .main { flex:1; padding:36px 44px; overflow-y:auto; display:flex; flex-direction:column; gap:28px; }
+    .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+    .page-title { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;
+      background:linear-gradient(135deg,#fff 30%,var(--act)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .page-sub { color:var(--muted); font-size:13px; margin-top:4px; }
+    .btn { display:inline-flex; align-items:center; gap:8px; padding:9px 20px; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; transition:all .2s; border:none; }
+    .btn-primary { background:linear-gradient(135deg,var(--act),#7c5cfc); color:#fff; box-shadow:0 4px 16px rgba(176,125,255,.3); }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(176,125,255,.45); }
+    .btn-ghost { background:var(--surface); border:1px solid var(--border); color:var(--muted); }
+    .btn-ghost:hover { background:var(--surface2); color:var(--text); border-color:var(--border2); }
+    .btn-sm { padding:5px 13px; font-size:12px; border-radius:8px; }
+    .toast { position:fixed; bottom:28px; right:28px; z-index:999; background:rgba(176,125,255,.12);
+      border:1px solid rgba(176,125,255,.35); color:var(--act); font-size:13px; font-weight:600;
+      padding:12px 20px; border-radius:12px; backdrop-filter:blur(12px);
+      opacity:0; transform:translateY(12px); transition:all .3s; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px 26px; position:relative; overflow:hidden; }
+    .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:var(--radius) var(--radius) 0 0; }
+    .card-purple::before { background:linear-gradient(90deg,var(--act),#d6bcfa); }
+    .card-blue::before  { background:linear-gradient(90deg,var(--blue),#90cdf4); }
+    .card-gold::before  { background:linear-gradient(90deg,var(--gold),#f6ad55); }
+    .card-green::before { background:linear-gradient(90deg,var(--green),#68d391); }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .card-title { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:8px; margin-bottom:0; }
+    .tbl-wrap { overflow-x:auto; }
+    .tbl { width:100%; border-collapse:collapse; min-width:520px; }
+    .tbl thead th { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); padding:0 10px 11px; text-align:left; border-bottom:1px solid var(--border); }
+    .tbl thead th.r { text-align:right; }
+    .tbl tbody td { padding:7px 10px; font-size:13.5px; border-bottom:1px solid rgba(255,255,255,.032); vertical-align:middle; }
+    .tbl tbody tr:last-child td { border-bottom:none; }
+    .tbl tbody tr:hover td { background:rgba(255,255,255,.017); }
+    .tbl tfoot td { padding:11px 10px 2px; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:var(--act); border-top:1px solid var(--border); }
+    .tbl tfoot td.r { text-align:right; }
+    .tbl td.r { text-align:right; }
+    .tbl td.pct { text-align:right; font-size:11.5px; color:var(--muted); font-family:'Space Grotesk',sans-serif; min-width:55px; }
+    .tbl td.sumcell { text-align:right; font-family:'Space Grotesk',sans-serif; font-weight:600; color:var(--act); min-width:95px; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
+    input[type=number] { -moz-appearance:textfield; }
+    .t-name { background:transparent; border:none; border-bottom:1px solid transparent; padding:3px 0; font-size:13.5px; color:var(--text); font-family:inherit; width:100%; outline:none; transition:border-color .2s; min-width:120px; }
+    .t-name:focus { border-bottom-color:rgba(176,125,255,.4); }
+    .t-unit { background:transparent; border:none; border-bottom:1px solid transparent; padding:3px 4px; font-size:12px; color:var(--muted); font-family:inherit; width:60px; outline:none; transition:border-color .2s; }
+    .t-unit:focus { border-bottom-color:rgba(176,125,255,.35); }
+    .t-num { background:transparent; border:none; border-bottom:1px solid transparent; padding:3px 4px; font-size:13px; color:var(--text); font-family:'Space Grotesk',sans-serif; width:88px; text-align:right; outline:none; transition:all .2s; }
+    .t-num:focus { border-bottom-color:rgba(176,125,255,.4); }
+    .t-num-syryo { border-bottom:1.5px solid rgba(61,232,199,.5) !important; color:var(--cyan) !important; }
+    .t-num-syryo:focus { border-bottom-color:var(--cyan) !important; }
+    .t-name[list]::-webkit-calendar-picker-indicator { opacity:.3; cursor:pointer; filter:invert(1); }
+    .del-btn { background:none; border:none; cursor:pointer; color:var(--muted); font-size:15px; padding:2px 5px; border-radius:5px; line-height:1; transition:color .15s, background .15s; }
+    .del-btn:hover { color:var(--red); background:rgba(255,94,125,.1); }
+    .add-row { display:flex; align-items:center; gap:8px; background:none; border:1px dashed var(--border); border-radius:8px; color:var(--muted); font-size:12.5px; font-family:inherit; padding:7px 14px; cursor:pointer; transition:all .15s; width:100%; margin-top:8px; }
+    .add-row:hover { border-color:rgba(176,125,255,.4); color:var(--act); background:rgba(176,125,255,.04); }
+    .ind-row { display:grid; grid-template-columns:1fr 150px 36px; gap:10px; align-items:center; margin-bottom:8px; }
+    .ind-name { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none; width:100%; transition:border-color .2s; }
+    .ind-name:focus { border-color:rgba(176,125,255,.45); }
+    .ind-num { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-size:13.5px; font-family:'Space Grotesk',sans-serif; outline:none; width:100%; text-align:right; transition:border-color .2s; }
+    .ind-num:focus { border-color:rgba(176,125,255,.45); }
+    .direct-strip { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; }
+    .ds-item { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:10px; padding:14px 16px; text-align:center; }
+    .ds-item.total { background:rgba(176,125,255,.07); border-color:rgba(176,125,255,.25); }
+    .ds-label { font-size:10px; color:var(--muted); font-weight:600; letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px; }
+    .ds-value { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:var(--act); }
+    .fin-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+    .fin-item { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+    .fin-item.hi  { background:rgba(176,125,255,.07);  border-color:rgba(176,125,255,.25); }
+    .fin-item.mg  { background:rgba(72,187,120,.07);  border-color:rgba(72,187,120,.25); }
+    .fin-label { font-size:10px; color:var(--muted); font-weight:600; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; }
+    .fin-value { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; line-height:1; }
+    .fin-sub { font-size:11px; color:var(--muted); margin-top:5px; }
+    .mg-header { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin:14px 0 5px; }
+    .mg-track { height:10px; background:rgba(255,255,255,.06); border-radius:99px; overflow:hidden; }
+    .mg-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--green),#68d391); transition:width .5s ease; }
+    .sect-tot { display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:12px; padding:10px 0 2px; border-top:1px solid var(--border); }
+    .sect-tot-label { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+    .sect-tot-val { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; color:var(--act); }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:99px; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp .4s ease both; }
+    .du-1{animation-delay:.04s} .du-2{animation-delay:.10s} .du-3{animation-delay:.16s}
+    .du-4{animation-delay:.22s} .du-5{animation-delay:.28s} .du-6{animation-delay:.34s}
+    @media(max-width:900px)  { .sidebar{display:none} .main{padding:20px} .fin-grid{grid-template-columns:1fr 1fr} .direct-strip{grid-template-columns:1fr 1fr} }
+    @media(max-width:600px)  { .fin-grid{grid-template-columns:1fr} .direct-strip{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <a class="logo-back" href="sebescost.html">←</a>
+      <div>
+        <div class="logo-text">Блэктрол</div>
+        <div class="logo-sub">Себестоимость · Клото</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Калькуляция</div>
+      <a class="nav-item active" href="#"><span class="nav-icon">🧮</span> 1 тонна</a>
+      <div class="nav-label">Связанные</div>
+      <a class="nav-item" href="syryo.html"><span class="nav-icon">🧪</span> Справочник сырья</a>
+      <a class="nav-item" href="#"><span class="nav-icon">📦</span> Склад сырья</a>
+      <a class="nav-item" href="#"><span class="nav-icon">💰</span> Прайс-лист</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="avatar">АК</div>
+      <div><div class="user-name">Андрей К.</div><div class="user-role">Руководитель</div></div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar fade-up du-1">
+      <div>
+        <div class="page-title">🧮 Себестоимость · Блэктрол</div>
+        <div class="page-sub">Калькуляция производства 1 тонны · SKU: BLK-001 · Упаковка: бочка 200 кг</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-ghost" onclick="resetCalc()">↺ Сбросить</button>
+        <button class="btn btn-primary" onclick="saveCalc()">💾 Сохранить</button>
+      </div>
+    </div>
+    <div class="card card-purple fade-up du-2">
+      <div class="card-header">
+        <div class="card-title">🛠️ Состав сырья · 1 тонна (1 000 кг)</div>
+        <button class="btn btn-ghost btn-sm" onclick="addRaw()">＋ Добавить</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th style="width:32px"></th>
+            <th>Компонент</th>
+            <th class="r" style="width:65px">% состав</th>
+            <th class="r" style="width:105px">Расход, кг/т</th>
+            <th class="r" style="width:110px">Цена, ₽/т</th>
+            <th class="r" style="width:110px">Итого сырьё, ₽</th>
+          </tr></thead>
+          <tbody id="raw-tbody"></tbody>
+          <tfoot><tr>
+            <td colspan="2">Итого сырьё</td>
+            <td class="r" id="tf-raw-pct">—</td>
+            <td class="r" id="tf-raw-qty">—</td>
+            <td></td>
+            <td class="r" id="tf-raw-sum">0</td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <button class="add-row" onclick="addRaw()">＋ Добавить компонент</button>
+    </div>
+    <div class="card card-blue fade-up du-3">
+      <div class="card-header">
+        <div class="card-title">📦 Упаковка · 1 тонна (бочки 200 кг)</div>
+        <button class="btn btn-ghost btn-sm" onclick="addPack()">＋ Добавить</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th style="width:32px"></th>
+            <th>Наименование</th>
+            <th style="width:60px">Ед.</th>
+            <th class="r" style="width:105px">Кол-во / т</th>
+            <th class="r" style="width:110px">Цена, ₽</th>
+            <th class="r" style="width:110px">Итого упаковка, ₽</th>
+          </tr></thead>
+          <tbody id="pack-tbody"></tbody>
+          <tfoot><tr>
+            <td colspan="4">Итого упаковка</td>
+            <td></td>
+            <td class="r" id="tf-pack-sum">0</td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <button class="add-row" onclick="addPack()">＋ Добавить позицию</button>
+    </div>
+    <div class="card card-gold fade-up du-4">
+      <div class="card-header">
+        <div class="card-title">⚡ Производственные затраты · 1 тонна</div>
+        <button class="btn btn-ghost btn-sm" onclick="addProd()">＋ Добавить</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th style="width:32px"></th>
+            <th>Статья затрат</th>
+            <th style="width:72px">Ед.</th>
+            <th class="r" style="width:105px">Кол-во / т</th>
+            <th class="r" style="width:110px">Ставка, ₽</th>
+            <th class="r" style="width:110px">Итого, ₽</th>
+          </tr></thead>
+          <tbody id="prod-tbody"></tbody>
+          <tfoot><tr>
+            <td colspan="4">Итого производственные</td>
+            <td></td>
+            <td class="r" id="tf-prod-sum">0</td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <button class="add-row" onclick="addProd()">＋ Добавить статью</button>
+    </div>
+    <div class="card card-purple fade-up du-4" style="padding:18px 26px">
+      <div class="card-title" style="margin-bottom:14px">📐 Прямые расходы = сырьё + упаковка + производственные</div>
+      <div class="direct-strip">
+        <div class="ds-item"><div class="ds-label">Сырьё</div><div class="ds-value" id="ds-raw">0 ₽</div></div>
+        <div class="ds-item"><div class="ds-label">Упаковка</div><div class="ds-value" id="ds-pack">0 ₽</div></div>
+        <div class="ds-item"><div class="ds-label">Производственные</div><div class="ds-value" id="ds-prod">0 ₽</div></div>
+        <div class="ds-item total"><div class="ds-label">Итого прямые</div><div class="ds-value" id="ds-total" style="font-size:19px">0 ₽</div></div>
+      </div>
+    </div>
+    <div class="card card-blue fade-up du-5">
+      <div class="card-header">
+        <div class="card-title">📋 Косвенные расходы · 1 тонна</div>
+        <button class="btn btn-ghost btn-sm" onclick="addIndirect()">＋ Добавить статью</button>
+      </div>
+      <div id="ind-rows"></div>
+      <div class="sect-tot">
+        <span class="sect-tot-label">Итого косвенные</span>
+        <span class="sect-tot-val" id="tl-indirect">0 ₽</span>
+      </div>
+    </div>
+    <div class="card card-green fade-up du-6">
+      <div class="card-title" style="margin-bottom:20px">📊 Итоговая себестоимость и маржа · 1 тонна</div>
+      <div class="fin-grid">
+        <div class="fin-item">
+          <div class="fin-label">Прямые расходы</div>
+          <div class="fin-value" id="fin-direct" style="color:var(--act)">0</div>
+          <div class="fin-sub">₽ / тонна</div>
+        </div>
+        <div class="fin-item">
+          <div class="fin-label">Косвенные расходы</div>
+          <div class="fin-value" id="fin-indirect" style="color:var(--act)">0</div>
+          <div class="fin-sub">₽ / тонна</div>
+        </div>
+        <div class="fin-item hi">
+          <div class="fin-label">Себестоимость</div>
+          <div class="fin-value" id="fin-total" style="color:var(--act)">0</div>
+          <div class="fin-sub" id="fin-total-sub">₽ / тонна = 0.00 ₽/кг</div>
+        </div>
+        <div class="fin-item">
+          <div class="fin-label">Себестоимость / кг</div>
+          <div class="fin-value" id="fin-per-kg" style="color:var(--blue)">0.00</div>
+          <div class="fin-sub">₽ / кг</div>
+        </div>
+        <div class="fin-item">
+          <div class="fin-label">Цена продажи</div>
+          <div class="fin-value" id="fin-price" style="color:var(--gold)">89.00</div>
+          <div class="fin-sub" id="fin-price-sub">₽ / кг (из прайса)</div>
+        </div>
+        <div class="fin-item mg">
+          <div class="fin-label">Маржа</div>
+          <div class="fin-value" id="fin-margin" style="color:var(--green)">—</div>
+          <div class="fin-sub" id="fin-margin-sub">%</div>
+        </div>
+      </div>
+      <div class="mg-header">
+        <span>0%</span>
+        <span id="mg-label">Маржа: вычисляется...</span>
+        <span>100%</span>
+      </div>
+      <div class="mg-track"><div class="mg-fill" id="mg-fill" style="width:0%"></div></div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast">✓ Данные сохранены</div>
+<datalist id="syryo-dl"></datalist>
+
+<script>
+var SK = 'cloto_cost_blacktrol';
+var PK = 'cloto_pricelist';
+
+var DEF_RAW = [
+  {name:'Битум нефтяной 70/30',                    qty:100, price:36639.34},
+  {name:'ОТП с УЩР (плитка)',                      qty:150, price:28163.52},
+  {name:'Кубовая жидкость колонны очистки этилена', qty:100, price:44696.32},
+  {name:'Вода техническая на технологию',           qty:250, price:360},
+  {name:'Гильсонит',                               qty:50,  price:43750}
+];
+
+var DEF_PACK = [
+  {name:'Бочка п/эт 2 горловины',                  unit:'шт',  qty:5,    price:2297.75},
+  {name:'Поддоны 1140×1140',                        unit:'шт',  qty:1.25, price:544},
+  {name:'Стретч-пленка',                            unit:'м',   qty:0.41, price:350},
+  {name:'Этикетка полимер 100×25 мм Zebra',         unit:'шт',  qty:5,    price:0.70},
+  {name:'Лента PET полиэтеровая (1 рул - 1250 м)', unit:'рул', qty:0.02, price:3490},
+  {name:'Скоба',                                    unit:'шт',  qty:5,    price:2.19},
+  {name:'Этикетка самокл А5 цвет типография',       unit:'шт',  qty:5,    price:20}
+];
+
+var DEF_PROD = [
+  {name:'Электроэнергия',            unit:'кВт·ч', qty:135,   price:10},
+  {name:'Топливо дизельное ГОРЕЛКА', unit:'т',     qty:0.025, price:72000},
+  {name:'Вода питательная на ЭПГ',   unit:'куб.м', qty:0.5,   price:360},
+  {name:'Заработная плата',          unit:'руб',   qty:1,     price:1883.80},
+  {name:'Отчисления',                unit:'руб',   qty:1,     price:823.22}
+];
+
+var DEF_IND = [
+  {name:'Косвенные расходы', sum:30769}
+];
+
+var rawRows = [], packRows = [], prodRows = [], indRows = [];
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(n){ return Math.round(n||0).toLocaleString('ru'); }
+function fmtD(n,d){ return (+(n||0)).toFixed(d||2); }
+function setEl(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+
+function renderRaw(){
+  document.getElementById('raw-tbody').innerHTML = rawRows.map(function(r,i){
+    var pct = fmtD((+r.qty||0)/10,1);
+    var sum = (+r.qty||0)*(+r.price||0)/1000;
+    var priceCls = r._fromSyryo ? 't-num t-num-syryo' : 't-num';
+    var priceTitle = r._fromSyryo ? ' title="Из справочника сырья: '+esc(r.name)+'"' : '';
+    return '<tr>'+
+      '<td><button class="del-btn" onclick="delRaw('+i+')">×</button></td>'+
+      '<td><input class="t-name" list="syryo-dl" value="'+esc(r.name)+'" oninput="rawRows['+i+'].name=this.value;chkSyryo('+i+')" /></td>'+
+      '<td class="pct" id="rp'+i+'">'+pct+'%</td>'+
+      '<td class="r"><input class="t-num" value="'+(+r.qty||'')+'" oninput="rawRows['+i+'].qty=+this.value;updRaw()" /></td>'+
+      '<td class="r"><input class="'+priceCls+'"'+priceTitle+' type="number" value="'+(+r.price||'')+'" oninput="rawRows['+i+'].price=+this.value;rawRows['+i+']._fromSyryo=false;this.className=\'t-num\';updRaw()" /></td>'+
+      '<td class="sumcell" id="rs'+i+'">'+fmt(sum)+'</td>'+
+    '</tr>';
+  }).join('');
+  updRaw();
+}
+function updRaw(){
+  var rawSum=0;
+  rawRows.forEach(function(r,i){
+    var s=(+r.qty||0)*(+r.price||0)/1000; rawSum+=s;
+    var ep=document.getElementById('rp'+i); if(ep) ep.textContent=fmtD((+r.qty||0)/10,1)+'%';
+    var es=document.getElementById('rs'+i); if(es) es.textContent=fmt(s);
+  });
+  var tq=rawRows.reduce(function(s,r){ return s+(+r.qty||0); },0);
+  setEl('tf-raw-pct',fmtD(tq/10,1)+'%'); setEl('tf-raw-qty',fmt(tq)+' кг'); setEl('tf-raw-sum',fmt(rawSum));
+  recalcAll();
+}
+function addRaw(){ rawRows.push({name:'',qty:0,price:0}); renderRaw(); }
+function delRaw(i){ rawRows.splice(i,1); renderRaw(); }
+
+function renderPack(){
+  document.getElementById('pack-tbody').innerHTML = packRows.map(function(r,i){
+    var sum=(+r.qty||0)*(+r.price||0);
+    return '<tr>'+
+      '<td><button class="del-btn" onclick="delPack('+i+')">×</button></td>'+
+      '<td><input class="t-name" value="'+esc(r.name)+'" oninput="packRows['+i+'].name=this.value" /></td>'+
+      '<td><input class="t-unit" value="'+esc(r.unit||'')+'" oninput="packRows['+i+'].unit=this.value" /></td>'+
+      '<td class="r"><input class="t-num" value="'+(+r.qty||'')+'" oninput="packRows['+i+'].qty=+this.value;updPack()" /></td>'+
+      '<td class="r"><input class="t-num" value="'+(+r.price||'')+'" oninput="packRows['+i+'].price=+this.value;updPack()" /></td>'+
+      '<td class="sumcell" id="pks'+i+'">'+fmt(sum)+'</td>'+
+    '</tr>';
+  }).join('');
+  updPack();
+}
+function updPack(){
+  var s=0; packRows.forEach(function(r,i){ var v=(+r.qty||0)*(+r.price||0); s+=v; var e=document.getElementById('pks'+i); if(e) e.textContent=fmt(v); });
+  setEl('tf-pack-sum',fmt(s)); recalcAll();
+}
+function addPack(){ packRows.push({name:'',unit:'шт',qty:0,price:0}); renderPack(); }
+function delPack(i){ packRows.splice(i,1); renderPack(); }
+
+function renderProd(){
+  document.getElementById('prod-tbody').innerHTML = prodRows.map(function(r,i){
+    var sum=(+r.qty||0)*(+r.price||0);
+    return '<tr>'+
+      '<td><button class="del-btn" onclick="delProd('+i+')">×</button></td>'+
+      '<td><input class="t-name" value="'+esc(r.name)+'" oninput="prodRows['+i+'].name=this.value" /></td>'+
+      '<td><input class="t-unit" value="'+esc(r.unit||'')+'" oninput="prodRows['+i+'].unit=this.value" /></td>'+
+      '<td class="r"><input class="t-num" value="'+(+r.qty||'')+'" oninput="prodRows['+i+'].qty=+this.value;updProd()" /></td>'+
+      '<td class="r"><input class="t-num" value="'+(+r.price||'')+'" oninput="prodRows['+i+'].price=+this.value;updProd()" /></td>'+
+      '<td class="sumcell" id="prs'+i+'">'+fmt(sum)+'</td>'+
+    '</tr>';
+  }).join('');
+  updProd();
+}
+function updProd(){
+  var s=0; prodRows.forEach(function(r,i){ var v=(+r.qty||0)*(+r.price||0); s+=v; var e=document.getElementById('prs'+i); if(e) e.textContent=fmt(v); });
+  setEl('tf-prod-sum',fmt(s)); recalcAll();
+}
+function addProd(){ prodRows.push({name:'',unit:'',qty:0,price:0}); renderProd(); }
+function delProd(i){ prodRows.splice(i,1); renderProd(); }
+
+function renderIndirect(){
+  var cont=document.getElementById('ind-rows');
+  if(!indRows.length){ cont.innerHTML='<div style="color:var(--muted);font-size:13px;padding:4px 0">Нет статей.</div>'; updIndirect(); return; }
+  cont.innerHTML=indRows.map(function(r,i){
+    return '<div class="ind-row">'+
+      '<input class="ind-name" value="'+esc(r.name)+'" placeholder="Статья затрат..." oninput="indRows['+i+'].name=this.value" />'+
+      '<input class="ind-num" type="number" value="'+(+r.sum||'')+'" placeholder="0 ₽" oninput="indRows['+i+'].sum=+this.value;updIndirect()" />'+
+      '<button class="del-btn" onclick="delIndirect('+i+')">×</button>'+
+    '</div>';
+  }).join('');
+  updIndirect();
+}
+function updIndirect(){
+  var t=indRows.reduce(function(s,r){ return s+(+r.sum||0); },0);
+  setEl('tl-indirect',fmt(t)+' ₽'); recalcAll();
+}
+function addIndirect(){ indRows.push({name:'',sum:0}); renderIndirect(); }
+function delIndirect(i){ indRows.splice(i,1); renderIndirect(); }
+
+function recalcAll(){
+  var rawSum  = rawRows.reduce(function(s,r){ return s+(+r.qty||0)*(+r.price||0)/1000; },0);
+  var packSum = packRows.reduce(function(s,r){ return s+(+r.qty||0)*(+r.price||0); },0);
+  var prodSum = prodRows.reduce(function(s,r){ return s+(+r.qty||0)*(+r.price||0); },0);
+  var indSum  = indRows.reduce(function(s,r){ return s+(+r.sum||0); },0);
+  var direct=rawSum+packSum+prodSum, total=direct+indSum, perKg=total/1000;
+  var saleKg=getSalePrice(), saleT=saleKg*1000;
+  var mg=saleT>0?(saleT-total)/saleT*100:null;
+  setEl('ds-raw',fmt(rawSum)+' ₽'); setEl('ds-pack',fmt(packSum)+' ₽'); setEl('ds-prod',fmt(prodSum)+' ₽'); setEl('ds-total',fmt(direct)+' ₽');
+  setEl('fin-direct',fmt(direct)); setEl('fin-indirect',fmt(indSum)); setEl('fin-total',fmt(total));
+  setEl('fin-total-sub','₽ / тонна = '+fmtD(perKg)+' ₽/кг'); setEl('fin-per-kg',fmtD(perKg));
+  setEl('fin-price',saleKg.toFixed(2)); setEl('fin-price-sub','₽ / кг (из прайса) = '+fmt(saleT)+' ₽/т');
+  if(mg!==null){
+    var el=document.getElementById('fin-margin');
+    el.style.color=mg>=0?'var(--green)':'var(--red)'; el.textContent=fmtD(mg,1)+'%';
+    setEl('fin-margin-sub',mg>=0?'% валовой маржи':'% убыток');
+    var fill=document.getElementById('mg-fill');
+    fill.style.width=Math.max(0,Math.min(100,mg))+'%';
+    fill.style.background=mg>=0?'linear-gradient(90deg,var(--green),#68d391)':'linear-gradient(90deg,var(--red),#fc8181)';
+    setEl('mg-label','Маржа: '+fmtD(mg,1)+'%');
+  } else { setEl('fin-margin','—'); setEl('mg-label','Маржа не определена'); }
+}
+
+function getSalePrice(){
+  try {
+    var raw=localStorage.getItem(PK);
+    if(raw){ var pl=JSON.parse(raw);
+      var e=Array.isArray(pl)?pl.find(function(r){ return r.sku==='BLK-001'||r.name==='Блэктрол'||r.name==='БЛЭКТРОЛ'; }):(pl['BLK-001']||pl['Блэктрол']);
+      if(e&&e.price) return parseFloat(e.price); }
+  } catch(e){}
+  return 89; // 89 000 ₽/т = 89 ₽/кг, маржа 35%
+}
+
+var syryoData=[], SK_SYRYO='cloto_raw_materials_v2';
+var SYRYO_FALLBACK=[
+  {name:'Битум нефтяной 70/30',priceCloto:36639.35},{name:'ОТП с УЩР (плитка)',priceCloto:28163.52},{name:'Кубовая жидкость колонны очистки этилена',priceCloto:44696.32},{name:'Гильсонит',priceCloto:43750},{name:'Вода техническая на технологию',priceCloto:300},{name:'Пек талловый',priceCloto:24525},{name:'Сода каустическая',priceCloto:63500},{name:'Пеногаситель Софэксил 9056-20',priceCloto:305000},{name:'Уголь бурый (в штабеле)',priceCloto:7131.15},{name:'ОТП (плитка)',priceCloto:28747.2},{name:'УЩР (собственный) СУХОЙ',priceCloto:13128.82},{name:'Каолин',priceCloto:19500},{name:'Баритовый концентрат',priceCloto:18083.33},{name:'Нефтяные сульфонаты',priceCloto:46666.67},{name:'Анитиоксидант 1010',priceCloto:1200000},{name:'Диоксид титана',priceCloto:320000},{name:'Кальций стеарат',priceCloto:280000},{name:'Цинк стеарат',priceCloto:410000},{name:'HALS (светостабилизатор)',priceCloto:0},{name:'Топливо дизельное ГОРЕЛКА',priceCloto:72000},{name:'Вода питательная на ЭПГ',priceCloto:360},{name:'Масло базовое SN-150',priceCloto:79800},{name:'Полиакриламид (ПАА)',priceCloto:178333.33},{name:'Ксантановая камедь Ziboxan F80',priceCloto:258521.25},{name:'Диталакс-4705',priceCloto:139166.67},{name:'Глицерин сырой',priceCloto:81165.2},{name:'Этилцеллозольв',priceCloto:281148.15},{name:'Лигносульфонат',priceCloto:48750},{name:'Крахмал (КМЦ-900)',priceCloto:151466.67}
+];
+function loadSyryoData(){
+  var loaded=false;
+  try { var raw=localStorage.getItem(SK_SYRYO); if(raw){ var p=JSON.parse(raw); if(Array.isArray(p)&&p.length){ syryoData=p; loaded=true; } } } catch(e){}
+  if(!loaded) syryoData=SYRYO_FALLBACK;
+  var dl=document.getElementById('syryo-dl');
+  if(dl) dl.innerHTML=syryoData.map(function(r){ return '<option value="'+esc(r.name)+'">'; }).join('');
+}
+function chkSyryo(i){
+  var name=(rawRows[i].name||'').trim(); if(!name) return;
+  var entry=syryoData.find(function(r){ return (r.name||'').toLowerCase()===name.toLowerCase(); });
+  if(!entry) return;
+  var pc=entry.priceCloto||0; if(!pc) return;
+  rawRows[i].price=pc; rawRows[i]._fromSyryo=true;
+  var trs=document.querySelectorAll('#raw-tbody tr');
+  if(trs[i]){ var inp=trs[i].querySelectorAll('input')[2]; if(inp){ inp.value=pc; inp.className='t-num t-num-syryo'; inp.title='Из справочника: '+name; } }
+  updRaw();
+}
+
+function collectInputNames(){
+  document.querySelectorAll('#raw-tbody tr').forEach(function(tr,i){ var v=tr.querySelector('.t-name'); if(v&&rawRows[i]) rawRows[i].name=v.value; });
+  document.querySelectorAll('#pack-tbody tr').forEach(function(tr,i){ var inputs=tr.querySelectorAll('.t-name,.t-unit'); if(packRows[i]){ if(inputs[0]) packRows[i].name=inputs[0].value; if(inputs[1]) packRows[i].unit=inputs[1].value; } });
+  document.querySelectorAll('#prod-tbody tr').forEach(function(tr,i){ var inputs=tr.querySelectorAll('.t-name,.t-unit'); if(prodRows[i]){ if(inputs[0]) prodRows[i].name=inputs[0].value; if(inputs[1]) prodRows[i].unit=inputs[1].value; } });
+  document.querySelectorAll('#ind-rows .ind-name').forEach(function(inp,i){ if(indRows[i]) indRows[i].name=inp.value; });
+}
+function saveCalc(){
+  collectInputNames();
+  localStorage.setItem(SK,JSON.stringify({rawRows:rawRows,packRows:packRows,prodRows:prodRows,indRows:indRows}));
+  var t=document.getElementById('toast'); t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2500);
+}
+function resetCalc(){
+  localStorage.removeItem(SK);
+  rawRows=DEF_RAW.map(function(r){ return Object.assign({},r); });
+  packRows=DEF_PACK.map(function(r){ return Object.assign({},r); });
+  prodRows=DEF_PROD.map(function(r){ return Object.assign({},r); });
+  indRows=DEF_IND.map(function(r){ return Object.assign({},r); });
+  renderRaw(); renderPack(); renderProd(); renderIndirect();
+}
+function loadCalc(){
+  try { var raw=localStorage.getItem(SK); if(raw){ var d=JSON.parse(raw); if(d.rawRows) rawRows=d.rawRows; if(d.packRows) packRows=d.packRows; if(d.prodRows) prodRows=d.prodRows; if(d.indRows) indRows=d.indRows; return; } } catch(e){}
+  rawRows=DEF_RAW.map(function(r){ return Object.assign({},r); });
+  packRows=DEF_PACK.map(function(r){ return Object.assign({},r); });
+  prodRows=DEF_PROD.map(function(r){ return Object.assign({},r); });
+  indRows=DEF_IND.map(function(r){ return Object.assign({},r); });
+}
+
+loadSyryoData(); loadCalc(); renderRaw(); renderPack(); renderProd(); renderIndirect();
+</script>
+</body>
+</html>

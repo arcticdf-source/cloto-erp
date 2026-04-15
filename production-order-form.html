@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новая заявка на производство — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #eef2f7;
+      --paper: #ffffff;
+      --line: #d7dee7;
+      --ink: #18212c;
+      --muted: #6e7a88;
+      --gold: #b18319;
+      --blue: #557bb8;
+      --radius: 18px;
+      --shadow: 0 20px 52px rgba(26, 38, 58, 0.14);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(177, 131, 25, 0.08), transparent 24%),
+        linear-gradient(180deg, #f5f7fb, var(--bg));
+    }
+
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .hero,
+    .paper,
+    .side-card {
+      border-radius: 22px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(24, 33, 44, 0.06);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 16px;
+      background:
+        linear-gradient(135deg, rgba(177, 131, 25, 0.08), rgba(85, 123, 184, 0.06)),
+        var(--paper);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(177, 131, 25, 0.18);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .title span { color: var(--gold); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions,
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions { margin-top: 16px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(24, 33, 44, 0.1);
+      background: #f6f8fb;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: #eef2f7; }
+    .btn.primary { color: #fff; background: #1d365b; border-color: #1d365b; }
+    .btn.accent { color: #fff; background: var(--gold); border-color: var(--gold); }
+
+    .side-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .side-card {
+      padding: 16px;
+      background: #fbfcfd;
+    }
+
+    .mini-title {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .side-card strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .side-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.42fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .paper {
+      padding: 24px;
+    }
+
+    .paper-title {
+      text-align: center;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 34px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #1b1f24;
+    }
+
+    .paper-title span {
+      font-weight: 800;
+    }
+
+    .header-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .header-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.5fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: baseline;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .header-row strong {
+      font-weight: 700;
+    }
+
+    .header-row input {
+      border: none;
+      border-bottom: 1px solid #aab7c8;
+      outline: none;
+      background: transparent;
+      font: inherit;
+      color: #1b1f24;
+      padding: 2px 4px;
+      min-width: 0;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 8px;
+      border: 2px solid #2a2f35;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #2a2f35;
+      padding: 10px 10px;
+      vertical-align: top;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .spec-table th {
+      width: 40%;
+      text-align: left;
+      font-weight: 700;
+      background: #fff;
+    }
+
+    .spec-table td input,
+    .spec-table td textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font: inherit;
+      color: #1b1f24;
+      resize: vertical;
+      min-height: 28px;
+    }
+
+    .spec-table td textarea { min-height: 54px; }
+
+    .form-actions {
+      margin-top: 18px;
+    }
+
+    .status-card {
+      position: sticky;
+      top: 18px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .status-row {
+      padding: 14px;
+      border-radius: 16px;
+      background: #f6f8fb;
+      border: 1px solid rgba(24, 33, 44, 0.08);
+    }
+
+    .status-row strong {
+      display: block;
+      margin-top: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .status-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 1180px) {
+      .hero,
+      .layout { grid-template-columns: 1fr; }
+      .status-card { position: static; }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 38px; }
+      .header-row { grid-template-columns: 1fr; }
+      .paper-title { font-size: 26px; }
+      .spec-table th,
+      .spec-table td,
+      .header-row { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Production Request Form</div>
+        <div class="title">Новая заявка <span>на производство</span></div>
+        <div class="sub">Форма повторяет структуру производственной заявки из вашего шаблона: шапка, реквизиты по продукции и большая табличная часть с параметрами отгрузки, упаковки и особыми требованиями.</div>
+        <div class="hero-actions">
+          <a class="btn" href="production-orders.html">← К полученным заявкам</a>
+          <button class="btn primary" type="button" onclick="sendProductionOrder()">Отправить заявку на производство</button>
+          <button class="btn accent" type="button" onclick="window.print()">Печать</button>
+        </div>
+      </div>
+
+      <div class="side-stack">
+        <div class="side-card">
+          <div class="mini-title">Шаблон</div>
+          <strong>Производственная заявка</strong>
+          <p>Форма ориентирована на коммерческий отдел и оформлена в логике бумажного производственного документа.</p>
+        </div>
+        <div class="side-card">
+          <div class="mini-title">Отправка</div>
+          <strong id="saved-count">0</strong>
+          <p>Количество заявок, которые будут видны в реестре полученных заявок на производство.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="paper">
+        <div class="paper-title">Заявка на производство продукции <span id="paper-number">№001</span></div>
+
+        <div class="header-grid">
+          <div class="header-row">
+            <strong>Подразделение Заявителя:</strong>
+            <input id="applicant-department" value="Коммерческий отдел" oninput="syncPreview()">
+          </div>
+          <div class="header-row">
+            <strong>Ф.И.О. Заявителя (должности):</strong>
+            <input id="applicant-name" placeholder="Например: Широков Михаил" oninput="syncPreview()">
+          </div>
+          <div class="header-row">
+            <strong>Дата размещения заявки:</strong>
+            <input id="posted-date" type="date" oninput="syncPreview()">
+          </div>
+          <div class="header-row">
+            <strong>Номенклатура 1С:</strong>
+            <input id="nomenclature-1c" placeholder="Например: ПОЛИКАП жидкий, канистра 30 кг" oninput="syncPreview()">
+          </div>
+        </div>
+
+        <table class="spec-table">
+          <tbody>
+            <tr>
+              <th>Компания-получатель</th>
+              <td><input id="company-receiver" placeholder="Компания получатель"></td>
+            </tr>
+            <tr>
+              <th>Название продукции</th>
+              <td><input id="product-name" placeholder="Название продукции"></td>
+            </tr>
+            <tr>
+              <th>Рецептура</th>
+              <td><textarea id="recipe" placeholder="Рецептура / состав"></textarea></td>
+            </tr>
+            <tr>
+              <th>Номер заказа/спецификация</th>
+              <td><textarea id="order-specification" placeholder="Например: Спецификация №100К"></textarea></td>
+            </tr>
+            <tr>
+              <th>Дата отгрузки</th>
+              <td><input id="shipment-date" placeholder="Например: 17-20 апреля"></td>
+            </tr>
+            <tr>
+              <th>Объем</th>
+              <td><textarea id="volume" placeholder="Например: 8,64 т 288 канистр"></textarea></td>
+            </tr>
+            <tr>
+              <th>Номер партии</th>
+              <td><textarea id="batch-number" placeholder="Партия / дата производства"></textarea></td>
+            </tr>
+            <tr>
+              <th>Мешок/бочка</th>
+              <td><input id="package-type" placeholder="Тип упаковки"></td>
+            </tr>
+            <tr>
+              <th>Вес мешка/бочки</th>
+              <td><input id="package-weight" placeholder="Например: 30 кг"></td>
+            </tr>
+            <tr>
+              <th>Количество мешков/бочек на паллете</th>
+              <td><input id="packages-per-pallet" placeholder="Например: 24"></td>
+            </tr>
+            <tr>
+              <th>Наличие этикетки на мешке (наносит цех)</th>
+              <td><textarea id="label-availability" placeholder="Например: Да. Этикетки печатает коммерческий отдел"></textarea></td>
+            </tr>
+            <tr>
+              <th>Особые требования (качество/упаковка)</th>
+              <td><textarea id="special-requirements" placeholder="Особые требования"></textarea></td>
+            </tr>
+            <tr>
+              <th>Примечания</th>
+              <td><textarea id="notes" placeholder="Дополнительные комментарии"></textarea></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="form-actions">
+          <button class="btn primary" type="button" onclick="sendProductionOrder()">Отправить заявку на производство</button>
+          <a class="btn" href="production-orders.html">Назад к заявкам</a>
+        </div>
+      </section>
+
+      <aside class="paper status-card">
+        <div class="status-row">
+          <div class="mini-title">Номер заявки</div>
+          <strong id="status-number">№001</strong>
+          <div class="status-copy">Номер можно использовать как внутренний идентификатор производственного заказа.</div>
+        </div>
+        <div class="status-row">
+          <div class="mini-title">Получатель</div>
+          <strong id="status-receiver">Не заполнено</strong>
+          <div class="status-copy">Подставляется из строки “Компания-получатель”.</div>
+        </div>
+        <div class="status-row">
+          <div class="mini-title">Продукция</div>
+          <strong id="status-product">Не заполнено</strong>
+          <div class="status-copy">Подставляется из полей “Номенклатура 1С” и “Название продукции”.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
+
+    function readStorageArray(key) {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeStorageArray(key, items) {
+      localStorage.setItem(key, JSON.stringify(items));
+    }
+
+    function getTodayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getDefaultRequestNumber() {
+      var existing = readStorageArray(PRODUCTION_ORDERS_KEY).length + 1;
+      return '№' + String(existing).padStart(3, '0');
+    }
+
+    function syncPreview() {
+      var requestNumber = document.getElementById('request-number').value.trim() || '№001';
+      document.getElementById('paper-number').textContent = requestNumber;
+      document.getElementById('status-number').textContent = requestNumber;
+      document.getElementById('status-receiver').textContent = document.getElementById('company-receiver').value.trim() || 'Не заполнено';
+
+      var nomenclature = document.getElementById('nomenclature-1c').value.trim();
+      var product = document.getElementById('product-name').value.trim();
+      document.getElementById('status-product').textContent = product || nomenclature || 'Не заполнено';
+    }
+
+    function getPayload() {
+      return {
+        requestNumber: document.getElementById('request-number').value.trim(),
+        applicantDepartment: document.getElementById('applicant-department').value.trim(),
+        applicantName: document.getElementById('applicant-name').value.trim(),
+        postedDate: document.getElementById('posted-date').value,
+        nomenclature1c: document.getElementById('nomenclature-1c').value.trim(),
+        companyReceiver: document.getElementById('company-receiver').value.trim(),
+        productName: document.getElementById('product-name').value.trim(),
+        recipe: document.getElementById('recipe').value.trim(),
+        orderSpecification: document.getElementById('order-specification').value.trim(),
+        shipmentDate: document.getElementById('shipment-date').value.trim(),
+        volume: document.getElementById('volume').value.trim(),
+        batchNumber: document.getElementById('batch-number').value.trim(),
+        packageType: document.getElementById('package-type').value.trim(),
+        packageWeight: document.getElementById('package-weight').value.trim(),
+        packagesPerPallet: document.getElementById('packages-per-pallet').value.trim(),
+        labelAvailability: document.getElementById('label-availability').value.trim(),
+        specialRequirements: document.getElementById('special-requirements').value.trim(),
+        notes: document.getElementById('notes').value.trim(),
+        createdAt: new Date().toISOString()
+      };
+    }
+
+    function validatePayload(payload) {
+      return payload.requestNumber && payload.applicantDepartment && payload.postedDate && payload.companyReceiver && payload.productName;
+    }
+
+    function sendProductionOrder() {
+      var payload = getPayload();
+      if (!validatePayload(payload)) {
+        alert('Заполните минимум: номер заявки, подразделение, дату, получателя и название продукции.');
+        return;
+      }
+
+      var items = readStorageArray(PRODUCTION_ORDERS_KEY);
+      var index = items.findIndex(function(item) {
+        return item.requestNumber === payload.requestNumber;
+      });
+
+      if (index >= 0) {
+        items[index] = payload;
+      } else {
+        items.unshift(payload);
+      }
+
+      writeStorageArray(PRODUCTION_ORDERS_KEY, items.slice(0, 200));
+      window.location.href = 'production-orders.html';
+    }
+
+    (function init() {
+      var defaultNumber = getDefaultRequestNumber();
+      var requestNumberInput = document.createElement('input');
+      requestNumberInput.type = 'hidden';
+      requestNumberInput.id = 'request-number';
+      requestNumberInput.value = defaultNumber;
+      document.body.appendChild(requestNumberInput);
+      document.getElementById('posted-date').value = getTodayIso();
+      document.getElementById('saved-count').textContent = String(readStorageArray(PRODUCTION_ORDERS_KEY).length);
+      syncPreview();
+    })();
+  </script>
+</body>
+</html>

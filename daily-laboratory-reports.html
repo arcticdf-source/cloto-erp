@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ежедневные лабораторные отчеты — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0f19;
+      --bg2: #121c2f;
+      --surface: rgba(255,255,255,.05);
+      --surface2: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.08);
+      --text: #ecf1f8;
+      --muted: #8a98ad;
+      --cyan: #55e3c6;
+      --gold: #f0c869;
+      --blue: #7dbdff;
+      --green: #76d7a3;
+      --red: #ff7b89;
+      --radius: 18px;
+      --shadow: 0 24px 60px rgba(0,0,0,.32);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(240,200,105,.14), transparent 26%),
+        radial-gradient(circle at bottom left, rgba(85,227,198,.12), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(125,189,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(125,189,255,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px 24px 40px;
+    }
+
+    .hero,
+    .panel,
+    .side,
+    .upload-card,
+    .registry-card,
+    .modal {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(300px, 420px);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(240,200,105,.14), rgba(10,15,25,.36)),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(240,200,105,.24);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 800;
+      line-height: .97;
+      letter-spacing: -.04em;
+    }
+
+    .title span { color: var(--gold); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .actions,
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .actions { margin-top: 16px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: var(--surface2); }
+
+    .btn.primary {
+      color: var(--gold);
+      background: rgba(240,200,105,.14);
+      border-color: rgba(240,200,105,.22);
+    }
+
+    .btn.cyan {
+      color: var(--cyan);
+      background: rgba(85,227,198,.14);
+      border-color: rgba(85,227,198,.22);
+    }
+
+    .hero-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .mini-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+
+    .hero-card strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .hero-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      padding: 16px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .panel-value {
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--gold);
+    }
+
+    .panel:nth-child(2) .panel-value { color: var(--cyan); }
+    .panel:nth-child(3) .panel-value { color: var(--blue); }
+    .panel:nth-child(4) .panel-value { color: var(--green); }
+
+    .panel-copy {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .upload-card,
+    .registry-card,
+    .side {
+      padding: 18px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-head.stack {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .section-head-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 700px;
+    }
+
+    .dropzone {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      padding: 24px;
+      border: 1.5px dashed rgba(240,200,105,.26);
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, rgba(240,200,105,.08), rgba(255,255,255,.02)),
+        rgba(255,255,255,.02);
+      text-align: center;
+      transition: all .18s ease;
+    }
+
+    .dropzone.dragover {
+      border-color: rgba(85,227,198,.38);
+      background:
+        linear-gradient(135deg, rgba(85,227,198,.12), rgba(255,255,255,.03)),
+        rgba(255,255,255,.03);
+      transform: scale(1.01);
+    }
+
+    .dropzone input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .drop-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      font-size: 34px;
+      background: rgba(240,200,105,.14);
+      border: 1px solid rgba(240,200,105,.22);
+    }
+
+    .drop-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .drop-copy {
+      margin-top: 8px;
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .drop-hint {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .summary-card {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .summary-card span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .report-builder {
+      display: none;
+      margin-top: 4px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .report-builder.open {
+      display: block;
+    }
+
+    .report-builder-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .report-builder-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .report-builder-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 760px;
+    }
+
+    .works-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .work-row {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.1fr) minmax(0, 1.9fr);
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.025);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .work-row-main {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .work-row-index {
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .work-crew-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .crew-card {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .crew-card .mini-title {
+      margin-bottom: 8px;
+    }
+
+    .crew-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hours-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .work-row-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.2fr repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+
+    .textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 980px;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px;
+      background: rgba(10,15,25,.96);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      font-size: 12px;
+      line-height: 1.55;
+      vertical-align: top;
+    }
+
+    tr:hover td { background: rgba(255,255,255,.03); }
+
+    .doc-title {
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .meta {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      white-space: nowrap;
+    }
+
+    .p-new { color: var(--blue); background: rgba(125,189,255,.12); }
+    .p-sort { color: var(--gold); background: rgba(240,200,105,.12); }
+    .p-ready { color: var(--green); background: rgba(118,215,163,.12); }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .18s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      background: var(--surface2);
+    }
+
+    .action-btn.edit { color: var(--blue); border-color: rgba(125,189,255,.18); background: rgba(125,189,255,.12); }
+    .action-btn.file { color: var(--cyan); border-color: rgba(85,227,198,.18); background: rgba(85,227,198,.12); }
+    .action-btn.save { color: var(--gold); border-color: rgba(240,200,105,.18); background: rgba(240,200,105,.12); }
+    .action-btn.delete { color: var(--red); border-color: rgba(255,123,137,.16); background: rgba(255,123,137,.1); min-width: 34px; width: 34px; padding: 0; }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .list-item {
+      padding: 12px 13px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .list-item strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .list-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(4, 10, 16, .8);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(820px, 100%);
+      padding: 18px;
+      background: rgba(18,28,47,.96);
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: #182437;
+      color: var(--text);
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all .22s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    @media (max-width: 1260px) {
+      .hero,
+      .layout,
+      .kpi-grid,
+      .summary-grid { grid-template-columns: 1fr; }
+
+      .filters { grid-template-columns: 1fr 1fr; }
+      .work-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 36px; }
+      .modal-grid,
+      .filters { grid-template-columns: 1fr; }
+      .work-crew-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Daily Lab Flow</div>
+        <div class="title">Ежедневные лабораторные <span>отчеты</span></div>
+        <div class="sub">Здесь складываются ежедневные Word-отчеты лаборатории. Можно просто перетащить файл, а затем быстро привести запись в порядок: дата, смена, зона испытаний, тип, ответственный и теги. Это даст нормальную базу для дальнейшей систематизации и поиска.</div>
+        <div class="actions">
+          <a class="btn primary" href="laboratory.html">← В лабораторию</a>
+          <a class="btn" href="laboratory-reports.html">К реестру отчетов</a>
+          <button class="btn cyan" type="button" onclick="triggerFileInput()">Загрузить Word</button>
+        </div>
+      </div>
+
+      <div class="hero-stack">
+        <div class="hero-card">
+          <div class="mini-title">Систематизация</div>
+          <strong id="hero-structured">0 карточек</strong>
+          <p id="hero-structured-copy">Все поля заполнены, отчет готов к дальнейшей маршрутизации или переносу в основной реестр.</p>
+        </div>
+        <div class="hero-card">
+          <div class="mini-title">Требуют разбора</div>
+          <strong id="hero-unsorted">0 файлов</strong>
+          <p id="hero-unsorted-copy">Новые файлы без полной карточки. Их можно быстро открыть и дописать метаданные.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="panel">
+        <div class="mini-title">Всего файлов</div>
+        <div class="panel-value" id="k-total">0</div>
+        <div class="panel-copy">Все загруженные ежедневные отчеты в этом локальном реестре.</div>
+      </article>
+      <article class="panel">
+        <div class="mini-title">Сегодня загружено</div>
+        <div class="panel-value" id="k-today">0</div>
+        <div class="panel-copy">Файлы, загруженные сегодня в лабораторный поток.</div>
+      </article>
+      <article class="panel">
+        <div class="mini-title">Готовы к структуре</div>
+        <div class="panel-value" id="k-ready">0</div>
+        <div class="panel-copy">Карточки с заполненными ключевыми полями: дата, смена, зона и тип.</div>
+      </article>
+      <article class="panel">
+        <div class="mini-title">Уникальные зоны</div>
+        <div class="panel-value" id="k-zones">0</div>
+        <div class="panel-copy">Сколько направлений или зон испытаний уже накоплено в ежедневном архиве.</div>
+      </article>
+    </section>
+
+    <section class="layout">
+      <div>
+        <article class="upload-card">
+          <div class="section-head stack">
+            <div class="section-head-top">
+              <button class="btn primary" type="button" id="create-report-btn" onclick="toggleWorkReportBuilder(true)">Создать новый отчет</button>
+            </div>
+            <div>
+              <div class="section-title">Загрузка ежедневных файлов</div>
+              <div class="section-copy">Поддерживается drag and drop или обычная загрузка. После загрузки запись сразу попадает в реестр, а дата и часть тегов пробуются определить из имени файла автоматически.</div>
+            </div>
+          </div>
+
+          <div class="report-builder" id="work-report-builder">
+            <div class="report-builder-head">
+              <div>
+                <div class="report-builder-title">Проделанные работы</div>
+                <div class="report-builder-copy">Для каждой работы можно указать саму операцию и до трех исполнителей. Под каждым исполнителем фиксируется затраченное время на конкретную работу.</div>
+              </div>
+              <button class="btn cyan" type="button" onclick="addWorkRow()">Добавить работу</button>
+            </div>
+            <div class="works-list" id="works-list"></div>
+          </div>
+
+          <label class="dropzone" id="dropzone">
+            <input id="daily-file-input" type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
+            <div>
+              <div class="drop-icon">📄</div>
+              <div class="drop-title">Перетащите Word-файлы сюда</div>
+              <div class="drop-copy">Или нажмите, чтобы выбрать файлы. Для старта этого достаточно: мы складываем документы в единый ежедневный поток, а потом уже приводим карточки к единому виду.</div>
+              <div class="drop-hint">Рекомендуемое имя файла: дата + направление + смена. Например: <strong>2026-04-14_фильтрация_день.docx</strong>.</div>
+            </div>
+          </label>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="mini-title">Авторазбор</div>
+              <strong>Дата, тип, теги</strong>
+              <span>Из имени файла автоматически подхватываются дата отчета, базовый тип документа и теги по ключевым словам.</span>
+            </div>
+            <div class="summary-card">
+              <div class="mini-title">Ручное уточнение</div>
+              <strong>Смена, зона, ответственный</strong>
+              <span>Если чего-то не хватило, запись можно открыть и дописать поля за 20–30 секунд.</span>
+            </div>
+            <div class="summary-card">
+              <div class="mini-title">Следующий слой</div>
+              <strong>Переход в итоговый реестр</strong>
+              <span>Позже часть записей можно будет продвигать в основной раздел отчетов или связывать с задачами лаборатории.</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="registry-card" style="margin-top:14px">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Ежедневный реестр</div>
+              <div class="section-copy">Базовый архив загруженных Word-файлов с поиском, фильтрами и карточкой систематизации.</div>
+            </div>
+            <div class="toolbar">
+              <button class="btn" type="button" onclick="clearDailyFilters()">Сбросить фильтры</button>
+            </div>
+          </div>
+
+          <div class="filters">
+            <input class="input" id="filter-search" placeholder="Поиск по названию, тегам, файлу или заметке">
+            <select class="select" id="filter-status">
+              <option value="all">Все статусы</option>
+              <option value="Новый">Новый</option>
+              <option value="Требует систематизации">Требует систематизации</option>
+              <option value="Систематизирован">Систематизирован</option>
+            </select>
+            <select class="select" id="filter-shift">
+              <option value="all">Все смены</option>
+              <option value="Утро">Утро</option>
+              <option value="День">День</option>
+              <option value="Ночь">Ночь</option>
+            </select>
+            <select class="select" id="filter-area">
+              <option value="all">Все зоны</option>
+            </select>
+            <input class="input" id="filter-date" type="date">
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Документ</th>
+                  <th>Дата отчета</th>
+                  <th>Смена</th>
+                  <th>Зона / направление</th>
+                  <th>Тип</th>
+                  <th>Статус</th>
+                  <th>Теги</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="daily-reports-body"></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+
+      <aside class="side">
+        <div class="section-title">Как систематизировать</div>
+        <div class="list" style="margin-top:14px">
+          <div class="list-item">
+            <strong>1. Сначала складываем файл</strong>
+            <span>Не нужно ждать идеальную структуру. Word-файл сначала просто попадает в поток и уже не теряется.</span>
+          </div>
+          <div class="list-item">
+            <strong>2. Потом открываем карточку</strong>
+            <span>Минимальный набор для порядка: дата отчета, смена, зона, тип и ответственный.</span>
+          </div>
+          <div class="list-item">
+            <strong>3. Теги оставляем короткими</strong>
+            <span>Например: фильтрация, реология, стабилайт, оптитрол, контроль, клиент.</span>
+          </div>
+          <div class="list-item">
+            <strong>4. Дальше можно нарастить логику</strong>
+            <span>Следующий нормальный шаг: связывать ежедневный файл с задачей из плана работ или с итоговым лабораторным отчетом.</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="daily-modal-backdrop">
+    <div class="modal">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="daily-modal-title">Карточка ежедневного отчета</div>
+          <div class="section-copy">Здесь можно дописать структуру к уже загруженному Word-файлу, чтобы потом было проще искать и связывать записи.</div>
+        </div>
+        <button class="btn" type="button" onclick="closeDailyModal()">Закрыть</button>
+      </div>
+
+      <input id="daily-id" type="hidden">
+
+      <div class="modal-grid">
+        <div class="field">
+          <label for="daily-title">Название записи</label>
+          <input class="input" id="daily-title" placeholder="Ежедневный отчет по фильтрации">
+        </div>
+        <div class="field">
+          <label for="daily-date">Дата отчета</label>
+          <input class="input" id="daily-date" type="date">
+        </div>
+
+        <div class="field">
+          <label for="daily-shift">Смена</label>
+          <select class="select" id="daily-shift">
+            <option value="">Не выбрано</option>
+            <option value="Утро">Утро</option>
+            <option value="День">День</option>
+            <option value="Ночь">Ночь</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="daily-area">Зона / направление</label>
+          <input class="input" id="daily-area" placeholder="Фильтрация, реология, стабильность и т.д.">
+        </div>
+
+        <div class="field">
+          <label for="daily-type">Тип документа</label>
+          <input class="input" id="daily-type" placeholder="Ежедневный отчет, протокол, сводка">
+        </div>
+        <div class="field">
+          <label for="daily-owner">Ответственный</label>
+          <input class="input" id="daily-owner" placeholder="ФИО">
+        </div>
+
+        <div class="field full">
+          <label for="daily-tags">Теги</label>
+          <input class="input" id="daily-tags" placeholder="Через запятую: фильтрация, стабилайт, клиент">
+        </div>
+
+        <div class="field full">
+          <label for="daily-notes">Заметка</label>
+          <textarea class="textarea" id="daily-notes" placeholder="Коротко: что внутри файла, что важно проверить, куда потом двигать"></textarea>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:16px">
+        <button class="btn primary" type="button" onclick="submitDailyForm()">Сохранить карточку</button>
+        <button class="btn" type="button" onclick="closeDailyModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script>
+    var STORAGE_KEY = 'cloto_daily_laboratory_reports_v1';
+    var activeDailyId = null;
+    var WORKER_OPTIONS = ['Кувшинова Н.А.', 'Архилин М.А.', 'Бурков А.А.', 'Четверикова А.С.', 'Не назначен'];
+    var workRows = [];
+
+    function showToast(message) {
+      var toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2200);
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function createEmptyWorkerSlot() {
+      return {
+        worker: '',
+        hours: ''
+      };
+    }
+
+    function createWorkRow() {
+      return {
+        id: 'work-' + Date.now() + '-' + Math.random().toString(16).slice(2, 7),
+        task: '',
+        workers: [createEmptyWorkerSlot(), createEmptyWorkerSlot(), createEmptyWorkerSlot()]
+      };
+    }
+
+    function renderWorkReportBuilder() {
+      var list = document.getElementById('works-list');
+      if (!list) return;
+
+      list.innerHTML = workRows.length ? workRows.map(function(row, rowIndex) {
+        var crew = row.workers.map(function(slot, slotIndex) {
+          return '<div class="crew-card">' +
+            '<div class="mini-title">Исполнитель ' + (slotIndex + 1) + '</div>' +
+            '<div class="crew-stack">' +
+              '<select class="select" onchange="updateWorkWorker(' + rowIndex + ', ' + slotIndex + ', this.value)">' +
+                '<option value="">Выберите исполнителя</option>' +
+                WORKER_OPTIONS.map(function(worker) {
+                  return '<option value="' + escapeHtml(worker) + '"' + (slot.worker === worker ? ' selected' : '') + '>' + escapeHtml(worker) + '</option>';
+                }).join('') +
+              '</select>' +
+              '<label class="hours-label" for="hours-' + row.id + '-' + slotIndex + '">Затраченное время, ч</label>' +
+              '<input class="input" id="hours-' + row.id + '-' + slotIndex + '" type="number" min="0" step="0.5" value="' + escapeHtml(slot.hours) + '" oninput="updateWorkHours(' + rowIndex + ', ' + slotIndex + ', this.value)">' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        return '<div class="work-row">' +
+          '<div class="work-row-main">' +
+            '<div class="work-row-index">Работа ' + (rowIndex + 1) + '</div>' +
+            '<label for="task-' + row.id + '">Проделанные работы</label>' +
+            '<textarea class="textarea" id="task-' + row.id + '" placeholder="Опишите конкретную выполненную работу" oninput="updateWorkTask(' + rowIndex + ', this.value)">' + escapeHtml(row.task) + '</textarea>' +
+            '<div class="work-row-actions"><button class="action-btn delete" type="button" title="Удалить работу" onclick="removeWorkRow(' + rowIndex + ')">×</button></div>' +
+          '</div>' +
+          '<div class="work-crew-grid">' + crew + '</div>' +
+        '</div>';
+      }).join('') : '<div class="empty">Нажмите «Добавить работу», чтобы начать заполнять ежедневный отчет.</div>';
+    }
+
+    function toggleWorkReportBuilder(forceOpen) {
+      var builder = document.getElementById('work-report-builder');
+      var shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !builder.classList.contains('open');
+
+      builder.classList.toggle('open', shouldOpen);
+
+      if (shouldOpen && !workRows.length) {
+        workRows = [createWorkRow()];
+      }
+
+      renderWorkReportBuilder();
+    }
+
+    function addWorkRow() {
+      if (!document.getElementById('work-report-builder').classList.contains('open')) {
+        toggleWorkReportBuilder(true);
+        return;
+      }
+
+      workRows.push(createWorkRow());
+      renderWorkReportBuilder();
+    }
+
+    function removeWorkRow(rowIndex) {
+      workRows = workRows.filter(function(_, index) { return index !== rowIndex; });
+      renderWorkReportBuilder();
+    }
+
+    function updateWorkTask(rowIndex, value) {
+      if (!workRows[rowIndex]) return;
+      workRows[rowIndex].task = value;
+    }
+
+    function updateWorkWorker(rowIndex, slotIndex, value) {
+      if (!workRows[rowIndex] || !workRows[rowIndex].workers[slotIndex]) return;
+      workRows[rowIndex].workers[slotIndex].worker = value;
+    }
+
+    function updateWorkHours(rowIndex, slotIndex, value) {
+      if (!workRows[rowIndex] || !workRows[rowIndex].workers[slotIndex]) return;
+      workRows[rowIndex].workers[slotIndex].hours = value;
+    }
+
+    function loadDailyReports() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveDailyReports(items) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function getDailyReports() {
+      return loadDailyReports().sort(function(a, b) {
+        return String(b.reportDate || b.uploadedAt || '').localeCompare(String(a.reportDate || a.uploadedAt || ''));
+      });
+    }
+
+    function normalizeDateMatch(parts) {
+      if (!parts) return '';
+      if (parts[1].length === 4) return parts[1] + '-' + parts[2] + '-' + parts[3];
+      return parts[3] + '-' + parts[2] + '-' + parts[1];
+    }
+
+    function parseFileName(fileName) {
+      var baseName = String(fileName || '').replace(/\.[^.]+$/, '');
+      var normalized = baseName.replace(/[_]+/g, ' ').replace(/[.]+/g, ' ').replace(/\s+/g, ' ').trim();
+      var lower = normalized.toLowerCase();
+      var dateMatch = normalized.match(/(\d{4})[-_. ](\d{2})[-_. ](\d{2})/) || normalized.match(/(\d{2})[-_. ](\d{2})[-_. ](\d{4})/);
+      var shift = '';
+      if (/(утро|morning)/i.test(lower)) shift = 'Утро';
+      if (/(день|day)/i.test(lower)) shift = 'День';
+      if (/(ночь|night)/i.test(lower)) shift = 'Ночь';
+
+      var type = 'Ежедневный отчет';
+      if (/(протокол)/i.test(lower)) type = 'Протокол';
+      if (/(свод|summary|сводка)/i.test(lower)) type = 'Сводка';
+
+      var area = '';
+      if (/(фильтр|filtrat)/i.test(lower)) area = 'Фильтрация';
+      else if (/(реолог|rheo)/i.test(lower)) area = 'Реология';
+      else if (/(стабил|stabil)/i.test(lower)) area = 'Стабильность';
+      else if (/(пена|foam)/i.test(lower)) area = 'Пенообразование';
+      else if (/(плотност|density)/i.test(lower)) area = 'Плотность';
+
+      var tags = [];
+      ['стабилайт', 'оптитрол', 'контроль', 'клиент', 'реология', 'фильтрация', 'пена'].forEach(function(token) {
+        if (lower.indexOf(token) !== -1) tags.push(token);
+      });
+
+      return {
+        title: normalized || fileName,
+        reportDate: normalizeDateMatch(dateMatch),
+        shift: shift,
+        area: area,
+        type: type,
+        tags: tags
+      };
+    }
+
+    function inferStatus(item) {
+      if (item.reportDate && item.shift && item.area && item.type) return 'Систематизирован';
+      if (item.area || item.shift || item.reportDate) return 'Требует систематизации';
+      return 'Новый';
+    }
+
+    function formatDate(dateValue) {
+      if (!dateValue) return '—';
+      var parts = String(dateValue).split('-');
+      if (parts.length !== 3) return dateValue;
+      return parts[2] + '.' + parts[1] + '.' + parts[0];
+    }
+
+    function formatDateTime(dateValue) {
+      if (!dateValue) return '—';
+      var date = new Date(dateValue);
+      if (Number.isNaN(date.getTime())) return dateValue;
+      return date.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function statusClass(status) {
+      if (status === 'Систематизирован') return 'p-ready';
+      if (status === 'Требует систематизации') return 'p-sort';
+      return 'p-new';
+    }
+
+    function renderAreaFilter(items) {
+      var select = document.getElementById('filter-area');
+      var current = select.value || 'all';
+      var areas = Array.from(new Set(items.map(function(item) { return item.area; }).filter(Boolean))).sort(function(a, b) {
+        return a.localeCompare(b, 'ru');
+      });
+      select.innerHTML = '<option value="all">Все зоны</option>' + areas.map(function(area) {
+        return '<option value="' + escapeHtml(area) + '">' + escapeHtml(area) + '</option>';
+      }).join('');
+      select.value = areas.indexOf(current) !== -1 ? current : 'all';
+    }
+
+    function getFilteredDailyReports() {
+      var search = document.getElementById('filter-search').value.trim().toLowerCase();
+      var status = document.getElementById('filter-status').value;
+      var shift = document.getElementById('filter-shift').value;
+      var area = document.getElementById('filter-area').value;
+      var date = document.getElementById('filter-date').value;
+
+      return getDailyReports().filter(function(item) {
+        var haystack = [item.title, item.fileName, item.notes, item.area, item.type, item.owner, (item.tags || []).join(' ')].join(' ').toLowerCase();
+        var matchesSearch = !search || haystack.indexOf(search) !== -1;
+        var matchesStatus = status === 'all' || inferStatus(item) === status;
+        var matchesShift = shift === 'all' || item.shift === shift;
+        var matchesArea = area === 'all' || item.area === area;
+        var matchesDate = !date || item.reportDate === date;
+        return matchesSearch && matchesStatus && matchesShift && matchesArea && matchesDate;
+      });
+    }
+
+    function renderDailyRegistry() {
+      var allItems = getDailyReports();
+      renderAreaFilter(allItems);
+      var items = getFilteredDailyReports();
+      var body = document.getElementById('daily-reports-body');
+
+      if (!items.length) {
+        body.innerHTML = '<tr><td colspan="8" class="empty">Пока здесь пусто. Загрузите первый Word-файл ежедневного отчета или сбросьте фильтры.</td></tr>';
+      } else {
+        body.innerHTML = items.map(function(item) {
+          var tags = item.tags && item.tags.length
+            ? '<div class="tag-cloud">' + item.tags.map(function(tag) { return '<span class="tag">' + escapeHtml(tag) + '</span>'; }).join('') + '</div>'
+            : '<span style="color:var(--muted)">—</span>';
+
+          return '<tr>' +
+            '<td><div class="doc-title">' + escapeHtml(item.title) + '</div><div class="meta">Загружен: ' + formatDateTime(item.uploadedAt) + '</div><div class="meta">Файл: ' + escapeHtml(item.fileName) + '</div><div class="doc-actions"><button class="action-btn file" type="button" onclick="openDailyFileInBrowser(\'' + escapeHtml(item.id) + '\')">Открыть Word</button><button class="action-btn save" type="button" onclick="saveDailyFile(\'' + escapeHtml(item.id) + '\')">Сохранить Word</button><button class="action-btn edit" type="button" onclick="openDailyModal(\'' + escapeHtml(item.id) + '\')">Карточка</button></div></td>' +
+            '<td>' + formatDate(item.reportDate) + '</td>' +
+            '<td>' + escapeHtml(item.shift || '—') + '</td>' +
+            '<td>' + escapeHtml(item.area || '—') + '</td>' +
+            '<td>' + escapeHtml(item.type || '—') + '</td>' +
+            '<td><span class="pill ' + statusClass(inferStatus(item)) + '">' + escapeHtml(inferStatus(item)) + '</span></td>' +
+            '<td>' + tags + '</td>' +
+            '<td><div class="row-actions"><button class="action-btn delete" type="button" title="Удалить файл" onclick="deleteDailyReport(\'' + escapeHtml(item.id) + '\')">×</button></div></td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      renderDailyKPIs(allItems);
+    }
+
+    function renderDailyKPIs(items) {
+      var today = new Date().toISOString().slice(0, 10);
+      var ready = items.filter(function(item) { return inferStatus(item) === 'Систематизирован'; });
+      var unsorted = items.filter(function(item) { return inferStatus(item) !== 'Систематизирован'; });
+      var todayCount = items.filter(function(item) { return String(item.uploadedAt || '').slice(0, 10) === today; }).length;
+      var uniqueZones = Array.from(new Set(items.map(function(item) { return item.area; }).filter(Boolean))).length;
+
+      document.getElementById('k-total').textContent = items.length;
+      document.getElementById('k-today').textContent = todayCount;
+      document.getElementById('k-ready').textContent = ready.length;
+      document.getElementById('k-zones').textContent = uniqueZones;
+      document.getElementById('hero-structured').textContent = ready.length + ' карточек';
+      document.getElementById('hero-structured-copy').textContent = ready.length
+        ? 'Структурированные записи уже можно быстро фильтровать по дате, зоне и смене.'
+        : 'Пока нет полностью оформленных карточек. После загрузки откройте файл и заполните поля.';
+      document.getElementById('hero-unsorted').textContent = unsorted.length + ' файлов';
+      document.getElementById('hero-unsorted-copy').textContent = unsorted.length
+        ? 'Есть записи, которым нужно добавить часть метаданных.'
+        : 'Все текущие записи уже приведены к базовой структуре.';
+    }
+
+    function clearDailyFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-status').value = 'all';
+      document.getElementById('filter-shift').value = 'all';
+      document.getElementById('filter-area').value = 'all';
+      document.getElementById('filter-date').value = '';
+      renderDailyRegistry();
+    }
+
+    function triggerFileInput() {
+      document.getElementById('daily-file-input').click();
+    }
+
+    function handleFiles(files) {
+      var validFiles = Array.from(files || []).filter(function(file) {
+        return /\.docx?$/.test(file.name.toLowerCase());
+      });
+      if (!validFiles.length) {
+        showToast('Нужны файлы .doc или .docx');
+        return;
+      }
+
+      Promise.all(validFiles.map(function(file) {
+        return new Promise(function(resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function() {
+            var parsed = parseFileName(file.name);
+            resolve({
+              id: 'daily-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+              title: parsed.title,
+              reportDate: parsed.reportDate,
+              shift: parsed.shift,
+              area: parsed.area,
+              type: parsed.type,
+              owner: '',
+              tags: parsed.tags,
+              notes: '',
+              fileName: file.name,
+              fileData: reader.result,
+              uploadedAt: new Date().toISOString()
+            });
+          };
+          reader.onerror = function() { reject(new Error('FILE_READ_ERROR')); };
+          reader.readAsDataURL(file);
+        });
+      }))
+        .then(function(newItems) {
+          var items = getDailyReports();
+          saveDailyReports(newItems.concat(items));
+          renderDailyRegistry();
+          showToast('Файлы добавлены в ежедневный реестр');
+        })
+        .catch(function() {
+          showToast('Не удалось загрузить один из файлов');
+        });
+    }
+
+    function resetDailyForm() {
+      activeDailyId = null;
+      document.getElementById('daily-id').value = '';
+      document.getElementById('daily-title').value = '';
+      document.getElementById('daily-date').value = '';
+      document.getElementById('daily-shift').value = '';
+      document.getElementById('daily-area').value = '';
+      document.getElementById('daily-type').value = '';
+      document.getElementById('daily-owner').value = '';
+      document.getElementById('daily-tags').value = '';
+      document.getElementById('daily-notes').value = '';
+      document.getElementById('daily-modal-title').textContent = 'Карточка ежедневного отчета';
+    }
+
+    function openDailyModal(itemId) {
+      var item = getDailyReports().find(function(entry) { return entry.id === itemId; });
+      if (!item) return;
+      activeDailyId = item.id;
+      document.getElementById('daily-id').value = item.id;
+      document.getElementById('daily-title').value = item.title || '';
+      document.getElementById('daily-date').value = item.reportDate || '';
+      document.getElementById('daily-shift').value = item.shift || '';
+      document.getElementById('daily-area').value = item.area || '';
+      document.getElementById('daily-type').value = item.type || '';
+      document.getElementById('daily-owner').value = item.owner || '';
+      document.getElementById('daily-tags').value = (item.tags || []).join(', ');
+      document.getElementById('daily-notes').value = item.notes || '';
+      document.getElementById('daily-modal-backdrop').classList.add('open');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeDailyModal() {
+      document.getElementById('daily-modal-backdrop').classList.remove('open');
+      document.body.classList.remove('modal-open');
+      resetDailyForm();
+    }
+
+    function submitDailyForm() {
+      if (!activeDailyId) return;
+      var items = getDailyReports().map(function(item) {
+        if (item.id !== activeDailyId) return item;
+        return {
+          id: item.id,
+          fileName: item.fileName,
+          fileData: item.fileData,
+          uploadedAt: item.uploadedAt,
+          title: document.getElementById('daily-title').value.trim() || item.fileName,
+          reportDate: document.getElementById('daily-date').value,
+          shift: document.getElementById('daily-shift').value,
+          area: document.getElementById('daily-area').value.trim(),
+          type: document.getElementById('daily-type').value.trim(),
+          owner: document.getElementById('daily-owner').value.trim(),
+          tags: document.getElementById('daily-tags').value.split(',').map(function(tag) { return tag.trim(); }).filter(Boolean),
+          notes: document.getElementById('daily-notes').value.trim()
+        };
+      });
+
+      saveDailyReports(items);
+      renderDailyRegistry();
+      closeDailyModal();
+      showToast('Карточка обновлена');
+    }
+
+    function deleteDailyReport(itemId) {
+      var items = getDailyReports();
+      var nextItems = items.filter(function(item) { return item.id !== itemId; });
+      if (nextItems.length === items.length) return;
+      saveDailyReports(nextItems);
+      renderDailyRegistry();
+      showToast('Файл удален из ежедневного реестра');
+    }
+
+    function getDailyFileById(itemId) {
+      return getDailyReports().find(function(entry) { return entry.id === itemId; });
+    }
+
+    function dataUrlToArrayBuffer(dataUrl) {
+      var base64 = String(dataUrl || '').split(',')[1] || '';
+      var binary = atob(base64);
+      var bytes = new Uint8Array(binary.length);
+
+      for (var index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index);
+      }
+
+      return bytes.buffer;
+    }
+
+    function openPreviewWindow(title, content) {
+      var previewWindow = window.open('', '_blank');
+      if (!previewWindow) {
+        showToast('Браузер заблокировал новую вкладку');
+        return null;
+      }
+
+      previewWindow.document.open();
+      previewWindow.document.write(
+        '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + escapeHtml(title) + '</title><style>' +
+        'body{margin:0;font-family:Inter,Segoe UI,sans-serif;background:#f4f7fb;color:#102033;line-height:1.7;}' +
+        '.wrap{max-width:980px;margin:0 auto;padding:32px 24px 56px;}' +
+        '.card{background:#fff;border:1px solid rgba(16,32,51,.08);border-radius:20px;box-shadow:0 18px 40px rgba(16,32,51,.08);padding:28px;}' +
+        '.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#678;}' +
+        'h1{margin:10px 0 8px;font-size:32px;line-height:1.1;}' +
+        '.meta{color:#5d6b7c;font-size:14px;margin-bottom:22px;}' +
+        '.docx{font-size:16px;line-height:1.75;color:#102033;}' +
+        '.docx table{border-collapse:collapse;width:100%;margin:16px 0;}' +
+        '.docx td,.docx th{border:1px solid rgba(16,32,51,.12);padding:8px;vertical-align:top;}' +
+        '.docx img{max-width:100%;height:auto;}' +
+        '.note{margin-top:18px;padding:12px 14px;border-radius:14px;background:#eef4fb;color:#516274;font-size:13px;}' +
+        '</style></head><body><div class="wrap"><div class="card"><div class="eyebrow">Word Preview</div><h1>' + escapeHtml(title) + '</h1><div class="meta">Просмотр документа прямо в браузере</div><div class="docx">' + content + '</div></div></div></body></html>'
+      );
+      previewWindow.document.close();
+      return previewWindow;
+    }
+
+    function openDailyFileInBrowser(itemId) {
+      var item = getDailyFileById(itemId);
+      if (!item || !item.fileData) return;
+
+      var fileName = String(item.fileName || '').toLowerCase();
+      if (/\.doc$/.test(fileName)) {
+        showToast('Формат .doc нельзя надежно открыть в браузере. Используйте «Сохранить Word».');
+        return;
+      }
+
+      if (!window.mammoth) {
+        showToast('Просмотрщик Word не загрузился');
+        return;
+      }
+
+      mammoth.convertToHtml({ arrayBuffer: dataUrlToArrayBuffer(item.fileData) })
+        .then(function(result) {
+          var extraNote = result.messages && result.messages.length
+            ? '<div class="note">Часть сложного форматирования Word могла быть упрощена при предпросмотре.</div>'
+            : '';
+          openPreviewWindow(item.title || item.fileName || 'Word preview', result.value + extraNote);
+        })
+        .catch(function() {
+          showToast('Не удалось открыть Word в браузере');
+        });
+    }
+
+    function saveDailyFile(itemId) {
+      var item = getDailyReports().find(function(entry) { return entry.id === itemId; });
+      if (!item || !item.fileData) return;
+      var link = document.createElement('a');
+      link.href = item.fileData;
+      link.download = item.fileName || 'daily-report.docx';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    (function init() {
+      renderDailyRegistry();
+
+      ['filter-search', 'filter-status', 'filter-shift', 'filter-area', 'filter-date'].forEach(function(id) {
+        document.getElementById(id).addEventListener('input', renderDailyRegistry);
+        document.getElementById(id).addEventListener('change', renderDailyRegistry);
+      });
+
+      var input = document.getElementById('daily-file-input');
+      input.addEventListener('change', function(event) {
+        handleFiles(event.target.files);
+        input.value = '';
+      });
+
+      var dropzone = document.getElementById('dropzone');
+      ['dragenter', 'dragover'].forEach(function(eventName) {
+        dropzone.addEventListener(eventName, function(event) {
+          event.preventDefault();
+          dropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(function(eventName) {
+        dropzone.addEventListener(eventName, function(event) {
+          event.preventDefault();
+          dropzone.classList.remove('dragover');
+        });
+      });
+
+      dropzone.addEventListener('drop', function(event) {
+        handleFiles(event.dataTransfer.files);
+      });
+
+      document.getElementById('daily-modal-backdrop').addEventListener('click', function(event) {
+        if (event.target.id === 'daily-modal-backdrop') closeDailyModal();
+      });
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeDailyModal();
+      });
+    })();
+  </script>
+</body>
+</html>

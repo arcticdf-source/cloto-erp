@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>План работы лаборатории — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07111b;
+      --bg2: #0d1a2a;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface-strong: rgba(255, 255, 255, 0.08);
+      --surface-soft: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(71, 224, 194, 0.28);
+      --text: #e8f0f7;
+      --muted: #7d92a7;
+      --cyan: #47e0c2;
+      --blue: #78bcff;
+      --gold: #f2cb6f;
+      --red: #ff7c87;
+      --violet: #9f8cff;
+      --green: #5fda93;
+      --radius: 18px;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(71, 224, 194, 0.16), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(159, 140, 255, 0.16), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120, 188, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 188, 255, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.4));
+    }
+
+    .orb {
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      border-radius: 50%;
+      filter: blur(120px);
+    }
+
+    .orb-a {
+      width: 560px;
+      height: 560px;
+      top: -220px;
+      left: -160px;
+      background: radial-gradient(circle, rgba(71, 224, 194, 0.16), transparent 70%);
+    }
+
+    .orb-b {
+      width: 460px;
+      height: 460px;
+      right: -140px;
+      bottom: -160px;
+      background: radial-gradient(circle, rgba(120, 188, 255, 0.14), transparent 70%);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .hero,
+    .toolbar,
+    .kpi-grid,
+    .split,
+    .tables,
+    .gantt-card,
+    .sheet,
+    .notes,
+    .modal {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      padding: 22px 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 420px);
+      gap: 18px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(71, 224, 194, 0.14), rgba(7, 17, 27, 0.4)),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(71, 224, 194, 0.24);
+      background: rgba(7, 17, 27, 0.45);
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .title span { color: var(--cyan); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions,
+    .toolbar-actions,
+    .sheet-actions,
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions { margin-top: 16px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-soft);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: var(--surface-strong);
+      border-color: var(--border-strong);
+    }
+
+    .btn.primary {
+      background: rgba(71, 224, 194, 0.14);
+      border-color: rgba(71, 224, 194, 0.28);
+      color: var(--cyan);
+    }
+
+    .btn.blue {
+      background: rgba(120, 188, 255, 0.12);
+      border-color: rgba(120, 188, 255, 0.22);
+      color: var(--blue);
+    }
+
+    .btn.gold {
+      background: rgba(242, 203, 111, 0.12);
+      border-color: rgba(242, 203, 111, 0.22);
+      color: var(--gold);
+    }
+
+    .side-box {
+      padding: 18px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .side-box + .side-box { margin-top: 12px; }
+
+    .mini-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .side-box strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .side-box p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .toolbar {
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 620px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .kpi-value {
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 800;
+      color: var(--cyan);
+    }
+
+    .kpi:nth-child(2) .kpi-value { color: var(--blue); }
+    .kpi:nth-child(3) .kpi-value { color: var(--gold); }
+    .kpi:nth-child(4) .kpi-value { color: var(--violet); }
+    .kpi:nth-child(5) .kpi-value { color: var(--green); }
+    .kpi:nth-child(6) .kpi-value { color: var(--red); }
+
+    .kpi-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .gantt-card,
+    .notes {
+      padding: 16px 18px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.08;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    .gantt-head,
+    .gantt-row {
+      display: grid;
+      grid-template-columns: 320px repeat(13, minmax(56px, 1fr));
+      gap: 8px;
+    }
+
+    .gantt-head {
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 10px;
+    }
+
+    .gantt-head div {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .gantt-row {
+      position: relative;
+      align-items: start;
+      padding: 12px 0 14px;
+      min-height: calc(var(--track-height, 34px) + 28px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .gantt-row:last-child { border-bottom: none; }
+
+    .gantt-meta {
+      padding-top: 2px;
+    }
+
+    .gantt-meta strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .gantt-meta span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .gantt-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .gantt-link-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .week-cell {
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed rgba(255, 255, 255, 0.04);
+    }
+
+    .gantt-track {
+      position: absolute;
+      left: calc(320px + 8px);
+      right: 0;
+      top: 12px;
+      height: var(--track-height, 34px);
+      pointer-events: none;
+    }
+
+    .gantt-bar {
+      position: absolute;
+      top: 0;
+      height: 34px;
+      border-radius: 12px;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 11px;
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .gantt-bar-main {
+      z-index: 2;
+    }
+
+    .gantt-bar-child {
+      height: 24px;
+      padding: 0 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      z-index: 3;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .gantt-row.has-children .week-cell {
+      height: calc(var(--track-height, 34px) + 12px);
+    }
+
+    .c-cyan { background: linear-gradient(90deg, rgba(71, 224, 194, 0.86), rgba(71, 224, 194, 0.56)); color: #042821; }
+    .c-blue { background: linear-gradient(90deg, rgba(120, 188, 255, 0.88), rgba(120, 188, 255, 0.56)); color: #071a30; }
+    .c-gold { background: linear-gradient(90deg, rgba(242, 203, 111, 0.88), rgba(242, 203, 111, 0.56)); color: #2a1c00; }
+    .c-violet { background: linear-gradient(90deg, rgba(159, 140, 255, 0.88), rgba(159, 140, 255, 0.56)); color: #1d123a; }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .note-item {
+      padding: 12px 13px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .note-item strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .note-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .tables {
+      padding: 14px;
+    }
+
+    .tables-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .sheet {
+      padding: 16px 18px;
+    }
+
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .sheet-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .sheet-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      margin-top: 6px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1280px;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 12px;
+      background: rgba(7, 17, 27, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: top;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
+    .task-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--cyan);
+      white-space: nowrap;
+    }
+
+    .progress-pill,
+    .status-pill,
+    .period-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .status-open { color: var(--blue); background: rgba(120, 188, 255, 0.12); }
+    .status-work { color: var(--gold); background: rgba(242, 203, 111, 0.12); }
+    .status-done { color: var(--green); background: rgba(95, 218, 147, 0.12); }
+    .status-risk { color: var(--red); background: rgba(255, 124, 135, 0.12); }
+    .period-week { color: var(--cyan); background: rgba(71, 224, 194, 0.12); }
+    .period-month { color: var(--blue); background: rgba(120, 188, 255, 0.12); }
+    .period-quarter { color: var(--violet); background: rgba(159, 140, 255, 0.12); }
+
+    .row-actions {
+      white-space: nowrap;
+    }
+
+    .btn-delete {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 124, 135, 0.16);
+      background: rgba(255, 124, 135, 0.1);
+      color: var(--red);
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 800;
+      transition: all 0.18s ease;
+    }
+
+    .btn-delete:hover {
+      background: rgba(255, 124, 135, 0.18);
+      border-color: rgba(255, 124, 135, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-open {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 88px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(120, 188, 255, 0.18);
+      background: rgba(120, 188, 255, 0.1);
+      color: var(--blue);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      transition: all 0.18s ease;
+    }
+
+    .btn-open:hover {
+      background: rgba(120, 188, 255, 0.18);
+      border-color: rgba(120, 188, 255, 0.32);
+      transform: translateY(-1px);
+    }
+
+    .desc,
+    .notes-cell {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .owner {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 30;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #182437;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.22s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(2, 8, 14, 0.78);
+      backdrop-filter: blur(14px);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(760px, 100%);
+      padding: 18px;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .input,
+    .textarea,
+    .select {
+      width: 100%;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+
+    .textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field-note {
+      margin-top: -2px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    @media (max-width: 1320px) {
+      .hero,
+      .split,
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .gantt-scroll { overflow-x: auto; }
+      .gantt-head,
+      .gantt-row { min-width: 1120px; }
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 18px 14px 32px; }
+      .toolbar { flex-direction: column; align-items: flex-start; }
+      .modal-grid { grid-template-columns: 1fr; }
+      .title { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Lab Plan Desk</div>
+        <div class="title">План работы <span>лаборатории</span></div>
+        <div class="sub">Страница собрана в логике старого Excel-плана: у каждой задачи есть период, срок, исполнитель, оценка времени, статус, отчет и примечания. Сверху выводятся KPI, ниже идут таблицы задач на неделю, месяц и квартал, а диаграмма Ганта на всю ширину страницы показывает вложенность коротких задач в квартальные контуры.</div>
+        <div class="hero-actions">
+          <a class="btn primary" href="laboratory.html">← В лабораторию</a>
+          <a class="btn" href="incoming-sample-requests.html">К входящим заявкам</a>
+          <a class="btn" href="portal.html">На главную</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="side-box">
+          <div class="mini-title">Формат плана</div>
+          <strong>Excel-like</strong>
+          <p>Опорная структура взята из старого файла: `% готовности`, задача, описание, отчет, статус, срок и примечания. Поверх этого добавлены часы, KPI и задачи по периодам.</p>
+        </div>
+        <div class="side-box">
+          <div class="mini-title">Управленческий режим</div>
+          <strong id="side-focus">Q2 / W07</strong>
+          <p>План рассчитан на еженедельный контроль, месячные срезы и квартальный горизонт с ресурсными ограничениями.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div>
+        <div class="section-title">Рабочий контур лаборатории</div>
+        <div class="toolbar-copy">Ниже можно добавлять новые задачи прямо на нужный горизонт. Каждая задача автоматически попадёт в KPI и в соответствующую таблицу, а на Ганте будет связана с квартальным контуром через тему или теги.</div>
+      </div>
+      <div class="toolbar-actions">
+        <button class="btn primary" type="button" onclick="openTaskModal('week')">+ Новая задача на неделю</button>
+        <button class="btn blue" type="button" onclick="openTaskModal('month')">+ Новая задача на месяц</button>
+        <button class="btn gold" type="button" onclick="openTaskModal('quarter')">+ Новая задача на квартал</button>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="kpi">
+        <div class="mini-title">Всего задач</div>
+        <div class="kpi-value" id="k-total">0</div>
+        <div class="kpi-meta">Сумма задач всех горизонтов: недельный, месячный и квартальный план.</div>
+      </article>
+      <article class="kpi">
+        <div class="mini-title">В работе</div>
+        <div class="kpi-value" id="k-in-work">0</div>
+        <div class="kpi-meta">Активные задачи, которые сейчас держат загрузку лаборатории.</div>
+      </article>
+      <article class="kpi">
+        <div class="mini-title">Часы в плане</div>
+        <div class="kpi-value" id="k-hours">0</div>
+        <div class="kpi-meta">Оценка трудозатрат по всем задачам, включая подготовку, тесты и отчетность.</div>
+      </article>
+      <article class="kpi">
+        <div class="mini-title">Средняя готовность</div>
+        <div class="kpi-value" id="k-progress">0%</div>
+        <div class="kpi-meta">Средний процент исполнения по активному плану.</div>
+      </article>
+      <article class="kpi">
+        <div class="mini-title">Выполнено в срок</div>
+        <div class="kpi-value" id="k-done">0</div>
+        <div class="kpi-meta">Число задач со статусом “Завершено”.</div>
+      </article>
+      <article class="kpi">
+        <div class="mini-title">Задачи риска</div>
+        <div class="kpi-value" id="k-risk">0</div>
+        <div class="kpi-meta">Задачи со статусом “Риск” или с критичным дедлайном.</div>
+      </article>
+    </section>
+
+    <section class="split">
+      <article class="gantt-card">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Гант всех задач</div>
+            <div class="section-copy">Здесь видны недельные, месячные и квартальные задачи на одной оси. Квартальные задачи выступают базовыми контурами, а связанные по теме короткие задачи вкладываются в них прямо на шкале.</div>
+          </div>
+        </div>
+        <div class="gantt-scroll">
+          <div class="gantt-head" id="gantt-head"></div>
+          <div id="gantt-body"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="tables">
+      <div class="tables-grid">
+        <article class="sheet">
+          <div class="sheet-head">
+            <div>
+              <div class="sheet-title">Недельные задачи</div>
+              <div class="sheet-copy">Операционные действия на ближайший рабочий контур: triage, упаковка, выпуск протоколов, промежуточные тесты.</div>
+            </div>
+            <div class="sheet-actions">
+              <button class="btn primary" type="button" onclick="openTaskModal('week')">Добавить</button>
+            </div>
+          </div>
+          <div class="table-wrap"><table id="table-week"></table></div>
+        </article>
+
+        <article class="sheet">
+          <div class="sheet-head">
+            <div>
+              <div class="sheet-title">Месячные задачи</div>
+              <div class="sheet-copy">Средний горизонт: пакеты испытаний, сводные отчеты, подтверждение рецептур, плановые проверки и ресурсный резерв.</div>
+            </div>
+            <div class="sheet-actions">
+              <button class="btn blue" type="button" onclick="openTaskModal('month')">Добавить</button>
+            </div>
+          </div>
+          <div class="table-wrap"><table id="table-month"></table></div>
+        </article>
+
+        <article class="sheet">
+          <div class="sheet-head">
+            <div>
+              <div class="sheet-title">Квартальные задачи</div>
+              <div class="sheet-copy">Большие задачи с отчетностью и вехами: сертификация, клиентские пилоты, внутренние программы и блок подготовки к следующему кварталу.</div>
+            </div>
+            <div class="sheet-actions">
+              <button class="btn gold" type="button" onclick="openTaskModal('quarter')">Добавить</button>
+            </div>
+          </div>
+          <div class="table-wrap"><table id="table-quarter"></table></div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="task-modal-backdrop">
+    <div class="modal">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="modal-title">Новая задача</div>
+          <div class="section-copy">Добавь задачу в соответствующий горизонт. Она сразу появится в таблицах и KPI, а теги темы помогут встроить её в квартальный контур на Ганте.</div>
+        </div>
+        <button class="btn" type="button" onclick="closeTaskModal()">Закрыть</button>
+      </div>
+
+      <div class="modal-grid">
+        <input id="task-id" type="hidden">
+        <div class="field">
+          <label for="task-period">Период</label>
+          <select class="select" id="task-period">
+            <option value="week">Неделя</option>
+            <option value="month">Месяц</option>
+            <option value="quarter">Квартал</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="task-status">Статус</label>
+          <select class="select" id="task-status">
+            <option value="Открыто">Открыто</option>
+            <option value="В работе">В работе</option>
+            <option value="Завершено">Завершено</option>
+            <option value="Риск">Риск</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label for="task-title">Задача</label>
+          <input class="input" id="task-title" placeholder="Например: Завершить протокол по Стабилайт II">
+        </div>
+
+        <div class="field full">
+          <label for="task-description">Описание</label>
+          <textarea class="textarea" id="task-description" placeholder="Что именно должно быть сделано и какой результат нужен"></textarea>
+        </div>
+
+        <div class="field full">
+          <label for="task-topic">Тема / теги контура</label>
+          <input class="input" id="task-topic" placeholder="Например: НЕДРА ТЕСТ, Стабилайт, R&D">
+          <div class="field-note">Используй запятые: по этим тегам недельные и месячные задачи будут привязываться к квартальным на Ганте.</div>
+        </div>
+
+        <div class="field">
+          <label for="task-owner">Исполнитель</label>
+          <input class="input" id="task-owner" placeholder="ФИО или роль">
+        </div>
+        <div class="field">
+          <label for="task-due-date">Срок</label>
+          <input class="input" id="task-due-date" type="date">
+        </div>
+
+        <div class="field">
+          <label for="task-progress">Готовность, %</label>
+          <input class="input" id="task-progress" type="number" min="0" max="100" value="0">
+        </div>
+        <div class="field">
+          <label for="task-hours">Время на выполнение, ч</label>
+          <input class="input" id="task-hours" type="number" min="1" value="8">
+        </div>
+
+        <div class="field">
+          <label for="task-report">Отчет / ссылка</label>
+          <input class="input" id="task-report" placeholder="Например: Отчет № 9.13">
+        </div>
+        <div class="field">
+          <label for="task-notes">Примечания</label>
+          <input class="input" id="task-notes" placeholder="Риски, комментарии, ожидания">
+        </div>
+
+        <div class="field">
+          <label for="task-start-week">Стартовая неделя квартала</label>
+          <input class="input" id="task-start-week" type="number" min="1" max="13" value="1">
+          <div class="field-note">Для недельных и месячных задач тоже используется для позиции на Ганте.</div>
+        </div>
+        <div class="field">
+          <label for="task-duration-weeks">Длительность, недель</label>
+          <input class="input" id="task-duration-weeks" type="number" min="1" max="13" value="2">
+          <div class="field-note">Недельная задача обычно = 1, месячная = 2-5, квартальная = 4+.</div>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top:16px">
+        <button class="btn primary" id="task-submit-btn" type="button" onclick="submitTaskForm()">Сохранить задачу</button>
+        <button class="btn" type="button" onclick="closeTaskModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var STORAGE_KEY = 'cloto_laboratory_work_plan_v2';
+    var currentModalPeriod = 'week';
+    var currentEditTaskId = null;
+
+    var DEFAULT_TASKS = [
+      {
+        id: 'w1', period: 'week', progress: 80, title: 'Выпустить протокол по НЕДРА ТЕСТ',
+        description: 'Свести результаты последних испытаний, проверить формулировки и передать финальный протокол в коммерческий отдел.',
+        report: 'Отчет 2.12', status: 'В работе', owner: 'Кувшинова Н.А.', dueDate: '2026-04-18',
+        hours: 10, notes: 'Критично закрыть до пятницы.', topic: 'НЕДРА ТЕСТ', startWeek: 7, durationWeeks: 1
+      },
+      {
+        id: 'w2', period: 'week', progress: 35, title: 'Разобрать новые входящие заявки',
+        description: 'Провести triage всех новых запросов, назначить приоритет и выдать окно на тесты и упаковку.',
+        report: 'Inbox board', status: 'В работе', owner: 'Архилин М.А.', dueDate: '2026-04-17',
+        hours: 12, notes: 'Фокус на срочные заявки от СБМ и НПП Бурение.', topic: 'Входящие заявки', startWeek: 7, durationWeeks: 1
+      },
+      {
+        id: 'w3', period: 'week', progress: 0, title: 'Сверить остатки реактивов',
+        description: 'Проверить остатки ключевых позиций под майский пик сертификации и оформить заказ на пополнение.',
+        report: 'Склад / чек-лист', status: 'Открыто', owner: 'Бурков А.А.', dueDate: '2026-04-19',
+        hours: 6, notes: 'Особенно важны позиции для Стабилайт II.', topic: 'Стабилайт', startWeek: 7, durationWeeks: 1
+      },
+      {
+        id: 'm1', period: 'month', progress: 70, title: 'Стабилайт II для Комплекс Ойл / ЭФТЕРРА',
+        description: 'Подтвердить повторяемость состава, провести серию контрольных тестов и дать рекомендации по внедрению.',
+        report: 'Отчет 9.13', status: 'В работе', owner: 'Бурков А.А.', dueDate: '2026-04-30',
+        hours: 48, notes: 'Нельзя допустить дрейфа рецептуры.', topic: 'Стабилайт', startWeek: 5, durationWeeks: 4
+      },
+      {
+        id: 'm2', period: 'month', progress: 30, title: 'Оптитрол без пены',
+        description: 'Минимизировать пенообразование, добрать данные по слеживаемости и подтвердить фильтрацию.',
+        report: 'Отчет 15.4', status: 'В работе', owner: 'Архилин М.А.', dueDate: '2026-05-12',
+        hours: 36, notes: 'Нужны новые пеногасители и подтверждение параметров.', topic: 'Оптитрол', startWeek: 6, durationWeeks: 5
+      },
+      {
+        id: 'm3', period: 'month', progress: 0, title: 'Окно срочных повторных испытаний',
+        description: 'Зарезервировать ресурс на повторные серии и корректировки по обратной связи клиентов.',
+        report: 'План-резерв', status: 'Открыто', owner: 'Кувшинова Н.А.', dueDate: '2026-05-31',
+        hours: 20, notes: 'Буфер нужен под коммерческие эскалации.', topic: 'Повторные испытания', startWeek: 9, durationWeeks: 3
+      },
+      {
+        id: 'q1', period: 'quarter', progress: 68, title: 'Сертификация НЕДРА ТЕСТ / Стабилайт',
+        description: 'Подготовка образцов, полный цикл лабораторных испытаний, консолидация данных и выпуск финального пакета.',
+        report: 'Сертификационный пакет', status: 'В работе', owner: 'Кувшинова Н.А.', dueDate: '2026-05-22',
+        hours: 96, notes: 'Главный квартальный контур без права на перенос.', topic: 'НЕДРА ТЕСТ, Стабилайт', startWeek: 1, durationWeeks: 7
+      },
+      {
+        id: 'q2', period: 'quarter', progress: 42, title: 'Пилотная программа Стабилайт II',
+        description: 'Провести последовательность пилотных серий, сравнить результаты по двум клиентам и оформить release-пакет.',
+        report: 'Pilot release', status: 'В работе', owner: 'Бурков А.А.', dueDate: '2026-06-10',
+        hours: 88, notes: 'Сильная зависимость от загрузки стенда.', topic: 'Стабилайт', startWeek: 4, durationWeeks: 5
+      },
+      {
+        id: 'q3', period: 'quarter', progress: 15, title: 'Новая линейка полимеров / внутренний R&D',
+        description: 'Собрать benchmark, провести серию сравнительных рецептур и подготовить июльский демонстрационный пакет.',
+        report: 'R&D deck', status: 'Открыто', owner: 'Архилин М.А.', dueDate: '2026-06-28',
+        hours: 72, notes: 'Это плацдарм на Q3.', topic: 'Полимеры, R&D', startWeek: 7, durationWeeks: 4
+      },
+      {
+        id: 'q4', period: 'quarter', progress: 10, title: 'Подготовка июльского блока испытаний',
+        description: 'Резерв оборудования, расписание стендов, комплектация образцов и календарь демонстраций.',
+        report: 'Q3 readiness', status: 'Риск', owner: 'Кувшинова Н.А.', dueDate: '2026-06-30',
+        hours: 40, notes: 'Риск по стенду и поставке реактивов.', topic: 'Испытания, Подготовка Q3', startWeek: 10, durationWeeks: 3
+      }
+    ];
+
+    function showToast(message) {
+      var toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2200);
+    }
+
+    function loadTasks() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (error) {}
+      return DEFAULT_TASKS.slice();
+    }
+
+    function saveTasks(tasks) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+
+    function getTasks() {
+      return loadTasks().sort(function(a, b) {
+        return String(a.dueDate).localeCompare(String(b.dueDate)) || String(a.title).localeCompare(String(b.title), 'ru');
+      });
+    }
+
+    function formatDate(dateValue) {
+      if (!dateValue) return '—';
+      var parts = dateValue.split('-');
+      if (parts.length !== 3) return dateValue;
+      return parts[2] + '.' + parts[1] + '.' + parts[0].slice(2);
+    }
+
+    function statusClass(status) {
+      if (status === 'Завершено') return 'status-done';
+      if (status === 'В работе') return 'status-work';
+      if (status === 'Риск') return 'status-risk';
+      return 'status-open';
+    }
+
+    function periodClass(period) {
+      if (period === 'month') return 'period-month';
+      if (period === 'quarter') return 'period-quarter';
+      return 'period-week';
+    }
+
+    function periodLabel(period) {
+      if (period === 'month') return 'Месяц';
+      if (period === 'quarter') return 'Квартал';
+      return 'Неделя';
+    }
+
+    function normalizeTopic(value) {
+      return String(value || '')
+        .toLowerCase()
+        .replace(/["'`]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function uniqueValues(values) {
+      return values.filter(function(value, index, list) {
+        return value && list.indexOf(value) === index;
+      });
+    }
+
+    function parseTopicList(rawValue) {
+      return uniqueValues(String(rawValue || '')
+        .split(',')
+        .map(function(value) { return normalizeTopic(value); })
+        .filter(Boolean));
+    }
+
+    function inferTopicList(task) {
+      var text = normalizeTopic([
+        task.title,
+        task.description,
+        task.notes,
+        task.report
+      ].join(' '));
+      var inferred = [];
+
+      if (text.indexOf('недра тест') !== -1) inferred.push('недра тест');
+      if (text.indexOf('стабилайт') !== -1) inferred.push('стабилайт');
+      if (text.indexOf('оптитрол') !== -1) inferred.push('оптитрол');
+      if (text.indexOf('полимер') !== -1) inferred.push('полимеры');
+      if (text.indexOf('r&d') !== -1 || text.indexOf('rnd') !== -1 || text.indexOf('исслед') !== -1) inferred.push('r&d');
+      if (text.indexOf('входящ') !== -1 || text.indexOf('triage') !== -1) inferred.push('входящие заявки');
+      if (text.indexOf('реактив') !== -1) inferred.push('реактивы');
+      if (text.indexOf('испытан') !== -1) inferred.push('испытания');
+
+      return uniqueValues(inferred);
+    }
+
+    function getTaskTopics(task) {
+      return uniqueValues(parseTopicList(task.topic).concat(inferTopicList(task)));
+    }
+
+    function formatTaskTopics(task) {
+      var topics = getTaskTopics(task);
+      return topics.length ? topics.join(', ') : '—';
+    }
+
+    function clampWeek(value) {
+      return Math.max(1, Math.min(13, Number(value || 1)));
+    }
+
+    function getTaskRange(task) {
+      var startWeek = clampWeek(task.startWeek || 1);
+      var durationWeeks = Math.max(1, Math.min(13, Number(task.durationWeeks || 1)));
+      var endWeek = Math.min(13, startWeek + durationWeeks - 1);
+
+      return {
+        startWeek: startWeek,
+        durationWeeks: (endWeek - startWeek) + 1,
+        endWeek: endWeek
+      };
+    }
+
+    function sharedTopics(taskA, taskB) {
+      var topicsA = getTaskTopics(taskA);
+      var topicsB = getTaskTopics(taskB);
+
+      return topicsA.filter(function(topic) {
+        return topicsB.indexOf(topic) !== -1;
+      });
+    }
+
+    function tasksOverlap(taskA, taskB) {
+      var rangeA = getTaskRange(taskA);
+      var rangeB = getTaskRange(taskB);
+      return rangeA.startWeek <= rangeB.endWeek && rangeB.startWeek <= rangeA.endWeek;
+    }
+
+    function sortTasksForGantt(taskA, taskB) {
+      var periodRank = { quarter: 0, month: 1, week: 2 };
+      var rangeA = getTaskRange(taskA);
+      var rangeB = getTaskRange(taskB);
+      return (periodRank[taskA.period] || 9) - (periodRank[taskB.period] || 9) ||
+        rangeA.startWeek - rangeB.startWeek ||
+        String(taskA.dueDate || '').localeCompare(String(taskB.dueDate || '')) ||
+        String(taskA.title || '').localeCompare(String(taskB.title || ''), 'ru');
+    }
+
+    function getGanttRows(tasks) {
+      var assignedChildren = {};
+      var quarterTasks = tasks.filter(function(task) { return task.period === 'quarter'; }).sort(sortTasksForGantt);
+      var rows = [];
+
+      quarterTasks.forEach(function(quarterTask) {
+        var children = tasks
+          .filter(function(task) {
+            return task.id !== quarterTask.id &&
+              task.period !== 'quarter' &&
+              !assignedChildren[task.id] &&
+              sharedTopics(task, quarterTask).length > 0 &&
+              tasksOverlap(task, quarterTask);
+          })
+          .sort(sortTasksForGantt)
+          .map(function(task) {
+            assignedChildren[task.id] = true;
+            return {
+              task: task,
+              topics: sharedTopics(task, quarterTask)
+            };
+          });
+
+        rows.push({
+          task: quarterTask,
+          children: children,
+          grouped: true
+        });
+      });
+
+      tasks
+        .filter(function(task) {
+          return task.period !== 'quarter' && !assignedChildren[task.id];
+        })
+        .sort(sortTasksForGantt)
+        .forEach(function(task) {
+          rows.push({
+            task: task,
+            children: [],
+            grouped: false
+          });
+        });
+
+      return rows;
+    }
+
+    function renderKPIs(tasks) {
+      var total = tasks.length;
+      var inWork = tasks.filter(function(task) { return task.status === 'В работе'; }).length;
+      var hours = tasks.reduce(function(sum, task) { return sum + Number(task.hours || 0); }, 0);
+      var avgProgress = total ? Math.round(tasks.reduce(function(sum, task) { return sum + Number(task.progress || 0); }, 0) / total) : 0;
+      var done = tasks.filter(function(task) { return task.status === 'Завершено'; }).length;
+      var risk = tasks.filter(function(task) { return task.status === 'Риск'; }).length;
+
+      document.getElementById('k-total').textContent = total;
+      document.getElementById('k-in-work').textContent = inWork;
+      document.getElementById('k-hours').textContent = hours;
+      document.getElementById('k-progress').textContent = avgProgress + '%';
+      document.getElementById('k-done').textContent = done;
+      document.getElementById('k-risk').textContent = risk;
+
+      var ownerMap = {};
+      tasks.forEach(function(task) {
+        ownerMap[task.owner] = (ownerMap[task.owner] || 0) + Number(task.hours || 0);
+      });
+      var topOwner = Object.keys(ownerMap).sort(function(a, b) { return ownerMap[b] - ownerMap[a]; })[0] || '—';
+      var nearestTask = tasks
+        .filter(function(task) { return task.status !== 'Завершено' && task.dueDate; })
+        .sort(function(a, b) { return String(a.dueDate).localeCompare(String(b.dueDate)); })[0];
+
+      document.getElementById('side-focus').textContent = (topOwner !== '—' ? topOwner + ' / ' : 'Q2 / ') + (nearestTask ? formatDate(nearestTask.dueDate) : 'W07');
+    }
+
+    function renderTable(period, tableId) {
+      var tasks = getTasks().filter(function(task) { return task.period === period; });
+      var table = document.getElementById(tableId);
+
+      table.innerHTML =
+        '<thead><tr>' +
+          '<th>№</th>' +
+          '<th>% готовности</th>' +
+          '<th>Период</th>' +
+          '<th>Контур</th>' +
+          '<th>Задача</th>' +
+          '<th>Описание</th>' +
+          '<th>Отчет</th>' +
+          '<th>Статус</th>' +
+          '<th>Срок</th>' +
+          '<th>Часы</th>' +
+          '<th>Исполнитель</th>' +
+          '<th>Примечания</th>' +
+          '<th>Действия</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
+        (tasks.length ? tasks.map(function(task, index) {
+          return '<tr>' +
+            '<td><div class="task-num">' + (index + 1) + '</div></td>' +
+            '<td><span class="progress-pill">' + Number(task.progress || 0) + '%</span></td>' +
+            '<td><span class="period-pill ' + periodClass(task.period) + '">' + periodLabel(task.period) + '</span></td>' +
+            '<td>' + escapeHtml(formatTaskTopics(task)) + '</td>' +
+            '<td><strong>' + escapeHtml(task.title) + '</strong></td>' +
+            '<td><div class="desc">' + escapeHtml(task.description || '—') + '</div></td>' +
+            '<td>' + escapeHtml(task.report || '—') + '</td>' +
+            '<td><span class="status-pill ' + statusClass(task.status) + '">' + escapeHtml(task.status || 'Открыто') + '</span></td>' +
+            '<td>' + formatDate(task.dueDate) + '</td>' +
+            '<td>' + Number(task.hours || 0) + ' ч</td>' +
+            '<td><span class="owner">' + escapeHtml(task.owner || '—') + '</span></td>' +
+            '<td><div class="notes-cell">' + escapeHtml(task.notes || '—') + '</div></td>' +
+            '<td class="row-actions"><button class="btn-open" type="button" title="Открыть задачу" onclick="openExistingTask(\'' + escapeHtml(task.id) + '\')">Открыть</button> <button class="btn-delete" type="button" title="Удалить задачу" onclick="deleteTask(\'' + escapeHtml(task.id) + '\')">×</button></td>' +
+          '</tr>';
+        }).join('') : '<tr><td colspan="13">Пока нет задач этого горизонта</td></tr>') +
+        '</tbody>';
+    }
+
+    function renderGantt() {
+      var weeks = ['Поток', 'W01', 'W02', 'W03', 'W04', 'W05', 'W06', 'W07', 'W08', 'W09', 'W10', 'W11', 'W12', 'W13'];
+      document.getElementById('gantt-head').innerHTML = weeks.map(function(label) {
+        return '<div>' + label + '</div>';
+      }).join('');
+
+      var rows = getGanttRows(getTasks());
+
+      document.getElementById('gantt-body').innerHTML = rows.map(function(row) {
+        var task = row.task;
+        var taskRange = getTaskRange(task);
+        var colorClass = task.period === 'week' ? 'c-cyan' : task.period === 'month' ? 'c-blue' : 'c-gold';
+        var left = ((taskRange.startWeek - 1) / 13) * 100;
+        var width = (taskRange.durationWeeks / 13) * 100;
+        var trackHeight = row.children.length ? 42 + (row.children.length * 28) : 34;
+        var topicLinks = getTaskTopics(task).map(function(topic) {
+          return '<span class="gantt-link-pill">' + escapeHtml(topic) + '</span>';
+        }).join('');
+        var childLinks = row.children.map(function(child) {
+          return '<span class="gantt-link-pill">' + escapeHtml(periodLabel(child.task.period)) + ' · ' + escapeHtml(child.task.title) + '</span>';
+        }).join('');
+        var childBars = row.children.map(function(child, index) {
+          var childTask = child.task;
+          var childRange = getTaskRange(childTask);
+          var childLeft = ((childRange.startWeek - 1) / 13) * 100;
+          var childWidth = (childRange.durationWeeks / 13) * 100;
+          var childClass = childTask.period === 'week' ? 'c-cyan' : 'c-blue';
+          var top = 42 + (index * 28);
+          return '<button class="gantt-bar gantt-bar-child ' + childClass + '" type="button" onclick="openExistingTask(\'' + escapeHtml(childTask.id) + '\')" style="top:' + top + 'px; left:calc(' + childLeft + '% + 4px); width:calc(' + childWidth + '% - 8px)">' + escapeHtml(periodLabel(childTask.period)) + ' · ' + escapeHtml(childTask.title) + '</button>';
+        }).join('');
+
+        return '<div class="gantt-row ' + (row.children.length ? 'has-children' : '') + '" style="--track-height:' + trackHeight + 'px">' +
+          '<div class="gantt-meta"><strong>' + escapeHtml(task.title) + '</strong><span>' + escapeHtml(periodLabel(task.period)) + ' · ' + escapeHtml(task.owner || '—') + ' · ' + Number(task.hours || 0) + ' ч · до ' + formatDate(task.dueDate) + '</span>' +
+            (topicLinks ? '<div class="gantt-links">' + topicLinks + '</div>' : '') +
+            (childLinks ? '<div class="gantt-links">' + childLinks + '</div>' : '') +
+          '</div>' +
+          Array.from({ length: 13 }).map(function() { return '<div class="week-cell"></div>'; }).join('') +
+          '<div class="gantt-track"><button class="gantt-bar gantt-bar-main ' + colorClass + '" type="button" onclick="openExistingTask(\'' + escapeHtml(task.id) + '\')" style="left:calc(' + left + '% + 4px); width:calc(' + width + '% - 8px)">' + escapeHtml(task.status) + ' · ' + Number(task.progress || 0) + '% · ' + escapeHtml(task.title) + '</button>' + childBars + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function resetTaskForm() {
+      currentEditTaskId = null;
+      document.getElementById('task-id').value = '';
+      document.querySelectorAll('.input, .textarea').forEach(function(el) { el.value = ''; });
+      document.getElementById('task-progress').value = 0;
+      document.getElementById('task-hours').value = 8;
+      document.getElementById('task-start-week').value = 1;
+      document.getElementById('task-duration-weeks').value = 2;
+      document.getElementById('task-status').value = 'Открыто';
+      document.getElementById('task-topic').value = '';
+      document.getElementById('task-submit-btn').textContent = 'Сохранить задачу';
+    }
+
+    function renderAll() {
+      var tasks = getTasks();
+      renderKPIs(tasks);
+      renderTable('week', 'table-week');
+      renderTable('month', 'table-month');
+      renderTable('quarter', 'table-quarter');
+      renderGantt();
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function openTaskModal(period) {
+      resetTaskForm();
+      currentModalPeriod = period || 'week';
+      document.getElementById('task-period').value = currentModalPeriod;
+      document.getElementById('modal-title').textContent =
+        currentModalPeriod === 'quarter' ? 'Новая квартальная задача' :
+        currentModalPeriod === 'month' ? 'Новая месячная задача' :
+        'Новая недельная задача';
+      document.getElementById('task-submit-btn').textContent = 'Сохранить задачу';
+      document.getElementById('task-modal-backdrop').classList.add('open');
+      document.body.classList.add('modal-open');
+    }
+
+    function openExistingTask(taskId) {
+      var task = getTasks().find(function(item) {
+        return item.id === taskId;
+      });
+      if (!task) return;
+
+      currentEditTaskId = task.id;
+      currentModalPeriod = task.period;
+      document.getElementById('task-id').value = task.id;
+      document.getElementById('task-period').value = task.period;
+      document.getElementById('task-status').value = task.status || 'Открыто';
+      document.getElementById('task-title').value = task.title || '';
+      document.getElementById('task-description').value = task.description || '';
+      document.getElementById('task-owner').value = task.owner || '';
+      document.getElementById('task-due-date').value = task.dueDate || '';
+      document.getElementById('task-progress').value = Number(task.progress || 0);
+      document.getElementById('task-hours').value = Number(task.hours || 0);
+      document.getElementById('task-report').value = task.report || '';
+      document.getElementById('task-notes').value = task.notes || '';
+      document.getElementById('task-topic').value = task.topic || '';
+      document.getElementById('task-start-week').value = Number(task.startWeek || 1);
+      document.getElementById('task-duration-weeks').value = Number(task.durationWeeks || 1);
+      document.getElementById('modal-title').textContent = 'Карточка задачи';
+      document.getElementById('task-submit-btn').textContent = 'Сохранить изменения';
+      document.getElementById('task-modal-backdrop').classList.add('open');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('task-modal-backdrop').classList.remove('open');
+      document.body.classList.remove('modal-open');
+    }
+
+    function submitTaskForm() {
+      var tasks = getTasks();
+      var isEditing = Boolean(currentEditTaskId);
+      var period = document.getElementById('task-period').value;
+      var title = document.getElementById('task-title').value.trim();
+      if (!title) {
+        showToast('Нужно указать название задачи');
+        return;
+      }
+
+      var taskPayload = {
+        id: currentEditTaskId || ('task-' + Date.now()),
+        period: period,
+        progress: Number(document.getElementById('task-progress').value || 0),
+        title: title,
+        description: document.getElementById('task-description').value.trim(),
+        report: document.getElementById('task-report').value.trim(),
+        status: document.getElementById('task-status').value,
+        owner: document.getElementById('task-owner').value.trim() || 'Не назначен',
+        dueDate: document.getElementById('task-due-date').value,
+        hours: Number(document.getElementById('task-hours').value || 0),
+        notes: document.getElementById('task-notes').value.trim(),
+        topic: document.getElementById('task-topic').value.trim(),
+        startWeek: Number(document.getElementById('task-start-week').value || 1),
+        durationWeeks: Number(document.getElementById('task-duration-weeks').value || 1)
+      };
+
+      if (currentEditTaskId) {
+        tasks = tasks.map(function(task) {
+          return task.id === currentEditTaskId ? taskPayload : task;
+        });
+      } else {
+        tasks.push(taskPayload);
+      }
+
+      saveTasks(tasks);
+      renderAll();
+      closeTaskModal();
+      resetTaskForm();
+      showToast(isEditing ? 'Задача обновлена' : 'Задача добавлена в план');
+    }
+
+    function deleteTask(taskId) {
+      var tasks = getTasks();
+      var nextTasks = tasks.filter(function(task) {
+        return task.id !== taskId;
+      });
+
+      if (nextTasks.length === tasks.length) return;
+
+      saveTasks(nextTasks);
+      renderAll();
+      showToast('Задача удалена');
+    }
+
+    (function init() {
+      renderAll();
+      document.getElementById('task-modal-backdrop').addEventListener('click', function(event) {
+        if (event.target.id === 'task-modal-backdrop') closeTaskModal();
+      });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeTaskModal();
+      });
+    })();
+  </script>
+</body>
+</html>

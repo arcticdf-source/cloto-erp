@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отгруженные заказы — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #09111b;
+      --bg2: #122033;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface2: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #edf3fa;
+      --muted: #8e9caf;
+      --gold: #f5c95f;
+      --green: #72d89a;
+      --blue: #7ebfff;
+      --radius: 20px;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+    }
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(114, 216, 154, 0.12), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(126, 191, 255, 0.12), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(126, 191, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126, 191, 255, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .wrap { position: relative; z-index: 1; max-width: 1560px; margin: 0 auto; padding: 28px 24px 44px; }
+    .hero, .panel, .kpi-card, .mini-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(114, 216, 154, 0.16), rgba(9, 17, 27, 0.34)),
+        var(--surface);
+    }
+    .eyebrow, .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .eyebrow {
+      border: 1px solid rgba(114, 216, 154, 0.24);
+      color: var(--green);
+    }
+    .chip {
+      border: 1px solid rgba(114, 216, 154, 0.22);
+      color: var(--green);
+      background: rgba(114, 216, 154, 0.12);
+    }
+    .title { margin-top: 12px; font-family: 'Space Grotesk', sans-serif; font-size: clamp(34px, 5vw, 54px); font-weight: 800; line-height: 0.98; letter-spacing: -0.04em; }
+    .title span { color: var(--green); }
+    .sub, .copy { color: var(--muted); }
+    .sub { margin-top: 12px; max-width: 860px; font-size: 14px; line-height: 1.7; }
+    .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 42px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04); color: var(--text); font-size: 12px; font-weight: 700; text-decoration: none;
+      transition: all 0.18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: var(--surface2); }
+    .btn.primary { color: var(--gold); background: rgba(245, 201, 95, 0.14); border-color: rgba(245, 201, 95, 0.24); }
+    .hero-side { display: grid; gap: 12px; }
+    .mini-card { padding: 16px; }
+    .mini-title { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; }
+    .mini-card strong { display: block; margin-top: 10px; font-family: 'Space Grotesk', sans-serif; font-size: 26px; line-height: 1.1; }
+    .mini-card p { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .kpi-card { padding: 16px; }
+    .kpi-value { margin-top: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 800; color: var(--green); }
+    .kpi-card:nth-child(2) .kpi-value { color: var(--blue); }
+    .kpi-card:nth-child(3) .kpi-value { color: var(--gold); }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 14px; }
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; line-height: 1.08; }
+    .copy { font-size: 12px; line-height: 1.6; max-width: 860px; }
+    .panel { padding: 20px; }
+    .table-wrap {
+      margin-top: 14px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(5, 13, 24, 0.5);
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 860px; }
+    thead { background: rgba(255, 255, 255, 0.05); }
+    th, td { padding: 14px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+    th { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    td { font-size: 13px; color: var(--text); }
+    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
+    tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+    .order-main { display: grid; gap: 4px; }
+    .order-main strong { font-size: 14px; font-weight: 800; }
+    .cell-meta { color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .empty-state { padding: 28px 18px; color: var(--muted); font-size: 13px; line-height: 1.7; text-align: center; }
+    @media (max-width: 1180px) {
+      .hero, .kpi-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 38px; }
+      table { min-width: 700px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Shipped Orders Module</div>
+        <div class="title">Отгруженные <span>заказы</span></div>
+        <div class="sub">Здесь открывается таблица всех отгруженных заказов. Каждая запись уже перенесена из модуля новых заказов и синхронизирована с коммерческой моделью отгрузок.</div>
+        <div class="hero-actions">
+          <a class="btn primary" href="sales-orders.html">← К дашборду заказов</a>
+          <a class="btn" href="sales-new-orders.html">К новым заказам</a>
+          <a class="btn" href="orders.html">К аналитике отгрузок</a>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div class="mini-card">
+          <div class="mini-title">Отгружено заказов</div>
+          <strong id="orders-count">0</strong>
+          <p>Количество заказов, уже перенесенных в архив отгрузок.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Экспорт строк</div>
+          <strong id="export-count">0</strong>
+          <p>Общее количество строк, отправленных в модель коммерческих отгрузок.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="kpi-card">
+        <div class="mini-title">Отгруженные заказы</div>
+        <div class="kpi-value" id="shipped-kpi">0</div>
+        <div class="copy">Записи, пришедшие из модуля новых заказов после отгрузки.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Сумма отгруженных</div>
+        <div class="kpi-value" id="amount-kpi">0 ₽</div>
+        <div class="copy">Итоговая сумма по архиву отгруженных заказов.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Синхронизация</div>
+        <div class="kpi-value">ОК</div>
+        <div class="copy">Каждый заказ уже доступен в коммерческих отгрузках.</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Таблица отгруженных заказов</div>
+          <div class="copy">Архив отгруженных заказов с датой отгрузки, суммой и количеством выгруженных строк.</div>
+        </div>
+        <div class="chip">Архив отгрузок</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Заказ</th>
+              <th>Покупатель</th>
+              <th>Отгрузка</th>
+              <th>Сумма</th>
+              <th>Экспорт</th>
+            </tr>
+          </thead>
+          <tbody id="shipped-orders-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    var SHIPPED_ORDERS_KEY = 'cloto_sales_orders_shipped';
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+    function readStorageArray(key) {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+    function formatRub(value) { return Number(value || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) + ' ₽'; }
+    function formatTons(value) { return Number(value || 0).toLocaleString('ru-RU', { maximumFractionDigits: 3, minimumFractionDigits: 0 }) + ' т'; }
+    function formatDate(value) {
+      if (!value) return '—';
+      if (/^\d{4}-\d{2}-\d{2}T/.test(value)) return formatDate(value.slice(0, 10));
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        var parts = value.split('-');
+        return parts[2] + '.' + parts[1] + '.' + parts[0];
+      }
+      return value;
+    }
+    function getOrderLines(order) { return Array.isArray(order && order.lines) ? order.lines : []; }
+    function getOrderTons(order) {
+      return getOrderLines(order).reduce(function(sum, line) { return sum + Number(line && line.tons || 0); }, 0);
+    }
+    function getOrderDestinations(order) {
+      var unique = {};
+      getOrderLines(order).forEach(function(line) {
+        var destination = (line && line.deliveryType === 'pickup') ? 'Архангельск' : (line && line.destination) || 'Архангельск';
+        if (destination) unique[destination] = true;
+      });
+      return Object.keys(unique).join(', ') || '—';
+    }
+    function renderShippedOrders() {
+      var shippedOrders = readStorageArray(SHIPPED_ORDERS_KEY);
+      var body = document.getElementById('shipped-orders-body');
+      var totalAmount = shippedOrders.reduce(function(sum, order) {
+        return sum + Number(order && order.totals && order.totals.withVat || 0);
+      }, 0);
+      var totalExports = shippedOrders.reduce(function(sum, order) {
+        return sum + Number(order && order.exportedRowsCount || 0);
+      }, 0);
+
+      document.getElementById('orders-count').textContent = String(shippedOrders.length);
+      document.getElementById('export-count').textContent = String(totalExports);
+      document.getElementById('shipped-kpi').textContent = String(shippedOrders.length);
+      document.getElementById('amount-kpi').textContent = formatRub(totalAmount);
+
+      if (!shippedOrders.length) {
+        body.innerHTML = '<tr><td colspan="5" class="empty-state">Отгруженных заказов пока нет. Перейдите в модуль новых заказов и нажмите “Отгрузить заказ”.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = shippedOrders.map(function(order) {
+        return '<tr>' +
+          '<td><div class="order-main"><strong>' + escapeHtml(order.number || 'Без номера') + '</strong><div class="cell-meta">' + escapeHtml(formatDate(order.date)) + '</div></div></td>' +
+          '<td><div class="order-main"><strong>' + escapeHtml(order.buyer && order.buyer.name || '—') + '</strong><div class="cell-meta">' + escapeHtml(getOrderDestinations(order)) + '</div></div></td>' +
+          '<td><div class="order-main"><strong>' + escapeHtml(formatDate(order.shippedAt)) + '</strong><div class="cell-meta">' + getOrderLines(order).length + ' строк · ' + escapeHtml(formatTons(getOrderTons(order))) + '</div></div></td>' +
+          '<td><div class="order-main"><strong>' + escapeHtml(formatRub(order.totals && order.totals.withVat || 0)) + '</strong><div class="cell-meta">С НДС</div></div></td>' +
+          '<td><div class="order-main"><strong>' + Number(order.exportedRowsCount || 0) + ' строк</strong><div class="cell-meta">Выгружено в cloto_orders_added</div></div></td>' +
+        '</tr>';
+      }).join('');
+    }
+    (function init() {
+      renderShippedOrders();
+      window.addEventListener('storage', renderShippedOrders);
+    })();
+  </script>
+</body>
+</html>

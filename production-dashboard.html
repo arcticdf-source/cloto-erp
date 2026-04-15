@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Производство — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09111b;
+      --bg2: #122033;
+      --surface: rgba(255,255,255,0.05);
+      --surface2: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+      --text: #edf3fa;
+      --muted: #8e9caf;
+      --gold: #f5c95f;
+      --cyan: #5de5cf;
+      --blue: #7ebfff;
+      --radius: 20px;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(126,191,255,0.16), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(93,229,207,0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(126,191,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126,191,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1520px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .hero,
+    .kpi-card,
+    .module-card,
+    .note-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(126,191,255,0.16), rgba(9,17,27,0.34)),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(126,191,255,0.24);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .title span { color: var(--blue); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: var(--surface2); }
+    .btn.primary { color: var(--gold); background: rgba(245,201,95,0.14); border-color: rgba(245,201,95,0.24); }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+
+    .note-card {
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .mini-title {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .note-card strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+
+    .note-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-card {
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .kpi-value {
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--blue);
+    }
+
+    .kpi-card:nth-child(2) .kpi-value { color: var(--cyan); }
+    .kpi-card:nth-child(3) .kpi-value { color: var(--gold); }
+
+    .kpi-copy {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.08;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 860px;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .module-card {
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.22s ease;
+      background:
+        linear-gradient(135deg, rgba(126,191,255,0.08), rgba(9,17,27,0.34)),
+        var(--surface);
+    }
+
+    .module-card:hover {
+      transform: translateY(-4px);
+      background:
+        linear-gradient(135deg, rgba(126,191,255,0.12), rgba(9,17,27,0.34)),
+        var(--surface2);
+    }
+
+    .module-icon {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(126,191,255,0.16);
+      border: 1px solid rgba(126,191,255,0.24);
+      font-size: 28px;
+    }
+
+    .module-name {
+      margin-top: 18px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .module-desc {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .module-footer {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .module-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--blue);
+      background: rgba(126,191,255,0.12);
+      border: 1px solid rgba(126,191,255,0.18);
+    }
+
+    .module-link {
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1180px) {
+      .hero,
+      .kpi-grid,
+      .modules-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Production Dashboard</div>
+        <div class="title">Дашборд <span>производства</span></div>
+        <div class="sub">Это входная страница производственного контура. Отсюда можно перейти в план производства и в реестр полученных заявок на производство.</div>
+        <div class="hero-actions">
+          <a class="btn primary" href="portal.html">← В портал</a>
+          <a class="btn" href="production-plan.html">Открыть план производства</a>
+          <a class="btn" href="production-orders.html">Открыть заявки</a>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="note-card">
+          <div class="mini-title">Контур</div>
+          <strong>2 модуля</strong>
+          <p>Планирование производства и входящие производственные заявки вынесены в отдельный контур.</p>
+        </div>
+        <div class="note-card">
+          <div class="mini-title">Источник заявок</div>
+          <strong>Коммерческий отдел</strong>
+          <p>Заявки на производство поступают из коммерческого блока и доступны в реестре полученных заявок.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="kpi-card">
+        <div class="mini-title">Модулей</div>
+        <div class="kpi-value">2</div>
+        <div class="kpi-copy">План производства и полученные заявки на производство.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Планирование</div>
+        <div class="kpi-value">Активно</div>
+        <div class="kpi-copy">Для производственного графика выделен отдельный модуль.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Заявки</div>
+        <div class="kpi-value">Реестр</div>
+        <div class="kpi-copy">Полученные заявки на производство собираются в отдельной таблице.</div>
+      </article>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <div class="section-title">Модули производства</div>
+          <div class="section-copy">Откройте нужный модуль: план производства для календарного и ресурсного планирования или полученные заявки для обработки входящих производственных документов.</div>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <a class="module-card" href="production-plan.html">
+          <div class="module-icon">🗓️</div>
+          <div class="module-name">План производства</div>
+          <div class="module-desc">Планирование выпуска, приоритетов, производственных окон и контроль загрузки по периодам.</div>
+          <div class="module-footer">
+            <div class="module-badge">Планирование</div>
+            <div class="module-link">Открыть →</div>
+          </div>
+        </a>
+
+        <a class="module-card" href="production-orders.html">
+          <div class="module-icon">📥</div>
+          <div class="module-name">Полученные заявки на производство</div>
+          <div class="module-desc">Реестр входящих заявок, пришедших на производство, с переходом к созданию новой производственной формы.</div>
+          <div class="module-footer">
+            <div class="module-badge">Реестр заявок</div>
+            <div class="module-link">Открыть →</div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

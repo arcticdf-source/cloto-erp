@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Полученные заявки на производство — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a121a;
+      --bg2: #112131;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface2: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #edf3fa;
+      --muted: #92a0b1;
+      --gold: #f5c95f;
+      --cyan: #5de5cf;
+      --blue: #7ebfff;
+      --radius: 20px;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(245, 201, 95, 0.14), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(93, 229, 207, 0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(126, 191, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126, 191, 255, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .hero,
+    .kpi-card,
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(245, 201, 95, 0.16), rgba(9, 17, 27, 0.34)),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 201, 95, 0.24);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .title span { color: var(--gold); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions,
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions { margin-top: 16px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: var(--surface2); }
+    .btn.primary { color: var(--gold); background: rgba(245, 201, 95, 0.14); border-color: rgba(245, 201, 95, 0.24); }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .mini-title {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+
+    .mini-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-card {
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .kpi-value {
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--gold);
+    }
+
+    .kpi-card:nth-child(2) .kpi-value { color: var(--cyan); }
+    .kpi-card:nth-child(3) .kpi-value { color: var(--blue); }
+
+    .kpi-copy {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .panel { padding: 20px; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.08;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 780px;
+    }
+
+    .table-wrap {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(5, 13, 24, 0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+    }
+
+    thead { background: rgba(255, 255, 255, 0.05); }
+
+    th,
+    td {
+      padding: 14px 12px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    td {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
+    tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+
+    .table-main {
+      display: grid;
+      gap: 4px;
+    }
+
+    .table-main strong {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .cell-meta {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .empty-state {
+      padding: 28px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1180px) {
+      .hero,
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 38px; }
+      table { min-width: 700px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Production Requests</div>
+        <div class="title">Полученные заявки <span>на производство</span></div>
+        <div class="sub">Здесь собирается реестр заявок, которые поступили в производство. Новая форма открывается отдельной страницей и повторяет структуру производственной заявки из вашего шаблона.</div>
+        <div class="hero-actions">
+          <a class="btn primary" href="production-dashboard.html">← К дашборду производства</a>
+          <a class="btn" href="production-order-form.html">Новый заказ на производство</a>
+          <a class="btn" href="portal.html">В портал</a>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="mini-card">
+          <div class="mini-title">Реестр</div>
+          <strong id="registry-count">0</strong>
+          <p>Количество заявок, отправленных в реестр производства в текущем браузере.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Статус</div>
+          <strong>Готово</strong>
+          <p>Форма создания новой заявки уже подключена к этой странице.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="kpi-card">
+        <div class="mini-title">Модуль</div>
+        <div class="kpi-value">Производство</div>
+        <div class="kpi-copy">Отдельный маршрут для заявок на производство.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Новых форм</div>
+        <div class="kpi-value" id="draft-count">0</div>
+        <div class="kpi-copy">Отправленные в локальный реестр производственные документы.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Шаг</div>
+        <div class="kpi-value">Новая заявка</div>
+        <div class="kpi-copy">Создание заявки начинается с кнопки ниже.</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Реестр полученных заявок</div>
+          <div class="section-copy">Нажмите “Новый заказ на производство”, заполните форму и отправьте заявку. После отправки она появится в этой таблице.</div>
+        </div>
+        <div class="toolbar">
+          <a class="btn primary" href="production-order-form.html">Новый заказ на производство</a>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Заявка</th>
+              <th>Получатель</th>
+              <th>Продукция</th>
+              <th>Отгрузка</th>
+              <th>Объем</th>
+            </tr>
+          </thead>
+          <tbody id="production-orders-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
+
+    function readStorageArray(key) {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatDate(value) {
+      if (!value) return '—';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        var parts = value.split('-');
+        return parts[2] + '.' + parts[1] + '.' + parts[0];
+      }
+      return value;
+    }
+
+    function renderRegistry() {
+      var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
+      var body = document.getElementById('production-orders-body');
+
+      document.getElementById('registry-count').textContent = String(orders.length);
+      document.getElementById('draft-count').textContent = String(orders.length);
+
+      if (!orders.length) {
+        body.innerHTML = '<tr><td colspan="5" class="empty-state">Реестр пока пуст. Создайте первую производственную заявку через кнопку “Новый заказ на производство”.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = orders.map(function(order) {
+        return '<tr>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(order.requestNumber || 'Без номера') + '</strong><div class="cell-meta">' + escapeHtml(order.applicantDepartment || '—') + ' · ' + escapeHtml(formatDate(order.postedDate)) + '</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(order.companyReceiver || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.orderSpecification || '—') + '</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(order.productName || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.recipe || '—') + '</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(order.shipmentDate || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.batchNumber || '—') + '</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(order.volume || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.packageType || '—') + '</div></div></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    (function init() {
+      renderRegistry();
+      window.addEventListener('storage', renderRegistry);
+    })();
+  </script>
+</body>
+</html>

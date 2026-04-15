@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторные отчеты — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #08111c;
+      --bg2: #111a2b;
+      --surface: rgba(255,255,255,.05);
+      --surface2: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.08);
+      --text: #e8eef7;
+      --muted: #7e8fa8;
+      --cyan: #47e0c2;
+      --blue: #78bcff;
+      --violet: #b39cff;
+      --gold: #f2cb6f;
+      --green: #6dd9a0;
+      --red: #ff7c87;
+      --radius: 18px;
+      --shadow: 0 24px 64px rgba(0,0,0,.34);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(179,156,255,.16), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(71,224,194,.14), transparent 22%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120,188,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120,188,255,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px 24px 42px;
+    }
+
+    .hero,
+    .kpi-grid,
+    .panel,
+    .table-panel,
+    .side-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 420px);
+      gap: 18px;
+      padding: 22px 24px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(179,156,255,.14), rgba(8,17,28,.4)),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(179,156,255,.24);
+      color: var(--violet);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 800;
+      line-height: .98;
+      letter-spacing: -.04em;
+    }
+
+    .title span { color: var(--violet); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all .18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: var(--surface2); }
+
+    .btn.primary {
+      background: rgba(179,156,255,.14);
+      border-color: rgba(179,156,255,.24);
+      color: var(--violet);
+    }
+
+    .btn.cyan {
+      background: rgba(71,224,194,.14);
+      border-color: rgba(71,224,194,.24);
+      color: var(--cyan);
+      cursor: pointer;
+    }
+
+    .btn.gold {
+      background: rgba(242,203,111,.14);
+      border-color: rgba(242,203,111,.22);
+      color: var(--gold);
+    }
+
+    .side-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .side-card + .side-card { margin-top: 12px; }
+
+    .mini-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+
+    .side-card strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .side-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .panel-value {
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--violet);
+    }
+
+    .panel:nth-child(2) .panel-value { color: var(--cyan); }
+    .panel:nth-child(3) .panel-value { color: var(--blue); }
+    .panel:nth-child(4) .panel-value { color: var(--gold); }
+    .panel:nth-child(5) .panel-value { color: var(--green); }
+
+    .panel-copy {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, .8fr);
+      gap: 14px;
+    }
+
+    .table-panel,
+    .side-panel { padding: 16px 18px; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 560px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 960px;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px;
+      background: rgba(8,17,28,.96);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      font-size: 12px;
+      line-height: 1.55;
+      vertical-align: top;
+    }
+
+    tr:hover td { background: rgba(255,255,255,.03); }
+
+    .report-id {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--violet);
+      white-space: nowrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .p-draft { color: var(--blue); background: rgba(120,188,255,.12); }
+    .p-review { color: var(--gold); background: rgba(242,203,111,.12); }
+    .p-release { color: var(--green); background: rgba(109,217,160,.12); }
+    .p-critical { color: var(--red); background: rgba(255,124,135,.12); }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      white-space: nowrap;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 92px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .18s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      background: var(--surface2);
+    }
+
+    .action-btn.edit {
+      color: var(--blue);
+      border-color: rgba(120,188,255,.18);
+      background: rgba(120,188,255,.12);
+    }
+
+    .action-btn.delete {
+      color: var(--red);
+      border-color: rgba(255,124,135,.16);
+      background: rgba(255,124,135,.1);
+      min-width: 34px;
+      width: 34px;
+      padding: 0;
+    }
+
+    .action-btn.file {
+      color: var(--cyan);
+      border-color: rgba(71,224,194,.18);
+      background: rgba(71,224,194,.1);
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .list-item {
+      padding: 12px 13px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+
+    .list-item strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .list-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(4, 10, 16, .78);
+      backdrop-filter: blur(12px);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(760px, 100%);
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(17,26,43,.96);
+      box-shadow: var(--shadow);
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+
+    .textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .file-note {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: #182437;
+      color: var(--text);
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all .22s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    @media (max-width: 1260px) {
+      .hero,
+      .layout,
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 36px; }
+      .modal-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Lab Reporting Desk</div>
+        <div class="title">Лабораторные <span>отчеты</span></div>
+        <div class="sub">Единый экран для выпуска протоколов, контроля статусов отчетов, критичных дедлайнов и передачи результатов в коммерческий отдел. Здесь можно быстро увидеть, какие документы готовы к релизу, какие висят на проверке и где есть риск по срокам.</div>
+        <div class="actions">
+          <a class="btn primary" href="laboratory.html">← В лабораторию</a>
+          <a class="btn" href="incoming-sample-requests.html">К входящим заявкам</a>
+          <a class="btn" href="laboratory-work-plan.html">К плану работ</a>
+          <a class="btn gold" href="daily-laboratory-reports.html">Ежедневные отчеты</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="side-card">
+          <div class="mini-title">Текущий выпуск</div>
+          <strong id="side-total">0 отчетов</strong>
+          <p id="side-total-copy">Активный пакет отчетности по лаборатории.</p>
+        </div>
+        <div class="side-card">
+          <div class="mini-title">Критичное окно</div>
+          <strong id="side-critical">—</strong>
+          <p id="side-critical-copy">Ближайший критичный отчет и окно до выпуска.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="panel">
+        <div class="mini-title">Всего отчетов</div>
+        <div class="panel-value" id="k-total">0</div>
+        <div class="panel-copy">Общий реестр по активным и недавно выданным протоколам лаборатории.</div>
+      </article>
+      <article class="panel">
+        <div class="mini-title">Готовы к выпуску</div>
+        <div class="panel-value" id="k-release">0</div>
+        <div class="panel-copy">Документы, которые можно передавать после финального подтверждения ответственного.</div>
+      </article>
+      <article class="panel">
+        <div class="mini-title">На проверке</div>
+        <div class="panel-value" id="k-review">0</div>
+        <div class="panel-copy">Отчеты, ожидающие технической верификации и сверки с лабораторными журналами.</div>
+      </article>
+      <article class="panel">
+        <div class="mini-title">Срок до выпуска</div>
+        <div class="panel-value" id="k-cycle">0 дн</div>
+        <div class="panel-copy">Среднее время от завершения испытаний до готового отчета.</div>
+      </article>
+      <article class="panel">
+        <div class="mini-title">Просрочка</div>
+        <div class="panel-value" id="k-overdue">0</div>
+        <div class="panel-copy">Отчеты, по которым уже нужна эскалация на руководителя лаборатории.</div>
+      </article>
+    </section>
+
+    <section class="layout">
+      <article class="table-panel">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Реестр отчетов</div>
+            <div class="section-copy">Текущий список ключевых протоколов и отчетов по клиентским и внутренним задачам. Это заготовка под будущую связку с задачами лаборатории и входящими заявками.</div>
+          </div>
+          <button class="btn cyan" type="button" onclick="openReportModal()">+ Добавить новый отчет</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>№ отчета</th>
+                <th>Проект / клиент</th>
+                <th>Тип</th>
+                <th>Статус</th>
+                <th>Ответственный</th>
+                <th>Дата испытаний</th>
+                <th>План выпуска</th>
+                <th>Комментарий</th>
+                <th>Файл</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="reports-body"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="side-panel">
+        <div class="section-title">Контрольные блоки</div>
+        <div class="list">
+          <div class="list-item">
+            <strong>Критичные отчеты недели</strong>
+            <span>2.12 по НЕДРА ТЕСТ и 18.7 по НПП Бурение требуют ручного контроля до передачи.</span>
+          </div>
+          <div class="list-item">
+            <strong>На внутренней проверке</strong>
+            <span>9.13 и 15.4 нельзя выпускать без сверки методики и последних измерений.</span>
+          </div>
+          <div class="list-item">
+            <strong>Буфер на оформление</strong>
+            <span>Лучше держать не меньше 1 дня между завершением испытаний и отправкой отчета клиенту.</span>
+          </div>
+          <div class="list-item">
+            <strong>Следующий шаг</strong>
+            <span>Эту страницу можно потом связать с задачами и входящими заявками, чтобы отчет рождался прямо из задачи и заявки.</span>
+          </div>
+          <div class="list-item">
+            <strong>Новый поток</strong>
+            <span>Для ежедневных Word-отчетов теперь есть отдельный модуль с drag and drop загрузкой и базовой систематизацией по дате, смене и зоне.</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="report-modal-backdrop">
+    <div class="modal">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="report-modal-title">Новый отчет</div>
+          <div class="section-copy">Можно создать новый лабораторный отчет, загрузить сам Word-файл и потом исправлять запись прямо в реестре.</div>
+        </div>
+        <button class="btn" type="button" onclick="closeReportModal()">Закрыть</button>
+      </div>
+
+      <input id="report-id" type="hidden">
+      <input id="report-existing-file-name" type="hidden">
+      <input id="report-existing-file-data" type="hidden">
+
+      <div class="modal-grid">
+        <div class="field">
+          <label for="report-number">№ отчета</label>
+          <input class="input" id="report-number" placeholder="Например: 24.6">
+        </div>
+        <div class="field">
+          <label for="report-type">Тип</label>
+          <input class="input" id="report-type" placeholder="Сертификационный протокол">
+        </div>
+
+        <div class="field full">
+          <label for="report-project">Проект / клиент</label>
+          <input class="input" id="report-project" placeholder="Например: НЕДРА ТЕСТ · Стабилайт">
+        </div>
+
+        <div class="field">
+          <label for="report-status">Статус</label>
+          <select class="select" id="report-status">
+            <option value="Черновик">Черновик</option>
+            <option value="На проверке">На проверке</option>
+            <option value="Готов к выпуску">Готов к выпуску</option>
+            <option value="Критично">Критично</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="report-owner">Ответственный</label>
+          <input class="input" id="report-owner" placeholder="ФИО">
+        </div>
+
+        <div class="field">
+          <label for="report-test-date">Дата испытаний</label>
+          <input class="input" id="report-test-date" type="date">
+        </div>
+        <div class="field">
+          <label for="report-release-date">План выпуска</label>
+          <input class="input" id="report-release-date" type="date">
+        </div>
+
+        <div class="field full">
+          <label for="report-comment">Комментарий</label>
+          <textarea class="textarea" id="report-comment" placeholder="Что нужно учесть по выпуску, проверке или передаче"></textarea>
+        </div>
+
+        <div class="field full">
+          <label for="report-file">Word-файл отчета</label>
+          <input class="input" id="report-file" type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+          <div class="file-note" id="report-file-note">Можно загрузить `.doc` или `.docx`. Файл будет храниться локально в браузере этой страницы.</div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:16px">
+        <button class="btn primary" id="report-submit-btn" type="button" onclick="submitReportForm()">Сохранить отчет</button>
+        <button class="btn" type="button" onclick="closeReportModal()">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var STORAGE_KEY = 'cloto_laboratory_reports_v1';
+    var currentReportId = null;
+
+    var DEFAULT_REPORTS = [
+      {
+        id: 'r1',
+        number: '2.12',
+        project: 'НЕДРА ТЕСТ · Стабилайт',
+        type: 'Сертификационный протокол',
+        status: 'Критично',
+        owner: 'Кувшинова Н.А.',
+        testDate: '2026-04-23',
+        releaseDate: '2026-04-25',
+        comment: 'Финальная редакция, нельзя переносить без уведомления коммерческого отдела.',
+        fileName: '',
+        fileData: ''
+      },
+      {
+        id: 'r2',
+        number: '9.13',
+        project: 'Стабилайт II · Комплекс Ойл / ЭФТЕРРА',
+        type: 'Сравнительный отчет',
+        status: 'На проверке',
+        owner: 'Бурков А.А.',
+        testDate: '2026-04-26',
+        releaseDate: '2026-04-30',
+        comment: 'Требуется сверка двух серий и итоговая таблица по повторяемости.',
+        fileName: '',
+        fileData: ''
+      },
+      {
+        id: 'r3',
+        number: '15.4',
+        project: 'Оптитрол без пены',
+        type: 'Внутренний R&D отчет',
+        status: 'Черновик',
+        owner: 'Архилин М.А.',
+        testDate: '2026-04-29',
+        releaseDate: '2026-05-12',
+        comment: 'Ждем новые пеногасители и контрольную проверку фильтрации.',
+        fileName: '',
+        fileData: ''
+      },
+      {
+        id: 'r4',
+        number: '18.7',
+        project: 'НПП Бурение · Карбо-Блок',
+        type: 'Клиентский протокол',
+        status: 'Готов к выпуску',
+        owner: 'Кувшинова Н.А.',
+        testDate: '2026-04-24',
+        releaseDate: '2026-04-26',
+        comment: 'Осталось подписать и передать в коммерческий отдел.',
+        fileName: '',
+        fileData: ''
+      },
+      {
+        id: 'r5',
+        number: '21.3',
+        project: 'Июльский демо-блок',
+        type: 'Плановый свод',
+        status: 'Черновик',
+        owner: 'Архилин М.А.',
+        testDate: '',
+        releaseDate: '2026-06-10',
+        comment: 'Свод готовится как опорный пакет под старт Q3.',
+        fileName: '',
+        fileData: ''
+      }
+    ];
+
+    function showToast(message) {
+      var toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2200);
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function loadReports() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (error) {}
+      return DEFAULT_REPORTS.slice();
+    }
+
+    function saveReports(reports) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    }
+
+    function getReports() {
+      return loadReports().sort(function(a, b) {
+        return String(a.releaseDate || '9999-99-99').localeCompare(String(b.releaseDate || '9999-99-99')) || String(a.number).localeCompare(String(b.number), 'ru');
+      });
+    }
+
+    function formatDate(dateValue) {
+      if (!dateValue) return '—';
+      var parts = dateValue.split('-');
+      if (parts.length !== 3) return dateValue;
+      return parts[2] + '.' + parts[1] + '.' + parts[0].slice(2);
+    }
+
+    function statusClass(status) {
+      if (status === 'Готов к выпуску') return 'p-release';
+      if (status === 'На проверке') return 'p-review';
+      if (status === 'Критично') return 'p-critical';
+      return 'p-draft';
+    }
+
+    function renderKPIs(reports) {
+      var total = reports.length;
+      var ready = reports.filter(function(report) { return report.status === 'Готов к выпуску'; }).length;
+      var review = reports.filter(function(report) { return report.status === 'На проверке'; }).length;
+      var overdue = reports.filter(function(report) {
+        return report.releaseDate && report.status !== 'Готов к выпуску' && report.status !== 'Черновик' && report.releaseDate < new Date().toISOString().slice(0, 10);
+      }).length;
+      var cycleItems = reports.filter(function(report) { return report.testDate && report.releaseDate; });
+      var avgCycle = cycleItems.length ? (cycleItems.reduce(function(sum, report) {
+        var test = new Date(report.testDate);
+        var release = new Date(report.releaseDate);
+        return sum + Math.max(0, Math.round((release - test) / 86400000));
+      }, 0) / cycleItems.length).toFixed(1) : '0';
+      var critical = reports.filter(function(report) { return report.status === 'Критично'; }).sort(function(a, b) {
+        return String(a.releaseDate || '').localeCompare(String(b.releaseDate || ''));
+      })[0];
+
+      document.getElementById('k-total').textContent = total;
+      document.getElementById('k-release').textContent = ready;
+      document.getElementById('k-review').textContent = review;
+      document.getElementById('k-cycle').textContent = avgCycle + ' дн';
+      document.getElementById('k-overdue').textContent = overdue;
+
+      document.getElementById('side-total').textContent = total + ' отчетов';
+      document.getElementById('side-total-copy').textContent = 'В реестре: ' + ready + ' готовы к выпуску, ' + review + ' на проверке.';
+      document.getElementById('side-critical').textContent = critical ? critical.number : '—';
+      document.getElementById('side-critical-copy').textContent = critical
+        ? critical.project + ' · план выпуска ' + formatDate(critical.releaseDate)
+        : 'Критичных отчетов сейчас нет.';
+    }
+
+    function renderReportsTable() {
+      var reports = getReports();
+      var body = document.getElementById('reports-body');
+
+      body.innerHTML = reports.map(function(report) {
+        var fileCell = report.fileData
+          ? '<button class="action-btn file" type="button" onclick="downloadReportFile(\'' + escapeHtml(report.id) + '\')">Файл</button><div style="margin-top:6px;color:var(--muted);font-size:11px">' + escapeHtml(report.fileName) + '</div>'
+          : '<span style="color:var(--muted)">—</span>';
+
+        return '<tr>' +
+          '<td><div class="report-id">' + escapeHtml(report.number) + '</div></td>' +
+          '<td><strong>' + escapeHtml(report.project) + '</strong></td>' +
+          '<td>' + escapeHtml(report.type) + '</td>' +
+          '<td><span class="pill ' + statusClass(report.status) + '">' + escapeHtml(report.status) + '</span></td>' +
+          '<td>' + escapeHtml(report.owner) + '</td>' +
+          '<td>' + formatDate(report.testDate) + '</td>' +
+          '<td>' + formatDate(report.releaseDate) + '</td>' +
+          '<td>' + escapeHtml(report.comment || '—') + '</td>' +
+          '<td>' + fileCell + '</td>' +
+          '<td><div class="row-actions"><button class="action-btn edit" type="button" onclick="editReport(\'' + escapeHtml(report.id) + '\')">Исправить</button><button class="action-btn delete" type="button" title="Удалить отчет" onclick="deleteReport(\'' + escapeHtml(report.id) + '\')">×</button></div></td>' +
+        '</tr>';
+      }).join('');
+
+      renderKPIs(reports);
+    }
+
+    function resetReportForm() {
+      currentReportId = null;
+      document.getElementById('report-id').value = '';
+      document.getElementById('report-existing-file-name').value = '';
+      document.getElementById('report-existing-file-data').value = '';
+      document.getElementById('report-number').value = '';
+      document.getElementById('report-project').value = '';
+      document.getElementById('report-type').value = '';
+      document.getElementById('report-status').value = 'Черновик';
+      document.getElementById('report-owner').value = '';
+      document.getElementById('report-test-date').value = '';
+      document.getElementById('report-release-date').value = '';
+      document.getElementById('report-comment').value = '';
+      document.getElementById('report-file').value = '';
+      document.getElementById('report-file-note').textContent = 'Можно загрузить `.doc` или `.docx`. Файл будет храниться локально в браузере этой страницы.';
+      document.getElementById('report-modal-title').textContent = 'Новый отчет';
+      document.getElementById('report-submit-btn').textContent = 'Сохранить отчет';
+    }
+
+    function openReportModal() {
+      resetReportForm();
+      document.getElementById('report-modal-backdrop').classList.add('open');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeReportModal() {
+      document.getElementById('report-modal-backdrop').classList.remove('open');
+      document.body.classList.remove('modal-open');
+    }
+
+    function editReport(reportId) {
+      var report = getReports().find(function(item) { return item.id === reportId; });
+      if (!report) return;
+
+      currentReportId = report.id;
+      document.getElementById('report-id').value = report.id;
+      document.getElementById('report-existing-file-name').value = report.fileName || '';
+      document.getElementById('report-existing-file-data').value = report.fileData || '';
+      document.getElementById('report-number').value = report.number || '';
+      document.getElementById('report-project').value = report.project || '';
+      document.getElementById('report-type').value = report.type || '';
+      document.getElementById('report-status').value = report.status || 'Черновик';
+      document.getElementById('report-owner').value = report.owner || '';
+      document.getElementById('report-test-date').value = report.testDate || '';
+      document.getElementById('report-release-date').value = report.releaseDate || '';
+      document.getElementById('report-comment').value = report.comment || '';
+      document.getElementById('report-file-note').textContent = report.fileName
+        ? 'Сейчас прикреплен файл: ' + report.fileName + '. Можно выбрать новый Word-файл для замены.'
+        : 'Файл пока не прикреплен. Можно загрузить `.doc` или `.docx`.';
+      document.getElementById('report-modal-title').textContent = 'Исправить отчет';
+      document.getElementById('report-submit-btn').textContent = 'Сохранить изменения';
+      document.getElementById('report-modal-backdrop').classList.add('open');
+      document.body.classList.add('modal-open');
+    }
+
+    function readSelectedFile() {
+      return new Promise(function(resolve, reject) {
+        var input = document.getElementById('report-file');
+        var file = input.files && input.files[0];
+        if (!file) {
+          resolve({
+            fileName: document.getElementById('report-existing-file-name').value,
+            fileData: document.getElementById('report-existing-file-data').value
+          });
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function() {
+          resolve({ fileName: file.name, fileData: reader.result });
+        };
+        reader.onerror = function() {
+          reject(new Error('FILE_READ_ERROR'));
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function submitReportForm() {
+      var number = document.getElementById('report-number').value.trim();
+      var project = document.getElementById('report-project').value.trim();
+      if (!number || !project) {
+        showToast('Нужно заполнить номер отчета и проект');
+        return;
+      }
+
+      var reports = getReports();
+      var isEditing = Boolean(currentReportId);
+
+      try {
+        var filePayload = await readSelectedFile();
+        var report = {
+          id: currentReportId || ('report-' + Date.now()),
+          number: number,
+          project: project,
+          type: document.getElementById('report-type').value.trim(),
+          status: document.getElementById('report-status').value,
+          owner: document.getElementById('report-owner').value.trim() || 'Не назначен',
+          testDate: document.getElementById('report-test-date').value,
+          releaseDate: document.getElementById('report-release-date').value,
+          comment: document.getElementById('report-comment').value.trim(),
+          fileName: filePayload.fileName || '',
+          fileData: filePayload.fileData || ''
+        };
+
+        if (isEditing) {
+          reports = reports.map(function(item) {
+            return item.id === currentReportId ? report : item;
+          });
+        } else {
+          reports.unshift(report);
+        }
+
+        saveReports(reports);
+        renderReportsTable();
+        closeReportModal();
+        resetReportForm();
+        showToast(isEditing ? 'Отчет обновлен' : 'Новый отчет добавлен');
+      } catch (error) {
+        showToast('Не удалось загрузить файл отчета');
+      }
+    }
+
+    function deleteReport(reportId) {
+      var reports = getReports();
+      var nextReports = reports.filter(function(item) { return item.id !== reportId; });
+      if (nextReports.length === reports.length) return;
+      saveReports(nextReports);
+      renderReportsTable();
+      showToast('Отчет удален');
+    }
+
+    function downloadReportFile(reportId) {
+      var report = getReports().find(function(item) { return item.id === reportId; });
+      if (!report || !report.fileData) return;
+      var link = document.createElement('a');
+      link.href = report.fileData;
+      link.download = report.fileName || ('report-' + report.number + '.docx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    (function init() {
+      renderReportsTable();
+      document.getElementById('report-modal-backdrop').addEventListener('click', function(event) {
+        if (event.target.id === 'report-modal-backdrop') closeReportModal();
+      });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeReportModal();
+      });
+    })();
+  </script>
+</body>
+</html>

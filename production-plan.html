@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>План производства — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09111b;
+      --bg2: #122033;
+      --surface: rgba(255,255,255,0.05);
+      --surface2: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+      --text: #edf3fa;
+      --muted: #8e9caf;
+      --blue: #7ebfff;
+      --cyan: #5de5cf;
+      --gold: #f5c95f;
+      --radius: 20px;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(126,191,255,0.14), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(93,229,207,0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(126,191,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126,191,255,0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1520px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .hero,
+    .panel,
+    .kpi-card,
+    .plan-card,
+    .queue-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(126,191,255,0.16), rgba(9,17,27,0.34)),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(126,191,255,0.24);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 56px);
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .title span { color: var(--blue); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: var(--surface2); }
+    .btn.primary { color: var(--gold); background: rgba(245,201,95,0.14); border-color: rgba(245,201,95,0.24); }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .mini-title {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+
+    .mini-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-card {
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .kpi-value {
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--blue);
+    }
+
+    .kpi-card:nth-child(2) .kpi-value { color: var(--cyan); }
+    .kpi-card:nth-child(3) .kpi-value { color: var(--gold); }
+
+    .kpi-copy {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .plan-card {
+      padding: 20px;
+    }
+
+    .plan-name {
+      margin-top: 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .plan-copy {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .plan-stat {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--cyan);
+      background: rgba(93,229,207,0.12);
+      border: 1px solid rgba(93,229,207,0.18);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.08;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 860px;
+    }
+
+    .schedule-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .table-wrap {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(5,13,24,0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+
+    thead { background: rgba(255,255,255,0.05); }
+
+    th,
+    td {
+      padding: 14px 12px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    td {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
+    tbody tr:hover { background: rgba(255,255,255,0.045); }
+
+    .table-main {
+      display: grid;
+      gap: 4px;
+    }
+
+    .table-main strong {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .cell-meta {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .load-pill,
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      border: 1px solid transparent;
+    }
+
+    .load-high { color: var(--gold); background: rgba(245,201,95,0.12); border-color: rgba(245,201,95,0.18); }
+    .load-mid { color: var(--blue); background: rgba(126,191,255,0.12); border-color: rgba(126,191,255,0.18); }
+    .load-low { color: var(--cyan); background: rgba(93,229,207,0.12); border-color: rgba(93,229,207,0.18); }
+
+    .status-pill.hot { color: var(--gold); background: rgba(245,201,95,0.12); border-color: rgba(245,201,95,0.18); }
+    .status-pill.work { color: var(--blue); background: rgba(126,191,255,0.12); border-color: rgba(126,191,255,0.18); }
+    .status-pill.ready { color: var(--cyan); background: rgba(93,229,207,0.12); border-color: rgba(93,229,207,0.18); }
+
+    .queue-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .queue-card {
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .queue-card strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .queue-card p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .queue-meta {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .queue-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .empty-state {
+      padding: 28px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1180px) {
+      .hero,
+      .kpi-grid,
+      .plan-grid,
+      .schedule-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 38px; }
+      table { min-width: 760px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Production Plan</div>
+        <div class="title">План <span>производства</span></div>
+        <div class="sub">Здесь собран недельный производственный план: загрузка линий, приоритетные партии, ближайшие окна отгрузки и входящие заявки, которые нужно поставить в производство.</div>
+        <div class="hero-actions">
+          <a class="btn primary" href="production-dashboard.html">← К дашборду производства</a>
+          <a class="btn" href="production-orders.html">К полученным заявкам</a>
+          <a class="btn" href="portal.html">В портал</a>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="mini-card">
+          <div class="mini-title">Горизонт</div>
+          <strong>Неделя / Месяц</strong>
+          <p>План производства можно развивать как недельный и месячный график работ.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Статус</div>
+          <strong>Шаблон готов</strong>
+          <p>Страница создана как точка входа для дальнейшего наполнения производственным планом.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="kpi-card">
+        <div class="mini-title">Линии</div>
+        <div class="kpi-value" id="line-count">3</div>
+        <div class="kpi-copy">Активные линии или производственные контуры текущего плана.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Окна отгрузки</div>
+        <div class="kpi-value" id="shipment-window-count">5</div>
+        <div class="kpi-copy">Ближайшие отгрузочные окна и контроль сроков по заявкам.</div>
+      </article>
+      <article class="kpi-card">
+        <div class="mini-title">Источник</div>
+        <div class="kpi-value" id="request-count">0</div>
+        <div class="kpi-copy">Заявок учтено в производственном плане из входящего реестра.</div>
+      </article>
+    </section>
+
+    <section class="plan-grid">
+      <article class="plan-card">
+        <div class="mini-title">Блок 1</div>
+        <div class="plan-name">Недельные приоритеты</div>
+        <div class="plan-copy">Список продуктов и партий, которые нужно выпустить в первую очередь на текущей неделе по отгрузочным окнам.</div>
+        <div class="plan-stat" id="priority-stat">Основа для календарного плана</div>
+      </article>
+      <article class="plan-card">
+        <div class="mini-title">Блок 2</div>
+        <div class="plan-name">Загрузка мощностей</div>
+        <div class="plan-copy">Распределение по линиям, сменам и доступным производственным слотам с индикацией перегруза.</div>
+        <div class="plan-stat" id="load-stat">Основа для ресурсного плана</div>
+      </article>
+      <article class="plan-card">
+        <div class="mini-title">Блок 3</div>
+        <div class="plan-name">Критичные сроки</div>
+        <div class="plan-copy">Контроль дат отгрузки и партий, которые нельзя сдвигать без согласования с коммерческим блоком.</div>
+        <div class="plan-stat" id="deadline-stat">Основа для диспетчеризации</div>
+      </article>
+    </section>
+
+    <section class="schedule-layout">
+      <article class="panel">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Недельный план</div>
+            <div class="section-copy">Производственные слоты по линиям. Приоритет и загрузка рассчитаны так, чтобы первыми шли ближайшие отгрузки и самые объемные партии.</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Линия</th>
+                <th>Продукт / партия</th>
+                <th>Получатель</th>
+                <th>Окно</th>
+                <th>Объем</th>
+                <th>Загрузка</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody id="schedule-body"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="panel">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Очередь на запуск</div>
+            <div class="section-copy">Заявки, которые уже пришли в производство и требуют постановки в ближайший план.</div>
+          </div>
+        </div>
+        <div class="queue-list" id="queue-list"></div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
+    var DEFAULT_PLAN_ROWS = [
+      {
+        line: 'Линия A',
+        product: 'ПОЛИКАП жидкий',
+        batch: 'Партия 150425',
+        receiver: 'ТОО «ОМАС ИНТЕГРЕЙТЕД»',
+        window: 'Пн 08:00 - Вт 18:00',
+        volume: '8,64 т / 288 канистр',
+        load: 'Высокая',
+        status: 'Горячий слот'
+      },
+      {
+        line: 'Линия B',
+        product: 'Стабилайт II',
+        batch: 'Партия ST-2604',
+        receiver: 'АКРОС',
+        window: 'Ср 07:00 - Чт 15:00',
+        volume: '12 т / мешки',
+        load: 'Средняя',
+        status: 'В работе'
+      },
+      {
+        line: 'Линия C',
+        product: 'УЩР сухой',
+        batch: 'Партия US-2704',
+        receiver: 'Мад-Сервис',
+        window: 'Чт 10:00 - Пт 20:00',
+        volume: '9 т / мешки',
+        load: 'Низкая',
+        status: 'Подготовка'
+      }
+    ];
+
+    function readStorageArray(key) {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function pickLoadClass(value) {
+      if (value === 'Высокая') return 'load-high';
+      if (value === 'Средняя') return 'load-mid';
+      return 'load-low';
+    }
+
+    function pickStatusClass(value) {
+      if (/горяч|крит/i.test(value || '')) return 'hot';
+      if (/работ/i.test(value || '')) return 'work';
+      return 'ready';
+    }
+
+    function mapOrdersToPlanRows(orders) {
+      return orders.slice(0, 6).map(function(order, index) {
+        var lineName = ['Линия A', 'Линия B', 'Линия C'][index % 3];
+        var volume = order.volume || order.packageWeight || 'Объем уточняется';
+        var shipment = order.shipmentDate || 'Окно уточняется';
+        var batch = order.batchNumber || 'Партия не назначена';
+        var priority = index === 0 ? 'Высокая' : index < 3 ? 'Средняя' : 'Низкая';
+        var status = index === 0 ? 'Горячий слот' : index < 3 ? 'В работе' : 'Подготовка';
+        return {
+          line: lineName,
+          product: order.productName || order.nomenclature1c || 'Без названия',
+          batch: batch,
+          receiver: order.companyReceiver || 'Не указан',
+          window: shipment,
+          volume: volume,
+          load: priority,
+          status: status
+        };
+      });
+    }
+
+    function renderSchedule(rows) {
+      var body = document.getElementById('schedule-body');
+      if (!rows.length) {
+        body.innerHTML = '<tr><td colspan="7" class="empty-state">План пока пуст. Добавьте заявки на производство, чтобы сформировать недельный график.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = rows.map(function(row) {
+        return '<tr>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(row.line) + '</strong><div class="cell-meta">Производственный слот</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(row.product) + '</strong><div class="cell-meta">' + escapeHtml(row.batch) + '</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(row.receiver) + '</strong><div class="cell-meta">Коммерческая заявка</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(row.window) + '</strong><div class="cell-meta">Ближайшее окно</div></div></td>' +
+          '<td><div class="table-main"><strong>' + escapeHtml(row.volume) + '</strong><div class="cell-meta">Плановый выпуск</div></div></td>' +
+          '<td><span class="load-pill ' + pickLoadClass(row.load) + '">' + escapeHtml(row.load) + '</span></td>' +
+          '<td><span class="status-pill ' + pickStatusClass(row.status) + '">' + escapeHtml(row.status) + '</span></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function renderQueue(orders) {
+      var list = document.getElementById('queue-list');
+      if (!orders.length) {
+        list.innerHTML = '<div class="empty-state">Полученных заявок пока нет. Перейдите в модуль заявок и создайте первую производственную форму.</div>';
+        return;
+      }
+
+      list.innerHTML = orders.slice(0, 4).map(function(order, index) {
+        return '<article class="queue-card">' +
+          '<div class="mini-title">Заявка ' + escapeHtml(order.requestNumber || ('№' + String(index + 1).padStart(3, '0'))) + '</div>' +
+          '<strong>' + escapeHtml(order.productName || order.nomenclature1c || 'Без названия') + '</strong>' +
+          '<p>' + escapeHtml(order.companyReceiver || 'Получатель не указан') + '</p>' +
+          '<div class="queue-meta">' +
+            '<div class="queue-chip">Отгрузка: ' + escapeHtml(order.shipmentDate || 'уточняется') + '</div>' +
+            '<div class="queue-chip">Объем: ' + escapeHtml(order.volume || 'уточняется') + '</div>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+    }
+
+    function renderPlan() {
+      var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
+      var planRows = orders.length ? mapOrdersToPlanRows(orders) : DEFAULT_PLAN_ROWS;
+
+      document.getElementById('request-count').textContent = String(orders.length);
+      document.getElementById('line-count').textContent = String(Math.min(3, Math.max(1, planRows.length)));
+      document.getElementById('shipment-window-count').textContent = String(planRows.length);
+      document.getElementById('priority-stat').textContent = orders.length ? ('В плане ' + orders.length + ' заявок') : 'Основа для календарного плана';
+      document.getElementById('load-stat').textContent = planRows.length > 2 ? 'Есть нагрузка по трем линиям' : 'Основа для ресурсного плана';
+      document.getElementById('deadline-stat').textContent = orders.length ? 'Сроки привязаны к заявкам' : 'Основа для диспетчеризации';
+
+      renderSchedule(planRows);
+      renderQueue(orders);
+    }
+
+    (function init() {
+      renderPlan();
+      window.addEventListener('storage', renderPlan);
+    })();
+  </script>
+</body>
+</html>

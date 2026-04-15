@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сырьё · Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --bg:#111827; --bg2:#1a2540;
+      --surface:rgba(255,255,255,.08); --surface2:rgba(255,255,255,.14);
+      --border:rgba(255,255,255,.16); --border2:rgba(255,255,255,.28);
+      --accent:#7c5cfc; --accent2:#b07dff;
+      --cyan:#3de8c7; --gold:#f5c842; --red:#ff5e7d;
+      --green:#48bb78; --blue:#63b3ed; --orange:#f6ad55; --pink:#ed64a6;
+      --text:#f0f2f9; --muted:#8b96b5; --radius:16px;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:14px; }
+
+    .bg-grid { position:fixed; inset:0; z-index:0;
+      background-image:linear-gradient(rgba(246,173,85,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(246,173,85,.025) 1px,transparent 1px);
+      background-size:48px 48px; pointer-events:none; }
+    .bg-orb { position:fixed; border-radius:50%; filter:blur(120px); pointer-events:none; z-index:0; }
+    .bg-orb-1 { width:600px; height:600px; background:radial-gradient(circle,rgba(246,173,85,.14) 0%,transparent 70%); top:-180px; right:-80px; animation:o1 20s ease-in-out infinite; }
+    .bg-orb-2 { width:500px; height:500px; background:radial-gradient(circle,rgba(124,92,252,.16) 0%,transparent 70%); bottom:-120px; left:-100px; animation:o2 16s ease-in-out infinite; }
+    @keyframes o1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-50px,70px)} }
+    @keyframes o2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(60px,-50px)} }
+
+    .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
+
+    /* ── Sidebar ── */
+    .sidebar { width:250px; min-height:100vh; background:rgba(14,22,40,.96); backdrop-filter:blur(24px);
+      border-right:1px solid var(--border); display:flex; flex-direction:column; padding:28px 0;
+      position:sticky; top:0; height:100vh; flex-shrink:0; overflow-y:auto; }
+    .logo { display:flex; align-items:center; gap:12px; padding:0 22px 28px; border-bottom:1px solid var(--border); }
+    .logo-back { width:32px; height:32px; border-radius:8px; background:var(--surface2); border:1px solid var(--border2);
+      display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px;
+      cursor:pointer; transition:all .2s; text-decoration:none; flex-shrink:0; }
+    .logo-back:hover { background:rgba(246,173,85,.18); color:var(--orange); border-color:rgba(246,173,85,.35); }
+    .logo-text { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;
+      background:linear-gradient(135deg,var(--orange),#f5c842); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .logo-sub { font-size:10px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-top:1px; }
+    .nav { padding:16px 10px; flex:1; display:flex; flex-direction:column; gap:2px; }
+    .nav-label { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:10px 12px 5px; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:9px 13px; border-radius:10px;
+      color:var(--muted); font-size:13.5px; font-weight:500; cursor:pointer; transition:all .2s; text-decoration:none; position:relative; }
+    .nav-item:hover { background:var(--surface2); color:var(--text); }
+    .nav-item.active { background:rgba(246,173,85,.12); color:var(--orange); border:1px solid rgba(246,173,85,.22); }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:25%; bottom:25%; width:3px; border-radius:0 3px 3px 0; background:var(--orange); }
+    .nav-icon { width:18px; text-align:center; font-size:15px; flex-shrink:0; }
+    .sidebar-user { margin:0 10px 4px; padding:13px; border-radius:12px; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+    .avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--cyan)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:#fff; flex-shrink:0; }
+    .user-name { font-size:12.5px; font-weight:600; }
+    .user-role { font-size:11px; color:var(--muted); }
+
+    /* ── Main ── */
+    .main { flex:1; padding:32px 36px; overflow-y:auto; display:flex; flex-direction:column; gap:24px; min-width:0; }
+
+    /* ── Topbar ── */
+    .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+    .page-title { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;
+      background:linear-gradient(135deg,#fff 30%,var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .page-sub { color:var(--muted); font-size:13px; margin-top:4px; }
+
+    /* ── KPI ── */
+    .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; position:relative; overflow:hidden; }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:var(--radius) var(--radius) 0 0; }
+    .kc-orange::before { background:linear-gradient(90deg,var(--orange),#f5c842); }
+    .kc-green::before  { background:linear-gradient(90deg,var(--green),#68d391); }
+    .kc-red::before    { background:linear-gradient(90deg,var(--red),#fc8181); }
+    .kc-purple::before { background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+    .kpi-label { font-size:11px; font-weight:600; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+    .kpi-value { font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; margin:6px 0 2px; line-height:1; }
+    .kc-orange .kpi-value { color:var(--orange); }
+    .kc-green  .kpi-value { color:var(--green); }
+    .kc-red    .kpi-value { color:var(--red); }
+    .kc-purple .kpi-value { color:var(--accent2); }
+    .kpi-sub { font-size:11.5px; color:var(--muted); }
+    .kpi-icon { position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:32px; opacity:.1; }
+
+    /* ── Filter bar ── */
+    .filter-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .search-wrap { display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:0 14px; flex:1; min-width:200px; max-width:300px; transition:all .2s; }
+    .search-wrap:focus-within { border-color:rgba(246,173,85,.45); box-shadow:0 0 0 3px rgba(246,173,85,.1); }
+    .search-wrap input { background:none; border:none; outline:none; color:var(--text); font-size:13px; width:100%; padding:9px 0; font-family:inherit; }
+    .search-wrap input::placeholder { color:var(--muted); }
+    .filter-select { background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:13px; font-family:inherit; padding:9px 14px; outline:none; cursor:pointer; transition:border-color .2s; }
+    .filter-select:focus { border-color:rgba(246,173,85,.45); }
+    .filter-select option { background:#131a2a; }
+    .ml-auto { margin-left:auto; }
+
+    /* ── Buttons ── */
+    .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; transition:all .2s; border:none; font-family:inherit; }
+    .btn-primary { background:linear-gradient(135deg,var(--orange),#e8a020); color:#111; box-shadow:0 4px 16px rgba(246,173,85,.28); }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(246,173,85,.42); }
+    .btn-ghost { background:var(--surface); border:1px solid var(--border); color:var(--muted); }
+    .btn-ghost:hover { background:var(--surface2); color:var(--text); border-color:var(--border2); }
+    .btn-sm { padding:5px 12px; font-size:12px; border-radius:8px; }
+    .btn-danger { background:rgba(255,94,125,.15); border:1px solid rgba(255,94,125,.3); color:var(--red); font-size:12px; border-radius:8px; padding:5px 10px; font-weight:600; cursor:pointer; transition:all .2s; font-family:inherit; }
+    .btn-danger:hover { background:rgba(255,94,125,.25); }
+
+    /* ── Table card ── */
+    .tbl-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .tbl-head { display:flex; align-items:center; justify-content:space-between; padding:14px 20px 12px; border-bottom:1px solid var(--border); gap:12px; }
+    .tbl-info { font-size:12px; color:var(--muted); }
+    .tbl-info strong { color:var(--text); }
+    .tbl-wrap { overflow-x:auto; }
+
+    /* ── Inline editable number cells ── */
+    .inline-num { background:transparent; border:none; border-bottom:1.5px solid transparent; color:inherit; font-family:'Space Grotesk',sans-serif; font-size:13px; text-align:right; width:100px; outline:none; padding:3px 2px; border-radius:4px; transition:all .15s; display:block; }
+    .inline-num:hover { border-bottom-color:rgba(255,255,255,.22); background:rgba(255,255,255,.05); }
+    .inline-num:focus { border-bottom-color:var(--orange); background:rgba(246,173,85,.07); box-shadow:0 2px 0 -1px rgba(246,173,85,.25); }
+    .inline-num::-webkit-inner-spin-button,.inline-num::-webkit-outer-spin-button { -webkit-appearance:none; }
+    .inline-num[type=number] { -moz-appearance:textfield; }
+
+    /* ── Sticky horizontal scrollbar ── */
+    #sticky-hscroll { position:fixed; bottom:0; left:250px; right:0; height:14px; background:var(--bg2); border-top:1px solid var(--border); z-index:9999; overflow-x:auto; overflow-y:hidden; }
+    #sticky-hscroll::-webkit-scrollbar { height:8px; }
+    #sticky-hscroll::-webkit-scrollbar-track { background:transparent; }
+    #sticky-hscroll::-webkit-scrollbar-thumb { background:rgba(255,255,255,.22); border-radius:99px; }
+    #sticky-hscroll::-webkit-scrollbar-thumb:hover { background:rgba(246,173,85,.55); }
+    #sticky-hscroll-inner { height:1px; }
+
+    table.mtbl { width:100%; border-collapse:collapse; min-width:1100px; }
+    table.mtbl thead th { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
+      padding:10px 10px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; cursor:pointer; user-select:none; transition:color .15s; }
+    table.mtbl thead th:hover { color:var(--text); }
+    table.mtbl thead th.sort-asc::after  { content:' ↑'; color:var(--orange); }
+    table.mtbl thead th.sort-desc::after { content:' ↓'; color:var(--orange); }
+    table.mtbl thead th.nr { text-align:right; }
+    table.mtbl thead th.cloto-th { background:rgba(245,200,66,.07); color:var(--gold) !important; border-bottom:2px solid rgba(245,200,66,.3); }
+
+    table.mtbl tbody td { padding:9px 10px; font-size:13px; border-bottom:1px solid rgba(255,255,255,.03); vertical-align:middle; }
+    table.mtbl tbody tr:last-child td { border-bottom:none; }
+    table.mtbl tbody tr:hover td { background:rgba(255,255,255,.02); }
+    table.mtbl td.nr { text-align:right; font-family:'Space Grotesk',sans-serif; }
+    table.mtbl td.nm { font-weight:600; font-size:13px; max-width:240px; }
+    table.mtbl td.mu { color:var(--muted); font-size:12px; }
+    table.mtbl td.cloto-cell { background:rgba(245,200,66,.04); border-left:1px solid rgba(245,200,66,.12); border-right:1px solid rgba(245,200,66,.12); }
+    table.mtbl tbody tr:hover td.cloto-cell { background:rgba(245,200,66,.08) !important; }
+
+    .name-main { font-weight:600; }
+    .name-note { font-size:11px; color:var(--muted); margin-top:2px; font-weight:400; }
+
+    /* ── Category pills ── */
+    .cat-pill { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap; }
+    .cp-coal   { background:rgba(107,116,145,.18); color:#a0aec0; }
+    .cp-semi   { background:rgba(124,92,252,.15);  color:var(--accent2); }
+    .cp-bitu   { background:rgba(246,173,85,.15);  color:var(--orange); }
+    .cp-chem   { background:rgba(99,179,237,.15);  color:var(--blue); }
+    .cp-surf   { background:rgba(61,232,199,.15);  color:var(--cyan); }
+    .cp-fuel   { background:rgba(237,100,166,.13); color:var(--pink); }
+    .cp-drill  { background:rgba(72,187,120,.15);  color:var(--green); }
+    .cp-filler { background:rgba(245,200,66,.15);  color:var(--gold); }
+    .cp-imp    { background:rgba(255,94,125,.13);  color:var(--red); }
+    .cp-other  { background:rgba(107,119,145,.18); color:#9aaabf; }
+
+    /* ── Status pills ── */
+    .st-pill { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+    .st-pill::before { content:''; width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .st-active   { background:rgba(72,187,120,.12); color:var(--green); }    .st-active::before   { background:var(--green); }
+    .st-order    { background:rgba(245,200,66,.12); color:var(--gold); }     .st-order::before    { background:var(--gold); }
+    .st-critical { background:rgba(255,94,125,.12); color:var(--red); }      .st-critical::before { background:var(--red); box-shadow:0 0 6px var(--red); }
+    .st-none     { background:rgba(255,255,255,.06); color:var(--muted); }   .st-none::before     { background:var(--muted); }
+    .st-own      { background:rgba(124,92,252,.13); color:var(--accent2); }  .st-own::before      { background:var(--accent2); }
+
+    /* ── Date cell ── */
+    .date-fresh    { color:var(--green); font-size:12px; }
+    .date-order    { color:var(--gold);  font-size:12px; }
+    .date-critical { color:var(--red);   font-size:12px; }
+    .date-none     { color:var(--muted); font-size:12px; }
+
+    /* ── КЛОТО price highlight ── */
+    .cloto-val { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13.5px; color:var(--gold); }
+    .fca-sub   { font-size:11px; color:var(--muted); display:block; margin-top:1px; }
+
+    .action-cell { display:flex; align-items:center; gap:5px; }
+    .rn { font-size:11px; color:var(--muted); font-family:'Space Grotesk',sans-serif; }
+
+    /* ── Empty state ── */
+    .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+    .empty-state .es-icon { font-size:40px; margin-bottom:12px; opacity:.4; }
+
+    /* ── Modal ── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(6px); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .25s; }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal { background:#18253d; border:1px solid var(--border2); border-radius:20px; width:100%; max-width:700px; max-height:92vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.6); transform:translateY(16px) scale(.98); transition:transform .25s; }
+    .modal-overlay.open .modal { transform:translateY(0) scale(1); }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 16px; border-bottom:1px solid var(--border); }
+    .modal-title { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; }
+    .modal-close { width:30px; height:30px; border-radius:8px; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; line-height:1; }
+    .modal-close:hover { background:var(--surface2); color:var(--text); }
+    .modal-body { padding:20px 24px; display:flex; flex-direction:column; gap:14px; }
+    .modal-footer { padding:14px 24px 20px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-group { display:flex; flex-direction:column; gap:5px; }
+    .form-group.full { grid-column:1/-1; }
+    .form-group.g3 { grid-column:span 1; }
+    label.fld { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .fld-input { background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.26); border-radius:10px; padding:10px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none; width:100%; transition:all .2s; }
+    .fld-input:focus { border-color:rgba(246,173,85,.75); background:rgba(246,173,85,.07); box-shadow:0 0 0 3px rgba(246,173,85,.12); }
+    .fld-input::placeholder { color:rgba(255,255,255,.35); }
+    .fld-input.gold-focus:focus { border-color:rgba(245,200,66,.85); background:rgba(245,200,66,.08); }
+    select.fld-input option { background:#1a2540; }
+    .sect-divider { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:4px 0; border-bottom:1px solid var(--border); margin-top:4px; }
+
+    /* ── Toast ── */
+    .toast { position:fixed; bottom:28px; right:28px; z-index:999; background:rgba(72,187,120,.14); border:1px solid rgba(72,187,120,.35); color:var(--green); font-size:13px; font-weight:600; padding:12px 20px; border-radius:12px; backdrop-filter:blur(12px); opacity:0; transform:translateY(12px); transition:all .3s; pointer-events:none; }
+    .toast.show { opacity:1; transform:translateY(0); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation:fadeUp .4s ease both; }
+    .du-1{animation-delay:.04s} .du-2{animation-delay:.10s} .du-3{animation-delay:.16s} .du-4{animation-delay:.22s} .du-5{animation-delay:.28s}
+
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:99px; }
+
+    @media(max-width:1100px) { .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:900px)  { .sidebar{display:none} .main{padding:16px} }
+    @media(max-width:600px)  { .kpi-row{grid-template-columns:1fr 1fr;} .form-grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <a class="logo-back" href="commercial.html">←</a>
+      <div>
+        <div class="logo-text">Сырьё</div>
+        <div class="logo-sub">закупочный прайс · Клото</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Разделы</div>
+      <a class="nav-item active" href="#"><span class="nav-icon">🌾</span> Все позиции</a>
+      <div class="nav-label">Связанные</div>
+      <a class="nav-item" href="sebescost.html"><span class="nav-icon">🧮</span> Себестоимость</a>
+      <a class="nav-item" href="products.html"><span class="nav-icon">📦</span> Продукты</a>
+      <a class="nav-item" href="commercial.html"><span class="nav-icon">⊞</span> Коммерческий отдел</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="avatar">АК</div>
+      <div><div class="user-name">Андрей К.</div><div class="user-role">Руководитель</div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <div class="topbar fade-up du-1">
+      <div>
+        <div class="page-title">🌾 Закупочный прайс сырья</div>
+        <div class="page-sub">Цены без НДС · Склад FCA поставщика + доставка = Цена склад КЛОТО · <span id="price-date-lbl" style="color:var(--orange)">Февраль 2026</span></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-ghost" onclick="exportCsv()">⬇ CSV</button>
+        <button class="btn btn-primary" onclick="saveData()">💾 Сохранить</button>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-row fade-up du-2">
+      <div class="kpi-card kc-orange">
+        <div class="kpi-label">Всего позиций</div>
+        <div class="kpi-value" id="kpi-total">46</div>
+        <div class="kpi-sub" id="kpi-cats-sub">в 9 категориях</div>
+        <div class="kpi-icon">📦</div>
+      </div>
+      <div class="kpi-card kc-green">
+        <div class="kpi-label">Актуальные цены</div>
+        <div class="kpi-value" id="kpi-active">0</div>
+        <div class="kpi-sub">обновлено ≤ 4 мес.</div>
+        <div class="kpi-icon">✅</div>
+      </div>
+      <div class="kpi-card kc-red">
+        <div class="kpi-label">Устаревшие</div>
+        <div class="kpi-value" id="kpi-crit">0</div>
+        <div class="kpi-sub">требуют обновления</div>
+        <div class="kpi-icon">⚠️</div>
+      </div>
+      <div class="kpi-card kc-purple">
+        <div class="kpi-label">Полуфабрикаты</div>
+        <div class="kpi-value" id="kpi-own">0</div>
+        <div class="kpi-sub">собственного пр-ва</div>
+        <div class="kpi-icon">🏭</div>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar fade-up du-3">
+      <div class="search-wrap">
+        <span style="color:var(--muted);font-size:14px;flex-shrink:0">🔍</span>
+        <input id="search-in" type="text" placeholder="Поиск по названию, поставщику..." oninput="applyFilters()" />
+      </div>
+      <select class="filter-select" id="fil-cat" onchange="applyFilters()">
+        <option value="">Все категории</option>
+        <option value="Углеродное сырьё">Углеродное сырьё</option>
+        <option value="Полуфабрикаты">Полуфабрикаты</option>
+        <option value="Битуминозные">Битуминозные</option>
+        <option value="Химреагенты">Химреагенты</option>
+        <option value="ПАВ и амины">ПАВ и амины</option>
+        <option value="Топливо">Топливо</option>
+        <option value="Буровые реагенты">Буровые реагенты</option>
+        <option value="Наполнители">Наполнители</option>
+        <option value="Импортные реагенты">Импортные реагенты</option>
+        <option value="Прочие">Прочие</option>
+      </select>
+      <select class="filter-select" id="fil-st" onchange="applyFilters()">
+        <option value="">Все статусы</option>
+        <option value="active">Актуальные</option>
+        <option value="order">Под обновление</option>
+        <option value="critical">Устаревшие</option>
+        <option value="none">Нет даты</option>
+        <option value="own">Полуфабрикат</option>
+      </select>
+      <button class="btn btn-primary ml-auto" onclick="openModal()">＋ Добавить позицию</button>
+    </div>
+
+    <!-- Table -->
+    <div class="tbl-card fade-up du-4">
+      <div class="tbl-head">
+        <span class="tbl-info">Показано: <strong id="shown-count">0</strong> из <strong id="total-count">0</strong></span>
+        <span style="font-size:11px;color:var(--muted)">
+          Колонка <span style="color:var(--gold);font-weight:700">Цена КЛОТО</span> = FCA + доставка (без НДС)
+        </span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="mtbl">
+          <thead>
+            <tr>
+              <th style="width:36px" onclick="sortBy('id'">#</th>
+              <th onclick="sortBy('name')">Наименование</th>
+              <th onclick="sortBy('norm')" style="width:80px">Норма</th>
+              <th onclick="sortBy('dateStr')" style="width:120px">Актуальность</th>
+              <th class="nr" style="width:130px" onclick="sortBy('priceFca')">Цена FCA, ₽/т</th>
+              <th class="nr cloto-th" style="width:140px" onclick="sortBy('priceCloto')">★ Цена КЛОТО, ₽/т</th>
+              <th class="nr" style="width:110px" onclick="sortBy('deliveryUnit')">Доставка, ₽/т</th>
+              <th onclick="sortBy('sup')" style="min-width:150px">Поставщик</th>
+              <th onclick="sortBy('storage')" style="min-width:120px">Склад / Перевозчик</th>
+              <th style="width:110px" onclick="sortBy('status')">Статус</th>
+              <th style="width:72px"></th>
+            </tr>
+          </thead>
+          <tbody id="mtbl-body"></tbody>
+        </table>
+        <div class="empty-state" id="empty-state" style="display:none">
+          <div class="es-icon">🌾</div>
+          <p style="font-size:14px">Нет позиций по текущему фильтру</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- /layout -->
+
+<!-- ════ MODAL: Add/Edit ════ -->
+<div class="modal-overlay" id="item-modal" onclick="closeItemModalOutside(event)">
+  <div class="modal" role="dialog">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Новая позиция</span>
+      <button class="modal-close" onclick="closeItemModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="fld">Наименование</label>
+          <input class="fld-input" id="f-name" type="text" placeholder="Битум 90/10" />
+        </div>
+        <div class="form-group">
+          <label class="fld">Категория</label>
+          <select class="fld-input" id="f-cat">
+            <option value="Углеродное сырьё">Углеродное сырьё</option>
+            <option value="Полуфабрикаты">Полуфабрикаты</option>
+            <option value="Битуминозные">Битуминозные</option>
+            <option value="Химреагенты">Химреагенты</option>
+            <option value="ПАВ и амины">ПАВ и амины</option>
+            <option value="Топливо">Топливо</option>
+            <option value="Буровые реагенты">Буровые реагенты</option>
+            <option value="Наполнители">Наполнители</option>
+            <option value="Импортные реагенты">Импортные реагенты</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="fld">Статус</label>
+          <select class="fld-input" id="f-status">
+            <option value="active">Актуальные</option>
+            <option value="order">Под обновление</option>
+            <option value="critical">Устаревшие</option>
+            <option value="none">Нет даты</option>
+            <option value="own">Полуфабрикат собственный</option>
+          </select>
+        </div>
+
+        <div class="sect-divider full">Логистика</div>
+
+        <div class="form-group">
+          <label class="fld">Ед. изм.</label>
+          <input class="fld-input" id="f-unit" type="text" placeholder="т" />
+        </div>
+        <div class="form-group">
+          <label class="fld">Норма отгрузки, ед.</label>
+          <input class="fld-input" id="f-norm" type="number" placeholder="20" min="0" step="0.1" />
+        </div>
+
+        <div class="sect-divider full">Цены (без НДС)</div>
+
+        <div class="form-group">
+          <label class="fld">Актуальность (дата прайса)</label>
+          <input class="fld-input" id="f-date" type="text" placeholder="Февраль 2026" />
+        </div>
+        <div class="form-group">
+          <label class="fld">Цена FCA, ₽/т</label>
+          <input class="fld-input" id="f-fca" type="number" placeholder="0" min="0" step="0.01" oninput="autoCloto()" />
+        </div>
+        <div class="form-group">
+          <label class="fld">Цена в у.е. (USD/EUR) — инфо</label>
+          <input class="fld-input" id="f-ue" type="text" placeholder='$4 396,56 или €4 829,00' />
+        </div>
+        <div class="form-group">
+          <label class="fld">Доставка за ед., ₽/т</label>
+          <input class="fld-input" id="f-del" type="number" placeholder="0" min="0" step="0.01" oninput="autoCloto()" />
+        </div>
+        <div class="form-group full">
+          <label class="fld">★ Цена склад КЛОТО, ₽/т <span style="font-size:10px;color:var(--muted);font-weight:400">(авто = FCA + доставка, можно изменить)</span></label>
+          <input class="fld-input gold-focus" id="f-cloto" type="number" placeholder="0" min="0" step="0.01" />
+        </div>
+
+        <div class="sect-divider full">Поставщик</div>
+
+        <div class="form-group full">
+          <label class="fld">Поставщик</label>
+          <input class="fld-input" id="f-sup" type="text" placeholder="МАККОМ ООО" />
+        </div>
+        <div class="form-group">
+          <label class="fld">Склад / Город</label>
+          <input class="fld-input" id="f-storage" type="text" placeholder="Коржма" />
+        </div>
+        <div class="form-group">
+          <label class="fld">Перевозчик</label>
+          <input class="fld-input" id="f-carrier" type="text" placeholder="КАМАЗ, доставка включена..." />
+        </div>
+        <div class="form-group full">
+          <label class="fld">Примечание</label>
+          <input class="fld-input" id="f-note" type="text" placeholder="CAS, торговое наименование, особые условия..." />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeItemModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="saveItemModal()">✓ Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SK = 'cloto_raw_materials_v2';
+
+/* ════════════════════════════════════
+   DEFAULT DATA  (46 строк из прайса)
+   Цены: ₽/т без НДС, FCA склад → Склад КЛОТО
+════════════════════════════════════ */
+var DEFAULT_DATA = [
+  {id:1,  name:'Уголь бурый (в штабеле)',                               unit:'т', norm:1050, dateStr:'Ноябрь 2025',  priceFca:5838.33,   priceUe:'',          deliveryUnit:1292.82,  priceCloto:7131.15,    sup:'АСКОМ ООО',                                  storage:'Казахстан',             carrier:'',                            cat:'Углеродное сырьё',    status:'order',    note:''},
+  {id:2,  name:'УЩР (БРЕГ-2) СЫРОЙ',                                   unit:'т', norm:19,   dateStr:'Апрель 2025',  priceFca:27083.33,  priceUe:'',          deliveryUnit:8333.33,  priceCloto:35416.67,   sup:'Башнефтехим ООО',                            storage:'Кумертау',              carrier:'Планет ДИНАС ООО',            cat:'Углеродное сырьё',    status:'order',    note:''},
+  {id:3,  name:'УЩР (БРЕГ-2) СУХОЙ',                                   unit:'т', norm:1,    dateStr:'',             priceFca:0,         priceUe:'',          deliveryUnit:0,        priceCloto:0,          sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:'Расчёт формулой'},
+  {id:4,  name:'УЩР (собственный) СЫРОЙ',                              unit:'т', norm:1,    dateStr:'',             priceFca:0,         priceUe:'',          deliveryUnit:0,        priceCloto:0,          sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:5,  name:'УЩР (собственный) СУХОЙ',                              unit:'т', norm:1,    dateStr:'',             priceFca:13128.82,  priceUe:'',          deliveryUnit:0,        priceCloto:13128.82,   sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:6,  name:'УЩР (Казахстан) СЫРОЙ',                                unit:'т', norm:20,   dateStr:'',             priceFca:17000.00,  priceUe:'',          deliveryUnit:7600.00,  priceCloto:24600.00,   sup:'Азия Компогум Ресурс',                       storage:'Экибастуз',             carrier:'',                            cat:'Углеродное сырьё',    status:'none',     note:''},
+  {id:7,  name:'УЩР (Казахстан) СУХОЙ',                                unit:'т', norm:1,    dateStr:'',             priceFca:0,         priceUe:'',          deliveryUnit:0,        priceCloto:0,          sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:8,  name:'УЩР с 3-этанолом',                                     unit:'т', norm:1,    dateStr:'',             priceFca:0,         priceUe:'',          deliveryUnit:0,        priceCloto:0,          sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:9,  name:'Битум 90/10',                                           unit:'т', norm:20,   dateStr:'Июль 2024',    priceFca:40800.00,  priceUe:'',          deliveryUnit:5000.00,  priceCloto:45800.00,   sup:'МПК КРЗ ООО',                                storage:'Рязань',                carrier:'Планет ДИНАС ООО',            cat:'Битуминозные',        status:'critical', note:''},
+  {id:10, name:'Пек талловый',                                          unit:'т', norm:22,   dateStr:'Февраль 2026', priceFca:17250.00,  priceUe:'',          deliveryUnit:7275.00,  priceCloto:24325.00,   sup:'МАККОМ ООО',                                 storage:'Коржма',                carrier:'КАМАЗ',                       cat:'Битуминозные',        status:'active',   note:''},
+  {id:11, name:'Сода каустическая',                                     unit:'т', norm:20,   dateStr:'Февраль 2026', priceFca:63500.00,  priceUe:'',          deliveryUnit:0,        priceCloto:63500.00,   sup:'Альянс ХК',                                  storage:'',                      carrier:'доставка включена',           cat:'Химреагенты',         status:'active',   note:''},
+  {id:12, name:'Сода кальцинированная',                                 unit:'т', norm:64,   dateStr:'Февраль 2026', priceFca:32040.00,  priceUe:'',          deliveryUnit:781.25,   priceCloto:32821.25,   sup:'АО РОСХИМ',                                  storage:'Стерлитамак',           carrier:'РЖД',                         cat:'Химреагенты',         status:'active',   note:''},
+  {id:13, name:'КМЦ (1 мешок 15 кг)',                                   unit:'т', norm:12,   dateStr:'Апрель 2022',  priceFca:155000.00, priceUe:'',          deliveryUnit:12083.33, priceCloto:167083.33,  sup:'Завод Карбоцел',                             storage:'Артёмовский',           carrier:'ГАНДВИК ООО',                 cat:'Химреагенты',         status:'critical', note:'КМЦ — карбоксиметилцеллюлоза'},
+  {id:14, name:'Мел 66 (МТД-2)',                                        unit:'т', norm:19,   dateStr:'Февраль 2026', priceFca:3333.61,   priceUe:'',          deliveryUnit:7257.51,  priceCloto:10591.12,   sup:'Главмел',                                    storage:'Воронеж',               carrier:'Агро-Транс',                  cat:'Наполнители',         status:'active',   note:''},
+  {id:15, name:'ТВИН 80',                                               unit:'т', norm:4,    dateStr:'Февраль 2025', priceFca:304200.00, priceUe:'',          deliveryUnit:0,        priceCloto:304200.00,  sup:'Линдера',                                    storage:'СПб',                   carrier:'доставка включена',           cat:'ПАВ и амины',         status:'critical', note:'Полисорбат 80'},
+  {id:16, name:'Топливо дизельное ГОРЕЛКА',                             unit:'т', norm:9,    dateStr:'Февраль 2026', priceFca:72000.00,  priceUe:'',          deliveryUnit:0,        priceCloto:72000.00,   sup:'Сервисснаб / СГС БИОТЭК',                    storage:'Архангельск',           carrier:'доставка включена',           cat:'Топливо',             status:'active',   note:''},
+  {id:17, name:'Топливо дизельное ТЕХНОЛОГИЯ',                          unit:'т', norm:9,    dateStr:'Февраль 2026', priceFca:72000.00,  priceUe:'',          deliveryUnit:0,        priceCloto:72000.00,   sup:'Сервисснаб / СГС БИОТЭК',                    storage:'Архангельск',           carrier:'доставка включена',           cat:'Топливо',             status:'active',   note:''},
+  {id:18, name:'ОТП (плитка)',                                          unit:'т', norm:1,    dateStr:'',             priceFca:28747.20,  priceUe:'',          deliveryUnit:0,        priceCloto:28747.20,   sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:19, name:'ОТП с УЩР (плитка)',                                   unit:'т', norm:1,    dateStr:'',             priceFca:28163.52,  priceUe:'',          deliveryUnit:0,        priceCloto:28163.52,   sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:20, name:'ОТП с УЩР (плитка) БРАК',                              unit:'т', norm:1,    dateStr:'',             priceFca:0,         priceUe:'',          deliveryUnit:0,        priceCloto:0,          sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:21, name:'ОТП с УЩР для DURATONE размолотый',                    unit:'т', norm:1,    dateStr:'',             priceFca:0,         priceUe:'',          deliveryUnit:0,        priceCloto:0,          sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:22, name:'Диэтаноламин',                                          unit:'т', norm:20,   dateStr:'Февраль 2026', priceFca:135000.00, priceUe:'',          deliveryUnit:5532.79,  priceCloto:140532.79,  sup:'ТД СИНТЕЗ-ОКА ООО',                          storage:'Дзержинск',             carrier:'Планет ДИНАС ООО',            cat:'ПАВ и амины',         status:'active',   note:'ДЭА'},
+  {id:23, name:'Триэтаноламин (мыло техническое)',                      unit:'т', norm:20,   dateStr:'Февраль 2026', priceFca:145000.00, priceUe:'',          deliveryUnit:5532.79,  priceCloto:150532.79,  sup:'ТД СИНТЕЗ-ОКА ООО',                          storage:'Дзержинск',             carrier:'Планет ДИНАС ООО',            cat:'ПАВ и амины',         status:'active',   note:'ТЭА'},
+  {id:24, name:'Гильсонит',                                             unit:'т', norm:20,   dateStr:'Февраль 2026', priceFca:34583.33,  priceUe:'',          deliveryUnit:9166.67,  priceCloto:43750.00,   sup:'Prime Rai Product',                          storage:'',                      carrier:'доставка включена',           cat:'Битуминозные',        status:'active',   note:'природный асфальтит'},
+  {id:25, name:'Кубовая жидкость колонны очистки этиленгликоля',        unit:'т', norm:19,   dateStr:'Февраль 2026', priceFca:34170.00,  priceUe:'',          deliveryUnit:10526.32, priceCloto:44696.32,   sup:'Агромимпроект',                              storage:'',                      carrier:'ЕвроТрансХим',               cat:'Буровые реагенты',    status:'active',   note:''},
+  {id:26, name:'Полигликоли тех.',                                      unit:'т', norm:21,   dateStr:'Февраль 2026', priceFca:61788.89,  priceUe:'',          deliveryUnit:7611.11,  priceCloto:69400.00,   sup:'Химтраст',                                   storage:'Дзержинск',             carrier:'Планет ДИНАС ООО',            cat:'Буровые реагенты',    status:'active',   note:''},
+  {id:27, name:'Пеногаситель Софэксин 9056-20',                         unit:'т', norm:4,    dateStr:'Февраль 2026', priceFca:295000.00, priceUe:'',          deliveryUnit:10000.00, priceCloto:305000.00,  sup:'Софэксин-Силикон',                           storage:'МО, г. Старая Купавна', carrier:'',                            cat:'Химреагенты',         status:'active',   note:''},
+  {id:28, name:'ЖКТМ (Жирные кислоты таллового масла)',                 unit:'т', norm:22,   dateStr:'Декабрь 2025', priceFca:183333.33, priceUe:'',          deliveryUnit:7275.00,  priceCloto:190608.33,  sup:'МАККОМ ООО',                                 storage:'Коржма',                carrier:'',                            cat:'Битуминозные',        status:'active',   note:''},
+  {id:29, name:'Холин Хлорид (конц 70%)',                               unit:'т', norm:19,   dateStr:'Июль 2024',    priceFca:150000.00, priceUe:'',          deliveryUnit:4736.84,  priceCloto:154736.84,  sup:'',                                           storage:'',                      carrier:'',                            cat:'ПАВ и амины',         status:'critical', note:''},
+  {id:30, name:'Стеариновая кислота',                                   unit:'т', norm:20,   dateStr:'Январь 2025',  priceFca:200000.00, priceUe:'',          deliveryUnit:4791.67,  priceCloto:204791.67,  sup:'Интерхиммет',                                storage:'СПб',                   carrier:'',                            cat:'Наполнители',         status:'critical', note:''},
+  {id:31, name:'Масло талловое сырое ЛТМ (АЦБК)',                       unit:'т', norm:55,   dateStr:'Февраль 2026', priceFca:24000.00,  priceUe:'',          deliveryUnit:1242.42,  priceCloto:25242.42,   sup:'Техсервис, перетарка ТРАНС-ЛЕС ООО',        storage:'Новодвинск',            carrier:'КЛОТО ООО',                   cat:'Битуминозные',        status:'active',   note:''},
+  {id:32, name:'Масло талловое дистиллированное',                       unit:'т', norm:22,   dateStr:'Февраль 2026', priceFca:83600.00,  priceUe:'',          deliveryUnit:9090.91,  priceCloto:92690.91,   sup:'МАККОМ ООО',                                 storage:'Коржма',                carrier:'КАМАЗ',                       cat:'Битуминозные',        status:'active',   note:''},
+  {id:33, name:'Правестол 2540 Н',                                      unit:'т', norm:20,   dateStr:'Март 2024',    priceFca:242000.00, priceUe:'',          deliveryUnit:8750.00,  priceCloto:250750.00,  sup:'СОЛЕНИС ЕВРАЗИЯ ООО',                        storage:'Пермь',                 carrier:'',                            cat:'Буровые реагенты',    status:'critical', note:'диспергатор'},
+  {id:34, name:'Сульфат натрия',                                        unit:'т', norm:20,   dateStr:'Ноябрь 2025',  priceFca:19166.67,  priceUe:'',          deliveryUnit:4583.33,  priceCloto:23750.00,   sup:'ХИМПЭК АО ТД',                               storage:'',                      carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:35, name:'Реагент ВПРГ молотый',                                  unit:'т', norm:20,   dateStr:'Февраль 2026', priceFca:240000.00, priceUe:'',          deliveryUnit:5532.79,  priceCloto:245532.79,  sup:'Завод ОРГСИНТЕЗ ОКА',                        storage:'Дзержинск',             carrier:'Планет ДИНАС ООО',            cat:'Буровые реагенты',    status:'active',   note:''},
+  {id:36, name:'ГЕОСПАН-П',                                             unit:'т', norm:20,   dateStr:'Февраль 2026', priceFca:236750.00, priceUe:'',          deliveryUnit:8333.33,  priceCloto:245083.33,  sup:'Лайсан',                                     storage:'Сибай',                 carrier:'',                            cat:'Наполнители',         status:'active',   note:''},
+  {id:37, name:'Смазочная добавка D-lube+ 7878',                        unit:'т', norm:14,   dateStr:'Май 2023',     priceFca:398100.00, priceUe:'$4 396,56', deliveryUnit:0,        priceCloto:398100.00,  sup:'Fav. Wind Limited',                          storage:'DAP Архангельск',       carrier:'К, доставка с Новороссийска', cat:'Импортные реагенты',  status:'critical', note:''},
+  {id:38, name:'Тример жирных кислот RADIACID 0982',                    unit:'т', norm:20,   dateStr:'Октябрь 2024', priceFca:307000.00, priceUe:'$2 951,15', deliveryUnit:0,        priceCloto:307000.00,  sup:'Fav. Wind Limited',                          storage:'DAP Архангельск',       carrier:'К, доставка с Новороссийска', cat:'Импортные реагенты',  status:'critical', note:''},
+  {id:39, name:'Буровая смазка RADIAGREEN EBL 7857',                    unit:'т', norm:20,   dateStr:'Январь 2026',  priceFca:480200.00, priceUe:'€4 829,00', deliveryUnit:0,        priceCloto:480200.00,  sup:'Fav. Wind Limited',                          storage:'',                      carrier:'доставка включена',           cat:'Импортные реагенты',  status:'active',   note:''},
+  {id:40, name:'RADIAGREEN RA (Андрей)',                                 unit:'т', norm:20,   dateStr:'Январь 2026',  priceFca:635200.00, priceUe:'€6 439,00', deliveryUnit:0,        priceCloto:635200.00,  sup:'Fav. Wind Limited',                          storage:'DAP Архангельск',       carrier:'К, доставка с Новороссийска', cat:'Импортные реагенты',  status:'active',   note:''},
+  {id:41, name:'Жидкая колонна (Liquid casing fine and coarse)',         unit:'т', norm:1,    dateStr:'',             priceFca:779268.00, priceUe:'$8 400,00', deliveryUnit:0,        priceCloto:779268.00,  sup:'STRAITWAY SINGAPORE',                        storage:'',                      carrier:'доставка включена',           cat:'Импортные реагенты',  status:'none',     note:''},
+  {id:42, name:'Нефтесодержащая жидкость Р1 (масло тёмное отработка)',  unit:'т', norm:1,    dateStr:'Март 2024',    priceFca:33333.33,  priceUe:'',          deliveryUnit:0,        priceCloto:33333.33,   sup:'ПЦЛ',                                        storage:'',                      carrier:'доставка включена',           cat:'Топливо',             status:'critical', note:''},
+  {id:43, name:'Диталакс-4705',                                         unit:'т', norm:20,   dateStr:'Июль 2025',    priceFca:131666.67, priceUe:'',          deliveryUnit:7500.00,  priceCloto:139166.67,  sup:'АВЕРС ООО',                                  storage:'Дзержинск',             carrier:'Планет ДИНАС ООО',            cat:'Буровые реагенты',    status:'order',    note:''},
+  {id:44, name:'JEFFAMINE D-230',                                        unit:'т', norm:20,   dateStr:'Февраль 2021', priceFca:463850.00, priceUe:'$5 000,00', deliveryUnit:4583.33,  priceCloto:468433.33,  sup:'ХИМЭКС Лимитед АО',                          storage:'СПб',                   carrier:'',                            cat:'Импортные реагенты',  status:'critical', note:'полиоксипропиленамин'},
+  {id:45, name:'GABROIL LV',                                            unit:'т', norm:20,   dateStr:'Ноябрь 2021',  priceFca:180666.00, priceUe:'€1 800,00', deliveryUnit:0,        priceCloto:180666.00,  sup:'Норнион ООО',                                storage:'',                      carrier:'',                            cat:'Импортные реагенты',  status:'critical', note:''},
+  {id:46, name:'СБС Р-30 мелкий порошок',                               unit:'т', norm:18.2, dateStr:'Февраль 2026', priceFca:379166.67, priceUe:'',          deliveryUnit:8241.76,  priceCloto:387408.43,  sup:'ПАО «СИБУР-Холдинг»',                        storage:'Воронеж/Красноярск',    carrier:'',                            cat:'Буровые реагенты',    status:'active',   note:'стирол-бутадиеновый сополимер'},
+  {id:47, name:'Мимоза МВ',                                               unit:'т', norm:17.5, dateStr:'Октябрь 2021',  priceFca:158191.40, priceUe:'$1 705,20', deliveryUnit:7600.00,  priceCloto:176699.23,  sup:'',                                           storage:'ЮАР, CIF СПб',          carrier:'доставка включена',           cat:'ПАВ и амины',         status:'critical', note:''},
+  {id:48, name:'Лигносульфонат',                                          unit:'т', norm:20,   dateStr:'Март 2022',     priceFca:48750.00,  priceUe:'',          deliveryUnit:0,        priceCloto:48750.00,   sup:'Промышленная логистика',                     storage:'Сасьстрой',             carrier:'доставка включена',           cat:'Буровые реагенты',    status:'critical', note:''},
+  {id:49, name:'Вода техническая',                                        unit:'куб.м', norm:1, dateStr:'Октябрь 2024', priceFca:300.00,    priceUe:'',          deliveryUnit:0,        priceCloto:300.00,     sup:'',                                           storage:'Сасьстрой',             carrier:'',                            cat:'Прочие',              status:'order',    note:''},
+  {id:50, name:'Вода питьевая на технологию',                             unit:'куб.м', norm:1, dateStr:'',             priceFca:300.00,    priceUe:'',          deliveryUnit:0,        priceCloto:300.00,     sup:'',                                           storage:'',                      carrier:'',                            cat:'Прочие',              status:'none',     note:''},
+  {id:51, name:'Вода питьевая на ЭПГ',                                    unit:'куб.м', norm:1, dateStr:'',             priceFca:300.00,    priceUe:'',          deliveryUnit:0,        priceCloto:300.00,     sup:'',                                           storage:'',                      carrier:'',                            cat:'Прочие',              status:'none',     note:''},
+  {id:52, name:'РДГБ',                                                    unit:'т', norm:1,    dateStr:'',             priceFca:0,         priceUe:'',          deliveryUnit:0,        priceCloto:0,          sup:'Полуфабрикат собственный',                   storage:'',                      carrier:'',                            cat:'Полуфабрикаты',       status:'own',      note:''},
+  {id:53, name:'Ксантановая камедь Ziboxan F80',                          unit:'т', norm:1,    dateStr:'',             priceFca:243521.25, priceUe:'$2 625,00', deliveryUnit:15000.00, priceCloto:258521.25,  sup:'ООО "ИНГРЕДИКО"',                           storage:'',                      carrier:'',                            cat:'Буровые реагенты',    status:'none',     note:''},
+  {id:54, name:'Сульфит натрия',                                          unit:'т', norm:20,   dateStr:'Январь 2025',  priceFca:77500.00,  priceUe:'',          deliveryUnit:5250.00,  priceCloto:82750.00,   sup:'АО "Торговый дом ХИМПЭК"',                  storage:'Москва',                carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:55, name:'FLODRILL DP/TS 30 LC',                                    unit:'т', norm:20,   dateStr:'',             priceFca:712621.00, priceUe:'€7 100,00', deliveryUnit:4500.00,  priceCloto:717127.00,  sup:'SNF',                                        storage:'СПб',                   carrier:'',                            cat:'Импортные реагенты',  status:'none',     note:''},
+  {id:56, name:'Глутамат натрия',                                         unit:'т', norm:20,   dateStr:'Июнь 2023',    priceFca:45660.00,  priceUe:'',          deliveryUnit:0,        priceCloto:45660.00,   sup:'ДТПК',                                       storage:'Беларусь',              carrier:'',                            cat:'Химреагенты',         status:'critical', note:''},
+  {id:57, name:'ГКЭЖ-11Н',                                                unit:'т', norm:16,   dateStr:'Январь 2025',  priceFca:62500.00,  priceUe:'',          deliveryUnit:5625.00,  priceCloto:68125.00,   sup:'',                                           storage:'',                      carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:58, name:'Полиэтиленовый воск Plastowax 200TD',                     unit:'т', norm:20,   dateStr:'',             priceFca:133333.33, priceUe:'',          deliveryUnit:5000.00,  priceCloto:138333.33,  sup:'',                                           storage:'',                      carrier:'',                            cat:'Наполнители',         status:'none',     note:''},
+  {id:59, name:'Bentoit 300 (MC Tone)',                                    unit:'т', norm:20,   dateStr:'Декабрь 2023', priceFca:303500.00, priceUe:'€2 671,00', deliveryUnit:0,        priceCloto:303500.00,  sup:'',                                           storage:'Индия',                 carrier:'',                            cat:'Буровые реагенты',    status:'critical', note:''},
+  {id:60, name:'Стеарат натрия',                                          unit:'т', norm:1,    dateStr:'Июль 2022',    priceFca:241666.67, priceUe:'',          deliveryUnit:20000.00, priceCloto:261666.67,  sup:'ООО "ПК ТЕМП"',                             storage:'Пермь',                 carrier:'',                            cat:'Наполнители',         status:'critical', note:''},
+  {id:61, name:'Сульфат железа',                                          unit:'т', norm:20,   dateStr:'Октябрь 2021', priceFca:20833.00,  priceUe:'',          deliveryUnit:3250.00,  priceCloto:24083.00,   sup:'',                                           storage:'',                      carrier:'',                            cat:'Химреагенты',         status:'critical', note:''},
+  {id:62, name:'Масло базовое SN-150',                                    unit:'т', norm:8.5,  dateStr:'Июнь 2023',    priceFca:75000.00,  priceUe:'',          deliveryUnit:4800.00,  priceCloto:79800.00,   sup:'ООО "Группа СКБ"',                          storage:'Дзержинск',             carrier:'АРГО НН',                     cat:'Битуминозные',        status:'critical', note:''},
+  {id:63, name:'STAFLO LV',                                               unit:'т', norm:20,   dateStr:'Ноябрь 2021',  priceFca:221817.70, priceUe:'€2 210,00', deliveryUnit:0,        priceCloto:221817.70,  sup:'Норнион ООО',                                storage:'',                      carrier:'доставка включена',           cat:'Импортные реагенты',  status:'critical', note:''},
+  {id:64, name:'Synthomer OCA43',                                         unit:'т', norm:18,   dateStr:'Март 2024',    priceFca:411517.00, priceUe:'€4 100,00', deliveryUnit:7407.41,  priceCloto:342240.74,  sup:'ВТС-Химические Материалы',                   storage:'СПб',                   carrier:'',                            cat:'Импортные реагенты',  status:'critical', note:''},
+  {id:65, name:'Radiagreen E-24',                                         unit:'т', norm:18.1, dateStr:'Февраль 2023', priceFca:392208.36, priceUe:'2 503 839 тенге', deliveryUnit:0, priceCloto:392208.36, sup:'Intekno SG',                                  storage:'Казахстан, DDP',        carrier:'доставка включена',           cat:'Импортные реагенты',  status:'critical', note:''},
+  {id:66, name:'Flodrill TS 705',                                         unit:'т', norm:20,   dateStr:'Декабрь 2021', priceFca:454573.00, priceUe:'$4 900,00', deliveryUnit:6650.00,  priceCloto:461223.00,  sup:'Полимер Систем',                             storage:'СПб',                   carrier:'',                            cat:'Импортные реагенты',  status:'critical', note:''},
+  {id:67, name:'Битум нефтяной 70/30',                                    unit:'т', norm:20,   dateStr:'Февраль 2026', priceFca:31311.48,  priceUe:'',          deliveryUnit:5327.87,  priceCloto:36639.35,   sup:'ЗАО МПК КРЗ',                                storage:'Рязань',                carrier:'',                            cat:'Битуминозные',        status:'active',   note:''},
+  {id:68, name:'ПАН порошок',                                             unit:'т', norm:10,   dateStr:'Июль 2022',    priceFca:50000.00,  priceUe:'',          deliveryUnit:12083.33, priceCloto:62083.33,   sup:'',                                           storage:'Татарстан',             carrier:'',                            cat:'Наполнители',         status:'critical', note:''},
+  {id:69, name:'СБС Р-30 (термоэластопласт бутадиен-стирольный)',         unit:'т', norm:5,    dateStr:'Июль 2022',    priceFca:199383.33, priceUe:'',          deliveryUnit:19078.14, priceCloto:218661.48,  sup:'ООО СИБУР',                                  storage:'Москва',                carrier:'',                            cat:'Буровые реагенты',    status:'critical', note:''},
+  {id:70, name:'Борная кислота',                                          unit:'т', norm:20,   dateStr:'Январь 2025',  priceFca:99166.67,  priceUe:'',          deliveryUnit:4500.00,  priceCloto:103666.67,  sup:'ХИМПЭК АО ТД',                               storage:'',                      carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:71, name:'ТПФН',                                                    unit:'т', norm:20,   dateStr:'Январь 2025',  priceFca:88500.00,  priceUe:'',          deliveryUnit:5208.33,  priceCloto:93708.33,   sup:'ООО «ФосАгро-Северо-Запад»',                 storage:'Волхов',                carrier:'',                            cat:'Химреагенты',         status:'order',    note:'трилонтетрафосфат натрия'},
+  {id:72, name:'Этиленгликоль',                                           unit:'т', norm:18,   dateStr:'Октябрь 2025', priceFca:83600.00,  priceUe:'',          deliveryUnit:0,        priceCloto:83600.00,   sup:'Тонны Химии Поволжья',                       storage:'Казань',                carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:73, name:'Метилдиэтаноламин',                                       unit:'т', norm:12,   dateStr:'Январь 2025',  priceFca:350000.00, priceUe:'',          deliveryUnit:8680.56,  priceCloto:358680.56,  sup:'ТД СИНТЕЗ-ОКА ООО',                          storage:'Дзержинск',             carrier:'',                            cat:'ПАВ и амины',         status:'order',    note:'МДЭА'},
+  {id:74, name:'Лимонная кислота',                                        unit:'т', norm:20,   dateStr:'Январь 2025',  priceFca:211481.67, priceUe:'',          deliveryUnit:4500.00,  priceCloto:215981.67,  sup:'Кемдел',                                     storage:'Колпино',               carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:75, name:'Пеногаситель ПС-1П',                                      unit:'т', norm:16,   dateStr:'Январь 2025',  priceFca:350000.00, priceUe:'',          deliveryUnit:6250.00,  priceCloto:356250.00,  sup:'Раухим',                                     storage:'Дзержинск',             carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:76, name:'Трилолифосфат натрия',                                    unit:'т', norm:20,   dateStr:'Январь 2025',  priceFca:88500.00,  priceUe:'',          deliveryUnit:5208.33,  priceCloto:93708.33,   sup:'ФосАгро Северо-Запад',                       storage:'Волхов',                carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:77, name:'ЖКТМ (2-я поставка)',                                     unit:'т', norm:22,   dateStr:'Февраль 2025', priceFca:50000.00,  priceUe:'',          deliveryUnit:13257.58, priceCloto:63257.58,   sup:'ООО НУР',                                    storage:'Конаково, Краснод.край',carrier:'',                            cat:'Битуминозные',        status:'critical', note:'жирные кислоты таллового масла'},
+  {id:78, name:'Газойль',                                                 unit:'т', norm:22,   dateStr:'Декабрь 2025', priceFca:32416.67,  priceUe:'',          deliveryUnit:0,        priceCloto:32416.67,   sup:'Татнефтехим',                                storage:'Уфа',                   carrier:'',                            cat:'Топливо',             status:'order',    note:''},
+  {id:79, name:'Растворитель ТПРД 2-ЭК',                                  unit:'т', norm:22.0, dateStr:'Февраль 2026', priceFca:53278.69,  priceUe:'',          deliveryUnit:0,        priceCloto:53278.69,   sup:'СНГП-СПб',                                   storage:'Стерлитамак',           carrier:'доставка включена',           cat:'Топливо',             status:'active',   note:''},
+  {id:80, name:'Стабилизатор глин C-STAB',                                unit:'т', norm:20.0, dateStr:'Октябрь 2024', priceFca:135000.00, priceUe:'',          deliveryUnit:7916.67,  priceCloto:142916.67,  sup:'Азия Импорт Карбон',                         storage:'Кинешма',               carrier:'доставка включена',           cat:'Буровые реагенты',    status:'order',    note:''},
+  {id:81, name:'Масло талловое лёгкое',                                   unit:'т', norm:22,   dateStr:'Декабрь 2025', priceFca:54650.00,  priceUe:'',          deliveryUnit:7275.00,  priceCloto:61925.00,   sup:'МАККОМ ООО',                                 storage:'Усть-Илинск',           carrier:'КАМАЗ',                       cat:'Битуминозные',        status:'order',    note:''},
+  {id:82, name:'MC SEAL (все марки)',                                     unit:'т', norm:18,   dateStr:'Июнь 2024',    priceFca:159963.68, priceUe:'',          deliveryUnit:0,        priceCloto:159963.68,  sup:'BioEnergy',                                  storage:'Сауд. Аравия',          carrier:'',                            cat:'Буровые реагенты',    status:'critical', note:''},
+  {id:83, name:'Глицерин сырой',                                          unit:'т', norm:18,   dateStr:'Февраль 2026', priceFca:75500.00,  priceUe:'',          deliveryUnit:5665.20,  priceCloto:81165.20,   sup:'Ока Кемикал, ООО',                           storage:'Дзержинск',             carrier:'',                            cat:'Химреагенты',         status:'active',   note:''},
+  {id:84, name:'Этилцеллозольв',                                          unit:'т', norm:15,   dateStr:'Июнь 2025',    priceFca:273500.00, priceUe:'',          deliveryUnit:7648.15,  priceCloto:281148.15,  sup:'ООО ТЭК',                                    storage:'Казань',                carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:85, name:'Олеиновая кислота',                                       unit:'т', norm:18,   dateStr:'Март 2026',    priceFca:133333.33, priceUe:'',          deliveryUnit:5208.33,  priceCloto:138541.67,  sup:'Стверх НПП Софит',                           storage:'Воронеж',               carrier:'доставка включена',           cat:'Наполнители',         status:'active',   note:''},
+  {id:86, name:'Монолеат ПЭГ-400',                                        unit:'т', norm:5.32, dateStr:'Апрель 2025',  priceFca:279900.00, priceUe:'',          deliveryUnit:8270.68,  priceCloto:288170.68,  sup:'НПП Макромер',                               storage:'Владимир',              carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:87, name:'Лапрамол 6504',                                           unit:'т', norm:10,   dateStr:'Июль 2025',    priceFca:310000.00, priceUe:'',          deliveryUnit:5902.78,  priceCloto:315902.78,  sup:'НПП Макромер',                               storage:'Владимир',              carrier:'',                            cat:'Химреагенты',         status:'order',    note:''},
+  {id:88, name:'Полиакриламид A110DF',                                    unit:'т', norm:25,   dateStr:'Октябрь 2025', priceFca:215000.00, priceUe:'',          deliveryUnit:0,        priceCloto:215000.00,  sup:'Fav. Wind Limited',                          storage:'DAP Архангельск',       carrier:'',                            cat:'Импортные реагенты',  status:'order',    note:''},
+  {id:89, name:'Пищевая сода',                                            unit:'т', norm:20,   dateStr:'Январь 2025',  priceFca:46833.33,  priceUe:'',          deliveryUnit:4791.67,  priceCloto:51625.00,   sup:'ХИМПЭК АО ТД',                               storage:'Москва',                carrier:'',                            cat:'Наполнители',         status:'order',    note:''},
+  {id:90, name:'Кубовые амины С17-С20',                                   unit:'т', norm:14,   dateStr:'Январь 2025',  priceFca:75000.00,  priceUe:'',          deliveryUnit:18233.58, priceCloto:93233.58,   sup:'Ураухим',                                    storage:'Березники',             carrier:'',                            cat:'ПАВ и амины',         status:'order',    note:''},
+  {id:91, name:'Скорлупа',                                                unit:'т', norm:17,   dateStr:'Февраль 2025', priceFca:58000.00,  priceUe:'',          deliveryUnit:0,        priceCloto:58000.00,   sup:'MADE-GREEN',                                 storage:'',                      carrier:'Доставка включена',           cat:'Наполнители',         status:'critical', note:''},
+  {id:92, name:'Пентаэритритил Монослоат',                                unit:'т', norm:15,   dateStr:'Февраль 2026', priceFca:254215.00, priceUe:'15 400,00', deliveryUnit:0,        priceCloto:254215.00,  sup:'Fav. Wind Limited',                          storage:'China',                 carrier:'Доставка включена',           cat:'Импортные реагенты',  status:'active',   note:''},
+  {id:93, name:'Глицерин Монолоат',                                       unit:'т', norm:16,   dateStr:'Октябрь 2025', priceFca:330000.00, priceUe:'3 366,00',  deliveryUnit:0,        priceCloto:330000.00,  sup:'Fav. Wind Limited',                          storage:'China',                 carrier:'Доставка включена',           cat:'Импортные реагенты',  status:'order',    note:''},
+  {id:94, name:'Макромер 45Н',                                            unit:'т', norm:1,    dateStr:'Февраль 2025', priceFca:150000.00, priceUe:'',          deliveryUnit:6000.00,  priceCloto:156000.00,  sup:'Макромер',                                   storage:'Владимир',              carrier:'',                            cat:'Химреагенты',         status:'critical', note:''},
+  {id:95, name:'2-Этилгексанол',                                          unit:'т', norm:1,    dateStr:'Март 2026',    priceFca:184426.22, priceUe:'',          deliveryUnit:6250.00,  priceCloto:190676.22,  sup:'ПК Платформа',                               storage:'Казань',                carrier:'',                            cat:'Химреагенты',         status:'active',   note:''},
+  {id:96, name:'Парагоголсульфокислота (ПТСК)',                            unit:'т', norm:1,    dateStr:'Октябрь 2025', priceFca:619600.00, priceUe:'',          deliveryUnit:0,        priceCloto:619600.00,  sup:'Кеминшен Лайн',                              storage:'Санкт-Петербург',       carrier:'Доставка включена',           cat:'Химреагенты',         status:'order',    note:''},
+  {id:97, name:'ТВИН-80 (Китай)',                                         unit:'т', norm:16,   dateStr:'Февраль 2026', priceFca:234304.74, priceUe:'12 860,00', deliveryUnit:0,        priceCloto:234304.74,  sup:'Fav. Wind Limited',                          storage:'China',                 carrier:'Доставка включена',           cat:'ПАВ и амины',         status:'active',   note:'Полисорбат 80 (КНР)'},
+  {id:98, name:'Алюмокалиевые квасцы (марка Ч)',                          unit:'т', norm:2,    dateStr:'Декабрь 2025', priceFca:120000.00, priceUe:'',          deliveryUnit:18750.00, priceCloto:138750.00,  sup:'Хлмзавод Флоресей',                          storage:'Пермь',                 carrier:'Доставка включена',           cat:'Химреагенты',         status:'order',    note:''},
+  {id:99, name:'ЖЛТ марки Е-5',                                           unit:'т', norm:18,   dateStr:'Февраль 2026', priceFca:36666.67,  priceUe:'',          deliveryUnit:0,        priceCloto:36666.67,   sup:'Шиканит Ойл',                                storage:'Уфа',                   carrier:'',                            cat:'Битуминозные',        status:'active',   note:''}
+];
+
+/* ════════ STATE ════════ */
+var data    = [];
+var editId  = null;
+var sortKey = 'id';
+var sortDir = 'asc';
+var nextId  = 200;
+
+/* ════════ INIT ════════ */
+function init(){
+  loadData();
+  renderTable();
+  updateKPIs();
+  initStickyScroll();
+}
+
+function inlineUpdate(inp, id, field){
+  var row = data.find(function(r){ return r.id===id; });
+  if(!row) return;
+  row[field] = parseFloat(inp.value)||0;
+  row.priceCloto = row.priceFca + row.deliveryUnit;
+  var cv = document.getElementById('cv-'+id);
+  if(cv) cv.textContent = row.priceCloto ? fmtR(row.priceCloto) : '—';
+}
+
+function inlineSave(id){
+  saveData();
+}
+
+function initStickyScroll(){
+  var wrap = document.querySelector('.tbl-wrap');
+  var bar  = document.getElementById('sticky-hscroll');
+  var inn  = document.getElementById('sticky-hscroll-inner');
+  if(!wrap||!bar||!inn) return;
+  var locked = false;
+  function syncW(){ inn.style.width = wrap.scrollWidth+'px'; }
+  syncW();
+  bar.addEventListener('scroll', function(){ if(!locked){ locked=true; wrap.scrollLeft=bar.scrollLeft; locked=false; } });
+  wrap.addEventListener('scroll', function(){ if(!locked){ locked=true; bar.scrollLeft=wrap.scrollLeft; locked=false; } });
+  new MutationObserver(syncW).observe(document.getElementById('mtbl-body'),{childList:true,subtree:false});
+}
+
+function loadData(){
+  try {
+    var raw = localStorage.getItem(SK);
+    if(raw){ data = JSON.parse(raw); nextId = data.reduce(function(m,r){ return Math.max(m,r.id||0); },0) + 1; return; }
+  } catch(e){}
+  data = DEFAULT_DATA.map(function(r){ return Object.assign({},r); });
+  nextId = 200;
+  /* Auto-persist defaults so other pages (stabilight-cost etc.) can read this data */
+  try { localStorage.setItem(SK, JSON.stringify(data)); } catch(e){}
+}
+
+function saveData(){
+  localStorage.setItem(SK, JSON.stringify(data));
+  showToast('✓ Сохранено');
+}
+
+function showToast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+
+/* ════════ RENDER TABLE ════════ */
+var CAT_CLS = {
+  'Углеродное сырьё':'cp-coal','Полуфабрикаты':'cp-semi','Битуминозные':'cp-bitu',
+  'Химреагенты':'cp-chem','ПАВ и амины':'cp-surf','Топливо':'cp-fuel',
+  'Буровые реагенты':'cp-drill','Наполнители':'cp-filler','Импортные реагенты':'cp-imp','Прочие':'cp-other'
+};
+var ST_CLS  = { active:'st-active', order:'st-order', critical:'st-critical', none:'st-none', own:'st-own' };
+var ST_LBL  = { active:'Актуально', order:'Под обновл.', critical:'Устарел', none:'Нет даты', own:'Полуфабрикат' };
+var DATE_CLS = { active:'date-fresh', order:'date-order', critical:'date-critical', none:'date-none', own:'date-none' };
+
+function fmtR(n){ if(!n && n!==0) return '—'; return Math.round(n).toLocaleString('ru'); }
+function fmtRd(n,d){ if(!n && n!==0) return '—'; return (+(n||0)).toFixed(d||2).replace('.',','); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function applyFilters(){ renderTable(); }
+
+function getFiltered(){
+  var q   = (document.getElementById('search-in').value||'').toLowerCase().trim();
+  var cat = document.getElementById('fil-cat').value;
+  var st  = document.getElementById('fil-st').value;
+  return data.filter(function(r){
+    if(cat && r.cat!==cat) return false;
+    if(st  && r.status!==st) return false;
+    if(q && !(
+      (r.name||'').toLowerCase().includes(q) ||
+      (r.sup||'').toLowerCase().includes(q)  ||
+      (r.storage||'').toLowerCase().includes(q) ||
+      (r.carrier||'').toLowerCase().includes(q) ||
+      (r.note||'').toLowerCase().includes(q)
+    )) return false;
+    return true;
+  });
+}
+
+function renderTable(){
+  var rows = getFiltered();
+  rows.sort(function(a,b){
+    var av = a[sortKey], bv = b[sortKey];
+    if(typeof av === 'string') { av = (av||'').toLowerCase(); bv = (bv||'').toLowerCase(); }
+    else { av = av||0; bv = bv||0; }
+    return av < bv ? -1 : av > bv ? 1 : 0;
+  });
+  if(sortDir==='desc') rows.reverse();
+
+  document.getElementById('shown-count').textContent = rows.length;
+  document.getElementById('total-count').textContent  = data.length;
+
+  if(!rows.length){
+    document.getElementById('mtbl-body').innerHTML = '';
+    document.getElementById('empty-state').style.display = '';
+    return;
+  }
+  document.getElementById('empty-state').style.display = 'none';
+
+  var html = '';
+  rows.forEach(function(r){
+    var catCls = CAT_CLS[r.cat]||'cp-coal';
+    var stCls  = ST_CLS[r.status]||'st-none';
+    var stLbl  = ST_LBL[r.status]||r.status;
+    var dtCls  = DATE_CLS[r.status]||'date-none';
+    var clotoVal = '<span class="cloto-val" id="cv-'+r.id+'">'+(r.priceCloto ? fmtR(r.priceCloto) : '—')+'</span>';
+    var fcaVal   = '<input class="inline-num" type="number" value="'+(r.priceFca||0)+'" oninput="inlineUpdate(this,'+r.id+',\'priceFca\')" onchange="inlineSave('+r.id+')" step="0.01" min="0">'+(r.priceUe ? '<span class="fca-sub">'+esc(r.priceUe)+'</span>' : '');
+    var delVal   = '<input class="inline-num" type="number" value="'+(r.deliveryUnit||0)+'" oninput="inlineUpdate(this,'+r.id+',\'deliveryUnit\')" onchange="inlineSave('+r.id+')" step="0.01" min="0">';
+    var normVal  = (r.norm||'—')+(r.unit?' '+r.unit:'');
+    var storageCell = (r.storage||'')+(r.carrier&&r.carrier!==r.storage?'<span class="fca-sub">'+(r.carrier||'')+'</span>':'');
+    if(!r.storage && r.carrier) storageCell = r.carrier;
+
+    html += '<tr>'+
+      '<td class="rn">'+r.id+'</td>'+
+      '<td class="nm">'+
+        '<span class="name-main">'+esc(r.name)+'</span>'+
+        (r.note?'<span class="name-note">'+esc(r.note)+'</span>':'')+
+        '<span style="display:block;margin-top:3px"><span class="cat-pill '+catCls+'">'+esc(r.cat)+'</span></span>'+
+      '</td>'+
+      '<td class="mu" style="white-space:nowrap">'+normVal+'</td>'+
+      '<td><span class="'+dtCls+'">'+(r.dateStr||'—')+'</span></td>'+
+      '<td class="nr">'+fcaVal+'</td>'+
+      '<td class="nr cloto-cell">'+clotoVal+'</td>'+
+      '<td class="nr mu">'+delVal+'</td>'+
+      '<td style="font-size:12.5px">'+esc(r.sup||'—')+'</td>'+
+      '<td class="mu" style="font-size:12px">'+storageCell+'</td>'+
+      '<td><span class="st-pill '+stCls+'">'+stLbl+'</span></td>'+
+      '<td class="action-cell">'+
+        '<button class="btn btn-ghost btn-sm" onclick="openModal('+r.id+')" title="Редактировать">✎</button>'+
+        '<button class="btn-danger" onclick="deleteItem('+r.id+')" title="Удалить">✕</button>'+
+      '</td>'+
+    '</tr>';
+  });
+  document.getElementById('mtbl-body').innerHTML = html;
+  updateSortHeaders();
+}
+
+function updateSortHeaders(){
+  document.querySelectorAll('table.mtbl thead th').forEach(function(th){
+    th.classList.remove('sort-asc','sort-desc');
+  });
+}
+
+/* ════════ SORT ════════ */
+function sortBy(key){
+  if(sortKey===key) sortDir = sortDir==='asc'?'desc':'asc';
+  else { sortKey=key; sortDir='asc'; }
+  renderTable();
+}
+
+/* ════════ KPIs ════════ */
+function updateKPIs(){
+  var total    = data.length;
+  var active   = data.filter(function(r){ return r.status==='active'; }).length;
+  var crit     = data.filter(function(r){ return r.status==='critical'||r.status==='order'; }).length;
+  var own      = data.filter(function(r){ return r.status==='own'; }).length;
+  var cats     = new Set(data.map(function(r){ return r.cat; })).size;
+  document.getElementById('kpi-total').textContent  = total;
+  document.getElementById('kpi-active').textContent = active;
+  document.getElementById('kpi-crit').textContent   = crit;
+  document.getElementById('kpi-own').textContent    = own;
+  document.getElementById('kpi-cats-sub').textContent = 'в '+cats+' категориях';
+}
+
+/* ════════ MODAL ════════ */
+function openModal(id){
+  editId = id||null;
+  var r = id ? data.find(function(x){ return x.id===id; }) : null;
+  document.getElementById('modal-title').textContent = id ? 'Редактировать позицию' : 'Новая позиция';
+  document.getElementById('f-name').value    = r ? esc(r.name)    : '';
+  document.getElementById('f-cat').value     = r ? r.cat          : 'Битуминозные';
+  document.getElementById('f-status').value  = r ? r.status       : 'active';
+  document.getElementById('f-unit').value    = r ? (r.unit||'т')  : 'т';
+  document.getElementById('f-norm').value    = r ? (r.norm||'')   : '';
+  document.getElementById('f-date').value    = r ? (r.dateStr||''): '';
+  document.getElementById('f-fca').value     = r ? (r.priceFca||'') : '';
+  document.getElementById('f-ue').value      = r ? (r.priceUe||'') : '';
+  document.getElementById('f-del').value     = r ? (r.deliveryUnit||'') : '';
+  document.getElementById('f-cloto').value   = r ? (r.priceCloto||'') : '';
+  document.getElementById('f-sup').value     = r ? (r.sup||'')    : '';
+  document.getElementById('f-storage').value = r ? (r.storage||'') : '';
+  document.getElementById('f-carrier').value = r ? (r.carrier||'') : '';
+  document.getElementById('f-note').value    = r ? (r.note||'')   : '';
+  document.getElementById('item-modal').classList.add('open');
+  setTimeout(function(){ document.getElementById('f-name').focus(); }, 80);
+}
+
+function autoCloto(){
+  var fca = parseFloat(document.getElementById('f-fca').value)||0;
+  var del = parseFloat(document.getElementById('f-del').value)||0;
+  if(fca||del) document.getElementById('f-cloto').value = (fca+del).toFixed(2);
+}
+
+function closeItemModal(){ document.getElementById('item-modal').classList.remove('open'); }
+function closeItemModalOutside(e){ if(e.target===document.getElementById('item-modal')) closeItemModal(); }
+
+function saveItemModal(){
+  var name = document.getElementById('f-name').value.trim();
+  if(!name){ document.getElementById('f-name').focus(); return; }
+  var item = {
+    id:           editId || nextId++,
+    name:         name,
+    cat:          document.getElementById('f-cat').value,
+    status:       document.getElementById('f-status').value,
+    unit:         document.getElementById('f-unit').value.trim()||'т',
+    norm:         parseFloat(document.getElementById('f-norm').value)||0,
+    dateStr:      document.getElementById('f-date').value.trim(),
+    priceFca:     parseFloat(document.getElementById('f-fca').value)||0,
+    priceUe:      document.getElementById('f-ue').value.trim(),
+    deliveryUnit: parseFloat(document.getElementById('f-del').value)||0,
+    priceCloto:   parseFloat(document.getElementById('f-cloto').value)||0,
+    sup:          document.getElementById('f-sup').value.trim(),
+    storage:      document.getElementById('f-storage').value.trim(),
+    carrier:      document.getElementById('f-carrier').value.trim(),
+    note:         document.getElementById('f-note').value.trim()
+  };
+  if(editId){
+    var idx = data.findIndex(function(x){ return x.id===editId; });
+    if(idx>=0) data[idx] = item;
+  } else {
+    data.push(item);
+  }
+  saveData();
+  renderTable();
+  updateKPIs();
+  closeItemModal();
+}
+
+function deleteItem(id){
+  if(!confirm('Удалить позицию из прайса?')) return;
+  data = data.filter(function(r){ return r.id!==id; });
+  saveData();
+  renderTable();
+  updateKPIs();
+  showToast('Позиция удалена');
+}
+
+/* ════════ CSV EXPORT ════════ */
+function exportCsv(){
+  var rows = getFiltered();
+  var hdr = ['№','Наименование','Ед.','Норма отгр.','Актуальность','Цена FCA ₽/т','У.Е.','Доставка ₽/т','Цена КЛОТО ₽/т','Поставщик','Склад','Перевозчик','Категория','Статус','Примечание'];
+  var lines = [hdr.join(';')];
+  rows.forEach(function(r){
+    lines.push([r.id,'"'+r.name+'"',r.unit||'',r.norm||'',r.dateStr||'',r.priceFca||'','"'+(r.priceUe||'')+'"',r.deliveryUnit||'',r.priceCloto||'','"'+(r.sup||'')+'"','"'+(r.storage||'')+'"','"'+(r.carrier||'')+'"',r.cat||'',r.status||'','"'+(r.note||'')+'"'].join(';'));
+  });
+  var blob = new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'syryo_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape') closeItemModal();
+});
+
+init();
+</script>
+
+<div id="sticky-hscroll"><div id="sticky-hscroll-inner"></div></div>
+
+</body>
+</html>

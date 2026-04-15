@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Конструктор заказов — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09111b;
+      --bg2: #122033;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface2: rgba(255, 255, 255, 0.08);
+      --surface3: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #edf3fa;
+      --muted: #8e9caf;
+      --gold: #f5c95f;
+      --cyan: #5de5cf;
+      --blue: #7ebfff;
+      --green: #72d89a;
+      --red: #ff7d8f;
+      --radius: 18px;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(245, 201, 95, 0.12), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(93, 229, 207, 0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(126, 191, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126, 191, 255, 0.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .hero,
+    .card,
+    .table-card,
+    .summary-card,
+    .validation-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(135deg, rgba(245, 201, 95, 0.16), rgba(9, 17, 27, 0.34)),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 201, 95, 0.24);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .title span { color: var(--gold); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions,
+    .toolbar,
+    .seller-actions,
+    .validation-actions,
+    .table-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .hero-actions { margin-top: 16px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); background: var(--surface2); }
+    .btn.primary { color: var(--gold); background: rgba(245, 201, 95, 0.14); border-color: rgba(245, 201, 95, 0.24); }
+    .btn.cyan { color: var(--cyan); background: rgba(93, 229, 207, 0.14); border-color: rgba(93, 229, 207, 0.24); }
+    .btn.blue { color: var(--blue); background: rgba(126, 191, 255, 0.14); border-color: rgba(126, 191, 255, 0.24); }
+
+    .mini-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .mini-title {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+
+    .mini-card p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.65fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .left-stack,
+    .right-stack { display: grid; gap: 14px; }
+
+    .card,
+    .table-card,
+    .summary-card,
+    .validation-card { padding: 18px; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.08;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      max-width: 820px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+
+    .textarea { min-height: 92px; resize: vertical; }
+
+    .field-note {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .seller-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .seller-box {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .seller-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    .seller-lines {
+      margin-top: 10px;
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1900px;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px;
+      background: rgba(9, 17, 27, 0.96);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-align: left;
+      font-weight: 800;
+      vertical-align: bottom;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
+    .line-index {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold);
+      min-width: 26px;
+      text-align: center;
+    }
+
+    .line-input,
+    .line-select {
+      width: 100%;
+      min-width: 110px;
+      min-height: 38px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font: inherit;
+    }
+
+    .line-input.wide { min-width: 260px; }
+    .line-input.medium { min-width: 170px; }
+    .line-readonly {
+      min-width: 130px;
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .line-sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .line-delete {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 125, 143, 0.18);
+      background: rgba(255, 125, 143, 0.1);
+      color: var(--red);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .totals-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .total-row strong {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      color: var(--gold);
+    }
+
+    .total-row span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .check-item {
+      padding: 12px 13px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .check-item.ok { border-color: rgba(114, 216, 154, 0.18); background: rgba(114, 216, 154, 0.08); }
+    .check-item.warn { border-color: rgba(255, 125, 143, 0.18); background: rgba(255, 125, 143, 0.08); }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .status-ready { color: var(--green); background: rgba(114, 216, 154, 0.12); }
+    .status-draft { color: var(--gold); background: rgba(245, 201, 95, 0.12); }
+    .status-error { color: var(--red); background: rgba(255, 125, 143, 0.12); }
+
+    .sticky-summary {
+      position: static;
+      top: auto;
+    }
+
+    .hidden-print { }
+
+    @media (max-width: 1320px) {
+      .hero,
+      .layout,
+      .seller-grid,
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 840px) {
+      .wrap { padding: 18px 14px 32px; }
+      .title { font-size: 38px; }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #111;
+      }
+
+      .bg-grid,
+      .hero-actions,
+      .table-actions,
+      .validation-actions,
+      .seller-actions,
+      .line-delete,
+      .hidden-print,
+      .toolbar { display: none !important; }
+
+      .hero,
+      .card,
+      .table-card,
+      .summary-card,
+      .validation-card {
+        box-shadow: none;
+        border: 1px solid #d8dde5;
+        background: #fff;
+        break-inside: avoid;
+      }
+
+      .layout { grid-template-columns: 1fr; }
+      .table-wrap { overflow: visible; }
+      table { min-width: 0; }
+      th { background: #f5f7fb; color: #4c5562; }
+      .line-readonly,
+      .line-input,
+      .line-select,
+      .input,
+      .select,
+      .textarea {
+        background: #fff;
+        color: #111;
+        border-color: #d8dde5;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Order Builder</div>
+        <div class="title">Конструктор <span>заказов</span></div>
+        <div class="sub">Здесь можно собрать заказ по реквизитам продавца и покупателя, выбрать товары из текущей номенклатуры, автоматически подтянуть стоимость доставки из модуля логистики, посчитать НДС 22% и подготовить документ к сохранению или печати.</div>
+        <div class="hero-actions hidden-print">
+          <a class="btn primary" href="sales-orders.html">← К дашборду заказов</a>
+          <a class="btn" href="commercial.html">В коммерческий отдел</a>
+          <a class="btn" href="orders.html">К аналитике отгрузок</a>
+          <a class="btn" href="logistic.html">К логистике</a>
+        </div>
+      </div>
+
+      <div class="mini-stack">
+        <div class="mini-card">
+          <div class="mini-title">Режим заказа</div>
+          <strong id="order-status">Черновик</strong>
+          <p id="order-status-copy">Пока заказ не проверен. После заполнения нажмите «Проверить заказ», чтобы увидеть ошибки и итог по документу.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-title">Логистическая ставка</div>
+          <strong id="logistic-source">cloto_logistic_rates</strong>
+          <p>Если ставки уже заполнены в модуле логистики, стоимость для авто, контейнера и вагона будет подставляться автоматически по выбранному пункту доставки.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div class="left-stack">
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Шапка заказа</div>
+              <div class="section-copy">Номер, дата и общие параметры документа. Эти поля попадут в печатную форму и в сохраненный файл заказа.</div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="order-number">Номер заказа</label>
+              <input class="input" id="order-number" placeholder="Например: КЛТ-2026-0415-01">
+            </div>
+            <div class="field">
+              <label for="order-date">Дата заказа</label>
+              <input class="input" id="order-date" type="date">
+            </div>
+            <div class="field full">
+              <label for="order-comment">Комментарий</label>
+              <textarea class="textarea" id="order-comment" placeholder="Особые условия, примечания по отгрузке, договор, ссылка на заявку"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Стороны заказа</div>
+              <div class="section-copy">Продавец заполнен автоматически. Покупатель расположен ниже и выбирается из выпадающих подсказок по модулю клиентов, но поле остается полностью редактируемым.</div>
+            </div>
+          </div>
+
+          <div class="seller-grid">
+            <div class="seller-box">
+              <div class="mini-title">Продавец</div>
+              <div class="seller-name">ООО "КЛОТО"</div>
+              <div class="seller-lines">
+                <div>ИНН 2928001770</div>
+                <div>КПП 290101001</div>
+                <div>163012, Архангельская обл, г. Архангельск, ул. Кировская, дом 10, корпус 2</div>
+                <div>Тел.: 7(8182)23-45-96</div>
+              </div>
+            </div>
+
+            <div class="seller-box">
+              <div class="mini-title">Покупатель</div>
+              <div class="form-grid" style="margin-top:10px">
+                <div class="field full">
+                  <label for="buyer-name">Наименование</label>
+                  <input class="input" id="buyer-name" list="buyers-list" placeholder="Введите или выберите покупателя">
+                  <div class="field-note">Подсказки подтягиваются из модуля «Клиенты». Поле можно свободно редактировать вручную.</div>
+                  <datalist id="buyers-list"></datalist>
+                </div>
+                <div class="field">
+                  <label for="buyer-inn">ИНН</label>
+                  <input class="input" id="buyer-inn" placeholder="ИНН покупателя">
+                </div>
+                <div class="field">
+                  <label for="buyer-kpp">КПП</label>
+                  <input class="input" id="buyer-kpp" placeholder="КПП покупателя">
+                </div>
+                <div class="field full">
+                  <label for="buyer-address">Адрес</label>
+                  <textarea class="textarea" id="buyer-address" placeholder="Юридический или адрес поставки покупателя"></textarea>
+                </div>
+                <div class="field">
+                  <label for="buyer-phone">Телефон</label>
+                  <input class="input" id="buyer-phone" placeholder="Телефон покупателя">
+                </div>
+                <div class="field">
+                  <label for="buyer-contact">Контактное лицо</label>
+                  <input class="input" id="buyer-contact" placeholder="ФИО / должность">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="table-card">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Товары</div>
+              <div class="section-copy">Добавляйте строки товара. Для продукта работает нативный поиск по номенклатуре, для покупателя и пункта доставки используются справочники клиента и логистики. Стоимость доставки по строке считается автоматически по модулю перевозки.</div>
+            </div>
+            <div class="table-actions hidden-print">
+              <button class="btn cyan" type="button" onclick="addOrderLine()">+ Добавить товар</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>№</th>
+                  <th>Наименование</th>
+                  <th>Кол-во, тонн</th>
+                  <th>Кол-во ед. <br> мешки/бочки</th>
+                  <th>Срок поставки</th>
+                  <th>Самовывоз / доставка</th>
+                  <th>Пункт доставки</th>
+                  <th>Модуль</th>
+                  <th>Стоимость доставки</th>
+                  <th>Цена без НДС</th>
+                  <th>НДС</th>
+                  <th>Сумма без НДС</th>
+                  <th>Сумма с НДС</th>
+                  <th class="hidden-print">Удалить</th>
+                </tr>
+              </thead>
+              <tbody id="order-lines-body"></tbody>
+            </table>
+          </div>
+
+          <datalist id="products-list"></datalist>
+          <datalist id="destinations-list"></datalist>
+        </section>
+      </div>
+
+      <div class="right-stack sticky-summary">
+        <section class="summary-card">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Итоги заказа</div>
+              <div class="section-copy">Суммы по всем строкам считаются автоматически, включая доставку и НДС 22%.</div>
+            </div>
+          </div>
+
+          <div class="totals-grid">
+            <div class="total-row">
+              <span>Итого без НДС</span>
+              <strong id="total-without-vat">0 ₽</strong>
+            </div>
+            <div class="total-row">
+              <span>НДС 22%</span>
+              <strong id="total-vat">0 ₽</strong>
+            </div>
+            <div class="total-row">
+              <span>Всего сумма с НДС</span>
+              <strong id="total-with-vat">0 ₽</strong>
+            </div>
+          </div>
+
+          <div class="check-list">
+            <div class="check-item">
+              <div class="mini-title">Строк в заказе</div>
+              <div id="stats-lines" style="margin-top:8px;font-size:16px;font-weight:800">0</div>
+            </div>
+            <div class="check-item">
+              <div class="mini-title">Общий тоннаж</div>
+              <div id="stats-tons" style="margin-top:8px;font-size:16px;font-weight:800">0 т</div>
+            </div>
+            <div class="check-item">
+              <div class="mini-title">Покупатель</div>
+              <div id="stats-buyer" style="margin-top:8px;font-size:14px;font-weight:700">Не выбран</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="validation-card">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Проверка заказа</div>
+              <div class="section-copy">Нажмите кнопку, и на экране появится список недостающих полей или подтверждение, что документ можно сохранять и печатать.</div>
+            </div>
+          </div>
+
+          <div class="validation-actions hidden-print" style="margin-bottom:14px">
+            <button class="btn blue" type="button" onclick="validateOrder(true)">Проверить заказ</button>
+            <button class="btn primary" type="button" onclick="saveOrderToPath()">Сохранить заказ</button>
+            <button class="btn" type="button" onclick="printOrder()">Распечатать заказ</button>
+          </div>
+
+          <div id="validation-status"><span class="status-pill status-draft">Черновик</span></div>
+          <div class="check-list" id="validation-list">
+            <div class="check-item">Проверка еще не запускалась.</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="orders_data.js"></script>
+  <script>
+    var LOGISTIC_RATES_KEY = 'cloto_logistic_rates';
+    var ORDER_DRAFTS_KEY = 'cloto_sales_orders_drafts';
+    var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
+    var VAT_RATE = 0.22;
+    var SELLER = {
+      name: 'ООО "КЛОТО"',
+      inn: '2928001770',
+      kpp: '290101001',
+      address: '163012, Архангельская обл, г. Архангельск, ул. Кировская, дом 10, корпус 2',
+      phone: '7(8182)23-45-96'
+    };
+
+    var DEFAULT_CLIENTS = [
+      { name: 'Халлибуртон / БурСервис', city: 'Тюмень' },
+      { name: 'Мад-Сервис', city: 'Москва' },
+      { name: 'ОМАС', city: 'Уфа' },
+      { name: 'ИНКО-Сервис', city: 'Нижневартовск' },
+      { name: 'ССК-Технологии', city: 'Новый Уренгой' },
+      { name: 'АКРОС', city: 'Краснодар' },
+      { name: 'ТКШ / Петроальянс', city: 'Альметьевск' },
+      { name: 'KazPetroDrilling', city: 'Атырау' },
+      { name: 'ПЕТРОИНЖИНИРИНГ', city: 'Москва' },
+      { name: 'FWL', city: 'Иностранный' },
+      { name: 'ПОЛИХИМПРОМ', city: 'Нижнекамск' },
+      { name: 'БУРИНТЕХ', city: 'Уфа' },
+      { name: 'Комар эпокси', city: 'Казань' },
+      { name: 'Сургутнефтегаз', city: 'Сургут' }
+    ];
+
+    var DEFAULT_PRODUCTS = [
+      { name: 'Стабилайт II', unitLabel: 'мешки', pricePerTon: 485000, sourceKey: 'cloto_product_stabilight' },
+      { name: 'УЩР сухой', unitLabel: 'мешки', pricePerTon: 320000, sourceKey: 'cloto_product_uschr' },
+      { name: 'Оптитрол жидкий', unitLabel: 'бочки', pricePerTon: 380000, sourceKey: 'cloto_product_optitrol' },
+      { name: 'Блэктрол', unitLabel: 'бочки', pricePerTon: 450000, sourceKey: 'cloto_product_blacktrol' },
+      { name: 'Макс-Флекс', unitLabel: 'бочки', pricePerTon: 199000, sourceKey: 'cloto_product_maksflex' }
+    ];
+
+    var DEFAULT_DESTINATIONS = [
+      { name: 'Архангельск', truck: 0, cont: 0, wagon: 0 },
+      { name: 'Пыть-Ях', truck: 0, cont: 0, wagon: 0 },
+      { name: 'Сургут', truck: 0, cont: 0, wagon: 0 },
+      { name: 'Нижневартовск', truck: 0, cont: 0, wagon: 0 },
+      { name: 'Коротчаево', truck: 0, cont: 0, wagon: 0 },
+      { name: 'Мурманск', truck: 0, cont: 0, wagon: 0 }
+    ];
+
+    var clientCatalog = [];
+    var productCatalog = [];
+    var destinationCatalog = [];
+    var orderLines = [];
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function normalizeValue(value) {
+      return String(value || '').trim().toLowerCase();
+    }
+
+    function formatRub(value) {
+      return (Number(value || 0)).toLocaleString('ru-RU', { maximumFractionDigits: 2, minimumFractionDigits: 0 }) + ' ₽';
+    }
+
+    function formatTons(value) {
+      return Number(value || 0).toLocaleString('ru-RU', { maximumFractionDigits: 3, minimumFractionDigits: 0 }) + ' т';
+    }
+
+    function getTodayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getDefaultOrderNumber() {
+      var now = new Date();
+      var parts = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')];
+      return 'КЛТ-' + parts.join('') + '-01';
+    }
+
+    function uniqueByName(items) {
+      var seen = {};
+      return items.filter(function(item) {
+        var key = normalizeValue(item.name);
+        if (!key || seen[key]) return false;
+        seen[key] = true;
+        return true;
+      });
+    }
+
+    function average(values) {
+      var nums = values.filter(function(value) { return Number(value) > 0; }).map(Number);
+      if (!nums.length) return 0;
+      return nums.reduce(function(sum, value) { return sum + value; }, 0) / nums.length;
+    }
+
+    function loadLogisticRates() {
+      try {
+        var raw = localStorage.getItem(LOGISTIC_RATES_KEY);
+        if (!raw) return DEFAULT_DESTINATIONS.slice();
+        var parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed) || !parsed.length) return DEFAULT_DESTINATIONS.slice();
+        return parsed.map(function(item) {
+          return {
+            name: item.name,
+            truck: Number(item.truck || 0),
+            cont: Number(item.cont || 0),
+            wagon: Number(item.wagon || 0)
+          };
+        });
+      } catch (error) {
+        return DEFAULT_DESTINATIONS.slice();
+      }
+    }
+
+    function loadClientsCatalog() {
+      var items = DEFAULT_CLIENTS.slice();
+
+      if (typeof ORDERS_DATA !== 'undefined' && Array.isArray(ORDERS_DATA)) {
+        ORDERS_DATA.forEach(function(item) {
+          if (item.client) items.push({ name: item.client, city: item.dest || '' });
+        });
+      }
+
+      return uniqueByName(items).sort(function(a, b) {
+        return a.name.localeCompare(b.name, 'ru');
+      });
+    }
+
+    function loadProductsCatalog() {
+      var byName = {};
+
+      DEFAULT_PRODUCTS.forEach(function(item) {
+        byName[normalizeValue(item.name)] = {
+          name: item.name,
+          unitLabel: item.unitLabel,
+          pricePerTon: item.pricePerTon,
+          sourceKey: item.sourceKey
+        };
+
+        if (item.sourceKey) {
+          try {
+            var raw = localStorage.getItem(item.sourceKey);
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              if (parsed.price) byName[normalizeValue(item.name)].pricePerTon = Number(parsed.price);
+              if (parsed.pack) byName[normalizeValue(item.name)].unitLabel = parsed.pack === 'drums' ? 'бочки' : 'мешки';
+            }
+          } catch (error) {}
+        }
+      });
+
+      if (typeof ORDERS_DATA !== 'undefined' && Array.isArray(ORDERS_DATA)) {
+        var productGroups = {};
+        ORDERS_DATA.forEach(function(item) {
+          if (!item.product) return;
+          var key = normalizeValue(item.productShort || item.product);
+          if (!productGroups[key]) {
+            productGroups[key] = {
+              name: item.productShort || item.product,
+              unitLabel: /боч/i.test(item.product || '') ? 'бочки' : 'мешки',
+              prices: []
+            };
+          }
+          if (item.pricePerTon) productGroups[key].prices.push(Number(item.pricePerTon));
+        });
+
+        Object.keys(productGroups).forEach(function(key) {
+          var group = productGroups[key];
+          if (!byName[key]) {
+            byName[key] = {
+              name: group.name,
+              unitLabel: group.unitLabel,
+              pricePerTon: average(group.prices)
+            };
+          }
+        });
+      }
+
+      return Object.keys(byName).map(function(key) { return byName[key]; }).sort(function(a, b) {
+        return a.name.localeCompare(b.name, 'ru');
+      });
+    }
+
+    function loadDestinationCatalog() {
+      var items = loadLogisticRates();
+      if (items.every(function(item) { return normalizeValue(item.name) !== 'архангельск'; })) {
+        items.unshift({ name: 'Архангельск', truck: 0, cont: 0, wagon: 0 });
+      }
+      return uniqueByName(items).sort(function(a, b) {
+        if (normalizeValue(a.name) === 'архангельск') return -1;
+        if (normalizeValue(b.name) === 'архангельск') return 1;
+        return a.name.localeCompare(b.name, 'ru');
+      });
+    }
+
+    function renderDatalist(listId, items, valueGetter) {
+      document.getElementById(listId).innerHTML = items.map(function(item) {
+        return '<option value="' + escapeHtml(valueGetter(item)) + '"></option>';
+      }).join('');
+    }
+
+    function createEmptyLine() {
+      return {
+        id: 'line-' + Date.now() + '-' + Math.random().toString(16).slice(2, 7),
+        productName: '',
+        tons: '',
+        units: '',
+        deliveryDate: '',
+        deliveryType: 'pickup',
+        destination: 'Архангельск',
+        module: 'truck',
+        deliveryCost: 0,
+        priceWithoutVat: '',
+        vatRate: VAT_RATE,
+        amountWithoutVat: 0,
+        amountVat: 0,
+        amountWithVat: 0,
+        unitLabel: 'мешки'
+      };
+    }
+
+    function getProductByName(name) {
+      var key = normalizeValue(name);
+      return productCatalog.filter(function(item) { return normalizeValue(item.name) === key; })[0] || null;
+    }
+
+    function getBuyerByName(name) {
+      var key = normalizeValue(name);
+      return clientCatalog.filter(function(item) { return normalizeValue(item.name) === key; })[0] || null;
+    }
+
+    function getDestinationByName(name) {
+      var key = normalizeValue(name);
+      return destinationCatalog.filter(function(item) { return normalizeValue(item.name) === key; })[0] || null;
+    }
+
+    function getModuleRateKey(module) {
+      if (module === 'container') return 'cont';
+      if (module === 'wagon') return 'wagon';
+      return 'truck';
+    }
+
+    function recalculateLine(line) {
+      var tons = Number(line.tons || 0);
+      var price = Number(line.priceWithoutVat || 0);
+      var delivery = Number(line.deliveryCost || 0);
+      var base = (tons * price) + delivery;
+      var vat = base * VAT_RATE;
+
+      line.amountWithoutVat = base;
+      line.amountVat = vat;
+      line.amountWithVat = base + vat;
+    }
+
+    function syncLineDerivedFields(line) {
+      var product = getProductByName(line.productName);
+      if (product) {
+        line.unitLabel = product.unitLabel || 'мешки';
+        if (!Number(line.priceWithoutVat)) {
+          line.priceWithoutVat = Math.round(Number(product.pricePerTon || 0));
+        }
+      }
+
+      if (line.deliveryType === 'pickup') {
+        line.destination = 'Архангельск';
+        line.deliveryCost = 0;
+      } else {
+        var destination = getDestinationByName(line.destination);
+        if (destination) {
+          line.deliveryCost = Number(destination[getModuleRateKey(line.module)] || 0);
+        }
+      }
+
+      recalculateLine(line);
+    }
+
+    function renderOrderLines() {
+      var body = document.getElementById('order-lines-body');
+      body.innerHTML = orderLines.map(function(line, index) {
+        syncLineDerivedFields(line);
+
+        var destinationOptions = destinationCatalog.map(function(destination) {
+          return '<option value="' + escapeHtml(destination.name) + '"' + (line.destination === destination.name ? ' selected' : '') + '>' + escapeHtml(destination.name) + '</option>';
+        }).join('');
+
+        return '<tr>' +
+          '<td><div class="line-index">' + (index + 1) + '</div></td>' +
+          '<td>' +
+            '<input class="line-input wide" list="products-list" value="' + escapeHtml(line.productName) + '" placeholder="Наименование продукта" oninput="updateLine(' + index + ', \'productName\', this.value)">' +
+            '<div class="line-sub">Поиск по модулю «Продукты» и истории отгрузок. Упаковка: ' + escapeHtml(line.unitLabel || 'мешки') + '</div>' +
+          '</td>' +
+          '<td><input class="line-input" type="number" min="0" step="0.001" value="' + escapeHtml(line.tons) + '" oninput="updateLine(' + index + ', \'tons\', this.value)"></td>' +
+          '<td>' +
+            '<input class="line-input" type="number" min="0" step="1" value="' + escapeHtml(line.units) + '" oninput="updateLine(' + index + ', \'units\', this.value)">' +
+            '<div class="line-sub">' + escapeHtml(line.unitLabel || 'мешки') + '</div>' +
+          '</td>' +
+          '<td><input class="line-input medium" type="date" value="' + escapeHtml(line.deliveryDate) + '" oninput="updateLine(' + index + ', \'deliveryDate\', this.value)"></td>' +
+          '<td>' +
+            '<select class="line-select" onchange="updateLine(' + index + ', \'deliveryType\', this.value)">' +
+              '<option value="pickup"' + (line.deliveryType === 'pickup' ? ' selected' : '') + '>Самовывоз</option>' +
+              '<option value="delivery"' + (line.deliveryType === 'delivery' ? ' selected' : '') + '>Доставка</option>' +
+            '</select>' +
+          '</td>' +
+          '<td>' +
+            '<select class="line-select" ' + (line.deliveryType === 'pickup' ? 'disabled' : '') + ' onchange="updateLine(' + index + ', \'destination\', this.value)">' + destinationOptions + '</select>' +
+            '<div class="line-sub">' + (line.deliveryType === 'pickup' ? 'Архангельск = склад КЛОТО' : 'Список подтянут из логистики') + '</div>' +
+          '</td>' +
+          '<td>' +
+            '<select class="line-select" onchange="updateLine(' + index + ', \'module\', this.value)">' +
+              '<option value="truck"' + (line.module === 'truck' ? ' selected' : '') + '>Авто</option>' +
+              '<option value="container"' + (line.module === 'container' ? ' selected' : '') + '>Контейнер</option>' +
+              '<option value="wagon"' + (line.module === 'wagon' ? ' selected' : '') + '>Вагон</option>' +
+            '</select>' +
+          '</td>' +
+          '<td>' +
+            '<div class="line-readonly">' + formatRub(line.deliveryCost) + '</div>' +
+            '<div class="line-sub">' + (line.deliveryType === 'pickup' ? 'Без доставки' : 'Ставка из логистики') + '</div>' +
+          '</td>' +
+          '<td><input class="line-input" type="number" min="0" step="1" value="' + escapeHtml(line.priceWithoutVat) + '" oninput="updateLine(' + index + ', \'priceWithoutVat\', this.value)"></td>' +
+          '<td><div class="line-readonly">22%</div><div class="line-sub">Автоматически</div></td>' +
+          '<td><div class="line-readonly">' + formatRub(line.amountWithoutVat) + '</div></td>' +
+          '<td><div class="line-readonly">' + formatRub(line.amountWithVat) + '</div></td>' +
+          '<td class="hidden-print"><button class="line-delete" type="button" onclick="removeOrderLine(' + index + ')">×</button></td>' +
+        '</tr>';
+      }).join('');
+
+      updateTotals();
+    }
+
+    function addOrderLine() {
+      orderLines.push(createEmptyLine());
+      renderOrderLines();
+    }
+
+    function removeOrderLine(index) {
+      orderLines = orderLines.filter(function(_, lineIndex) { return lineIndex !== index; });
+      if (!orderLines.length) orderLines = [createEmptyLine()];
+      renderOrderLines();
+    }
+
+    function updateLine(index, key, value) {
+      if (!orderLines[index]) return;
+      orderLines[index][key] = value;
+
+      if (key === 'productName') {
+        var product = getProductByName(value);
+        if (product) {
+          orderLines[index].unitLabel = product.unitLabel;
+          orderLines[index].priceWithoutVat = Math.round(Number(product.pricePerTon || 0));
+        }
+      }
+
+      if (key === 'deliveryType' && value === 'pickup') {
+        orderLines[index].destination = 'Архангельск';
+      }
+
+      syncLineDerivedFields(orderLines[index]);
+      renderOrderLines();
+    }
+
+    function updateTotals() {
+      var totalWithoutVat = 0;
+      var totalVat = 0;
+      var totalWithVat = 0;
+      var totalTons = 0;
+
+      orderLines.forEach(function(line) {
+        totalWithoutVat += Number(line.amountWithoutVat || 0);
+        totalVat += Number(line.amountVat || 0);
+        totalWithVat += Number(line.amountWithVat || 0);
+        totalTons += Number(line.tons || 0);
+      });
+
+      document.getElementById('total-without-vat').textContent = formatRub(totalWithoutVat);
+      document.getElementById('total-vat').textContent = formatRub(totalVat);
+      document.getElementById('total-with-vat').textContent = formatRub(totalWithVat);
+      document.getElementById('stats-lines').textContent = String(orderLines.length);
+      document.getElementById('stats-tons').textContent = formatTons(totalTons);
+      document.getElementById('stats-buyer').textContent = document.getElementById('buyer-name').value.trim() || 'Не выбран';
+    }
+
+    function fillBuyerDetailsFromCatalog() {
+      var buyer = getBuyerByName(document.getElementById('buyer-name').value);
+      if (!buyer) return;
+
+      if (!document.getElementById('buyer-address').value.trim()) {
+        document.getElementById('buyer-address').value = buyer.city ? ('г. ' + buyer.city) : '';
+      }
+      updateTotals();
+    }
+
+    function setValidationState(type, text) {
+      var status = document.getElementById('validation-status');
+      var copy = document.getElementById('order-status-copy');
+      var title = document.getElementById('order-status');
+      if (type === 'ready') {
+        status.innerHTML = '<span class="status-pill status-ready">Готов к сохранению</span>';
+        title.textContent = 'Готов';
+        copy.textContent = text;
+      } else if (type === 'error') {
+        status.innerHTML = '<span class="status-pill status-error">Нужны исправления</span>';
+        title.textContent = 'Ошибка проверки';
+        copy.textContent = text;
+      } else {
+        status.innerHTML = '<span class="status-pill status-draft">Черновик</span>';
+        title.textContent = 'Черновик';
+        copy.textContent = text;
+      }
+    }
+
+    function validateOrder(showMessages) {
+      var issues = [];
+      var orderNumber = document.getElementById('order-number').value.trim();
+      var orderDate = document.getElementById('order-date').value;
+      var buyerName = document.getElementById('buyer-name').value.trim();
+
+      if (!orderNumber) issues.push('Не заполнен номер заказа.');
+      if (!orderDate) issues.push('Не заполнена дата заказа.');
+      if (!buyerName) issues.push('Не выбран покупатель.');
+
+      orderLines.forEach(function(line, index) {
+        if (!line.productName.trim()) issues.push('Строка ' + (index + 1) + ': не указано наименование товара.');
+        if (!Number(line.tons)) issues.push('Строка ' + (index + 1) + ': не указано количество в тоннах.');
+        if (!Number(line.units)) issues.push('Строка ' + (index + 1) + ': не указано количество единиц.');
+        if (!line.deliveryDate) issues.push('Строка ' + (index + 1) + ': не указан срок поставки.');
+        if (line.deliveryType === 'delivery' && !line.destination) issues.push('Строка ' + (index + 1) + ': не выбран пункт доставки.');
+        if (!Number(line.priceWithoutVat)) issues.push('Строка ' + (index + 1) + ': не указана цена без НДС.');
+      });
+
+      if (!showMessages) return issues;
+
+      var list = document.getElementById('validation-list');
+      if (issues.length) {
+        list.innerHTML = issues.map(function(issue) {
+          return '<div class="check-item warn">' + escapeHtml(issue) + '</div>';
+        }).join('');
+        setValidationState('error', 'Заказ пока нельзя сохранять: есть незаполненные или некорректные поля.');
+      } else {
+        list.innerHTML = [
+          'Покупатель указан.',
+          'Табличная часть заполнена.',
+          'НДС и итоговые суммы посчитаны.',
+          'Заказ можно сохранять и печатать.'
+        ].map(function(message) {
+          return '<div class="check-item ok">' + escapeHtml(message) + '</div>';
+        }).join('');
+        setValidationState('ready', 'Документ проверен. Можно сохранить в файл или отправить на печать.');
+      }
+
+      return issues;
+    }
+
+    function getOrderPayload() {
+      return {
+        number: document.getElementById('order-number').value.trim(),
+        date: document.getElementById('order-date').value,
+        comment: document.getElementById('order-comment').value.trim(),
+        seller: SELLER,
+        buyer: {
+          name: document.getElementById('buyer-name').value.trim(),
+          inn: document.getElementById('buyer-inn').value.trim(),
+          kpp: document.getElementById('buyer-kpp').value.trim(),
+          address: document.getElementById('buyer-address').value.trim(),
+          phone: document.getElementById('buyer-phone').value.trim(),
+          contact: document.getElementById('buyer-contact').value.trim()
+        },
+        lines: orderLines.map(function(line) {
+          return {
+            productName: line.productName,
+            tons: Number(line.tons || 0),
+            units: Number(line.units || 0),
+            unitLabel: line.unitLabel,
+            deliveryDate: line.deliveryDate,
+            deliveryType: line.deliveryType,
+            destination: line.destination,
+            module: line.module,
+            deliveryCost: Number(line.deliveryCost || 0),
+            priceWithoutVat: Number(line.priceWithoutVat || 0),
+            vatRate: VAT_RATE,
+            amountWithoutVat: Number(line.amountWithoutVat || 0),
+            amountVat: Number(line.amountVat || 0),
+            amountWithVat: Number(line.amountWithVat || 0)
+          };
+        }),
+        totals: {
+          withoutVat: orderLines.reduce(function(sum, line) { return sum + Number(line.amountWithoutVat || 0); }, 0),
+          vat: orderLines.reduce(function(sum, line) { return sum + Number(line.amountVat || 0); }, 0),
+          withVat: orderLines.reduce(function(sum, line) { return sum + Number(line.amountWithVat || 0); }, 0)
+        },
+        savedAt: new Date().toISOString()
+      };
+    }
+
+    function buildPrintableOrderHtml(payload) {
+      var rowsHtml = payload.lines.map(function(line, index) {
+        return '<tr>' +
+          '<td>' + (index + 1) + '</td>' +
+          '<td>' + escapeHtml(line.productName) + '</td>' +
+          '<td>' + line.tons + '</td>' +
+          '<td>' + line.units + ' ' + escapeHtml(line.unitLabel || '') + '</td>' +
+          '<td>' + escapeHtml(line.deliveryDate || '') + '</td>' +
+          '<td>' + (line.deliveryType === 'pickup' ? 'Самовывоз' : 'Доставка') + '</td>' +
+          '<td>' + escapeHtml(line.destination || 'Архангельск') + '</td>' +
+          '<td>' + (line.module === 'container' ? 'Контейнер' : line.module === 'wagon' ? 'Вагон' : 'Авто') + '</td>' +
+          '<td>' + formatRub(line.deliveryCost) + '</td>' +
+          '<td>' + formatRub(line.priceWithoutVat) + '</td>' +
+          '<td>22%</td>' +
+          '<td>' + formatRub(line.amountWithoutVat) + '</td>' +
+          '<td>' + formatRub(line.amountWithVat) + '</td>' +
+        '</tr>';
+      }).join('');
+
+      return '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>' + escapeHtml(payload.number || 'Заказ') + '</title><style>' +
+        'body{font-family:Inter,Arial,sans-serif;margin:32px;color:#111;line-height:1.5}h1,h2{font-family:Arial,sans-serif;margin:0 0 12px}h1{font-size:28px}h2{font-size:18px;margin-top:24px}table{width:100%;border-collapse:collapse;margin-top:18px}th,td{border:1px solid #cfd6df;padding:8px;vertical-align:top;font-size:12px}th{background:#f5f7fb;text-align:left}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.box{border:1px solid #cfd6df;border-radius:12px;padding:14px}.muted{color:#5b6674}.totals{margin-top:18px;display:grid;gap:8px}.total{display:flex;justify-content:space-between;border:1px solid #cfd6df;border-radius:10px;padding:10px 12px}.comment{margin-top:16px;padding:12px;border:1px solid #cfd6df;border-radius:10px;background:#fafbfc}</style></head><body>' +
+        '<h1>Заказ ' + escapeHtml(payload.number || 'без номера') + '</h1>' +
+        '<div class="muted">Дата заказа: ' + escapeHtml(payload.date || '') + '</div>' +
+        '<div class="grid"><div class="box"><div class="muted">Продавец</div><strong>' + escapeHtml(payload.seller.name) + '</strong><div>ИНН ' + escapeHtml(payload.seller.inn) + '</div><div>КПП ' + escapeHtml(payload.seller.kpp) + '</div><div>' + escapeHtml(payload.seller.address) + '</div><div>Тел.: ' + escapeHtml(payload.seller.phone) + '</div></div>' +
+        '<div class="box"><div class="muted">Покупатель</div><strong>' + escapeHtml(payload.buyer.name || '—') + '</strong><div>ИНН ' + escapeHtml(payload.buyer.inn || '—') + '</div><div>КПП ' + escapeHtml(payload.buyer.kpp || '—') + '</div><div>' + escapeHtml(payload.buyer.address || '—') + '</div><div>Тел.: ' + escapeHtml(payload.buyer.phone || '—') + '</div><div>Контакт: ' + escapeHtml(payload.buyer.contact || '—') + '</div></div></div>' +
+        '<h2>Товары</h2><table><thead><tr><th>№</th><th>Наименование</th><th>Тонны</th><th>Единицы</th><th>Срок поставки</th><th>Тип</th><th>Пункт доставки</th><th>Модуль</th><th>Доставка</th><th>Цена без НДС</th><th>НДС</th><th>Сумма без НДС</th><th>Сумма с НДС</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
+        '<div class="totals"><div class="total"><span>Итого без НДС</span><strong>' + formatRub(payload.totals.withoutVat) + '</strong></div><div class="total"><span>НДС 22%</span><strong>' + formatRub(payload.totals.vat) + '</strong></div><div class="total"><span>Всего сумма с НДС</span><strong>' + formatRub(payload.totals.withVat) + '</strong></div></div>' +
+        (payload.comment ? '<div class="comment"><strong>Комментарий</strong><div style="margin-top:8px">' + escapeHtml(payload.comment) + '</div></div>' : '') +
+      '</body></html>';
+    }
+
+    function saveDraftToLocalStorage(payload) {
+      try {
+        var existing = JSON.parse(localStorage.getItem(ORDER_DRAFTS_KEY) || '[]');
+        existing.unshift(payload);
+        localStorage.setItem(ORDER_DRAFTS_KEY, JSON.stringify(existing.slice(0, 20)));
+      } catch (error) {}
+    }
+
+    function saveOrderToNewQueue(payload) {
+      try {
+        var existing = JSON.parse(localStorage.getItem(NEW_ORDERS_KEY) || '[]');
+        if (!Array.isArray(existing)) existing = [];
+
+        var now = new Date().toISOString();
+        var orderKey = normalizeValue(payload.number);
+        var index = existing.findIndex(function(item) {
+          return normalizeValue(item && item.number) === orderKey;
+        });
+        var record = Object.assign({}, payload, {
+          status: 'new',
+          updatedAt: now,
+          queuedAt: now
+        });
+
+        if (index >= 0) {
+          record.queuedAt = existing[index].queuedAt || now;
+          existing[index] = record;
+        } else {
+          existing.unshift(record);
+        }
+
+        localStorage.setItem(NEW_ORDERS_KEY, JSON.stringify(existing.slice(0, 100)));
+      } catch (error) {}
+    }
+
+    function openNewOrdersModule() {
+      window.location.href = 'sales-new-orders.html';
+    }
+
+    async function saveOrderToPath() {
+      var issues = validateOrder(true);
+      if (issues.length) return;
+
+      var payload = getOrderPayload();
+      var html = buildPrintableOrderHtml(payload);
+      var fileName = (payload.number || 'order').replace(/[^\w\-]+/g, '_') + '.html';
+      saveDraftToLocalStorage(payload);
+      saveOrderToNewQueue(payload);
+
+      if (window.showSaveFilePicker) {
+        try {
+          var handle = await window.showSaveFilePicker({
+            suggestedName: fileName,
+            types: [{
+              description: 'HTML order',
+              accept: { 'text/html': ['.html'] }
+            }]
+          });
+          var writable = await handle.createWritable();
+          await writable.write(html);
+          await writable.close();
+          setValidationState('ready', 'Заказ сохранен в выбранный путь и добавлен в модуль «Новые заказы».');
+          setTimeout(openNewOrdersModule, 180);
+          return;
+        } catch (error) {
+          if (error && error.name === 'AbortError') {
+            setValidationState('ready', 'Заказ добавлен в модуль «Новые заказы». Сохранение файла отменено.');
+            setTimeout(openNewOrdersModule, 180);
+            return;
+          }
+        }
+      }
+
+      var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      var link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      setValidationState('ready', 'Заказ добавлен в модуль «Новые заказы» и сохранен через загрузку файла браузера.');
+      setTimeout(openNewOrdersModule, 180);
+    }
+
+    function printOrder() {
+      var issues = validateOrder(true);
+      if (issues.length) return;
+      window.print();
+    }
+
+    function bindHeaderFields() {
+      ['order-number', 'order-date', 'order-comment', 'buyer-name', 'buyer-inn', 'buyer-kpp', 'buyer-address', 'buyer-phone', 'buyer-contact'].forEach(function(id) {
+        document.getElementById(id).addEventListener('input', function() {
+          if (id === 'buyer-name') fillBuyerDetailsFromCatalog();
+          updateTotals();
+          setValidationState('draft', 'Черновик изменен. Нажмите «Проверить заказ», чтобы обновить статус.');
+        });
+      });
+    }
+
+    (function init() {
+      clientCatalog = loadClientsCatalog();
+      productCatalog = loadProductsCatalog();
+      destinationCatalog = loadDestinationCatalog();
+
+      renderDatalist('buyers-list', clientCatalog, function(item) { return item.name; });
+      renderDatalist('products-list', productCatalog, function(item) { return item.name; });
+      renderDatalist('destinations-list', destinationCatalog, function(item) { return item.name; });
+
+      document.getElementById('order-number').value = getDefaultOrderNumber();
+      document.getElementById('order-date').value = getTodayIso();
+      document.getElementById('logistic-source').textContent = destinationCatalog.length + ' локаций / cloto_logistic_rates';
+
+      orderLines = [createEmptyLine()];
+      renderOrderLines();
+      bindHeaderFields();
+      updateTotals();
+      setValidationState('draft', 'Заказ создан как черновик.');
+    })();
+  </script>
+</body>
+</html>

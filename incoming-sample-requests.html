@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Входящие заявки на образцы — Архив 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07111d;
+      --bg2: #0c1726;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface-strong: rgba(255, 255, 255, 0.08);
+      --border: rgba(129, 216, 208, 0.14);
+      --border-strong: rgba(129, 216, 208, 0.28);
+      --text: #eaf5f3;
+      --muted: #7d91a6;
+      --cyan: #47e0c2;
+      --cyan-soft: rgba(71, 224, 194, 0.14);
+      --blue: #77b8ff;
+      --gold: #f0cb6b;
+      --radius: 18px;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(71, 224, 194, 0.14), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(119, 184, 255, 0.10), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(119, 184, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(119, 184, 255, 0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.35));
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(110px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb-a {
+      width: 520px;
+      height: 520px;
+      top: -180px;
+      right: -140px;
+      background: radial-gradient(circle, rgba(71, 224, 194, 0.16), transparent 70%);
+    }
+
+    .orb-b {
+      width: 420px;
+      height: 420px;
+      bottom: -180px;
+      left: -100px;
+      background: radial-gradient(circle, rgba(119, 184, 255, 0.14), transparent 70%);
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 30px 24px 44px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(7, 17, 29, 0.55);
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 0.98;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      max-width: 900px;
+    }
+
+    .title span { color: var(--cyan); }
+
+    .sub {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: var(--surface-strong);
+      border-color: var(--border-strong);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .summary-card,
+    .archive-note,
+    .filters,
+    .table-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .archive-note {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      min-height: 138px;
+      background:
+        linear-gradient(135deg, rgba(71, 224, 194, 0.12), rgba(7, 17, 29, 0.45)),
+        var(--surface);
+    }
+
+    .archive-note-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .archive-note p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      max-width: 440px;
+    }
+
+    .archive-note-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .note-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(7, 17, 29, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    .summary-card {
+      padding: 16px 18px;
+      min-height: 138px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .summary-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .summary-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 800;
+      color: var(--cyan);
+    }
+
+    .summary-meta {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .summary-card.alt .summary-value { color: var(--blue); }
+    .summary-card.warn .summary-value { color: var(--gold); }
+
+    .filters {
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .filters-top {
+      display: grid;
+      grid-template-columns: minmax(240px, 360px) minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      height: 46px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(7, 17, 29, 0.48);
+    }
+
+    .search input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .search input::placeholder { color: var(--muted); }
+
+    .filters-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .month-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .month-pill {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(7, 17, 29, 0.44);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .month-pill:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+    }
+
+    .month-pill.active {
+      background: var(--cyan-soft);
+      border-color: rgba(71, 224, 194, 0.34);
+      color: var(--cyan);
+    }
+
+    .table-panel { overflow: hidden; }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .panel-sub {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .panel-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--blue);
+      background: rgba(119, 184, 255, 0.12);
+      border: 1px solid rgba(119, 184, 255, 0.2);
+      white-space: nowrap;
+    }
+
+    .table-wrap { overflow: auto; }
+
+    table {
+      width: 100%;
+      min-width: 1080px;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-weight: 800;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(7, 17, 29, 0.45);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    .request-row {
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+
+    tr:hover td { background: rgba(255, 255, 255, 0.025); }
+    tr:last-child td { border-bottom: none; }
+
+    .request-row:hover td:first-child {
+      box-shadow: inset 2px 0 0 var(--cyan);
+    }
+
+    .request-row:focus-visible {
+      outline: 2px solid rgba(71, 224, 194, 0.45);
+      outline-offset: -2px;
+    }
+
+    .num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--cyan);
+      white-space: nowrap;
+    }
+
+    .num small {
+      display: block;
+      margin-top: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .date {
+      white-space: nowrap;
+      color: #d5e6f7;
+      font-weight: 600;
+    }
+
+    .company {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .company strong {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .company span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .request {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .request-title {
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .request-meta {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .badges,
+    .file-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .badge,
+    .file-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .badge {
+      color: var(--cyan);
+      background: rgba(71, 224, 194, 0.12);
+      border: 1px solid rgba(71, 224, 194, 0.16);
+    }
+
+    .badge.warn {
+      color: var(--gold);
+      background: rgba(240, 203, 107, 0.12);
+      border-color: rgba(240, 203, 107, 0.16);
+    }
+
+    .file-badge {
+      color: var(--blue);
+      background: rgba(119, 184, 255, 0.12);
+      border: 1px solid rgba(119, 184, 255, 0.18);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .empty {
+      display: none;
+      padding: 46px 22px 52px;
+      text-align: center;
+    }
+
+    .empty strong {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .empty p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(3, 10, 18, 0.76);
+      backdrop-filter: blur(16px);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(1080px, 100%);
+      max-height: min(88vh, 980px);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      border-radius: 24px;
+      border: 1px solid var(--border-strong);
+      background: linear-gradient(180deg, rgba(9, 19, 31, 0.96), rgba(7, 17, 29, 0.98));
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-head,
+    .modal-meta,
+    .modal-body {
+      padding-left: 22px;
+      padding-right: 22px;
+    }
+
+    .modal-head {
+      padding-top: 20px;
+      padding-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .modal-kicker {
+      display: inline-flex;
+      width: fit-content;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(71, 224, 194, 0.1);
+      border: 1px solid rgba(71, 224, 194, 0.18);
+      color: var(--cyan);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.05;
+    }
+
+    .modal-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 720px;
+    }
+
+    .modal-close {
+      appearance: none;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .modal-meta {
+      padding-top: 14px;
+      padding-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .version-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .version-tab {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .version-tab.active {
+      color: var(--cyan);
+      background: rgba(71, 224, 194, 0.12);
+      border-color: rgba(71, 224, 194, 0.24);
+    }
+
+    .modal-body {
+      padding-top: 18px;
+      padding-bottom: 22px;
+      overflow: auto;
+    }
+
+    .doc-name {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .doc-content {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+      color: #dbe8f4;
+      font-size: 13px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 1180px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .archive-note { min-height: 0; }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .filters-top { grid-template-columns: 1fr; }
+      .hero-actions { justify-content: flex-start; }
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 22px 14px 32px; }
+      .title { font-size: 34px; }
+      .panel-head { flex-direction: column; align-items: flex-start; }
+      th, td { padding: 12px; }
+      .modal-backdrop { padding: 12px; }
+      .modal-head, .modal-meta, .modal-body { padding-left: 14px; padding-right: 14px; }
+      .modal-title { font-size: 23px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Архив лаборатории 2026</div>
+        <h1 class="title">Входящие заявки на образцы <span>из архива</span></h1>
+        <p class="sub">Сюда перенесены все заявки 2026 года из архива <strong>lab/Заявки 2026 г.zip</strong>. На странице собраны только заявки 2026 года: без файлов 2025, без дублей по номерам, с аккуратной сводкой по месяцам и быстрым поиском по компании или предмету запроса.</p>
+      </div>
+
+      <div class="hero-actions">
+        <a class="btn" href="laboratory.html">← В лабораторию</a>
+        <a class="btn" href="portal.html">На главную</a>
+      </div>
+    </section>
+
+    <section class="summary-grid">
+      <article class="archive-note">
+        <div>
+          <div class="archive-note-title">27 заявок за период с января по июль</div>
+          <p>Дубликаты файлов сохранены как версии архива, но в таблице показаны уникальные заявки. Для №01 и №19 отмечены дополнительные версии документов.</p>
+        </div>
+        <div class="archive-note-meta">
+          <span class="note-chip">Источник: ZIP-архив</span>
+          <span class="note-chip">Форматы: DOC / DOCX</span>
+          <span class="note-chip">Исключены: №10 и №27 за 2025</span>
+        </div>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-label">Уникальных заявок</div>
+        <div class="summary-value" id="k-total">0</div>
+        <div class="summary-meta">Все номера 2026 года, собранные в одном списке без повторов.</div>
+      </article>
+
+      <article class="summary-card alt">
+        <div class="summary-label">Компаний</div>
+        <div class="summary-value" id="k-companies">0</div>
+        <div class="summary-meta">Количество уникальных заказчиков и контрагентов в архиве.</div>
+      </article>
+
+      <article class="summary-card warn">
+        <div class="summary-label">Файлов в архиве</div>
+        <div class="summary-value" id="k-files">0</div>
+        <div class="summary-meta">С учетом дублей версий для отдельных заявок.</div>
+      </article>
+
+      <article class="summary-card">
+        <div class="summary-label">Последняя заявка</div>
+        <div class="summary-value" id="k-last">0</div>
+        <div class="summary-meta">Самая поздняя дата, найденная в архиве 2026.</div>
+      </article>
+    </section>
+
+    <section class="filters">
+      <div class="filters-top">
+        <label class="search">
+          <span>⌕</span>
+          <input id="search-input" type="search" placeholder="Поиск по компании, продукту или номеру заявки">
+        </label>
+        <div class="filters-copy">Фильтр работает по номеру, компании и предмету заявки. Кнопки месяцев помогают быстро переключаться между партиями запросов, а таблица ниже перестраивается сразу на клиенте.</div>
+      </div>
+      <div class="month-pills" id="month-pills"></div>
+    </section>
+
+    <section class="table-panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Реестр заявок 2026</div>
+          <div class="panel-sub" id="panel-sub">Показаны все записи архива</div>
+        </div>
+        <div class="panel-tag" id="panel-tag">Архив 2026</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Дата</th>
+              <th>Компания</th>
+              <th>Предмет заявки</th>
+              <th>Файлы</th>
+              <th>Пометки</th>
+            </tr>
+          </thead>
+          <tbody id="incoming-body"></tbody>
+        </table>
+      </div>
+
+      <div class="empty" id="empty">
+        <strong>Ничего не найдено</strong>
+        <p>Сбрось фильтры или измени поисковый запрос. Архивные записи остаются вшитыми в страницу.</p>
+      </div>
+    </section>
+
+    <div class="footer-note">Архивные записи №01 и №19 имели по две версии файла. В таблице они сведены в одну строку с пометкой о количестве версий. Записи 2025 года из архива сознательно не включены в реестр 2026.</div>
+  </div>
+
+  <div class="modal-backdrop" id="request-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <div class="modal-kicker">Просмотр заявки</div>
+          <div class="modal-title" id="modal-title">Заявка</div>
+          <div class="modal-sub" id="modal-sub">Содержимое Word-документа</div>
+        </div>
+        <button class="modal-close" id="modal-close" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <div class="modal-meta" id="modal-meta"></div>
+      <div class="modal-body">
+        <div class="version-tabs" id="version-tabs"></div>
+        <div class="doc-name" id="doc-name"></div>
+        <div class="doc-content" id="doc-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="incoming-sample-requests-data.js"></script>
+  <script>
+    var ARCHIVE_REQUESTS = [
+      { number: '01', date: '2026-01-13', company: 'НЕДРА ТЕСТ', request: 'Сертификация ПОЛИКАП', files: ['DOC', 'DOCX'], note: '2 версии файла' },
+      { number: '02', date: '2026-01-16', company: 'Технологии ОФС', request: 'Полимеры', files: ['DOC'], note: '' },
+      { number: '03', date: '2026-01-20', company: 'КОМАР-ЭПОКСИ', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '04', date: '2026-01-21', company: 'ЭФТЕРРА', request: 'Базовая заявка на образцы', files: ['DOC'], note: 'В архиве имя с префиксом ООО' },
+      { number: '05', date: '2026-01-26', company: 'ООО ТаграС-РемСервис', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '06', date: '2026-02-02', company: 'ССК', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '07', date: '2026-02-03', company: 'Технологии ОФС', request: 'Форест Ойл', files: ['DOC'], note: '' },
+      { number: '08', date: '2026-02-03', company: 'ССК', request: 'Террапан', files: ['DOC'], note: '' },
+      { number: '09', date: '2026-02-03', company: 'ПУХК', request: 'Танатин жидкий', files: ['DOC'], note: '' },
+      { number: '11', date: '2026-02-03', company: 'ССК', request: 'Повторная заявка на образцы', files: ['DOC'], note: '' },
+      { number: '12', date: '2026-02-05', company: 'Омас', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '13', date: '2026-02-07', company: 'Петро Техно Инжиниринг', request: 'Запрос на образцы', files: ['DOCX'], note: '' },
+      { number: '14', date: '2026-02-13', company: 'БурСервис', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '15', date: '2026-02-18', company: 'ГПН-НТЦ', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '16', date: '2026-02-19', company: 'ССК', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '17', date: '2026-02-24', company: 'БелНИПИнефть', request: 'Запрос на образцы', files: ['DOC'], note: 'Восстановлено по имени файла из архива' },
+      { number: '18', date: '2026-02-26', company: 'НПП Бурение', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '19', date: '2026-02-27', company: 'Технологии ОФС', request: 'Образцы, 2 запроса', files: ['DOC', 'DOC'], note: '2 версии файла' },
+      { number: '20', date: '2026-03-05', company: 'Технологии ОФС', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '21', date: '2026-03-23', company: 'Буринтех', request: 'Макс-Флекс', files: ['DOC'], note: '' },
+      { number: '22', date: '2026-07-21', company: 'НЕДРА ТЕСТ', request: 'Стабилайт ХОС', files: ['DOC'], note: 'Июльская заявка вне основного блока января-апреля' },
+      { number: '23', date: '2026-03-24', company: 'ГПН-НТЦ', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '24', date: '2026-03-30', company: 'НЕДРА ТЕСТ', request: 'Сертификация ДЖИ-ДРИЛЛ + сульф. асф.', files: ['DOC'], note: '' },
+      { number: '25', date: '2026-03-31', company: 'ЭФТЕРРА', request: 'Стабилайт II', files: ['DOC'], note: '' },
+      { number: '26', date: '2026-04-03', company: 'Комплекс Ойл', request: 'Стабилайт II', files: ['DOC'], note: '' },
+      { number: '28', date: '2026-04-13', company: 'НПП Бурение', request: 'Запрос на образцы', files: ['DOC'], note: '' },
+      { number: '29', date: '2026-04-13', company: 'СБМ', request: 'Террапан', files: ['DOC'], note: '' }
+    ];
+
+    var MONTH_NAMES = {
+      '2026-01': 'Январь',
+      '2026-02': 'Февраль',
+      '2026-03': 'Март',
+      '2026-04': 'Апрель',
+      '2026-07': 'Июль'
+    };
+
+    var STORAGE_KEY = 'cloto_incoming_sample_requests';
+    var activeMonth = 'all';
+    var searchValue = '';
+    var activeModalId = null;
+    var activeModalVersion = 0;
+    var REQUEST_DETAILS = window.INCOMING_REQUEST_DETAILS || [];
+
+    var ARCHIVE_ITEMS = ARCHIVE_REQUESTS.map(function(item) {
+      var clone = Object.assign({}, item);
+      clone.id = 'archive-' + item.number;
+      clone.sourceType = 'archive';
+      clone.sourceLabel = 'Архив 2026';
+      return clone;
+    });
+
+    var ALL_REQUESTS = [];
+    var DETAILS_BY_ID = {};
+
+    var ARCHIVE_DETAILS_BY_ID = REQUEST_DETAILS.reduce(function(acc, item) {
+      var key = 'archive-' + item.number;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    }, {});
+
+    function formatDate(isoDate) {
+      var parts = isoDate.split('-');
+      return parts[2] + '.' + parts[1] + '.' + parts[0].slice(2);
+    }
+
+    function getMonthKey(isoDate) {
+      return isoDate.slice(0, 7);
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function prettifyDocumentText(rawText) {
+      var text = String(rawText || '').replace(/\u000b/g, '\n');
+      [
+        'Заявку разместил:',
+        'Дата размещения заявки:',
+        'Адрес отправки:',
+        'Компания-получатель:',
+        'Контактное лицо получателя',
+        'Email получателя',
+        'Адрес',
+        'Город:',
+        'Индекс:',
+        'Страна',
+        'Телефон получателя:',
+        'Наименование продукта',
+        'Количество',
+        'Результаты испытаний:',
+        'Наименование продуктаСОСТАВПАРАМЕТРЫ',
+        'Наименование продуктаСоставХарактеристики',
+        'НаименованиеСоставХарактеристики',
+        'Особенности, примечания:',
+        'Номер для отслеживания посылки:',
+        'Дата отправки:'
+      ].forEach(function(label) {
+        text = text.replaceAll(label, '\n' + label + '\n');
+      });
+
+      return text
+        .replace(/ +\n/g, '\n')
+        .replace(/\n +/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function normalizeLiveRequestDate(request) {
+      if (request.createdAt && /^\d{4}-\d{2}-\d{2}/.test(request.createdAt)) {
+        return request.createdAt.slice(0, 10);
+      }
+
+      if (request.placedDate && /^\d{2}\.\d{2}\.\d{4}$/.test(request.placedDate)) {
+        var parts = request.placedDate.split('.');
+        return parts[2] + '-' + parts[1] + '-' + parts[0];
+      }
+
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getLiveRequestTitle(request) {
+      var products = Array.isArray(request.products) ? request.products.filter(function(product) {
+        return product.productName;
+      }) : [];
+
+      if (!products.length) return 'Новая заявка из формы';
+      if (products.length === 1) return products[0].productName;
+      if (products.length === 2) return products[0].productName + ' + ' + products[1].productName;
+      return products[0].productName + ' и еще ' + (products.length - 1);
+    }
+
+    function buildLiveRequestContent(request) {
+      var lines = [
+        'Заявка из формы коммерческого отдела',
+        '',
+        'Номер заявки: ' + (request.requestNumber || '—'),
+        'Кто разместил: ' + (request.placedBy || '—'),
+        'Дата размещения: ' + (request.placedDate || '—'),
+        'Компания получатель: ' + (request.receiverCompany || '—'),
+        'Контактное лицо: ' + (request.receiverContact || '—'),
+        'Email: ' + (request.receiverEmail || '—'),
+        'Телефон: ' + (request.receiverPhone || '—'),
+        'Адрес отправки: ' + (request.shippingAddress || '—'),
+        '',
+        'Продукты:'
+      ];
+
+      var products = Array.isArray(request.products) ? request.products : [];
+      if (!products.length) {
+        lines.push('— Нет позиций');
+      } else {
+        products.forEach(function(product, index) {
+          lines.push((index + 1) + '. ' + (product.productName || '—'));
+          lines.push('   Количество: ' + (product.productQty || '—'));
+          lines.push('   Состав: ' + (product.productComp || '—'));
+          lines.push('   Параметры: ' + (product.productParams || '—'));
+        });
+      }
+
+      lines.push('');
+      lines.push('Комментарий: ' + (request.comments || '—'));
+      lines.push('Статус: ' + (request.status || 'Новая'));
+      lines.push('Источник: ' + (request.source || 'Коммерческий отдел'));
+
+      return lines.join('\n');
+    }
+
+    function getLiveRequests() {
+      var list = [];
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) list = JSON.parse(raw);
+      } catch (error) {}
+
+      return list.map(function(request, index) {
+        var date = normalizeLiveRequestDate(request);
+        return {
+          id: 'live-' + (request.requestNumber || ('request-' + index)) + '-' + (request.createdAt || index),
+          number: request.requestNumber || '—',
+          date: date,
+          company: request.receiverCompany || 'Не указано',
+          request: getLiveRequestTitle(request),
+          files: ['WEB'],
+          note: request.comments || 'Новая заявка из формы',
+          sourceType: 'live',
+          sourceLabel: request.source || 'Коммерческий отдел',
+          rawRequest: request
+        };
+      });
+    }
+
+    function refreshRequestData() {
+      var liveRequests = getLiveRequests();
+      ALL_REQUESTS = liveRequests.concat(ARCHIVE_ITEMS).sort(function(a, b) {
+        return b.date.localeCompare(a.date) || String(b.number).localeCompare(String(a.number), 'ru');
+      });
+
+      DETAILS_BY_ID = {};
+      Object.keys(ARCHIVE_DETAILS_BY_ID).forEach(function(key) {
+        DETAILS_BY_ID[key] = ARCHIVE_DETAILS_BY_ID[key].slice();
+      });
+
+      liveRequests.forEach(function(item) {
+        DETAILS_BY_ID[item.id] = [{
+          number: item.number,
+          fileName: 'Заявка из формы ' + item.number,
+          extension: 'WEB',
+          content: buildLiveRequestContent(item.rawRequest)
+        }];
+      });
+    }
+
+    function getRequestById(requestId) {
+      return ALL_REQUESTS.find(function(item) {
+        return item.id === requestId;
+      });
+    }
+
+    function renderModalVersion(requestId, versionIndex) {
+      var versions = DETAILS_BY_ID[requestId] || [];
+      var version = versions[versionIndex];
+      var request = getRequestById(requestId);
+
+      document.getElementById('modal-title').textContent = 'Заявка ' + (request ? request.number : '—') + ' · ' + (request ? request.company : 'Архив');
+      document.getElementById('modal-sub').textContent = request
+        ? request.request + ' · от ' + formatDate(request.date)
+        : 'Содержимое Word-документа';
+      document.getElementById('modal-meta').innerHTML = request ? [
+        '<span class="meta-chip">Дата: ' + escapeHtml(formatDate(request.date)) + '</span>',
+        '<span class="meta-chip">Компания: ' + escapeHtml(request.company) + '</span>',
+        '<span class="meta-chip">Источник: ' + escapeHtml(request.sourceLabel || 'Лаборатория') + '</span>',
+        '<span class="meta-chip">Файлов: ' + versions.length + '</span>'
+      ].join('') : '';
+
+      document.getElementById('version-tabs').innerHTML = versions.map(function(item, index) {
+        return '<button class="version-tab' + (index === versionIndex ? ' active' : '') + '" type="button" data-version-index="' + index + '">' + escapeHtml(item.extension) + ' · версия ' + (index + 1) + '</button>';
+      }).join('');
+
+      document.getElementById('doc-name').textContent = version ? version.fileName : 'Файл не найден';
+      document.getElementById('doc-content').textContent = version ? prettifyDocumentText(version.content) : 'Содержимое не найдено.';
+
+      document.querySelectorAll('.version-tab').forEach(function(button) {
+        button.addEventListener('click', function() {
+          activeModalVersion = Number(button.getAttribute('data-version-index'));
+          renderModalVersion(requestId, activeModalVersion);
+        });
+      });
+    }
+
+    function openRequestModal(requestId) {
+      var versions = DETAILS_BY_ID[requestId] || [];
+      if (!versions.length) return;
+      activeModalId = requestId;
+      activeModalVersion = 0;
+      renderModalVersion(requestId, activeModalVersion);
+      document.getElementById('request-modal').classList.add('open');
+      document.getElementById('request-modal').setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeRequestModal() {
+      document.getElementById('request-modal').classList.remove('open');
+      document.getElementById('request-modal').setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      activeModalId = null;
+    }
+
+    function attachRowEvents() {
+      document.querySelectorAll('.request-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+          openRequestModal(row.getAttribute('data-request-id'));
+        });
+        row.addEventListener('keydown', function(event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openRequestModal(row.getAttribute('data-request-id'));
+          }
+        });
+      });
+    }
+
+    function getFilteredRequests() {
+      return ALL_REQUESTS.filter(function(item) {
+        var byMonth = activeMonth === 'all' || getMonthKey(item.date) === activeMonth;
+        var haystack = [item.number, item.company, item.request, item.note, item.sourceLabel].join(' ').toLowerCase();
+        var bySearch = !searchValue || haystack.indexOf(searchValue) !== -1;
+        return byMonth && bySearch;
+      }).sort(function(a, b) {
+        return b.date.localeCompare(a.date) || String(b.number).localeCompare(String(a.number), 'ru');
+      });
+    }
+
+    function renderSummary() {
+      var uniqueCompanies = new Set(ALL_REQUESTS.map(function(item) { return item.company; }));
+      var totalFiles = ALL_REQUESTS.reduce(function(sum, item) { return sum + item.files.length; }, 0);
+      var lastDate = ALL_REQUESTS.slice().sort(function(a, b) { return b.date.localeCompare(a.date); })[0].date;
+
+      document.getElementById('k-total').textContent = ALL_REQUESTS.length;
+      document.getElementById('k-companies').textContent = uniqueCompanies.size;
+      document.getElementById('k-files').textContent = totalFiles;
+      document.getElementById('k-last').textContent = formatDate(lastDate);
+    }
+
+    function renderMonthPills() {
+      var counts = {};
+      ALL_REQUESTS.forEach(function(item) {
+        var key = getMonthKey(item.date);
+        counts[key] = (counts[key] || 0) + 1;
+      });
+
+      var orderedKeys = Object.keys(MONTH_NAMES).filter(function(key) { return counts[key]; });
+      var pills = ['<button class="month-pill' + (activeMonth === 'all' ? ' active' : '') + '" data-month="all">Все <span>(' + ALL_REQUESTS.length + ')</span></button>'];
+
+      orderedKeys.forEach(function(key) {
+        pills.push('<button class="month-pill' + (activeMonth === key ? ' active' : '') + '" data-month="' + key + '">' + MONTH_NAMES[key] + ' <span>(' + counts[key] + ')</span></button>');
+      });
+
+      var wrap = document.getElementById('month-pills');
+      wrap.innerHTML = pills.join('');
+      wrap.querySelectorAll('.month-pill').forEach(function(button) {
+        button.addEventListener('click', function() {
+          activeMonth = button.getAttribute('data-month');
+          renderMonthPills();
+          renderTable();
+        });
+      });
+    }
+
+    function renderTable() {
+      var rows = getFilteredRequests();
+      var body = document.getElementById('incoming-body');
+      var empty = document.getElementById('empty');
+      var panelSub = document.getElementById('panel-sub');
+      var panelTag = document.getElementById('panel-tag');
+      var liveCount = ALL_REQUESTS.filter(function(item) { return item.sourceType === 'live'; }).length;
+
+      panelSub.textContent = activeMonth === 'all'
+        ? 'Показаны архивные записи и новые заявки из формы'
+        : 'Показан месяц: ' + MONTH_NAMES[activeMonth];
+      panelTag.textContent = rows.length + ' строк · новых: ' + liveCount;
+
+      if (!rows.length) {
+        body.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      body.innerHTML = rows.map(function(item) {
+        var monthLabel = MONTH_NAMES[getMonthKey(item.date)] || 'Архив';
+        var fileBadges = item.files.map(function(ext) {
+          return '<span class="file-badge">' + escapeHtml(ext) + '</span>';
+        }).join('');
+        var noteBadges = '<div class="badges"><span class="badge">' + escapeHtml(monthLabel) + '</span><span class="badge">' + escapeHtml(item.sourceLabel || 'Лаборатория') + '</span>' + (item.files.length > 1 ? '<span class="badge warn">Версий: ' + item.files.length + '</span>' : '') + '</div>';
+        var noteText = item.note ? escapeHtml(item.note) : 'Без дополнительных пометок';
+
+        return '<tr class="request-row" tabindex="0" data-request-id="' + escapeHtml(item.id) + '">' +
+          '<td><div class="num">№' + escapeHtml(item.number) + '<small>Открыть</small></div></td>' +
+          '<td><div class="date">' + formatDate(item.date) + '</div></td>' +
+          '<td><div class="company"><strong>' + escapeHtml(item.company) + '</strong><span>' + escapeHtml(item.sourceLabel || 'Архив 2026') + '</span></div></td>' +
+          '<td><div class="request"><div class="request-title">' + escapeHtml(item.request) + '</div><div class="request-meta">Заявка на образцы от ' + formatDate(item.date) + '</div></div></td>' +
+          '<td><div class="file-badges">' + fileBadges + '</div></td>' +
+          '<td><div class="request">' + noteBadges + '<div class="note">' + noteText + '</div></div></td>' +
+        '</tr>';
+      }).join('');
+
+      attachRowEvents();
+    }
+
+    (function init() {
+      refreshRequestData();
+      renderSummary();
+      renderMonthPills();
+      renderTable();
+
+      document.getElementById('search-input').addEventListener('input', function(event) {
+        searchValue = event.target.value.trim().toLowerCase();
+        renderTable();
+      });
+
+      document.getElementById('modal-close').addEventListener('click', closeRequestModal);
+      document.getElementById('request-modal').addEventListener('click', function(event) {
+        if (event.target.id === 'request-modal') closeRequestModal();
+      });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && activeModalId) closeRequestModal();
+      });
+    })();
+  </script>
+</body>
+</html>
