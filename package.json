@@ -2,14 +2,23 @@
   "name": "cloto-new",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "auth-server.js",
   "scripts": {
+    "start": "node auth-server.js",
     "serve": "npx serve . -l 8080",
     "serve:python": "python -m http.server 8080",
+    "serve:auth": "node auth-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-basic-auth": "^1.2.1",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "multer": "^2.1.1"
+  }
 }

@@ -1,0 +1,18 @@
+[Unit]
+Description=CLOTO secure portal
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/CLOTO-NEW
+Environment=AUTH_USER=demo
+Environment=AUTH_PASS=strong-password
+Environment=PORT=8080
+ExecStart=/usr/bin/npm run serve:auth
+Restart=always
+RestartSec=5
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target

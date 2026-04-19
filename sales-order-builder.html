@@ -63,7 +63,7 @@
     .validation-card {
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: var(--surface);
+      background: linear-gradient(180deg, rgba(29, 42, 60, 0.86), rgba(18, 30, 46, 0.92));
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
     }
@@ -77,6 +77,31 @@
       background:
         linear-gradient(135deg, rgba(245, 201, 95, 0.16), rgba(9, 17, 27, 0.34)),
         var(--surface);
+    }
+
+    .card.order-head {
+      background: linear-gradient(180deg, rgba(20, 32, 49, 0.95), rgba(24, 39, 59, 0.9));
+      border-color: rgba(126, 191, 255, 0.14);
+    }
+
+    .card.parties-card {
+      background: linear-gradient(180deg, rgba(19, 34, 43, 0.95), rgba(28, 45, 61, 0.9));
+      border-color: rgba(93, 229, 207, 0.16);
+    }
+
+    .table-card.products-card {
+      background: linear-gradient(180deg, rgba(18, 34, 52, 0.96), rgba(24, 44, 66, 0.9));
+      border-color: rgba(126, 191, 255, 0.16);
+    }
+
+    .summary-card.order-totals {
+      background: linear-gradient(180deg, rgba(46, 39, 22, 0.9), rgba(32, 38, 54, 0.92));
+      border-color: rgba(245, 201, 95, 0.22);
+    }
+
+    .validation-card.order-actions {
+      background: linear-gradient(180deg, rgba(22, 36, 33, 0.92), rgba(29, 40, 54, 0.92));
+      border-color: rgba(93, 229, 207, 0.16);
     }
 
     .eyebrow {
@@ -180,7 +205,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.65fr);
+      grid-template-columns: 1fr;
       gap: 14px;
       align-items: start;
     }
@@ -249,9 +274,20 @@
       color: var(--text);
       font: inherit;
       outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, transform 0.18s ease;
     }
 
     .textarea { min-height: 92px; resize: vertical; }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus,
+    .line-input:focus,
+    .line-select:focus {
+      border-color: rgba(126, 191, 255, 0.34);
+      box-shadow: 0 0 0 3px rgba(126, 191, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+    }
 
     .field-note {
       color: var(--muted);
@@ -292,7 +328,8 @@
       overflow: auto;
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.02);
+      background: linear-gradient(180deg, rgba(10, 18, 29, 0.92), rgba(20, 33, 50, 0.9));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
     table {
@@ -340,9 +377,14 @@
       padding: 8px 10px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.06);
       color: var(--text);
       font: inherit;
+    }
+
+    .line-select option {
+      background: #0d1320;
+      color: var(--text);
     }
 
     .line-input.wide { min-width: 260px; }
@@ -355,7 +397,7 @@
       padding: 8px 10px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.05);
       color: var(--text);
       font-size: 12px;
       font-weight: 700;
@@ -382,6 +424,7 @@
 
     .totals-grid {
       display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -411,6 +454,10 @@
       display: grid;
       gap: 10px;
       margin-top: 14px;
+    }
+
+    .summary-card.order-totals .check-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .check-item {
@@ -459,6 +506,8 @@
     @media (max-width: 840px) {
       .wrap { padding: 18px 14px 32px; }
       .title { font-size: 38px; }
+      .totals-grid,
+      .summary-card.order-totals .check-list { grid-template-columns: 1fr; }
     }
 
     @media print {
@@ -518,6 +567,8 @@
           <a class="btn" href="commercial.html">В коммерческий отдел</a>
           <a class="btn" href="orders.html">К аналитике отгрузок</a>
           <a class="btn" href="logistic.html">К логистике</a>
+          <button class="btn" type="button" onclick="triggerOrderUpload()">Загрузить заказ</button>
+          <input id="upload-order-input" type="file" accept=".json,.csv,.txt,.pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" hidden>
         </div>
       </div>
 
@@ -537,11 +588,11 @@
 
     <div class="layout">
       <div class="left-stack">
-        <section class="card">
+        <section class="card order-head">
           <div class="section-head">
             <div>
               <div class="section-title">Шапка заказа</div>
-              <div class="section-copy">Номер, дата и общие параметры документа. Эти поля попадут в печатную форму и в сохраненный файл заказа.</div>
+              <div class="section-copy">Номер, дата и общие параметры документа. Эти поля попадут в печатную форму и в сохраненный заказ.</div>
             </div>
           </div>
 
@@ -561,7 +612,7 @@
           </div>
         </section>
 
-        <section class="card">
+        <section class="card parties-card">
           <div class="section-head">
             <div>
               <div class="section-title">Стороны заказа</div>
@@ -615,7 +666,7 @@
           </div>
         </section>
 
-        <section class="table-card">
+        <section class="table-card products-card">
           <div class="section-head">
             <div>
               <div class="section-title">Товары</div>
@@ -653,10 +704,7 @@
           <datalist id="products-list"></datalist>
           <datalist id="destinations-list"></datalist>
         </section>
-      </div>
-
-      <div class="right-stack sticky-summary">
-        <section class="summary-card">
+        <section class="summary-card order-totals">
           <div class="section-head">
             <div>
               <div class="section-title">Итоги заказа</div>
@@ -695,7 +743,7 @@
           </div>
         </section>
 
-        <section class="validation-card">
+        <section class="validation-card order-actions">
           <div class="section-head">
             <div>
               <div class="section-title">Проверка заказа</div>
@@ -723,6 +771,10 @@
     var LOGISTIC_RATES_KEY = 'cloto_logistic_rates';
     var ORDER_DRAFTS_KEY = 'cloto_sales_orders_drafts';
     var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
+    var SHIPPED_ORDERS_KEY = 'cloto_sales_orders_shipped';
+    var PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    var PDFJS_WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    var TESSERACT_URL = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
     var VAT_RATE = 0.22;
     var SELLER = {
       name: 'ООО "КЛОТО"',
@@ -770,6 +822,8 @@
     var productCatalog = [];
     var destinationCatalog = [];
     var orderLines = [];
+    var pdfJsLoaderPromise = null;
+    var tesseractLoaderPromise = null;
 
     function escapeHtml(value) {
       return String(value || '')
@@ -800,6 +854,27 @@
       var now = new Date();
       var parts = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')];
       return 'КЛТ-' + parts.join('') + '-01';
+    }
+
+    function readStorageArray(key) {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function getExistingOrder(orderNumber) {
+      return readStorageArray(NEW_ORDERS_KEY).filter(function(item) {
+        return normalizeValue(item && item.number) === normalizeValue(orderNumber);
+      })[0] || null;
+    }
+
+    function getShippedOrder(orderNumber) {
+      return readStorageArray(SHIPPED_ORDERS_KEY).filter(function(item) {
+        return normalizeValue(item && item.number) === normalizeValue(orderNumber);
+      })[0] || null;
     }
 
     function uniqueByName(items) {
@@ -1011,15 +1086,15 @@
         return '<tr>' +
           '<td><div class="line-index">' + (index + 1) + '</div></td>' +
           '<td>' +
-            '<input class="line-input wide" list="products-list" value="' + escapeHtml(line.productName) + '" placeholder="Наименование продукта" oninput="updateLine(' + index + ', \'productName\', this.value)">' +
+            '<input class="line-input wide" list="products-list" value="' + escapeHtml(line.productName) + '" placeholder="Наименование продукта" onchange="updateLine(' + index + ', \'productName\', this.value)">' +
             '<div class="line-sub">Поиск по модулю «Продукты» и истории отгрузок. Упаковка: ' + escapeHtml(line.unitLabel || 'мешки') + '</div>' +
           '</td>' +
-          '<td><input class="line-input" type="number" min="0" step="0.001" value="' + escapeHtml(line.tons) + '" oninput="updateLine(' + index + ', \'tons\', this.value)"></td>' +
+          '<td><input class="line-input" type="number" min="0" step="0.001" inputmode="decimal" value="' + escapeHtml(line.tons) + '" onchange="updateLine(' + index + ', \'tons\', this.value)"></td>' +
           '<td>' +
-            '<input class="line-input" type="number" min="0" step="1" value="' + escapeHtml(line.units) + '" oninput="updateLine(' + index + ', \'units\', this.value)">' +
+            '<input class="line-input" type="number" min="0" step="1" inputmode="numeric" value="' + escapeHtml(line.units) + '" onchange="updateLine(' + index + ', \'units\', this.value)">' +
             '<div class="line-sub">' + escapeHtml(line.unitLabel || 'мешки') + '</div>' +
           '</td>' +
-          '<td><input class="line-input medium" type="date" value="' + escapeHtml(line.deliveryDate) + '" oninput="updateLine(' + index + ', \'deliveryDate\', this.value)"></td>' +
+          '<td><input class="line-input medium" type="date" value="' + escapeHtml(line.deliveryDate) + '" onchange="updateLine(' + index + ', \'deliveryDate\', this.value)"></td>' +
           '<td>' +
             '<select class="line-select" onchange="updateLine(' + index + ', \'deliveryType\', this.value)">' +
               '<option value="pickup"' + (line.deliveryType === 'pickup' ? ' selected' : '') + '>Самовывоз</option>' +
@@ -1041,7 +1116,7 @@
             '<div class="line-readonly">' + formatRub(line.deliveryCost) + '</div>' +
             '<div class="line-sub">' + (line.deliveryType === 'pickup' ? 'Без доставки' : 'Ставка из логистики') + '</div>' +
           '</td>' +
-          '<td><input class="line-input" type="number" min="0" step="1" value="' + escapeHtml(line.priceWithoutVat) + '" oninput="updateLine(' + index + ', \'priceWithoutVat\', this.value)"></td>' +
+          '<td><input class="line-input" type="number" min="0" step="1" inputmode="numeric" value="' + escapeHtml(line.priceWithoutVat) + '" onchange="updateLine(' + index + ', \'priceWithoutVat\', this.value)"></td>' +
           '<td><div class="line-readonly">22%</div><div class="line-sub">Автоматически</div></td>' +
           '<td><div class="line-readonly">' + formatRub(line.amountWithoutVat) + '</div></td>' +
           '<td><div class="line-readonly">' + formatRub(line.amountWithVat) + '</div></td>' +
@@ -1114,6 +1189,47 @@
       updateTotals();
     }
 
+    function fillField(id, value) {
+      document.getElementById(id).value = value || '';
+    }
+
+    function mapLineFromPayload(line) {
+      var draft = createEmptyLine();
+      return {
+        id: draft.id,
+        productName: line && line.productName || '',
+        tons: line && line.tons || '',
+        units: line && line.units || '',
+        deliveryDate: line && line.deliveryDate || '',
+        deliveryType: line && line.deliveryType || 'pickup',
+        destination: line && line.destination || 'Архангельск',
+        module: line && line.module || 'truck',
+        deliveryCost: Number(line && line.deliveryCost || 0),
+        priceWithoutVat: line && line.priceWithoutVat || '',
+        vatRate: Number(line && line.vatRate || VAT_RATE),
+        amountWithoutVat: Number(line && line.amountWithoutVat || 0),
+        amountVat: Number(line && line.amountVat || 0),
+        amountWithVat: Number(line && line.amountWithVat || 0),
+        unitLabel: line && line.unitLabel || draft.unitLabel
+      };
+    }
+
+    function loadExistingOrder(payload) {
+      if (!payload) return;
+      fillField('order-number', payload.number);
+      fillField('order-date', payload.date || getTodayIso());
+      fillField('order-comment', payload.comment);
+      fillField('buyer-name', payload.buyer && payload.buyer.name);
+      fillField('buyer-inn', payload.buyer && payload.buyer.inn);
+      fillField('buyer-kpp', payload.buyer && payload.buyer.kpp);
+      fillField('buyer-address', payload.buyer && payload.buyer.address);
+      fillField('buyer-phone', payload.buyer && payload.buyer.phone);
+      fillField('buyer-contact', payload.buyer && payload.buyer.contact);
+      orderLines = (Array.isArray(payload.lines) && payload.lines.length ? payload.lines : [createEmptyLine()]).map(mapLineFromPayload);
+      renderOrderLines();
+      setValidationState('draft', 'Открыт сохраненный заказ. Можно полностью просмотреть его или внести изменения.');
+    }
+
     function setValidationState(type, text) {
       var status = document.getElementById('validation-status');
       var copy = document.getElementById('order-status-copy');
@@ -1169,7 +1285,7 @@
         ].map(function(message) {
           return '<div class="check-item ok">' + escapeHtml(message) + '</div>';
         }).join('');
-        setValidationState('ready', 'Документ проверен. Можно сохранить в файл или отправить на печать.');
+        setValidationState('ready', 'Документ проверен. Можно сохранить заказ или отправить его на печать.');
       }
 
       return issues;
@@ -1286,50 +1402,488 @@
       window.location.href = 'sales-new-orders.html';
     }
 
-    async function saveOrderToPath() {
+    function parseNumber(value) {
+      if (value === null || value === undefined || value === '') return 0;
+      return Number(String(value).replace(/\s+/g, '').replace(',', '.')) || 0;
+    }
+
+    function normalizeHeaderName(value) {
+      return String(value || '').trim().toLowerCase().replace(/\s+/g, '').replace(/["'`«».,/\\()_:\-]/g, '').replace(/ё/g, 'е');
+    }
+
+    function escapeRegExp(value) {
+      return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function normalizeImportedDate(value) {
+      var text = String(value || '').trim();
+      if (!text) return getTodayIso();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+      if (/^\d{2}\.\d{2}\.\d{4}$/.test(text)) {
+        var parts = text.split('.');
+        return parts[2] + '-' + parts[1] + '-' + parts[0];
+      }
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(text)) {
+        var slash = text.split('/');
+        return slash[2] + '-' + slash[1] + '-' + slash[0];
+      }
+      return getTodayIso();
+    }
+
+    function getFileBaseName(fileName) {
+      return String(fileName || 'order').replace(/\.[^.]+$/, '');
+    }
+
+    function findTextMatch(text, expressions) {
+      for (var index = 0; index < expressions.length; index += 1) {
+        var match = text.match(expressions[index]);
+        if (match && match[1]) return match[1].trim();
+      }
+      return '';
+    }
+
+    function loadPdfJs() {
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+        return Promise.resolve(window.pdfjsLib);
+      }
+      if (pdfJsLoaderPromise) return pdfJsLoaderPromise;
+      pdfJsLoaderPromise = new Promise(function(resolve, reject) {
+        var script = document.createElement('script');
+        script.src = PDFJS_URL;
+        script.onload = function() {
+          if (!window.pdfjsLib) {
+            reject(new Error('PDF.js не загрузился.'));
+            return;
+          }
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+          resolve(window.pdfjsLib);
+        };
+        script.onerror = function() { reject(new Error('Не удалось загрузить библиотеку чтения PDF.')); };
+        document.head.appendChild(script);
+      });
+      return pdfJsLoaderPromise;
+    }
+
+    function loadTesseract() {
+      if (window.Tesseract) return Promise.resolve(window.Tesseract);
+      if (tesseractLoaderPromise) return tesseractLoaderPromise;
+      tesseractLoaderPromise = new Promise(function(resolve, reject) {
+        var script = document.createElement('script');
+        script.src = TESSERACT_URL;
+        script.onload = function() {
+          if (!window.Tesseract) {
+            reject(new Error('OCR-библиотека не загрузилась.'));
+            return;
+          }
+          resolve(window.Tesseract);
+        };
+        script.onerror = function() { reject(new Error('Не удалось загрузить OCR-библиотеку.')); };
+        document.head.appendChild(script);
+      });
+      return tesseractLoaderPromise;
+    }
+
+    function groupPdfItemsToLines(items) {
+      var rows = [];
+      items.forEach(function(item) {
+        var text = String(item && item.str || '').trim();
+        if (!text) return;
+        var y = item.transform && item.transform[5] ? item.transform[5] : 0;
+        var existing = rows.filter(function(row) { return Math.abs(row.y - y) < 3; })[0];
+        if (!existing) {
+          existing = { y: y, items: [] };
+          rows.push(existing);
+        }
+        existing.items.push({ x: item.transform && item.transform[4] ? item.transform[4] : 0, text: text });
+      });
+      return rows.sort(function(a, b) { return b.y - a.y; }).map(function(row) {
+        return row.items.sort(function(a, b) { return a.x - b.x; }).map(function(item) { return item.text; }).join(' ').replace(/\s+/g, ' ').trim();
+      }).filter(Boolean);
+    }
+
+    function extractTextFromPdf(file) {
+      return loadPdfJs().then(function(pdfjsLib) {
+        return file.arrayBuffer().then(function(buffer) {
+          return pdfjsLib.getDocument({ data: new Uint8Array(buffer) }).promise;
+        }).then(function(pdf) {
+          var tasks = [];
+          for (var pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+            tasks.push(pdf.getPage(pageNumber).then(function(page) {
+              return page.getTextContent().then(function(content) {
+                return groupPdfItemsToLines(content.items);
+              });
+            }));
+          }
+          return Promise.all(tasks).then(function(pages) {
+            return pages.map(function(lines) { return lines.join('\n'); }).join('\n');
+          });
+        });
+      });
+    }
+
+    function extractTextFromImage(file) {
+      return loadTesseract().then(function(Tesseract) {
+        setValidationState('draft', 'Распознаем текст с изображения заказа. Это может занять до минуты.');
+        return Tesseract.recognize(file, 'rus+eng', {
+          logger: function(message) {
+            if (message && message.status === 'recognizing text' && typeof message.progress === 'number') {
+              setValidationState('draft', 'Распознаем текст с изображения заказа: ' + Math.round(message.progress * 100) + '%.');
+            }
+          }
+        }).then(function(result) {
+          return String(result && result.data && result.data.text || '');
+        });
+      });
+    }
+
+    function findKnownClientInText(text) {
+      var lower = normalizeValue(text);
+      var best = '';
+      clientCatalog.forEach(function(client) {
+        var name = String(client && client.name || '').trim();
+        if (!name) return;
+        var key = normalizeValue(name);
+        if (key && lower.indexOf(key) >= 0 && key.length > best.length) best = name;
+      });
+      return best;
+    }
+
+    function findKnownDestinationInLine(line) {
+      var lower = normalizeValue(line);
+      var best = '';
+      destinationCatalog.forEach(function(destination) {
+        var name = String(destination && destination.name || '').trim();
+        if (!name) return;
+        var key = normalizeValue(name);
+        if (key && lower.indexOf(key) >= 0 && key.length > best.length) best = name;
+      });
+      return best;
+    }
+
+    function findKnownProductInLine(line) {
+      var lower = normalizeValue(line);
+      var bestProduct = null;
+      var bestScore = 0;
+      productCatalog.forEach(function(product) {
+        var name = String(product && product.name || '').trim();
+        if (!name) return;
+        var normalizedName = normalizeValue(name);
+        var score = 0;
+        if (normalizedName && lower.indexOf(normalizedName) >= 0) score += normalizedName.length + 10;
+        normalizedName.split(/[\s/]+/).forEach(function(token) {
+          if (token.length >= 4 && lower.indexOf(token) >= 0) score += token.length;
+        });
+        if (score > bestScore) {
+          bestScore = score;
+          bestProduct = product;
+        }
+      });
+      return bestScore >= 4 ? bestProduct : null;
+    }
+
+    function extractPdfBuyer(lines, text) {
+      var fromLabel = '';
+      lines.some(function(line) {
+        var match = line.match(/(?:покупатель|заказчик|клиент)\s*[:№-]*\s*(.+)$/i);
+        if (match && match[1]) {
+          fromLabel = match[1].trim();
+          return true;
+        }
+        return false;
+      });
+      return fromLabel || findKnownClientInText(text) || '';
+    }
+
+    function extractPdfOrderNumber(text, fileName) {
+      return findTextMatch(text, [/(?:заказ|счет|документ)\s*(?:№|#)?\s*([A-ZА-Я0-9\/-]{4,})/i, /№\s*([A-ZА-Я0-9\/-]{4,})/i]) || getFileBaseName(fileName).toUpperCase() || getDefaultOrderNumber();
+    }
+
+    function extractPdfOrderDate(text) {
+      return normalizeImportedDate(findTextMatch(text, [/(\d{2}[./]\d{2}[./]\d{4})/, /(\d{4}-\d{2}-\d{2})/]));
+    }
+
+    function extractPdfLineValue(line, expressions) {
+      for (var index = 0; index < expressions.length; index += 1) {
+        var match = line.match(expressions[index]);
+        if (match && match[1]) return parseNumber(match[1]);
+      }
+      return 0;
+    }
+
+    function buildPdfLines(text, fileName) {
+      var lines = text.split(/\r?\n/).map(function(line) { return line.replace(/\s+/g, ' ').trim(); }).filter(Boolean);
+      var orderDate = extractPdfOrderDate(text) || getTodayIso();
+      var result = [];
+      var usedIndexes = {};
+
+      productCatalog.forEach(function(product) {
+        var name = String(product && product.name || '').trim();
+        if (!name) return;
+        var pattern = new RegExp(escapeRegExp(name), 'i');
+        lines.forEach(function(line, lineIndex) {
+          if (usedIndexes[lineIndex] || !pattern.test(line)) return;
+          var context = [line, lines[lineIndex + 1] || '', lines[lineIndex + 2] || ''].join(' ');
+          var destination = findKnownDestinationInLine(context);
+          var imported = createImportedLine({
+            productName: name,
+            tons: extractPdfLineValue(context, [/(\d+(?:[.,]\d+)?)\s*(?:т|тонн|тонны|tons?)/i]),
+            units: extractPdfLineValue(context, [/(\d+)\s*(?:меш|боч|шт|ед)/i]),
+            deliveryDate: orderDate,
+            deliveryType: detectDeliveryType(context, destination),
+            destination: destination,
+            module: detectModule(context),
+            priceWithoutVat: extractPdfLineValue(context, [/(?:цена(?:безндс)?|за\s*тонну|стоимость)\s*[:=]?\s*(\d[\d\s,.]{2,})/i, /(\d[\d\s]{3,})\s*(?:₽|руб)/i]),
+            deliveryCost: extractPdfLineValue(context, [/(?:доставка|логистика)\s*[:=]?\s*(\d[\d\s,.]{2,})/i])
+          }, orderDate);
+          if (!imported.tons) imported.tons = 1;
+          if (!imported.units) imported.units = Math.max(1, Math.round(Number(imported.tons || 0)));
+          recalculateLine(imported);
+          result.push(imported);
+          usedIndexes[lineIndex] = true;
+        });
+      });
+
+      if (!result.length) {
+        lines.forEach(function(line, lineIndex) {
+          if (usedIndexes[lineIndex]) return;
+          var product = findKnownProductInLine(line);
+          if (!product) return;
+          var destination = findKnownDestinationInLine(line);
+          var imported = createImportedLine({
+            productName: product.name,
+            tons: extractPdfLineValue(line, [/(\d+(?:[.,]\d+)?)\s*(?:т|тонн|тонны|tons?)/i]),
+            units: extractPdfLineValue(line, [/(\d+)\s*(?:меш|боч|шт|ед)/i]),
+            deliveryDate: orderDate,
+            deliveryType: detectDeliveryType(line, destination),
+            destination: destination,
+            module: detectModule(line),
+            priceWithoutVat: extractPdfLineValue(line, [/(?:цена(?:безндс)?|за\s*тонну|стоимость)\s*[:=]?\s*(\d[\d\s,.]{2,})/i, /(\d[\d\s]{3,})\s*(?:₽|руб)/i]),
+            deliveryCost: extractPdfLineValue(line, [/(?:доставка|логистика)\s*[:=]?\s*(\d[\d\s,.]{2,})/i])
+          }, orderDate);
+          if (!imported.tons) imported.tons = 1;
+          if (!imported.units) imported.units = Math.max(1, Math.round(Number(imported.tons || 0)));
+          recalculateLine(imported);
+          result.push(imported);
+          usedIndexes[lineIndex] = true;
+        });
+      }
+
+      if (!result.length) throw new Error('Из PDF не удалось выделить строки заказа. Нужен текстовый PDF с товарами, количеством и реквизитами.');
+      return { lines: lines, items: result, orderDate: orderDate };
+    }
+
+    function parsePdfPayload(text, fileName) {
+      var parsed = buildPdfLines(text, fileName);
+      var buyerName = extractPdfBuyer(parsed.lines, text);
+      return buildImportedPayload({
+        number: extractPdfOrderNumber(text, fileName),
+        date: parsed.orderDate,
+        comment: 'Импортировано из PDF-файла ' + fileName,
+        buyerName: buyerName,
+        buyerAddress: findTextMatch(text, [/(?:адрес)\s*[:№-]*\s*(.+)/i]),
+        buyerPhone: findTextMatch(text, [/(?:телефон|тел\.)\s*[:№-]*\s*([+()\d\s-]{6,})/i]),
+        buyerContact: findTextMatch(text, [/(?:контакт|менеджер)\s*[:№-]*\s*(.+)/i])
+      }, parsed.items, fileName);
+    }
+
+    function getImportedValue(source, keys) {
+      if (!source || typeof source !== 'object') return '';
+      for (var index = 0; index < keys.length; index += 1) {
+        var key = keys[index];
+        if (source[key] !== undefined && source[key] !== null && source[key] !== '') return source[key];
+      }
+      return '';
+    }
+
+    function detectDeliveryType(value, destination) {
+      var text = normalizeValue(value);
+      if (text.indexOf('сам') >= 0 || text.indexOf('pickup') >= 0) return 'pickup';
+      if (normalizeValue(destination) === 'архангельск') return 'pickup';
+      return 'delivery';
+    }
+
+    function detectModule(value) {
+      var text = normalizeValue(value);
+      if (text.indexOf('конт') >= 0) return 'container';
+      if (text.indexOf('вагон') >= 0 || text.indexOf('wagon') >= 0) return 'wagon';
+      return 'truck';
+    }
+
+    function createImportedLine(rawLine, orderDate) {
+      var line = createEmptyLine();
+      var productName = String(getImportedValue(rawLine, ['productName', 'product', 'name', 'product_name', 'товар', 'наименование', 'позиция']) || '').trim();
+      var destination = String(getImportedValue(rawLine, ['destination', 'deliveryPoint', 'location', 'пунктдоставки', 'локация']) || '').trim();
+      var priceValue = getImportedValue(rawLine, ['priceWithoutVat', 'price', 'unitPrice', 'ценабезндс', 'цена']);
+      var deliveryCostValue = getImportedValue(rawLine, ['deliveryCost', 'delivery', 'стоимостьдоставки', 'доставка']);
+      line.productName = productName;
+      line.tons = parseNumber(getImportedValue(rawLine, ['tons', 'qtyTons', 'тонны', 'тонн']));
+      line.units = parseNumber(getImportedValue(rawLine, ['units', 'qtyUnits', 'мешки', 'бочки', 'единицы']));
+      line.deliveryDate = normalizeImportedDate(getImportedValue(rawLine, ['deliveryDate', 'date', 'датапоставки', 'срокпоставки']) || orderDate);
+      line.deliveryType = detectDeliveryType(getImportedValue(rawLine, ['deliveryType', 'типдоставки']), destination);
+      line.destination = destination || (line.deliveryType === 'pickup' ? 'Архангельск' : '');
+      line.module = detectModule(getImportedValue(rawLine, ['module', 'transport', 'модуль', 'перевозка']));
+      line.unitLabel = String(getImportedValue(rawLine, ['unitLabel', 'pack', 'упаковка']) || line.unitLabel || 'мешки');
+
+      syncLineDerivedFields(line);
+
+      if (priceValue !== '') line.priceWithoutVat = Math.round(parseNumber(priceValue));
+      if (deliveryCostValue !== '') line.deliveryCost = Math.round(parseNumber(deliveryCostValue));
+      if (!line.units && line.tons) line.units = Math.round(line.tons);
+      recalculateLine(line);
+      return line;
+    }
+
+    function buildImportedPayload(meta, lines, fileName) {
+      var buyer = meta.buyer || {};
+      var payload = {
+        number: String(getImportedValue(meta, ['number', 'orderNumber', 'номерзаказа']) || getFileBaseName(fileName).toUpperCase() || getDefaultOrderNumber()).trim(),
+        date: normalizeImportedDate(getImportedValue(meta, ['date', 'orderDate', 'датазаказа'])),
+        comment: String(getImportedValue(meta, ['comment', 'notes', 'commentary', 'комментарий']) || '').trim(),
+        seller: SELLER,
+        buyer: {
+          name: String(getImportedValue(buyer, ['name', 'buyerName', 'customer', 'покупатель']) || getImportedValue(meta, ['buyerName', 'customer', 'покупатель']) || '').trim(),
+          inn: String(getImportedValue(buyer, ['inn']) || getImportedValue(meta, ['buyerInn', 'inn', 'инн']) || '').trim(),
+          kpp: String(getImportedValue(buyer, ['kpp']) || getImportedValue(meta, ['buyerKpp', 'kpp', 'кпп']) || '').trim(),
+          address: String(getImportedValue(buyer, ['address']) || getImportedValue(meta, ['buyerAddress', 'address', 'адрес']) || '').trim(),
+          phone: String(getImportedValue(buyer, ['phone']) || getImportedValue(meta, ['buyerPhone', 'phone', 'телефон']) || '').trim(),
+          contact: String(getImportedValue(buyer, ['contact']) || getImportedValue(meta, ['buyerContact', 'contact', 'контакт']) || '').trim()
+        },
+        lines: lines,
+        totals: {
+          withoutVat: lines.reduce(function(sum, line) { return sum + Number(line.amountWithoutVat || 0); }, 0),
+          vat: lines.reduce(function(sum, line) { return sum + Number(line.amountVat || 0); }, 0),
+          withVat: lines.reduce(function(sum, line) { return sum + Number(line.amountWithVat || 0); }, 0)
+        },
+        savedAt: new Date().toISOString()
+      };
+
+      if (!payload.number) payload.number = getDefaultOrderNumber();
+      if (!payload.buyer.name) payload.buyer.name = 'Клиент';
+      return payload;
+    }
+
+    function parseDelimitedRow(row, delimiter) {
+      var result = [];
+      var current = '';
+      var quoted = false;
+      for (var index = 0; index < row.length; index += 1) {
+        var char = row[index];
+        if (char === '"') {
+          if (quoted && row[index + 1] === '"') {
+            current += '"';
+            index += 1;
+          } else {
+            quoted = !quoted;
+          }
+        } else if (char === delimiter && !quoted) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    function detectDelimiter(lines) {
+      var sample = lines.slice(0, 5).join('\n');
+      var delimiters = [';', '\t', ','];
+      var best = ';';
+      var bestScore = -1;
+      delimiters.forEach(function(delimiter) {
+        var score = sample.split(delimiter).length;
+        if (score > bestScore) {
+          bestScore = score;
+          best = delimiter;
+        }
+      });
+      return best;
+    }
+
+    function parseTextTablePayload(text, fileName) {
+      var rawLines = text.split(/\r?\n/).map(function(line) { return line.trim(); }).filter(Boolean);
+      if (!rawLines.length) throw new Error('Файл пустой.');
+      var delimiter = detectDelimiter(rawLines);
+      var rows = rawLines.map(function(line) { return parseDelimitedRow(line, delimiter); });
+      var headerIndex = rows.findIndex(function(row) {
+        return row.some(function(cell) {
+          var key = normalizeHeaderName(cell);
+          return key === 'productname' || key === 'product' || key === 'наименование' || key === 'товар' || key === 'позиция';
+        });
+      });
+      if (headerIndex < 0) throw new Error('Не найден заголовок таблицы товаров. Поддерживаются JSON и CSV/TXT с колонкой продукта.');
+
+      var meta = {};
+      rows.slice(0, headerIndex).forEach(function(row) {
+        if (row.length < 2) return;
+        meta[normalizeHeaderName(row[0])] = row[1];
+      });
+
+      var headers = rows[headerIndex].map(normalizeHeaderName);
+      var lines = rows.slice(headerIndex + 1).filter(function(row) { return row.some(Boolean); }).map(function(row) {
+        var item = {};
+        headers.forEach(function(header, index) {
+          item[header] = row[index] || '';
+        });
+        return createImportedLine(item, normalizeImportedDate(meta.датазаказа || meta.orderdate || meta.date || getTodayIso()));
+      }).filter(function(line) { return line.productName; });
+
+      if (!lines.length) throw new Error('Не удалось прочитать ни одной строки товара из файла.');
+      return buildImportedPayload(meta, lines, fileName);
+    }
+
+    function parseImportedPayload(text, fileName) {
+      try {
+        var parsed = JSON.parse(text);
+        var meta = Array.isArray(parsed) ? {} : parsed;
+        var sourceLines = Array.isArray(parsed) ? parsed : (parsed.lines || parsed.items || parsed.products || []);
+        var lines = sourceLines.map(function(item) {
+          return createImportedLine(item, normalizeImportedDate(getImportedValue(meta, ['date', 'orderDate']) || getTodayIso()));
+        }).filter(function(line) { return line.productName; });
+        if (!lines.length) throw new Error('JSON без строк товара');
+        return buildImportedPayload(meta, lines, fileName);
+      } catch (error) {
+        return parseTextTablePayload(text, fileName);
+      }
+    }
+
+    function triggerOrderUpload() {
+      var input = document.getElementById('upload-order-input');
+      input.value = '';
+      input.click();
+    }
+
+    function importUploadedOrder(file) {
+      if (!file) return;
+      var extension = String(file.name || '').toLowerCase();
+      var isPdf = extension.endsWith('.pdf') || file.type === 'application/pdf';
+      var isImage = /\.(jpg|jpeg|png|webp)$/i.test(extension) || /^image\//.test(file.type || '');
+      var importPromise = isPdf
+        ? extractTextFromPdf(file).then(function(text) { return parsePdfPayload(text, file.name); })
+        : isImage
+          ? extractTextFromImage(file).then(function(text) { return parsePdfPayload(text, file.name); })
+          : file.text().then(function(text) { return parseImportedPayload(text, file.name); });
+
+      importPromise.then(function(payload) {
+        saveDraftToLocalStorage(payload);
+        saveOrderToNewQueue(payload);
+        setValidationState('ready', 'Заказ из файла «' + file.name + '» загружен и сразу добавлен в модуль «Новые заказы».');
+        setTimeout(openNewOrdersModule, 180);
+      }).catch(function(error) {
+        window.alert(error && error.message ? error.message : 'Не удалось загрузить заказ из файла.');
+      });
+    }
+
+    function saveOrderToPath() {
       var issues = validateOrder(true);
       if (issues.length) return;
 
       var payload = getOrderPayload();
-      var html = buildPrintableOrderHtml(payload);
-      var fileName = (payload.number || 'order').replace(/[^\w\-]+/g, '_') + '.html';
       saveDraftToLocalStorage(payload);
       saveOrderToNewQueue(payload);
-
-      if (window.showSaveFilePicker) {
-        try {
-          var handle = await window.showSaveFilePicker({
-            suggestedName: fileName,
-            types: [{
-              description: 'HTML order',
-              accept: { 'text/html': ['.html'] }
-            }]
-          });
-          var writable = await handle.createWritable();
-          await writable.write(html);
-          await writable.close();
-          setValidationState('ready', 'Заказ сохранен в выбранный путь и добавлен в модуль «Новые заказы».');
-          setTimeout(openNewOrdersModule, 180);
-          return;
-        } catch (error) {
-          if (error && error.name === 'AbortError') {
-            setValidationState('ready', 'Заказ добавлен в модуль «Новые заказы». Сохранение файла отменено.');
-            setTimeout(openNewOrdersModule, 180);
-            return;
-          }
-        }
-      }
-
-      var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      var link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(link.href);
-      setValidationState('ready', 'Заказ добавлен в модуль «Новые заказы» и сохранен через загрузку файла браузера.');
-      setTimeout(openNewOrdersModule, 180);
+      setValidationState('ready', 'Заказ сохранен и добавлен в модуль «Новые заказы». Файл на компьютер больше не скачивается автоматически.');
     }
 
     function printOrder() {
@@ -1352,20 +1906,32 @@
       clientCatalog = loadClientsCatalog();
       productCatalog = loadProductsCatalog();
       destinationCatalog = loadDestinationCatalog();
+      var orderFromUrl = new URLSearchParams(window.location.search).get('order');
+      var orderSource = new URLSearchParams(window.location.search).get('source');
+      var existingOrder = orderFromUrl
+        ? (orderSource === 'shipped' ? getShippedOrder(orderFromUrl) : (getExistingOrder(orderFromUrl) || getShippedOrder(orderFromUrl)))
+        : null;
 
       renderDatalist('buyers-list', clientCatalog, function(item) { return item.name; });
       renderDatalist('products-list', productCatalog, function(item) { return item.name; });
       renderDatalist('destinations-list', destinationCatalog, function(item) { return item.name; });
 
-      document.getElementById('order-number').value = getDefaultOrderNumber();
-      document.getElementById('order-date').value = getTodayIso();
+      document.getElementById('order-number').value = existingOrder && existingOrder.number ? existingOrder.number : getDefaultOrderNumber();
+      document.getElementById('order-date').value = existingOrder && existingOrder.date ? existingOrder.date : getTodayIso();
       document.getElementById('logistic-source').textContent = destinationCatalog.length + ' локаций / cloto_logistic_rates';
 
       orderLines = [createEmptyLine()];
       renderOrderLines();
       bindHeaderFields();
-      updateTotals();
-      setValidationState('draft', 'Заказ создан как черновик.');
+      document.getElementById('upload-order-input').addEventListener('change', function(event) {
+        importUploadedOrder(event.target.files && event.target.files[0]);
+      });
+      if (existingOrder) {
+        loadExistingOrder(existingOrder);
+      } else {
+        updateTotals();
+        setValidationState('draft', 'Заказ создан как черновик.');
+      }
     })();
   </script>
 </body>

@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Клото — Карточка поставщика</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080c14;
+      --surface: rgba(255,255,255,.04);
+      --surface2: rgba(255,255,255,.07);
+      --border: rgba(255,255,255,.08);
+      --border2: rgba(255,255,255,.14);
+      --text: #e8eaf0;
+      --muted: #7f89a8;
+      --purple: #b07dff;
+      --cyan: #3de8c7;
+      --gold: #f5c842;
+      --blue: #63b3ed;
+      --green: #48bb78;
+      --red: #ff5e7d;
+      --orange: #f6ad55;
+      --radius: 18px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(124,92,252,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,252,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 {
+      width: 560px;
+      height: 560px;
+      top: -180px;
+      right: -140px;
+      background: radial-gradient(circle, rgba(176,125,255,.14) 0%, transparent 70%);
+    }
+    .bg-orb-2 {
+      width: 480px;
+      height: 480px;
+      left: -120px;
+      bottom: -180px;
+      background: radial-gradient(circle, rgba(61,232,199,.12) 0%, transparent 70%);
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 30px 24px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .back-link:hover { color: var(--text); background: var(--surface2); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.6fr .9fr;
+      gap: 18px;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+    .hero-main {
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(176,125,255,.12), rgba(8,12,20,.92));
+      border: 1px solid rgba(176,125,255,.16);
+    }
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .hero-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      background: rgba(176,125,255,.18);
+      border: 1px solid rgba(176,125,255,.28);
+    }
+    .hero-title {
+      margin-top: 18px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .hero-sub {
+      margin-top: 10px;
+      max-width: 860px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.05);
+      color: #eef0f8;
+    }
+    .tag-cyan { color: var(--cyan); border-color: rgba(61,232,199,.2); background: rgba(61,232,199,.08); }
+    .tag-gold { color: var(--gold); border-color: rgba(245,200,66,.2); background: rgba(245,200,66,.08); }
+    .tag-purple { color: var(--purple); border-color: rgba(176,125,255,.2); background: rgba(176,125,255,.08); }
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+    .btn {
+      border: 0;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all .2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), #d49bff);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(176,125,255,.22);
+    }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface2); }
+    .btn-accent {
+      background: rgba(61,232,199,.12);
+      color: var(--cyan);
+      border: 1px solid rgba(61,232,199,.22);
+    }
+    .btn-accent:hover { background: rgba(61,232,199,.18); }
+    .btn-danger {
+      background: rgba(255,94,125,.12);
+      color: var(--red);
+      border: 1px solid rgba(255,94,125,.18);
+    }
+    .btn-sm {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .summary {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      align-content: start;
+    }
+    .summary-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .summary-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    .summary-value { margin-top: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; }
+    .summary-note { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 2fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .section-sub { color: var(--muted); font-size: 12px; }
+    .section-body { padding: 20px; }
+
+    .contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .contact-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(61,232,199,.12);
+      background: linear-gradient(135deg, rgba(61,232,199,.08), rgba(13,19,32,.88));
+    }
+    .contact-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .contact-role {
+      margin-top: 4px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .contact-meta {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .contact-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+    .empty-state {
+      padding: 26px 0;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .empty-state strong { color: var(--text); }
+
+    .table-wrap {
+      overflow: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 960px;
+    }
+    th, td {
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      vertical-align: top;
+      text-align: left;
+      font-size: 13px;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      background: #0f1522;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+    td.nr, th.nr { text-align: right; }
+    .prod-name { font-weight: 700; }
+    .prod-note { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .status-pill {
+      display: inline-flex;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .st-active { color: var(--green); background: rgba(72,187,120,.12); }
+    .st-order { color: var(--gold); background: rgba(245,200,66,.12); }
+    .st-critical { color: var(--red); background: rgba(255,94,125,.12); }
+    .st-none { color: var(--muted); background: rgba(255,255,255,.08); }
+    .product-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,8,14,.72);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      padding: 18px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      width: min(920px, 100%);
+      max-height: min(88vh, 1000px);
+      overflow: auto;
+      border-radius: 22px;
+      border: 1px solid var(--border2);
+      background: #0d1320;
+      box-shadow: 0 24px 60px rgba(0,0,0,.45);
+    }
+    .modal-header, .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-footer {
+      border-top: 1px solid var(--border);
+      border-bottom: 0;
+      justify-content: flex-end;
+    }
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+    }
+    .modal-close {
+      border: 0;
+      cursor: pointer;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--muted);
+    }
+    .modal-body { padding: 20px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .field-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      outline: 0;
+      font: inherit;
+    }
+    .field-textarea { min-height: 92px; resize: vertical; }
+    .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: rgba(176,125,255,.4); box-shadow: 0 0 0 3px rgba(176,125,255,.12); }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 12;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(13,19,32,.96);
+      color: var(--text);
+      border: 1px solid rgba(61,232,199,.22);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1100px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .page { padding: 22px 14px 30px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .hero-main { padding: 18px; }
+      .summary { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <main class="page">
+    <a class="back-link" href="suppliers.html">← Назад к списку поставщиков</a>
+
+    <section class="hero">
+      <article class="card hero-main">
+        <div class="hero-top">
+          <div class="hero-icon" id="hero-icon">🤝</div>
+          <a class="btn btn-ghost" href="syryo.html">Открыть Сырьё</a>
+        </div>
+        <div class="hero-title" id="supplier-title">Загрузка карточки поставщика…</div>
+        <div class="hero-sub" id="supplier-description">Собираю товары, цены и доступные контакты из данных коммерческого контура.</div>
+        <div class="hero-tags" id="hero-tags"></div>
+        <div class="hero-actions">
+          <button class="btn btn-primary" type="button" onclick="openProductModal()">＋ Добавить товар</button>
+          <button class="btn btn-ghost" type="button" onclick="openContactModal()">＋ Добавить контакт</button>
+          <button class="btn btn-accent" type="button" onclick="openQuoteRequestModal()">Запросить КП</button>
+          <button class="btn btn-ghost" type="button" onclick="openPurchaseOrderModal()">Разместить заказ</button>
+        </div>
+      </article>
+
+      <aside class="card summary" id="summary-column">
+        <div class="summary-card">
+          <div class="summary-label">Позиций</div>
+          <div class="summary-value" id="summary-products">0</div>
+          <div class="summary-note">номенклатура в карточке поставщика</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Средняя цена с доставкой</div>
+          <div class="summary-value" id="summary-average">0</div>
+          <div class="summary-note">руб./т или за единицу по строкам прайса</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Локации</div>
+          <div class="summary-value" id="summary-locations">0</div>
+          <div class="summary-note">склады, города и базисы</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Контакты работников поставщика</div>
+            <div class="section-sub">Телефоны, email, роли и заметки</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div id="contacts-container"></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Поставляемая продукция</div>
+            <div class="section-sub">Номенклатура подтянута из Сырья по столбцам Наименование и Поставщик</div>
+          </div>
+        </div>
+        <div class="section-body table-wrap" id="products-container">
+          <div class="empty-state"><strong>Загрузка товаров…</strong></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="product-modal" onclick="handleOverlayClick(event, 'product-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="product-modal-title">Добавить товар поставщика</div>
+        <button class="modal-close" type="button" onclick="closeModal('product-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="field-label" for="product-name">Наименование</label>
+            <input class="field-input" id="product-name" type="text" placeholder="Новое сырьё или компонент" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-category">Категория</label>
+            <select class="field-select" id="product-category">
+              <option value="Углеродное сырьё">Углеродное сырьё</option>
+              <option value="Полуфабрикаты">Полуфабрикаты</option>
+              <option value="Битуминозные">Битуминозные</option>
+              <option value="Химреагенты">Химреагенты</option>
+              <option value="ПАВ и амины">ПАВ и амины</option>
+              <option value="Топливо">Топливо</option>
+              <option value="Буровые реагенты">Буровые реагенты</option>
+              <option value="Наполнители">Наполнители</option>
+              <option value="Импортные реагенты">Импортные реагенты</option>
+              <option value="Прочие">Прочие</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-status">Статус</label>
+            <select class="field-select" id="product-status">
+              <option value="active">Актуально</option>
+              <option value="order">Под обновление</option>
+              <option value="critical">Устарело</option>
+              <option value="none">Без даты</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-unit">Ед. изм.</label>
+            <input class="field-input" id="product-unit" type="text" placeholder="т" value="т" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-norm">Норма / партия</label>
+            <input class="field-input" id="product-norm" type="number" min="0" step="0.01" placeholder="20" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-date">Актуальность прайса</label>
+            <input class="field-input" id="product-date" type="text" placeholder="Апрель 2026" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-storage">Склад / город</label>
+            <input class="field-input" id="product-storage" type="text" placeholder="Дзержинск" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-fca">Цена FCA</label>
+            <input class="field-input" id="product-fca" type="number" min="0" step="0.01" placeholder="0" oninput="syncPriceCloto()" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="product-delivery">Доставка</label>
+            <input class="field-input" id="product-delivery" type="number" min="0" step="0.01" placeholder="0" oninput="syncPriceCloto()" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="product-cloto">Цена с доставкой</label>
+            <input class="field-input" id="product-cloto" type="number" min="0" step="0.01" placeholder="0" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="product-note">Примечание</label>
+            <textarea class="field-textarea" id="product-note" placeholder="Особые условия, базис поставки, комментарий по товару"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" type="button" onclick="closeModal('product-modal')">Отмена</button>
+        <button class="btn btn-primary" type="button" onclick="saveProduct()">Сохранить товар</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="contact-modal" onclick="handleOverlayClick(event, 'contact-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Контакт поставщика</div>
+        <button class="modal-close" type="button" onclick="closeModal('contact-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="field-label" for="contact-name">ФИО</label>
+            <input class="field-input" id="contact-name" type="text" placeholder="Иван Петров" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="contact-role">Должность</label>
+            <input class="field-input" id="contact-role" type="text" placeholder="Менеджер по продажам" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="contact-phone">Телефон</label>
+            <input class="field-input" id="contact-phone" type="text" placeholder="+7 (...) ...-..-.." />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="contact-email">Email</label>
+            <input class="field-input" id="contact-email" type="email" placeholder="name@company.ru" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="contact-note">Примечание</label>
+            <textarea class="field-textarea" id="contact-note" placeholder="Ответственный за FCA, резерв, документы, график связи"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" type="button" onclick="closeModal('contact-modal')">Отмена</button>
+        <button class="btn btn-primary" type="button" onclick="saveContact()">Сохранить контакт</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="quote-request-modal" onclick="handleOverlayClick(event, 'quote-request-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Запросить коммерческое предложение</div>
+        <button class="modal-close" type="button" onclick="closeModal('quote-request-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="field-label" for="quote-supplier">Поставщик</label>
+            <input class="field-input" id="quote-supplier" type="text" readonly />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="quote-requester">Ответственный</label>
+            <input class="field-input" id="quote-requester" type="text" placeholder="Кто запрашивает КП" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="quote-email">Email</label>
+            <input class="field-input" id="quote-email" type="email" placeholder="email@cloto.ru" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="quote-product">Номенклатура</label>
+            <select class="field-select" id="quote-product"></select>
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="quote-qty">Объём</label>
+            <input class="field-input" id="quote-qty" type="number" min="0" step="0.01" placeholder="20" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="quote-unit">Ед. изм.</label>
+            <input class="field-input" id="quote-unit" type="text" placeholder="т" value="т" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="quote-deadline">Срок ответа</label>
+            <input class="field-input" id="quote-deadline" type="date" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="quote-delivery-point">Точка доставки</label>
+            <input class="field-input" id="quote-delivery-point" type="text" placeholder="Архангельск / склад КЛОТО" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="quote-comment">Комментарий к запросу</label>
+            <textarea class="field-textarea" id="quote-comment" placeholder="Требуем FCA, срок действия КП, упаковка, документы, условия оплаты"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" type="button" onclick="closeModal('quote-request-modal')">Отмена</button>
+        <button class="btn btn-primary" type="button" onclick="saveQuoteRequest()">Сохранить запрос КП</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="purchase-order-modal" onclick="handleOverlayClick(event, 'purchase-order-modal')">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Разместить заказ поставщику</div>
+        <button class="modal-close" type="button" onclick="closeModal('purchase-order-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="field-label" for="order-supplier">Поставщик</label>
+            <input class="field-input" id="order-supplier" type="text" readonly />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="order-number">Номер заказа</label>
+            <input class="field-input" id="order-number" type="text" placeholder="PO-2026-001" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="order-product">Товар</label>
+            <select class="field-select" id="order-product"></select>
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="order-qty">Количество</label>
+            <input class="field-input" id="order-qty" type="number" min="0" step="0.01" placeholder="20" oninput="syncOrderTotal()" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="order-unit">Ед. изм.</label>
+            <input class="field-input" id="order-unit" type="text" placeholder="т" value="т" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="order-fca">Цена FCA</label>
+            <input class="field-input" id="order-fca" type="number" min="0" step="0.01" placeholder="0" oninput="syncOrderTotal()" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="order-delivery">Доставка</label>
+            <input class="field-input" id="order-delivery" type="number" min="0" step="0.01" placeholder="0" oninput="syncOrderTotal()" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="order-total">Итого</label>
+            <input class="field-input" id="order-total" type="number" min="0" step="0.01" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="order-date">Плановая дата поставки</label>
+            <input class="field-input" id="order-date" type="date" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="order-payment">Условия оплаты</label>
+            <input class="field-input" id="order-payment" type="text" placeholder="100% постоплата / 50-50 / отсрочка 30 дней" />
+          </div>
+          <div class="form-group full">
+            <label class="field-label" for="order-comment">Комментарий к заказу</label>
+            <textarea class="field-textarea" id="order-comment" placeholder="Упаковка, маркировка, документы, условия отгрузки, доставка"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" type="button" onclick="closeModal('purchase-order-modal')">Отмена</button>
+        <button class="btn btn-primary" type="button" onclick="savePurchaseOrder()">Сохранить заказ</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    var STORAGE_KEY = 'cloto_raw_materials_v2';
+    var CONTACTS_KEY = 'cloto_supplier_contacts_v1';
+    var QUOTE_REQUESTS_KEY = 'cloto_quote_requests_v1';
+    var PURCHASE_ORDERS_KEY = 'cloto_purchase_orders_v1';
+    function getSupplierNameFromLocation() {
+      var queryValue = new URLSearchParams(window.location.search).get('supplier') || '';
+      var hashValue = '';
+      if (window.location.hash.indexOf('#supplier=') === 0) {
+        hashValue = window.location.hash.slice('#supplier='.length);
+      }
+      return decodeURIComponent(queryValue || hashValue || '').trim();
+    }
+
+    var supplierName = getSupplierNameFromLocation();
+    var rawData = [];
+    var supplierItems = [];
+    var supplierContacts = {};
+    var editingProductId = null;
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatMoney(value) {
+      return Math.round(value || 0).toLocaleString('ru-RU');
+    }
+
+    function getStatusLabel(status) {
+      var labels = {
+        active: 'Актуально',
+        order: 'Под обновление',
+        critical: 'Устарело',
+        none: 'Без даты',
+        own: 'Внутреннее'
+      };
+      return labels[status] || 'Без статуса';
+    }
+
+    function getStatusClass(status) {
+      return {
+        active: 'st-active',
+        order: 'st-order',
+        critical: 'st-critical',
+        none: 'st-none',
+        own: 'st-none'
+      }[status] || 'st-none';
+    }
+
+    function getSupplierIcon(name) {
+      var icons = ['🏭', '🧪', '🚚', '🧱', '⚗️', '📦', '🛢️', '🔩'];
+      var sum = 0;
+      for (var index = 0; index < name.length; index += 1) sum += name.charCodeAt(index);
+      return icons[sum % icons.length];
+    }
+
+    function loadRawMaterialsData() {
+      try {
+        var localData = localStorage.getItem(STORAGE_KEY);
+        if (localData) {
+          var parsed = JSON.parse(localData);
+          if (Array.isArray(parsed) && parsed.length) return Promise.resolve(parsed);
+        }
+      } catch (error) {}
+
+      return fetch('syryo.html')
+        .then(function(response) { return response.text(); })
+        .then(function(html) {
+          var match = html.match(/var\s+DEFAULT_DATA\s*=\s*\[([\s\S]*?)\];/);
+          if (!match) throw new Error('Не удалось прочитать DEFAULT_DATA из syryo.html');
+          return new Function('return [' + match[1] + '];')();
+        });
+    }
+
+    function loadContacts() {
+      try {
+        supplierContacts = JSON.parse(localStorage.getItem(CONTACTS_KEY) || '{}') || {};
+      } catch (error) {
+        supplierContacts = {};
+      }
+    }
+
+    function persistContacts() {
+      localStorage.setItem(CONTACTS_KEY, JSON.stringify(supplierContacts));
+    }
+
+    function persistRawData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rawData));
+    }
+
+    function showToast(message) {
+      var toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2200);
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function handleOverlayClick(event, id) {
+      if (event.target.id === id) closeModal(id);
+    }
+
+    function openProductModal(id) {
+      resetProductForm();
+      editingProductId = id || null;
+      document.getElementById('product-modal-title').textContent = editingProductId ? 'Редактировать товар поставщика' : 'Добавить товар поставщика';
+      if (editingProductId) {
+        var item = rawData.find(function(row) { return Number(row.id) === Number(editingProductId); });
+        if (item) {
+          document.getElementById('product-name').value = item.name || '';
+          document.getElementById('product-category').value = item.cat || 'Битуминозные';
+          document.getElementById('product-status').value = item.status || 'active';
+          document.getElementById('product-unit').value = item.unit || 'т';
+          document.getElementById('product-norm').value = item.norm || '';
+          document.getElementById('product-date').value = item.dateStr || '';
+          document.getElementById('product-storage').value = item.storage || '';
+          document.getElementById('product-fca').value = item.priceFca || '';
+          document.getElementById('product-delivery').value = item.deliveryUnit || '';
+          document.getElementById('product-cloto').value = item.priceCloto || '';
+          document.getElementById('product-note').value = item.note || '';
+        }
+      }
+      openModal('product-modal');
+    }
+
+    function openContactModal() {
+      resetContactForm();
+      openModal('contact-modal');
+    }
+
+    function populateSupplierProductSelect(selectId) {
+      var select = document.getElementById(selectId);
+      if (!select) return;
+
+      var options = supplierItems.map(function(item) {
+        return '<option value="' + escapeHtml(item.name) + '">' + escapeHtml(item.name) + '</option>';
+      });
+
+      if (!options.length) {
+        options = ['<option value="">Нет доступных товаров</option>'];
+      } else {
+        options.unshift('<option value="">Выберите товар</option>');
+      }
+
+      select.innerHTML = options.join('');
+    }
+
+    function openQuoteRequestModal() {
+      resetQuoteRequestForm();
+      populateSupplierProductSelect('quote-product');
+      document.getElementById('quote-supplier').value = supplierName;
+      openModal('quote-request-modal');
+    }
+
+    function openPurchaseOrderModal() {
+      resetPurchaseOrderForm();
+      populateSupplierProductSelect('order-product');
+      document.getElementById('order-supplier').value = supplierName;
+      openModal('purchase-order-modal');
+    }
+
+    function resetProductForm() {
+      editingProductId = null;
+      document.getElementById('product-modal-title').textContent = 'Добавить товар поставщика';
+      document.getElementById('product-name').value = '';
+      document.getElementById('product-category').value = 'Битуминозные';
+      document.getElementById('product-status').value = 'active';
+      document.getElementById('product-unit').value = 'т';
+      document.getElementById('product-norm').value = '';
+      document.getElementById('product-date').value = '';
+      document.getElementById('product-storage').value = '';
+      document.getElementById('product-fca').value = '';
+      document.getElementById('product-delivery').value = '';
+      document.getElementById('product-cloto').value = '';
+      document.getElementById('product-note').value = '';
+    }
+
+    function resetContactForm() {
+      document.getElementById('contact-name').value = '';
+      document.getElementById('contact-role').value = '';
+      document.getElementById('contact-phone').value = '';
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-note').value = '';
+    }
+
+    function resetQuoteRequestForm() {
+      document.getElementById('quote-supplier').value = supplierName || '';
+      document.getElementById('quote-requester').value = '';
+      document.getElementById('quote-email').value = '';
+      document.getElementById('quote-qty').value = '';
+      document.getElementById('quote-unit').value = 'т';
+      document.getElementById('quote-deadline').value = '';
+      document.getElementById('quote-delivery-point').value = '';
+      document.getElementById('quote-comment').value = '';
+    }
+
+    function resetPurchaseOrderForm() {
+      document.getElementById('order-supplier').value = supplierName || '';
+      document.getElementById('order-number').value = '';
+      document.getElementById('order-qty').value = '';
+      document.getElementById('order-unit').value = 'т';
+      document.getElementById('order-fca').value = '';
+      document.getElementById('order-delivery').value = '';
+      document.getElementById('order-total').value = '';
+      document.getElementById('order-date').value = '';
+      document.getElementById('order-payment').value = '';
+      document.getElementById('order-comment').value = '';
+    }
+
+    function syncPriceCloto() {
+      var fca = parseFloat(document.getElementById('product-fca').value) || 0;
+      var delivery = parseFloat(document.getElementById('product-delivery').value) || 0;
+      if (fca || delivery) document.getElementById('product-cloto').value = (fca + delivery).toFixed(2);
+    }
+
+    function syncOrderTotal() {
+      var qty = parseFloat(document.getElementById('order-qty').value) || 0;
+      var fca = parseFloat(document.getElementById('order-fca').value) || 0;
+      var delivery = parseFloat(document.getElementById('order-delivery').value) || 0;
+      var total = qty * (fca + delivery);
+      if (qty || fca || delivery) {
+        document.getElementById('order-total').value = total.toFixed(2);
+      }
+    }
+
+    function buildSupplierItems() {
+      supplierItems = rawData.filter(function(item) {
+        return String(item.sup || '').trim() === supplierName;
+      });
+    }
+
+    function renderHero() {
+      document.title = 'Клото — ' + supplierName;
+      document.getElementById('hero-icon').textContent = getSupplierIcon(supplierName || 'supplier');
+      document.getElementById('supplier-title').textContent = supplierName || 'Поставщик не найден';
+
+      if (!supplierItems.length) {
+        document.getElementById('supplier-description').textContent = 'По этому поставщику пока нет номенклатуры в текущем наборе данных. Можно сразу добавить товар вручную.';
+      } else {
+        var categories = Array.from(new Set(supplierItems.map(function(item) { return item.cat; }).filter(Boolean)));
+        var locations = Array.from(new Set(supplierItems.map(function(item) { return item.storage; }).filter(Boolean)));
+        document.getElementById('supplier-description').textContent = 'Карточка собрана из закупочного прайса Сырьё. Здесь видны товары поставщика, их цены FCA, доставка, итоговая цена с доставкой и контактные лица.';
+        document.getElementById('hero-tags').innerHTML = '' +
+          '<span class="tag tag-purple">' + supplierItems.length + ' позиций</span>' +
+          '<span class="tag tag-cyan">' + (categories.length || 0) + ' категорий</span>' +
+          '<span class="tag tag-gold">' + (locations.length || 0) + ' локаций</span>';
+      }
+    }
+
+    function renderSummary() {
+      var locations = Array.from(new Set(supplierItems.map(function(item) { return item.storage; }).filter(Boolean)));
+      var average = 0;
+
+      if (supplierItems.length) {
+        average = supplierItems.reduce(function(sum, item) { return sum + (Number(item.priceCloto) || 0); }, 0) / supplierItems.length;
+      }
+
+      document.getElementById('summary-products').textContent = String(supplierItems.length);
+      document.getElementById('summary-average').textContent = supplierItems.length ? formatMoney(average) : '0';
+      document.getElementById('summary-locations').textContent = String(locations.length);
+    }
+
+    function renderContacts() {
+      var contacts = supplierContacts[supplierName] || [];
+      var container = document.getElementById('contacts-container');
+
+      if (!contacts.length) {
+        container.innerHTML = '' +
+          '<div class="empty-state">' +
+            '<p><strong>Контакты пока не заполнены.</strong></p>' +
+            '<p style="margin-top:8px">Добавьте менеджера, технолога или логиста этого поставщика.</p>' +
+          '</div>';
+        return;
+      }
+
+      var html = '<div class="contact-list">';
+      contacts.forEach(function(contact, index) {
+        html += '' +
+          '<div class="contact-card">' +
+            '<div class="contact-name">' + escapeHtml(contact.name) + '</div>' +
+            '<div class="contact-role">' + escapeHtml(contact.role || 'Роль не указана') + '</div>' +
+            '<div class="contact-meta">' +
+              '<div>Телефон: ' + escapeHtml(contact.phone || 'не указан') + '</div>' +
+              '<div>Email: ' + escapeHtml(contact.email || 'не указан') + '</div>' +
+              (contact.note ? '<div>Примечание: ' + escapeHtml(contact.note) + '</div>' : '') +
+            '</div>' +
+            '<div class="contact-actions">' +
+              '<button class="btn btn-danger" type="button" onclick="deleteContact(' + index + ')">Удалить</button>' +
+            '</div>' +
+          '</div>';
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function renderProducts() {
+      var container = document.getElementById('products-container');
+
+      if (!supplierItems.length) {
+        container.innerHTML = '' +
+          '<div class="empty-state">' +
+            '<p><strong>У поставщика пока нет товаров в прайсе.</strong></p>' +
+            '<p style="margin-top:8px">Нажмите Добавить товар, чтобы завести первую позицию и сразу сохранить ее в общие данные Сырья.</p>' +
+          '</div>';
+        return;
+      }
+
+      var rows = supplierItems.slice().sort(function(left, right) {
+        return String(left.name || '').localeCompare(String(right.name || ''), 'ru');
+      });
+
+      var html = '' +
+        '<table>' +
+          '<thead>' +
+            '<tr>' +
+              '<th>Наименование</th>' +
+              '<th>Категория</th>' +
+              '<th>Актуальность</th>' +
+              '<th class="nr">FCA</th>' +
+              '<th class="nr">Доставка</th>' +
+              '<th class="nr">С доставкой</th>' +
+              '<th>Склад / город</th>' +
+              '<th>Статус</th>' +
+              '<th class="nr">Действия</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>';
+
+      rows.forEach(function(item) {
+        html += '' +
+          '<tr>' +
+            '<td><span class="prod-name">' + escapeHtml(item.name) + '</span>' + (item.note ? '<span class="prod-note">' + escapeHtml(item.note) + '</span>' : '') + '</td>' +
+            '<td>' + escapeHtml(item.cat || '—') + '</td>' +
+            '<td>' + escapeHtml(item.dateStr || '—') + '</td>' +
+            '<td class="nr">' + formatMoney(item.priceFca || 0) + '</td>' +
+            '<td class="nr">' + formatMoney(item.deliveryUnit || 0) + '</td>' +
+            '<td class="nr">' + formatMoney(item.priceCloto || 0) + '</td>' +
+            '<td>' + escapeHtml(item.storage || '—') + '</td>' +
+            '<td><span class="status-pill ' + getStatusClass(item.status) + '">' + getStatusLabel(item.status) + '</span></td>' +
+            '<td class="nr"><div class="product-actions">' +
+              '<button class="btn btn-ghost btn-sm" type="button" onclick="openProductModal(' + Number(item.id) + ')">Изменить</button>' +
+              '<button class="btn btn-danger btn-sm" type="button" onclick="deleteProduct(' + Number(item.id) + ')">Удалить</button>' +
+            '</div></td>' +
+          '</tr>';
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function saveProduct() {
+      var name = document.getElementById('product-name').value.trim();
+      if (!name) {
+        document.getElementById('product-name').focus();
+        return;
+      }
+
+      var payload = {
+        id: editingProductId || (rawData.reduce(function(maximum, item) {
+          return Math.max(maximum, Number(item.id) || 0);
+        }, 0) + 1),
+        name: name,
+        unit: document.getElementById('product-unit').value.trim() || 'т',
+        norm: parseFloat(document.getElementById('product-norm').value) || 0,
+        dateStr: document.getElementById('product-date').value.trim(),
+        priceFca: parseFloat(document.getElementById('product-fca').value) || 0,
+        priceUe: '',
+        deliveryUnit: parseFloat(document.getElementById('product-delivery').value) || 0,
+        priceCloto: parseFloat(document.getElementById('product-cloto').value) || 0,
+        sup: supplierName,
+        storage: document.getElementById('product-storage').value.trim(),
+        carrier: '',
+        cat: document.getElementById('product-category').value,
+        status: document.getElementById('product-status').value,
+        note: document.getElementById('product-note').value.trim()
+      };
+
+      if (editingProductId) {
+        rawData = rawData.map(function(item) {
+          return Number(item.id) === Number(editingProductId) ? payload : item;
+        });
+      } else {
+        rawData.push(payload);
+      }
+
+      persistRawData();
+      buildSupplierItems();
+      renderHero();
+      renderSummary();
+      renderProducts();
+      closeModal('product-modal');
+      showToast(editingProductId ? 'Товар обновлен' : 'Товар добавлен в данные Сырья');
+    }
+
+    function deleteProduct(id) {
+      var item = rawData.find(function(row) { return Number(row.id) === Number(id); });
+      if (!item) return;
+      if (!confirm('Удалить товар ' + item.name + ' из карточки поставщика и общего прайса Сырьё?')) return;
+
+      rawData = rawData.filter(function(row) { return Number(row.id) !== Number(id); });
+      persistRawData();
+      buildSupplierItems();
+      renderHero();
+      renderSummary();
+      renderProducts();
+      showToast('Товар удален');
+    }
+
+    function saveContact() {
+      var name = document.getElementById('contact-name').value.trim();
+      if (!name) {
+        document.getElementById('contact-name').focus();
+        return;
+      }
+
+      if (!supplierContacts[supplierName]) supplierContacts[supplierName] = [];
+      supplierContacts[supplierName].push({
+        name: name,
+        role: document.getElementById('contact-role').value.trim(),
+        phone: document.getElementById('contact-phone').value.trim(),
+        email: document.getElementById('contact-email').value.trim(),
+        note: document.getElementById('contact-note').value.trim()
+      });
+
+      persistContacts();
+      renderContacts();
+      closeModal('contact-modal');
+      showToast('Контакт сохранен');
+    }
+
+    function saveQuoteRequest() {
+      var requester = document.getElementById('quote-requester').value.trim();
+      if (!requester) {
+        document.getElementById('quote-requester').focus();
+        return;
+      }
+
+      var requests = [];
+      try {
+        requests = JSON.parse(localStorage.getItem(QUOTE_REQUESTS_KEY) || '[]') || [];
+      } catch (error) {}
+
+      requests.push({
+        id: 'qr-' + Date.now(),
+        supplier: supplierName,
+        requester: requester,
+        email: document.getElementById('quote-email').value.trim(),
+        product: document.getElementById('quote-product').value,
+        qty: parseFloat(document.getElementById('quote-qty').value) || 0,
+        unit: document.getElementById('quote-unit').value.trim() || 'т',
+        deadline: document.getElementById('quote-deadline').value,
+        deliveryPoint: document.getElementById('quote-delivery-point').value.trim(),
+        comment: document.getElementById('quote-comment').value.trim(),
+        createdAt: new Date().toISOString()
+      });
+
+      localStorage.setItem(QUOTE_REQUESTS_KEY, JSON.stringify(requests));
+      closeModal('quote-request-modal');
+      showToast('Запрос КП сохранен');
+    }
+
+    function savePurchaseOrder() {
+      var orderNumber = document.getElementById('order-number').value.trim();
+      if (!orderNumber) {
+        document.getElementById('order-number').focus();
+        return;
+      }
+
+      var orders = [];
+      try {
+        orders = JSON.parse(localStorage.getItem(PURCHASE_ORDERS_KEY) || '[]') || [];
+      } catch (error) {}
+
+      orders.push({
+        id: 'po-' + Date.now(),
+        supplier: supplierName,
+        orderNumber: orderNumber,
+        product: document.getElementById('order-product').value,
+        qty: parseFloat(document.getElementById('order-qty').value) || 0,
+        unit: document.getElementById('order-unit').value.trim() || 'т',
+        priceFca: parseFloat(document.getElementById('order-fca').value) || 0,
+        delivery: parseFloat(document.getElementById('order-delivery').value) || 0,
+        total: parseFloat(document.getElementById('order-total').value) || 0,
+        plannedDate: document.getElementById('order-date').value,
+        paymentTerms: document.getElementById('order-payment').value.trim(),
+        comment: document.getElementById('order-comment').value.trim(),
+        createdAt: new Date().toISOString()
+      });
+
+      localStorage.setItem(PURCHASE_ORDERS_KEY, JSON.stringify(orders));
+      closeModal('purchase-order-modal');
+      showToast('Заказ поставщику сохранен');
+    }
+
+    function deleteContact(index) {
+      if (!supplierContacts[supplierName]) return;
+      supplierContacts[supplierName].splice(index, 1);
+      persistContacts();
+      renderContacts();
+      showToast('Контакт удален');
+    }
+
+    function renderMissingSupplierState() {
+      document.getElementById('supplier-title').textContent = 'Поставщик не выбран';
+      document.getElementById('supplier-description').textContent = 'Откройте карточку из списка Поставщики.';
+      document.getElementById('contacts-container').innerHTML = '<div class="empty-state"><strong>Нет поставщика для отображения.</strong></div>';
+      document.getElementById('products-container').innerHTML = '<div class="empty-state"><strong>Нет данных для отображения.</strong></div>';
+    }
+
+    function initPage() {
+      if (!supplierName) {
+        renderMissingSupplierState();
+        return;
+      }
+
+      loadContacts();
+      loadRawMaterialsData()
+        .then(function(data) {
+          rawData = data;
+          buildSupplierItems();
+          renderHero();
+          renderSummary();
+          renderContacts();
+          renderProducts();
+        })
+        .catch(function(error) {
+          document.getElementById('supplier-title').textContent = supplierName;
+          document.getElementById('supplier-description').textContent = 'Ошибка загрузки данных: ' + (error && error.message ? error.message : 'неизвестная ошибка');
+          document.getElementById('contacts-container').innerHTML = '<div class="empty-state"><strong>Не удалось загрузить контакты.</strong></div>';
+          document.getElementById('products-container').innerHTML = '<div class="empty-state"><strong>Не удалось загрузить товары.</strong></div>';
+        });
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeModal('product-modal');
+        closeModal('contact-modal');
+        closeModal('quote-request-modal');
+        closeModal('purchase-order-modal');
+      }
+    });
+
+    initPage();
+  </script>
+</body>
+</html>

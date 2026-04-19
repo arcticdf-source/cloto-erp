@@ -123,6 +123,45 @@
     .btn:hover { transform: translateY(-1px); background: var(--surface2); }
     .btn.primary { color: var(--gold); background: rgba(245, 201, 95, 0.14); border-color: rgba(245, 201, 95, 0.24); }
     .btn.ship { color: var(--green); background: rgba(114, 216, 154, 0.12); border-color: rgba(114, 216, 154, 0.2); min-height: 36px; padding: 8px 12px; }
+    .btn.production { color: var(--cyan); background: rgba(93, 229, 207, 0.12); border-color: rgba(93, 229, 207, 0.22); min-height: 36px; padding: 8px 12px; }
+    .btn.production.sent { color: var(--gold); background: rgba(245, 201, 95, 0.12); border-color: rgba(245, 201, 95, 0.24); }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .status-pill.is-new {
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    .status-pill.is-accepted {
+      color: #8ad7ff;
+      background: rgba(126, 191, 255, 0.12);
+      border-color: rgba(126, 191, 255, 0.24);
+    }
+    .status-pill.is-sent {
+      color: var(--cyan);
+      background: rgba(93, 229, 207, 0.12);
+      border-color: rgba(93, 229, 207, 0.22);
+    }
+    .status-pill.is-produced {
+      color: var(--gold);
+      background: rgba(245, 201, 95, 0.12);
+      border-color: rgba(245, 201, 95, 0.24);
+    }
+    .status-pill.is-warehouse {
+      color: var(--green);
+      background: rgba(114, 216, 154, 0.12);
+      border-color: rgba(114, 216, 154, 0.24);
+    }
     .hero-side { display: grid; gap: 12px; }
     .mini-card, .status-bar { padding: 16px; border-radius: 18px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); }
     .mini-title { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; }
@@ -159,9 +198,102 @@
     td { font-size: 13px; color: var(--text); }
     tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
     tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+    .clickable-row { cursor: pointer; }
     .order-main { display: grid; gap: 4px; }
     .order-main strong { font-size: 14px; font-weight: 800; }
     .cell-meta { color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(2, 8, 16, 0.72);
+      backdrop-filter: blur(10px);
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      width: min(100%, 520px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(20, 32, 48, 0.96), rgba(9, 17, 27, 0.98));
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .modal-copy {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .modal-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .option-btn {
+      min-height: 40px;
+      padding: 9px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .option-btn.active {
+      color: var(--cyan);
+      background: rgba(93, 229, 207, 0.12);
+      border-color: rgba(93, 229, 207, 0.24);
+    }
+    .ship-form {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .ship-field {
+      display: grid;
+      gap: 6px;
+    }
+    .ship-field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .ship-input {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+    }
+    .ship-input::placeholder { color: rgba(142, 156, 175, 0.82); }
+    .ship-field.hidden { display: none; }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
     .empty-state { padding: 28px 18px; color: var(--muted); font-size: 13px; line-height: 1.7; text-align: center; }
     @media (max-width: 1180px) {
       .hero, .kpi-grid { grid-template-columns: 1fr; }
@@ -180,11 +312,12 @@
       <div>
         <div class="eyebrow">New Orders Module</div>
         <div class="title">Новые <span>заказы</span></div>
-        <div class="sub">Здесь открывается таблица всех новых заказов из конструктора. Напротив каждого заказа доступна кнопка “Отгрузить заказ”, которая сразу переносит запись в модуль отгруженных заказов и отправляет строки в коммерческие отгрузки.</div>
+        <div class="sub">Здесь открывается таблица всех новых заказов из конструктора и из загруженных клиентских файлов. Напротив каждого заказа доступна кнопка “Отгрузить заказ”, которая сразу переносит запись в модуль отгруженных заказов и отправляет строки в коммерческие отгрузки.</div>
         <div class="hero-actions">
           <a class="btn primary" href="sales-orders.html">← К дашборду заказов</a>
           <a class="btn" href="sales-order-builder.html">Открыть конструктор</a>
           <a class="btn" href="sales-shipped-orders.html">К отгруженным заказам</a>
+          <a class="btn" href="production-order-form.html">Отправить заказ на производство</a>
         </div>
       </div>
       <div class="hero-side">
@@ -207,11 +340,44 @@
       <p id="status-copy">Заказ перемещен в модуль отгруженных заказов.</p>
     </div>
 
+    <div class="modal-backdrop" id="ship-modal" onclick="closeShipModal(event)">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-title">Отгрузка заказа</div>
+        <div class="modal-copy">Выберите тип отгрузки и заполните данные по водителю или контейнеру перед переносом заказа в модуль отгруженных.</div>
+        <div class="modal-options">
+          <button class="option-btn" type="button" id="ship-mode-pickup" onclick="selectShipmentMode('pickup')">Самовывоз</button>
+          <button class="option-btn" type="button" id="ship-mode-delivery" onclick="selectShipmentMode('delivery')">Доставка</button>
+        </div>
+        <div class="ship-form">
+          <div class="ship-field">
+            <label for="ship-driver">Водитель</label>
+            <input class="ship-input" id="ship-driver" placeholder="ФИО водителя">
+          </div>
+          <div class="ship-field">
+            <label for="ship-vehicle">№ авто или контейнера</label>
+            <input class="ship-input" id="ship-vehicle" placeholder="Например: А123ВС 29 / CONT-4582">
+          </div>
+          <div class="ship-field">
+            <label for="ship-phone">Телефон водителя</label>
+            <input class="ship-input" id="ship-phone" placeholder="Например: +7 900 000-00-00">
+          </div>
+          <div class="ship-field hidden" id="ship-destination-field">
+            <label for="ship-destination">Пункт назначения</label>
+            <input class="ship-input" id="ship-destination" placeholder="Например: Сургут">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" type="button" onclick="closeShipModal()">Отмена</button>
+          <button class="btn ship" type="button" onclick="confirmShipment()">Подтвердить отгрузку</button>
+        </div>
+      </div>
+    </div>
+
     <section class="kpi-grid">
       <article class="kpi-card">
         <div class="mini-title">Новые заказы</div>
         <div class="kpi-value" id="new-orders-kpi">0</div>
-        <div class="copy">Записи, пришедшие из конструктора заказов.</div>
+        <div class="copy">Записи, пришедшие из конструктора заказов и через загрузку готового заказа.</div>
       </article>
       <article class="kpi-card">
         <div class="mini-title">Общий тоннаж</div>
@@ -244,6 +410,7 @@
               <th>Покупатель</th>
               <th>Позиции</th>
               <th>Сумма</th>
+              <th>Статус производства</th>
               <th>Действие</th>
             </tr>
           </thead>
@@ -255,8 +422,12 @@
 
   <script>
     var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
+    var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
     var SHIPPED_ORDERS_KEY = 'cloto_sales_orders_shipped';
     var SHIPMENTS_KEY = 'cloto_orders_added';
+    var syncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('cloto-orders-sync') : null;
+    var activeShipmentOrderNumber = '';
+    var activeShipmentMode = '';
 
     function normalizeValue(value) { return String(value || '').trim().toLowerCase(); }
     function escapeHtml(value) {
@@ -321,30 +492,37 @@
       if (line && line.module === 'container') return 'cnt';
       return 'trk';
     }
-    function getShipmentNote(order, line) {
+    function getShipmentNote(order, line, shipmentDetails) {
       var parts = [];
       if (order && order.comment) parts.push(order.comment);
       if (line && line.module === 'wagon') parts.push('Модуль: вагон');
       if (line && line.deliveryType === 'pickup') parts.push('Самовывоз');
+      if (shipmentDetails && shipmentDetails.mode === 'pickup') parts.push('Отгрузка: самовывоз');
+      if (shipmentDetails && shipmentDetails.mode === 'delivery') parts.push('Отгрузка: доставка');
+      if (shipmentDetails && shipmentDetails.driver) parts.push('Водитель: ' + shipmentDetails.driver);
+      if (shipmentDetails && shipmentDetails.vehicleNumber) parts.push('Транспорт: ' + shipmentDetails.vehicleNumber);
       return parts.join(' · ');
     }
-    function orderToShipmentRows(order) {
+    function orderToShipmentRows(order, shipmentDetails) {
       return getOrderLines(order).map(function(line) {
         var dateValue = line && line.deliveryDate ? line.deliveryDate : order.date;
+        var destination = shipmentDetails && shipmentDetails.mode === 'delivery'
+          ? shipmentDetails.destination
+          : ((line && line.deliveryType === 'pickup') ? 'Архангельск' : (line && line.destination) || 'Архангельск');
         return [
           getMonthLabel(dateValue),
-          getShipmentNote(order, line),
+          getShipmentNote(order, line, shipmentDetails),
           order.number || '',
           order.buyer && order.buyer.name || '',
           line && line.productName || '',
           Math.round(Number(line && line.tons || 0) * 1000),
           Math.round(Number(line && line.units || 0)),
-          (line && line.deliveryType === 'pickup') ? 'Архангельск' : (line && line.destination) || 'Архангельск',
+          destination || 'Архангельск',
           'отгружено',
           formatDate(dateValue),
-          '',
-          '',
-          line && line.module === 'container' ? 'Контейнер' : '',
+          shipmentDetails && shipmentDetails.vehicleNumber || '',
+          shipmentDetails && shipmentDetails.driver || '',
+          shipmentDetails && shipmentDetails.driverPhone || (line && line.module === 'container' ? 'Контейнер' : ''),
           '',
           Number(line && line.priceWithoutVat || 0),
           Number(line && line.amountWithoutVat || 0),
@@ -358,31 +536,160 @@
       document.getElementById('status-title').textContent = title;
       document.getElementById('status-copy').textContent = copy;
     }
+    function getLinkedProductionRequest(order) {
+      var orderNumber = String(order && order.number || '');
+      if (!orderNumber) return null;
+
+      return readStorageArray(PRODUCTION_ORDERS_KEY)
+        .filter(function(item) {
+          var sourceOrderNumber = String(item && item.sourceOrderNumber || '');
+          var specification = String(item && item.orderSpecification || '');
+          return normalizeValue(sourceOrderNumber) === normalizeValue(orderNumber) || specification.indexOf(orderNumber) >= 0;
+        })
+        .sort(function(a, b) {
+          var left = String(b && (b.stageUpdatedAt || b.createdAt) || '');
+          var right = String(a && (a.stageUpdatedAt || a.createdAt) || '');
+          return left.localeCompare(right);
+        })[0] || null;
+    }
+    function mergeProductionStatus(order) {
+      var linkedRequest = getLinkedProductionRequest(order);
+      if (!linkedRequest) return order;
+
+      return Object.assign({}, order, {
+        productionRequestNumber: linkedRequest.requestNumber || order.productionRequestNumber || '',
+        productionStage: linkedRequest.productionStage || order.productionStage || 'sent',
+        productionStageUpdatedAt: linkedRequest.stageUpdatedAt || linkedRequest.createdAt || order.productionStageUpdatedAt || ''
+      });
+    }
+    function syncOrdersFromProduction(newOrders) {
+      var syncedOrders = newOrders.map(mergeProductionStatus);
+      var changed = syncedOrders.some(function(order, index) {
+        return String(order && order.productionStage || '') !== String(newOrders[index] && newOrders[index].productionStage || '') ||
+          String(order && order.productionRequestNumber || '') !== String(newOrders[index] && newOrders[index].productionRequestNumber || '');
+      });
+
+      if (changed) writeStorageArray(NEW_ORDERS_KEY, syncedOrders);
+      return syncedOrders;
+    }
+    function getProductionStageLabel(order) {
+      if (order && order.productionStage === 'sent') return 'Заказ отправлен на производство';
+      if (order && order.productionStage === 'accepted') return 'Заказ принят производством';
+      if (order && order.productionStage === 'produced') return 'Заказ произведен';
+      if (order && order.productionStage === 'warehouse') return 'Заказ отправлен на склад';
+      return 'Новая заявка';
+    }
+    function getProductionStageClass(order) {
+      if (order && order.productionStage === 'sent') return 'is-sent';
+      if (order && order.productionStage === 'accepted') return 'is-accepted';
+      if (order && order.productionStage === 'produced') return 'is-produced';
+      if (order && order.productionStage === 'warehouse') return 'is-warehouse';
+      return 'is-new';
+    }
+    function getProductionButtonLabel(order) {
+      if (order && order.productionStage) return 'Заказ отправлен на производство';
+      return 'Отправить заказ на производство';
+    }
+    function getProductionButtonClass(order) {
+      return order && order.productionStage ? ' sent' : '';
+    }
+    function openOrder(orderNumber) {
+      if (!orderNumber) return;
+      window.location.href = 'sales-order-builder.html?order=' + encodeURIComponent(orderNumber);
+    }
+    function openProductionForm(orderNumber, event) {
+      if (event) event.stopPropagation();
+      if (!orderNumber) return;
+      window.location.href = 'production-order-form.html?order=' + encodeURIComponent(orderNumber) + '&returnTo=sales-new-orders';
+    }
+    function resetShipForm() {
+      document.getElementById('ship-driver').value = '';
+      document.getElementById('ship-vehicle').value = '';
+      document.getElementById('ship-phone').value = '';
+      document.getElementById('ship-destination').value = '';
+      activeShipmentMode = '';
+      document.getElementById('ship-mode-pickup').classList.remove('active');
+      document.getElementById('ship-mode-delivery').classList.remove('active');
+      document.getElementById('ship-destination-field').classList.add('hidden');
+    }
+    function openShipModal(orderNumber, event) {
+      if (event) event.stopPropagation();
+      activeShipmentOrderNumber = orderNumber || '';
+      resetShipForm();
+      selectShipmentMode('pickup');
+      document.getElementById('ship-modal').classList.add('open');
+    }
+    function closeShipModal(event) {
+      if (event && event.target !== document.getElementById('ship-modal')) return;
+      document.getElementById('ship-modal').classList.remove('open');
+      activeShipmentOrderNumber = '';
+      resetShipForm();
+    }
+    function selectShipmentMode(mode) {
+      activeShipmentMode = mode;
+      document.getElementById('ship-mode-pickup').classList.toggle('active', mode === 'pickup');
+      document.getElementById('ship-mode-delivery').classList.toggle('active', mode === 'delivery');
+      document.getElementById('ship-destination-field').classList.toggle('hidden', mode !== 'delivery');
+    }
+    function getShipmentFormPayload() {
+      return {
+        mode: activeShipmentMode,
+        driver: document.getElementById('ship-driver').value.trim(),
+        vehicleNumber: document.getElementById('ship-vehicle').value.trim(),
+        driverPhone: document.getElementById('ship-phone').value.trim(),
+        destination: document.getElementById('ship-destination').value.trim()
+      };
+    }
+    function confirmShipment() {
+      var shipmentDetails = getShipmentFormPayload();
+      if (!activeShipmentOrderNumber) return;
+      if (!shipmentDetails.mode) {
+        window.alert('Выберите вариант отгрузки: Самовывоз или Доставка.');
+        return;
+      }
+      if (!shipmentDetails.driver || !shipmentDetails.vehicleNumber || !shipmentDetails.driverPhone) {
+        window.alert('Заполните поля: Водитель, № авто или контейнера, телефон водителя.');
+        return;
+      }
+      if (shipmentDetails.mode === 'delivery' && !shipmentDetails.destination) {
+        window.alert('Для доставки заполните поле «Пункт назначения».');
+        return;
+      }
+      shipOrder(activeShipmentOrderNumber, null, shipmentDetails);
+      closeShipModal();
+    }
     function renderNewOrders() {
-      var newOrders = readStorageArray(NEW_ORDERS_KEY);
+      var newOrders = syncOrdersFromProduction(readStorageArray(NEW_ORDERS_KEY));
       var body = document.getElementById('new-orders-body');
       var totalTons = newOrders.reduce(function(sum, order) { return sum + getOrderTons(order); }, 0);
+      var sentOrder = new URLSearchParams(window.location.search).get('productionSent');
 
       document.getElementById('orders-count').textContent = String(newOrders.length);
       document.getElementById('new-orders-kpi').textContent = String(newOrders.length);
       document.getElementById('tons-kpi').textContent = formatTons(totalTons);
 
+      if (sentOrder) {
+        setStatus('Заказ отправлен на производство', 'Для заказа ' + sentOrder + ' создана производственная заявка. Статус в строке заказа обновлен.');
+      }
+
       if (!newOrders.length) {
-        body.innerHTML = '<tr><td colspan="5" class="empty-state">Новых заказов пока нет. Сохраните заказ в конструкторе, и он появится в этой таблице автоматически.</td></tr>';
+        body.innerHTML = '<tr><td colspan="6" class="empty-state">Новых заказов пока нет. Сохраните заказ в конструкторе или загрузите готовый клиентский файл, и запись появится в этой таблице автоматически.</td></tr>';
         return;
       }
 
       body.innerHTML = newOrders.map(function(order) {
-        return '<tr>' +
+        return '<tr class="clickable-row" onclick="openOrder(\'' + escapeHtml(order.number || '') + '\')">' +
           '<td><div class="order-main"><strong>' + escapeHtml(order.number || 'Без номера') + '</strong><div class="cell-meta">' + escapeHtml(formatDate(order.date)) + ' · ' + escapeHtml(getOrderModules(order)) + '</div></div></td>' +
           '<td><div class="order-main"><strong>' + escapeHtml(order.buyer && order.buyer.name || '—') + '</strong><div class="cell-meta">' + escapeHtml(getOrderDestinations(order)) + '</div></div></td>' +
           '<td><div class="order-main"><strong>' + getOrderLines(order).length + ' строк</strong><div class="cell-meta">' + escapeHtml(formatTons(getOrderTons(order))) + '</div></div></td>' +
           '<td><div class="order-main"><strong>' + escapeHtml(formatRub(order.totals && order.totals.withVat || 0)) + '</strong><div class="cell-meta">С НДС</div></div></td>' +
-          '<td><button class="btn ship" type="button" data-order="' + escapeHtml(order.number || '') + '" onclick="shipOrder(this.dataset.order)">Отгрузить заказ</button></td>' +
+          '<td><div class="order-main"><span class="status-pill ' + getProductionStageClass(order) + '">' + escapeHtml(getProductionStageLabel(order)) + '</span><div class="cell-meta">' + escapeHtml(order.productionRequestNumber ? ('Заявка ' + order.productionRequestNumber) : 'Ожидает статуса от производства') + '</div></div></td>' +
+          '<td><div class="row-actions"><button class="btn production' + getProductionButtonClass(order) + '" type="button" data-order="' + escapeHtml(order.number || '') + '" onclick="openProductionForm(this.dataset.order, event)">' + escapeHtml(getProductionButtonLabel(order)) + '</button><button class="btn ship" type="button" data-order="' + escapeHtml(order.number || '') + '" onclick="openShipModal(this.dataset.order, event)">Отгрузить заказ</button></div></td>' +
         '</tr>';
       }).join('');
     }
-    function shipOrder(orderNumber) {
+    function shipOrder(orderNumber, event, shipmentDetails) {
+      if (event) event.stopPropagation();
       var newOrders = readStorageArray(NEW_ORDERS_KEY);
       var shipments = readStorageArray(SHIPMENTS_KEY);
       var shippedOrders = readStorageArray(SHIPPED_ORDERS_KEY);
@@ -394,11 +701,13 @@
         return;
       }
       var order = newOrders[orderIndex];
-      var exportedRows = orderToShipmentRows(order);
+      var exportedRows = orderToShipmentRows(order, shipmentDetails);
+      var shippedAt = new Date().toISOString();
       var shippedRecord = Object.assign({}, order, {
         status: 'shipped',
-        shippedAt: new Date().toISOString(),
-        exportedRowsCount: exportedRows.length
+        shippedAt: shippedAt,
+        exportedRowsCount: exportedRows.length,
+        shipmentDetails: shipmentDetails || null
       });
 
       newOrders.splice(orderIndex, 1);
@@ -408,10 +717,17 @@
       writeStorageArray(NEW_ORDERS_KEY, newOrders);
       writeStorageArray(SHIPPED_ORDERS_KEY, shippedOrders.slice(0, 200));
       writeStorageArray(SHIPMENTS_KEY, shipments);
+      if (syncChannel) {
+        syncChannel.postMessage({
+          type: 'shipment-updated',
+          orderNumber: order.number || '',
+          sheetKey: getMonthLabel(shippedAt.slice(0, 10))
+        });
+      }
 
       setStatus(
         'Заказ отгружен',
-        'Заказ ' + (order.number || 'без номера') + ' перемещен в модуль отгруженных заказов. Откройте таблицу отгруженных заказов по кнопке выше.'
+        'Заказ ' + (order.number || 'без номера') + ' перемещен в модуль отгруженных заказов и сразу добавлен в таблицу отгрузок.'
       );
       renderNewOrders();
     }

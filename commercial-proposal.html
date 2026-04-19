@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Коммерческое предложение — КЛОТО</title>
+  <style>
+    @page{size:A4 portrait;margin:12mm}
+    *{box-sizing:border-box}
+    body{margin:0;background:#eef3f8;font-family:Inter,Arial,sans-serif;color:#173056}
+    .actions{margin:0 auto 18px;width:210mm;display:flex;justify-content:flex-end;gap:10px;padding:24px 8px 0}
+    .print-btn,.back-btn{border:none;border-radius:12px;background:#0d63ff;color:#fff;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+    .back-btn{background:#24415f}
+    .page{width:210mm;min-height:297mm;margin:0 auto 24px;background:#fff;padding:18mm 16mm 18mm;box-shadow:0 24px 60px rgba(16,32,56,.12)}
+    .topbar{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+    .brand{display:flex;align-items:center;gap:16px}
+    .brand-mark{width:74px;height:74px;position:relative;display:flex;align-items:center;justify-content:center}
+    .brand-mark::before{content:'';position:absolute;inset:0;border-radius:50%;background:#214e94}
+    .brand-mark::after{content:'';position:absolute;inset:8px;border-radius:50%;background:repeating-linear-gradient(to bottom,#ffffff 0 5px,#214e94 5px 11px)}
+    .brand-text{display:grid;gap:2px}
+    .brand-name{font-size:34px;font-weight:800;letter-spacing:.16em;color:#214e94;line-height:1}
+    .brand-copy{font-size:13px;color:#214e94;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+    .brand-sub{font-size:12px;color:#214e94;font-weight:700}
+    .doc-meta{text-align:right;display:grid;gap:6px;padding-top:6px}
+    .doc-type{font-size:26px;font-weight:800;color:#214e94;text-transform:uppercase;letter-spacing:.1em}
+    .doc-num{font-size:13px;color:#60779c}
+    .lead{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .box{border:1px solid #cfd9ea;border-radius:14px;padding:14px 16px;background:#ffffff}
+    .box-title{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#6d7f97;margin-bottom:8px;font-weight:700}
+    .box strong{display:block;font-size:16px;margin-bottom:4px;color:#214e94}
+    .lead-row{margin-top:3px;font-size:13px;color:#32445f;line-height:1.45}
+    .intro{margin-top:16px;padding:14px 16px;border-radius:14px;background:#f4f7fc;color:#1d3150;line-height:1.55;border:1px solid #dce5f2}
+    table{width:100%;border-collapse:collapse;margin-top:18px}
+    th,td{border:1px solid #cfd9ea;padding:10px 10px;vertical-align:top;text-align:left}
+    th{background:#f3f7fd;color:#557198;font-size:10px;text-transform:uppercase;letter-spacing:.12em}
+    td{font-size:13px;line-height:1.45}
+    .cell-copy{margin-top:4px;color:#6d7f97;font-size:11px;line-height:1.45}
+    .field-grid{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .field-block{display:flex;flex-direction:column;gap:8px}
+    .field-label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#6d7f97;font-weight:700}
+    .editable-field{min-height:46px;border:none;border-bottom:1px solid #bfd0e9;padding:6px 0;color:#214e94;font-size:16px;outline:none}
+    .editable-field.signature-field{font-family:"Segoe Script","Brush Script MT",cursive;font-size:44px;line-height:1.05;color:#1d5cff;min-height:58px}
+    .hint{font-size:11px;color:#6d7f97}
+    .empty{max-width:760px;margin:48px auto;padding:32px;border-radius:20px;background:#fff;box-shadow:0 24px 60px rgba(16,32,56,.12);text-align:center}
+    .empty h1{margin:0 0 12px;font-size:28px;color:#0d63ff}
+    .empty p{margin:0;color:#4d6280;line-height:1.7}
+    @media print{body{background:#fff}.actions{display:none}.page{box-shadow:none;margin:0;width:auto;min-height:auto;padding:0}.empty{box-shadow:none;margin:0;max-width:none}}
+    @media (max-width:900px){.actions,.page{width:auto;margin-left:12px;margin-right:12px}}
+    @media (max-width:760px){.page{padding:20px}.topbar,.lead,.field-grid{display:block}.doc-meta{margin-top:18px;text-align:left}.field-block+.field-block{margin-top:16px}}
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const GENERATED_QUOTE_KEY = 'cloto_generated_quote';
+
+    function escapeHtml(value){return String(value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+    function formatRub(value){return Number(value||0).toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';}
+    function formatDate(value){if(!value)return '—';if(/^\d{4}-\d{2}-\d{2}T/.test(value))return formatDate(value.slice(0,10));if(/^\d{4}-\d{2}-\d{2}$/.test(value)){const parts=value.split('-');return parts[2]+'.'+parts[1]+'.'+parts[0];}return value;}
+    function readPayload(){try{return JSON.parse(localStorage.getItem(GENERATED_QUOTE_KEY)||'null');}catch(error){return null;}}
+
+    function buildRows(products){
+      const rows=[];
+      products.forEach((product)=>{
+        const options=(Array.isArray(product.deliveryOptions)?product.deliveryOptions:[]).filter((option)=>String(option&&option.location||'').trim()&&String(option&&option.price||'').trim());
+        if(!options.length){
+          rows.push({productName:product.name||'Новый продукт',productCopy:product.notes||product.recipe||'Коммерческое предложение по выбранному продукту клиента.',location:'—',price:'—'});
+          return;
+        }
+        options.forEach((option)=>{
+          rows.push({productName:product.name||'Новый продукт',productCopy:product.notes||product.recipe||'Коммерческое предложение по выбранному продукту клиента.',location:option.location||'—',price:formatRub(option.price||0)});
+        });
+      });
+      return rows.map((row,index)=>'<tr><td>'+(index+1)+'</td><td><strong>'+escapeHtml(row.productName)+'</strong><div class="cell-copy">'+escapeHtml(row.productCopy)+'</div></td><td>'+escapeHtml(row.location)+'</td><td>'+escapeHtml(row.price)+'</td></tr>').join('');
+    }
+
+    function renderEmpty(){
+      document.getElementById('app').innerHTML='<section class="empty"><h1>КП не найдено</h1><p>Сначала выберите продукты в карточке клиента и нажмите кнопку формирования КП.</p></section>';
+    }
+
+    function renderProposal(payload){
+      const rows=buildRows(Array.isArray(payload.products)?payload.products:[]);
+      document.title=(payload.number||'КП')+' — КЛОТО';
+      document.getElementById('app').innerHTML='<div class="actions"><a class="back-btn" href="client-card.html?company='+encodeURIComponent(payload.buyer&&payload.buyer.name||'')+'">Назад к клиенту</a><button class="print-btn" type="button" onclick="window.print()">Печать КП</button></div><main class="page"><section class="topbar"><div class="brand"><div class="brand-mark"></div><div class="brand-text"><div class="brand-name">КЛОТО</div><div class="brand-copy">Коммерческое предложение</div><div class="brand-sub">основана в 1991 году</div></div></div><div class="doc-meta"><div class="doc-type">КП</div><div class="doc-num">№ '+escapeHtml(payload.number||'—')+' от '+escapeHtml(formatDate(payload.date))+'</div></div></section><section class="lead"><div class="box"><div class="box-title">Продавец</div><strong>'+escapeHtml(payload.seller&&payload.seller.name||'—')+'</strong><div class="lead-row">ИНН '+escapeHtml(payload.seller&&payload.seller.inn||'—')+' / КПП '+escapeHtml(payload.seller&&payload.seller.kpp||'—')+'</div><div class="lead-row">'+escapeHtml(payload.seller&&payload.seller.address||'—')+'</div><div class="lead-row">Тел.: '+escapeHtml(payload.seller&&payload.seller.phone||'—')+'</div></div><div class="box"><div class="box-title">Клиент</div><strong>'+escapeHtml(payload.buyer&&payload.buyer.name||'—')+'</strong><div class="lead-row">Адрес: '+escapeHtml(payload.buyer&&payload.buyer.address||'—')+'</div><div class="lead-row">Контакт: '+escapeHtml(payload.buyer&&payload.buyer.contact||'—')+'</div><div class="lead-row">Тел.: '+escapeHtml(payload.buyer&&payload.buyer.phone||'—')+'</div><div class="lead-row">E-mail: '+escapeHtml(payload.buyer&&payload.buyer.email||'—')+'</div></div></section><section class="intro">Предлагаем к рассмотрению следующие продукты ООО "КЛОТО". Ниже указаны цены за 1 тонну без НДС с доставкой до выбранных локаций.</section><table><thead><tr><th style="width:44px">№</th><th>Продукт</th><th style="width:180px">Локация доставки</th><th style="width:180px">Цена за 1 тонну без НДС</th></tr></thead><tbody>'+rows+'</tbody></table><section class="field-grid"><div class="field-block"><div class="field-label">Исполнитель</div><div class="editable-field" contenteditable="true">'+escapeHtml(payload.executor||'Коммерческий отдел ООО "КЛОТО"')+'</div><div class="hint">Поле можно редактировать перед печатью.</div></div><div class="field-block"><div class="field-label">Подпись</div><div class="editable-field signature-field" contenteditable="true">'+escapeHtml(payload.signature||'Klotto')+'</div><div class="hint">Синяя подпись редактируется прямо в документе.</div></div></section></main>';
+    }
+
+    const payload=readPayload();
+    if(!payload||!Array.isArray(payload.products)||!payload.products.length){
+      renderEmpty();
+    }else{
+      renderProposal(payload);
+    }
+  </script>
+</body>
+</html>

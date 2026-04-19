@@ -292,10 +292,15 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
-      align-items: start;
+      align-items: stretch;
     }
 
     .module-card {
+      min-height: 320px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       padding: 20px;
       color: inherit;
       background:
@@ -371,6 +376,41 @@
       line-height: 1.7;
     }
 
+    .module-top {
+      display: grid;
+      align-content: start;
+    }
+
+    .module-stats {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .module-stat-box {
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .module-stat-box strong {
+      display: block;
+      margin-top: 6px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .module-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
     .module-footer,
     .table-head,
     .table-meta {
@@ -428,83 +468,6 @@
       color: var(--text);
       font-size: 12px;
       font-weight: 700;
-    }
-
-    .table-wrap {
-      margin-top: 14px;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(5, 13, 24, 0.5);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 720px;
-    }
-
-    thead {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    th,
-    td {
-      padding: 14px 12px;
-      text-align: left;
-      vertical-align: top;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    td {
-      font-size: 13px;
-      color: var(--text);
-    }
-
-    tbody tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    tbody tr:hover {
-      background: rgba(255, 255, 255, 0.045);
-    }
-
-    .order-main {
-      display: grid;
-      gap: 4px;
-    }
-
-    .order-main strong {
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .order-sub,
-    .cell-meta {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.55;
-    }
-
-    .cell-stack {
-      display: grid;
-      gap: 6px;
-    }
-
-    .empty-state {
-      padding: 28px 18px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-      text-align: center;
     }
 
     .pill-row {
@@ -568,7 +531,6 @@
     @media (max-width: 760px) {
       .wrap { padding: 18px 14px 32px; }
       .title { font-size: 38px; }
-      table { min-width: 640px; }
       .metric-inline { grid-template-columns: 1fr; }
     }
   </style>
@@ -617,8 +579,8 @@
     <section class="kpi-grid">
       <article class="kpi-card">
         <div class="mini-title">Модулей</div>
-        <div class="kpi-value">4</div>
-        <div class="kpi-copy">Конструктор, новые заказы, отгруженные заказы и модуль отправки на производство доступны из этого дашборда.</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-copy">Конструктор, новые заказы и отгруженные заказы доступны из этого дашборда.</div>
       </article>
       <article class="kpi-card">
         <div class="mini-title">Новые заказы</div>
@@ -635,100 +597,85 @@
         <div class="kpi-value" id="shipment-lines-kpi">0</div>
         <div class="kpi-copy">Количество строк, переданных в модель коммерческих отгрузок.</div>
       </article>
-      <a class="kpi-card production-cta-card" href="production-orders.html">
-        <div class="production-cta-copy">
-          <div class="mini-title">Производство</div>
-          <div class="production-cta-value">Отправить заказ на производство</div>
-          <div class="kpi-copy">Открывает отдельную страницу с реестром производственных заказов и кнопкой создания новой производственной заявки.</div>
-        </div>
-        <div class="production-cta-arrow">→</div>
-      </a>
     </section>
 
     <section>
       <div class="section-head">
         <div>
           <div class="section-title">Модули заказа</div>
-          <div class="section-copy">Откройте нужный модуль: новые заказы содержат таблицу очереди и кнопку “Отгрузить заказ”, отгруженные заказы показывают архив, а производство открывает реестр и форму производственной заявки.</div>
+          <div class="section-copy">Выберите нужный модуль. Каждая карточка открывает свою отдельную страницу по нажатию.</div>
         </div>
       </div>
 
       <div class="modules-grid">
         <a class="module-card" href="sales-order-builder.html">
-          <div class="module-icon">🧾</div>
-          <div class="module-name">Конструктор заказов</div>
-          <div class="module-desc">Создание заказа с продавцом, покупателем, подбором товаров, логистикой, НДС 22%, проверкой, сохранением и печатью.</div>
-          <div class="metric-inline">
-            <div class="metric-box">
-              <div class="mini-title">В очереди</div>
-              <strong id="builder-queue-count">0</strong>
+          <div class="module-top">
+            <div class="module-icon">🧾</div>
+            <div class="module-name">Конструктор заказов</div>
+            <div class="module-desc">Создание заказа с продавцом, покупателем, подбором товаров, логистикой, НДС 22%, проверкой, сохранением и печатью.</div>
+            <div class="module-stats">
+              <div class="module-stat-box">
+                <div class="mini-title">В очереди</div>
+                <strong id="builder-queue-count">0</strong>
+              </div>
+              <div class="module-stat-box">
+                <div class="mini-title">Статус</div>
+                <strong>Готов</strong>
+              </div>
             </div>
-            <div class="metric-box">
-              <div class="mini-title">Последний шаг</div>
-              <strong>Сохранить заказ</strong>
-            </div>
+            <div class="module-note">Нажмите на карточку, чтобы открыть страницу конструктора.</div>
           </div>
           <div class="module-footer">
             <div class="module-badge">Первый модуль</div>
-            <div class="module-link">Открыть →</div>
+            <div class="module-link">Переход в модуль →</div>
           </div>
         </a>
 
-        <article class="module-card new-orders" id="new-orders">
-          <div class="module-icon">📥</div>
-          <div class="module-name">Новые заказы</div>
-          <div class="module-desc">Откройте отдельный модуль с таблицей новых заказов, где для каждой строки доступна кнопка “Отгрузить заказ”.</div>
-          <div class="table-head">
+        <a class="module-card new-orders" id="new-orders" href="sales-new-orders.html">
+          <div class="module-top">
+            <div class="module-icon">📥</div>
+            <div class="module-name">Новые заказы</div>
+            <div class="module-desc">Таблица текущей очереди заказов, ожидание отгрузки и переходы к дальнейшей обработке.</div>
+            <div class="module-stats">
+              <div class="module-stat-box">
+                <div class="mini-title">Заказов</div>
+                <strong id="new-orders-count-chip">0</strong>
+              </div>
+              <div class="module-stat-box">
+                <div class="mini-title">Статус</div>
+                <strong>В работе</strong>
+              </div>
+            </div>
+            <div class="module-note">Нажмите на карточку, чтобы открыть страницу новых заказов.</div>
+          </div>
+          <div class="module-footer">
             <div class="status-chip new">Ожидают отгрузки</div>
-            <div class="count-chip" id="new-orders-count-chip">0 заказов</div>
+            <div class="module-link">Переход в модуль →</div>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Заказ</th>
-                  <th>Покупатель</th>
-                  <th>Позиции</th>
-                  <th>Сумма</th>
-                  <th>Действие</th>
-                </tr>
-              </thead>
-              <tbody id="new-orders-body"></tbody>
-            </table>
-          </div>
-          <div class="table-meta">
-            <div class="table-note">Кнопка отгрузки создаст строки для модели “Отгрузки” и сразу переместит заказ в архив.</div>
-            <a class="btn" href="sales-new-orders.html">Открыть модуль</a>
-          </div>
-        </article>
+        </a>
 
-        <article class="module-card shipped-orders">
-          <div class="module-icon">📦</div>
-          <div class="module-name">Отгруженные заказы</div>
-          <div class="module-desc">Откройте отдельный модуль с таблицей отгруженных заказов, датой отгрузки и количеством экспортированных строк.</div>
-          <div class="table-head">
+        <a class="module-card shipped-orders" href="sales-shipped-orders.html">
+          <div class="module-top">
+            <div class="module-icon">📦</div>
+            <div class="module-name">Отгруженные заказы</div>
+            <div class="module-desc">Архив уже отгруженных заказов с историей, датами отгрузки и связью с моделью отгрузок.</div>
+            <div class="module-stats">
+              <div class="module-stat-box">
+                <div class="mini-title">Заказов</div>
+                <strong id="shipped-orders-count-chip">0</strong>
+              </div>
+              <div class="module-stat-box">
+                <div class="mini-title">Экспорт</div>
+                <strong id="shipment-lines-card">0</strong>
+              </div>
+            </div>
+            <div class="module-note">Нажмите на карточку, чтобы открыть архив отгруженных заказов.</div>
+          </div>
+          <div class="module-footer">
             <div class="status-chip shipped">Отгружено</div>
-            <div class="count-chip" id="shipped-orders-count-chip">0 заказов</div>
+            <div class="module-link">Переход в модуль →</div>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Заказ</th>
-                  <th>Покупатель</th>
-                  <th>Отгрузка</th>
-                  <th>Сумма</th>
-                  <th>Экспорт</th>
-                </tr>
-              </thead>
-              <tbody id="shipped-orders-body"></tbody>
-            </table>
-          </div>
-          <div class="table-meta">
-            <div class="table-note">Каждая строка здесь уже передана в массив cloto_orders_added, который читает страница аналитики отгрузок.</div>
-            <a class="btn" href="sales-shipped-orders.html">Открыть модуль</a>
-          </div>
-        </article>
+        </a>
       </div>
     </section>
   </div>
@@ -870,42 +817,6 @@
       document.getElementById('status-copy').textContent = text;
     }
 
-    function renderNewOrders(newOrders) {
-      var body = document.getElementById('new-orders-body');
-      if (!newOrders.length) {
-        body.innerHTML = '<tr><td colspan="5" class="empty-state">Пока пусто. Сохраните заказ в конструкторе, и он автоматически появится здесь.</td></tr>';
-        return;
-      }
-
-      body.innerHTML = newOrders.map(function(order) {
-        return '<tr>' +
-          '<td><div class="order-main"><strong>' + escapeHtml(order.number || 'Без номера') + '</strong><div class="order-sub">' + escapeHtml(formatDate(order.date)) + ' · ' + escapeHtml(getOrderModules(order)) + '</div></div></td>' +
-          '<td><div class="cell-stack"><div>' + escapeHtml(order.buyer && order.buyer.name || '—') + '</div><div class="cell-meta">' + escapeHtml(getOrderDestinations(order)) + '</div></div></td>' +
-          '<td><div class="cell-stack"><div>' + getOrderLines(order).length + ' строк</div><div class="cell-meta">' + escapeHtml(formatTons(getOrderTons(order))) + '</div></div></td>' +
-          '<td><div class="cell-stack"><div>' + escapeHtml(formatRub(order.totals && order.totals.withVat || 0)) + '</div><div class="cell-meta">С НДС</div></div></td>' +
-          '<td><button class="btn ship" type="button" data-order="' + escapeHtml(order.number || '') + '" onclick="shipOrder(this.dataset.order)">Отгрузить заказ</button></td>' +
-        '</tr>';
-      }).join('');
-    }
-
-    function renderShippedOrders(shippedOrders) {
-      var body = document.getElementById('shipped-orders-body');
-      if (!shippedOrders.length) {
-        body.innerHTML = '<tr><td colspan="5" class="empty-state">Отгруженных заказов пока нет. После отгрузки новый заказ переедет сюда автоматически.</td></tr>';
-        return;
-      }
-
-      body.innerHTML = shippedOrders.map(function(order) {
-        return '<tr>' +
-          '<td><div class="order-main"><strong>' + escapeHtml(order.number || 'Без номера') + '</strong><div class="order-sub">' + escapeHtml(formatDate(order.date)) + '</div></div></td>' +
-          '<td><div class="cell-stack"><div>' + escapeHtml(order.buyer && order.buyer.name || '—') + '</div><div class="cell-meta">' + escapeHtml(getOrderDestinations(order)) + '</div></div></td>' +
-          '<td><div class="cell-stack"><div>' + escapeHtml(formatDate(order.shippedAt)) + '</div><div class="cell-meta">' + getOrderLines(order).length + ' строк · ' + escapeHtml(formatTons(getOrderTons(order))) + '</div></div></td>' +
-          '<td><div class="cell-stack"><div>' + escapeHtml(formatRub(order.totals && order.totals.withVat || 0)) + '</div><div class="cell-meta">С НДС</div></div></td>' +
-          '<td><div class="cell-stack"><div>' + Number(order.exportedRowsCount || 0) + ' строк</div><div class="cell-meta">cloto_orders_added</div></div></td>' +
-        '</tr>';
-      }).join('');
-    }
-
     function renderDashboard() {
       var drafts = readStorageArray(ORDER_DRAFTS_KEY);
       var newOrders = readStorageArray(NEW_ORDERS_KEY);
@@ -918,11 +829,9 @@
       document.getElementById('shipped-orders-kpi').textContent = String(shippedOrders.length);
       document.getElementById('shipment-lines-kpi').textContent = String(shipments.length);
       document.getElementById('builder-queue-count').textContent = String(newOrders.length);
-      document.getElementById('new-orders-count-chip').textContent = newOrders.length + ' заказ' + getOrderWordEnding(newOrders.length);
-      document.getElementById('shipped-orders-count-chip').textContent = shippedOrders.length + ' заказ' + getOrderWordEnding(shippedOrders.length);
-
-      renderNewOrders(newOrders);
-      renderShippedOrders(shippedOrders);
+      document.getElementById('new-orders-count-chip').textContent = String(newOrders.length);
+      document.getElementById('shipped-orders-count-chip').textContent = String(shippedOrders.length);
+      document.getElementById('shipment-lines-card').textContent = String(shipments.length);
     }
 
     function getOrderWordEnding(count) {

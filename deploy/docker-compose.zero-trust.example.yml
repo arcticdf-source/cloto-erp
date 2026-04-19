@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./.env.external
+    expose:
+      - "8080"
+    volumes:
+      - ../uploads:/app/uploads
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - cloto_internal
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - app
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - cloto_internal
+
+networks:
+  cloto_internal:
+    driver: bridge

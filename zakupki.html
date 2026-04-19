@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Клото — Закупки</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080c14;
+      --surface: rgba(255,255,255,.04);
+      --surface2: rgba(255,255,255,.07);
+      --border: rgba(255,255,255,.08);
+      --border2: rgba(255,255,255,.14);
+      --text: #e8eaf0;
+      --muted: #7f89a8;
+      --red: #ff5e7d;
+      --gold: #f5c842;
+      --blue: #63b3ed;
+      --cyan: #3de8c7;
+      --green: #48bb78;
+      --radius: 18px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(124,92,252,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,252,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 {
+      width: 620px;
+      height: 620px;
+      top: -240px;
+      right: -120px;
+      background: radial-gradient(circle, rgba(255,94,125,.14) 0%, transparent 70%);
+    }
+    .bg-orb-2 {
+      width: 520px;
+      height: 520px;
+      bottom: -180px;
+      left: -120px;
+      background: radial-gradient(circle, rgba(245,200,66,.1) 0%, transparent 70%);
+    }
+
+    .layout { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px;
+      min-height: 100vh;
+      background: rgba(13,19,32,.9);
+      backdrop-filter: blur(24px);
+      border-right: 1px solid var(--border);
+      padding: 28px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-back {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .logo-back:hover { color: var(--red); background: rgba(255,94,125,.12); border-color: rgba(255,94,125,.28); }
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 15%, var(--red) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-sub { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+    .nav { padding: 16px 10px; display: flex; flex-direction: column; gap: 3px; }
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 12px 12px 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 13px;
+      border-radius: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all .2s;
+      position: relative;
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active {
+      background: rgba(255,94,125,.14);
+      color: var(--red);
+      border: 1px solid rgba(255,94,125,.2);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 24%;
+      bottom: 24%;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--red);
+    }
+    .nav-icon { width: 18px; text-align: center; }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255,94,125,.14);
+      color: var(--red);
+    }
+    .sidebar-user {
+      margin: 14px 10px 0;
+      padding: 13px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--red), var(--gold));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .user-name { font-size: 12.5px; font-weight: 600; }
+    .user-role { font-size: 11px; color: var(--muted); }
+
+    .main {
+      flex: 1;
+      padding: 32px 36px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 20%, var(--red) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 760px;
+      line-height: 1.5;
+    }
+    .search-box {
+      min-width: min(380px, 100%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .search-box:focus-within { border-color: rgba(255,94,125,.4); box-shadow: 0 0 0 3px rgba(255,94,125,.1); }
+    .search-box input {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .kpi-card {
+      position: relative;
+      overflow: hidden;
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+    .kc-red::after { background: linear-gradient(90deg, var(--red), #ff8b9f); }
+    .kc-gold::after { background: linear-gradient(90deg, var(--gold), var(--green)); }
+    .kc-blue::after { background: linear-gradient(90deg, var(--blue), #8ecfff); }
+    .kc-cyan::after { background: linear-gradient(90deg, var(--cyan), #7cf2df); }
+    .kpi-label { color: var(--muted); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; }
+    .kpi-value { margin-top: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; line-height: 1; }
+    .kc-red .kpi-value { color: var(--red); }
+    .kc-gold .kpi-value { color: var(--gold); }
+    .kc-blue .kpi-value { color: var(--blue); }
+    .kc-cyan .kpi-value { color: var(--cyan); }
+    .kpi-sub { margin-top: 6px; color: var(--muted); font-size: 12px; }
+
+    .panel {
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      overflow: hidden;
+    }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-title {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .panel-meta { color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow: auto; }
+    table {
+      width: 100%;
+      min-width: 1120px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #0f1522;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .nr { text-align: right; }
+    .strong { font-weight: 700; }
+    .subline {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(72,187,120,.12);
+      color: var(--green);
+    }
+    .empty-state {
+      padding: 56px 24px 62px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .empty-state strong { color: var(--text); }
+
+    @media (max-width: 1180px) {
+      .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 940px) {
+      .layout { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        min-height: auto;
+        height: auto;
+        position: relative;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .main { padding: 24px 18px 32px; }
+      .search-box { min-width: 100%; }
+    }
+    @media (max-width: 700px) {
+      .kpi-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">
+        <a class="logo-back" href="commercial.html" title="Назад">←</a>
+        <div>
+          <div class="logo-text">Закупки</div>
+          <div class="logo-sub">коммерческий модуль</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-section-label">Навигация</div>
+        <a class="nav-item" href="commercial.html"><span class="nav-icon">⊞</span> Коммерческий отдел</a>
+        <a class="nav-item" href="suppliers.html"><span class="nav-icon">🤝</span> Поставщики</a>
+        <a class="nav-item" href="syryo.html"><span class="nav-icon">🌾</span> Сырьё</a>
+        <a class="nav-item active" href="zakupki.html"><span class="nav-icon">🛒</span> Закупки <span class="nav-badge" id="nav-orders-count">0</span></a>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar">АК</div>
+        <div>
+          <div class="user-name">Андрей К.</div>
+          <div class="user-role">Руководитель</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <div class="page-title">Реестр размещённых заказов поставщикам</div>
+          <div class="page-sub">Таблица собирает все заказы, созданные через кнопку Разместить заказ в карточках поставщиков. Данные читаются из локального хранилища текущего браузера.</div>
+        </div>
+        <label class="search-box">
+          <span>🔎</span>
+          <input id="search-input" type="text" placeholder="Поиск по поставщику, номеру заказа, товару, условиям" />
+        </label>
+      </section>
+
+      <section class="kpi-row">
+        <article class="kpi-card kc-red">
+          <div class="kpi-label">Всего заказов</div>
+          <div class="kpi-value" id="kpi-orders">0</div>
+          <div class="kpi-sub">размещено поставщикам</div>
+        </article>
+        <article class="kpi-card kc-gold">
+          <div class="kpi-label">Сумма заказов</div>
+          <div class="kpi-value" id="kpi-total">0</div>
+          <div class="kpi-sub">рублей по колонке Итого</div>
+        </article>
+        <article class="kpi-card kc-blue">
+          <div class="kpi-label">Поставщиков</div>
+          <div class="kpi-value" id="kpi-suppliers">0</div>
+          <div class="kpi-sub">с активными заказами</div>
+        </article>
+        <article class="kpi-card kc-cyan">
+          <div class="kpi-label">Ближайшая поставка</div>
+          <div class="kpi-value" id="kpi-next-date">—</div>
+          <div class="kpi-sub" id="kpi-next-sub">нет даты поставки</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Таблица заказов</div>
+          <div class="panel-meta" id="results-meta">Загрузка…</div>
+        </div>
+        <div id="orders-content"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    var PURCHASE_ORDERS_KEY = 'cloto_purchase_orders_v1';
+    var orders = [];
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatNumber(value) {
+      return Math.round(value || 0).toLocaleString('ru-RU');
+    }
+
+    function formatDate(value) {
+      if (!value) return '—';
+      var date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleDateString('ru-RU');
+    }
+
+    function loadOrders() {
+      try {
+        orders = JSON.parse(localStorage.getItem(PURCHASE_ORDERS_KEY) || '[]') || [];
+      } catch (error) {
+        orders = [];
+      }
+    }
+
+    function updateKpis(filtered) {
+      var totalSum = filtered.reduce(function(sum, order) { return sum + (Number(order.total) || 0); }, 0);
+      var uniqueSuppliers = new Set(filtered.map(function(order) { return order.supplier; }).filter(Boolean));
+      var nextOrder = filtered
+        .filter(function(order) { return order.plannedDate; })
+        .sort(function(left, right) { return String(left.plannedDate).localeCompare(String(right.plannedDate)); })[0];
+
+      document.getElementById('kpi-orders').textContent = formatNumber(filtered.length);
+      document.getElementById('kpi-total').textContent = formatNumber(totalSum);
+      document.getElementById('kpi-suppliers').textContent = formatNumber(uniqueSuppliers.size);
+      document.getElementById('nav-orders-count').textContent = String(filtered.length);
+      document.getElementById('kpi-next-date').textContent = nextOrder ? formatDate(nextOrder.plannedDate) : '—';
+      document.getElementById('kpi-next-sub').textContent = nextOrder ? (nextOrder.supplier + ' · ' + (nextOrder.product || 'без товара')) : 'нет даты поставки';
+    }
+
+    function getFilteredOrders() {
+      var query = (document.getElementById('search-input').value || '').trim().toLowerCase();
+      if (!query) return orders.slice();
+
+      return orders.filter(function(order) {
+        return [
+          order.supplier,
+          order.orderNumber,
+          order.product,
+          order.paymentTerms,
+          order.comment,
+          order.plannedDate
+        ].join(' ').toLowerCase().indexOf(query) !== -1;
+      });
+    }
+
+    function renderOrders() {
+      var filtered = getFilteredOrders().sort(function(left, right) {
+        return String(right.createdAt || '').localeCompare(String(left.createdAt || ''));
+      });
+
+      updateKpis(filtered);
+      document.getElementById('results-meta').textContent = 'Показано ' + filtered.length + ' из ' + orders.length;
+
+      if (!filtered.length) {
+        document.getElementById('orders-content').innerHTML = '' +
+          '<div class="empty-state">' +
+            '<p><strong>Заказы поставщикам пока не размещены.</strong></p>' +
+            '<p style="margin-top:8px">Откройте карточку поставщика и используйте кнопку Разместить заказ.</p>' +
+          '</div>';
+        return;
+      }
+
+      var html = '' +
+        '<div class="table-wrap">' +
+          '<table>' +
+            '<thead>' +
+              '<tr>' +
+                '<th>Заказ</th>' +
+                '<th>Поставщик</th>' +
+                '<th>Товар</th>' +
+                '<th class="nr">Количество</th>' +
+                '<th class="nr">FCA</th>' +
+                '<th class="nr">Доставка</th>' +
+                '<th class="nr">Итого</th>' +
+                '<th>Поставка</th>' +
+                '<th>Оплата</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>';
+
+      filtered.forEach(function(order) {
+        html += '' +
+          '<tr>' +
+            '<td><span class="strong">' + escapeHtml(order.orderNumber || '—') + '</span><span class="subline">Создан: ' + formatDate(order.createdAt) + '</span></td>' +
+            '<td><span class="strong">' + escapeHtml(order.supplier || '—') + '</span><span class="subline">Статус: <span class="status-pill">Размещён</span></span></td>' +
+            '<td><span class="strong">' + escapeHtml(order.product || '—') + '</span>' + (order.comment ? '<span class="subline">' + escapeHtml(order.comment) + '</span>' : '') + '</td>' +
+            '<td class="nr">' + formatNumber(order.qty || 0) + '<span class="subline">' + escapeHtml(order.unit || '') + '</span></td>' +
+            '<td class="nr">' + formatNumber(order.priceFca || 0) + '</td>' +
+            '<td class="nr">' + formatNumber(order.delivery || 0) + '</td>' +
+            '<td class="nr strong">' + formatNumber(order.total || 0) + '</td>' +
+            '<td>' + formatDate(order.plannedDate) + '</td>' +
+            '<td>' + escapeHtml(order.paymentTerms || '—') + '</td>' +
+          '</tr>';
+      });
+
+      html += '</tbody></table></div>';
+      document.getElementById('orders-content').innerHTML = html;
+    }
+
+    function initPage() {
+      loadOrders();
+      document.getElementById('search-input').addEventListener('input', renderOrders);
+      renderOrders();
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

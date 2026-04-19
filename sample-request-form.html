@@ -142,6 +142,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
+    var SAMPLE_REQUESTS_KEY = 'cloto_incoming_sample_requests';
     var PRODUCT_OPTIONS = [
       'ОПТИТРОЛ жидкий',
       'ОПТИТРОЛ порошок',
@@ -204,7 +205,9 @@
 
     function submitRequest(){
       var form = document.getElementById('request-form');
+      var createdAt = new Date().toISOString();
       var request = {
+        requestId: 'sample-' + createdAt.replace(/[^\d]/g, '') + '-' + Math.random().toString(36).slice(2, 8),
         requestNumber: (form.querySelector('[name="requestNumber"]').value || '').trim(),
         placedBy: (form.querySelector('[name="placedBy"]').value || '').trim(),
         placedDate: (form.querySelector('[name="placedDate"]').value || '').trim(),
@@ -214,9 +217,12 @@
         receiverPhone: (form.querySelector('[name="receiverPhone"]').value || '').trim(),
         shippingAddress: (form.querySelector('[name="shippingAddress"]').value || '').trim(),
         comments: (form.querySelector('[name="comments"]').value || '').trim(),
-        status: 'Новая',
+        status: 'Заявка в работе',
         source: 'Коммерческий отдел',
-        createdAt: new Date().toISOString(),
+        createdAt: createdAt,
+        sentToLabAt: createdAt,
+        readyAt: '',
+        sentToClientAt: '',
         products: []
       };
 
@@ -230,12 +236,11 @@
       });
 
       try {
-        var key = 'cloto_incoming_sample_requests';
         var list = [];
-        var raw = localStorage.getItem(key);
+        var raw = localStorage.getItem(SAMPLE_REQUESTS_KEY);
         if (raw) list = JSON.parse(raw);
         list.unshift(request);
-        localStorage.setItem(key, JSON.stringify(list));
+        localStorage.setItem(SAMPLE_REQUESTS_KEY, JSON.stringify(list));
         localStorage.removeItem('cloto_sample_request_form_draft');
         toast('Заявка отправлена в лабораторию');
         setTimeout(function(){

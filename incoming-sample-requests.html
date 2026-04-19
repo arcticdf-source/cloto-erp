@@ -506,6 +506,65 @@
       border: 1px solid rgba(119, 184, 255, 0.18);
     }
 
+    .file-badge.in-progress {
+      color: var(--gold);
+      background: rgba(240, 203, 107, 0.14);
+      border-color: rgba(240, 203, 107, 0.24);
+    }
+
+    .file-badge.ready {
+      color: var(--green);
+      background: rgba(72, 187, 120, 0.16);
+      border-color: rgba(72, 187, 120, 0.24);
+    }
+
+    .file-badge.sent {
+      color: var(--blue);
+      background: rgba(119, 184, 255, 0.16);
+      border-color: rgba(119, 184, 255, 0.24);
+    }
+
+    .status-cell,
+    .action-cell {
+      min-width: 168px;
+    }
+
+    .row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .row-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: rgba(71, 224, 194, 0.16);
+      border: 1px solid rgba(71, 224, 194, 0.3);
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .row-action-btn:hover {
+      background: rgba(71, 224, 194, 0.24);
+      border-color: var(--border-strong);
+    }
+
+    .row-action-btn[disabled] {
+      opacity: 0.58;
+      cursor: not-allowed;
+    }
+
+    .row-action-btn[disabled]:hover {
+      background: rgba(71, 224, 194, 0.16);
+      border-color: rgba(71, 224, 194, 0.3);
+    }
+
     .note {
       color: var(--muted);
       font-size: 12px;
@@ -700,6 +759,25 @@
       word-break: break-word;
     }
 
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 20px 20px;
+    }
+
+    .btn.main {
+      background: rgba(71, 224, 194, 0.16);
+      border-color: rgba(71, 224, 194, 0.34);
+      color: var(--cyan);
+    }
+
+    .btn.main:hover {
+      background: rgba(71, 224, 194, 0.24);
+      border-color: var(--border-strong);
+    }
+
     body.modal-open {
       overflow: hidden;
     }
@@ -812,7 +890,8 @@
               <th>Дата</th>
               <th>Компания</th>
               <th>Предмет заявки</th>
-              <th>Файлы</th>
+              <th>Статус заявки</th>
+              <th>Действие</th>
               <th>Пометки</th>
             </tr>
           </thead>
@@ -845,6 +924,7 @@
         <div class="doc-name" id="doc-name"></div>
         <div class="doc-content" id="doc-content"></div>
       </div>
+      <div class="modal-actions" id="modal-actions"></div>
     </div>
   </div>
 
@@ -1034,8 +1114,9 @@
 
       return list.map(function(request, index) {
         var date = normalizeLiveRequestDate(request);
+        var requestId = request.requestId || ('sample-' + (request.requestNumber || ('request-' + index)) + '-' + (request.createdAt || index));
         return {
-          id: 'live-' + (request.requestNumber || ('request-' + index)) + '-' + (request.createdAt || index),
+          id: requestId,
           number: request.requestNumber || '—',
           date: date,
           company: request.receiverCompany || 'Не указано',
@@ -1047,6 +1128,43 @@
           rawRequest: request
         };
       });
+    }
+
+    function getRequestStatus(request) {
+      var status = request && request.status ? request.status : 'Заявка в работе';
+      if (status === 'Новая' || status === 'Отправлена в лабораторию' || status === 'В работе') return 'Заявка в работе';
+      if (status === 'Готова') return 'Заявка готова';
+      return status;
+    }
+
+    function updateLiveRequestStatus(requestId, nextStatus) {
+      var list = [];
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) list = JSON.parse(raw);
+      } catch (error) {}
+
+      var changed = false;
+      list = list.map(function(request, index) {
+        var itemId = request.requestId || ('sample-' + (request.requestNumber || ('request-' + index)) + '-' + (request.createdAt || index));
+        if (itemId !== requestId) return request;
+
+        changed = true;
+        return Object.assign({}, request, {
+          requestId: itemId,
+          status: nextStatus,
+          readyAt: nextStatus === 'Заявка готова' ? new Date().toISOString() : (request.readyAt || ''),
+          sentToClientAt: nextStatus === 'Отправлена клиенту' ? new Date().toISOString() : (request.sentToClientAt || '')
+        });
+      });
+
+      if (!changed) return;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      refreshRequestData();
+      renderSummary();
+      renderMonthPills();
+      renderTable();
+      if (activeModalId) renderModalVersion(activeModalId, activeModalVersion);
     }
 
     function refreshRequestData() {
@@ -1089,7 +1207,8 @@
         '<span class="meta-chip">Дата: ' + escapeHtml(formatDate(request.date)) + '</span>',
         '<span class="meta-chip">Компания: ' + escapeHtml(request.company) + '</span>',
         '<span class="meta-chip">Источник: ' + escapeHtml(request.sourceLabel || 'Лаборатория') + '</span>',
-        '<span class="meta-chip">Файлов: ' + versions.length + '</span>'
+        '<span class="meta-chip">Версий: ' + versions.length + '</span>',
+        '<span class="meta-chip">Статус: ' + escapeHtml(request.rawRequest ? getRequestStatus(request.rawRequest) : 'Архив') + '</span>'
       ].join('') : '';
 
       document.getElementById('version-tabs').innerHTML = versions.map(function(item, index) {
@@ -1098,6 +1217,7 @@
 
       document.getElementById('doc-name').textContent = version ? version.fileName : 'Файл не найден';
       document.getElementById('doc-content').textContent = version ? prettifyDocumentText(version.content) : 'Содержимое не найдено.';
+      document.getElementById('modal-actions').innerHTML = '';
 
       document.querySelectorAll('.version-tab').forEach(function(button) {
         button.addEventListener('click', function() {
@@ -1208,9 +1328,23 @@
       empty.style.display = 'none';
       body.innerHTML = rows.map(function(item) {
         var monthLabel = MONTH_NAMES[getMonthKey(item.date)] || 'Архив';
-        var fileBadges = item.files.map(function(ext) {
-          return '<span class="file-badge">' + escapeHtml(ext) + '</span>';
-        }).join('');
+        var statusValue = item.rawRequest ? getRequestStatus(item.rawRequest) : 'Архив';
+        var statusBadgeClass = 'in-progress';
+        if (statusValue === 'Готова' || statusValue === 'Заявка готова') statusBadgeClass = 'ready';
+        if (statusValue === 'Отправлена клиенту') statusBadgeClass = 'sent';
+        var fileBadges = item.sourceType === 'live'
+          ? '<span class="file-badge ' + statusBadgeClass + '">' + escapeHtml(statusValue) + '</span>'
+          : item.files.map(function(ext) {
+              return '<span class="file-badge">' + escapeHtml(ext) + '</span>';
+            }).join('');
+        var actionButton = '';
+        if (item.sourceType === 'live' && statusValue === 'Заявка в работе') {
+          actionButton = '<button class="row-action-btn" type="button" onclick="event.stopPropagation(); updateLiveRequestStatus(\'' + escapeHtml(item.id) + '\', \'Заявка готова\')">Заявка готова</button>';
+        } else if (item.sourceType === 'live') {
+          actionButton = '<button class="row-action-btn" type="button" disabled>Заявка готова</button>';
+        } else {
+          actionButton = '<button class="row-action-btn" type="button" disabled title="Доступно только для новых заявок из формы">Заявка готова</button>';
+        }
         var noteBadges = '<div class="badges"><span class="badge">' + escapeHtml(monthLabel) + '</span><span class="badge">' + escapeHtml(item.sourceLabel || 'Лаборатория') + '</span>' + (item.files.length > 1 ? '<span class="badge warn">Версий: ' + item.files.length + '</span>' : '') + '</div>';
         var noteText = item.note ? escapeHtml(item.note) : 'Без дополнительных пометок';
 
@@ -1219,7 +1353,8 @@
           '<td><div class="date">' + formatDate(item.date) + '</div></td>' +
           '<td><div class="company"><strong>' + escapeHtml(item.company) + '</strong><span>' + escapeHtml(item.sourceLabel || 'Архив 2026') + '</span></div></td>' +
           '<td><div class="request"><div class="request-title">' + escapeHtml(item.request) + '</div><div class="request-meta">Заявка на образцы от ' + formatDate(item.date) + '</div></div></td>' +
-          '<td><div class="file-badges">' + fileBadges + '</div></td>' +
+          '<td class="status-cell"><div class="file-badges">' + fileBadges + '</div></td>' +
+          '<td class="action-cell"><div class="row-actions">' + actionButton + '</div></td>' +
           '<td><div class="request">' + noteBadges + '<div class="note">' + noteText + '</div></div></td>' +
         '</tr>';
       }).join('');
@@ -1244,6 +1379,14 @@
       });
       document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape' && activeModalId) closeRequestModal();
+      });
+      window.addEventListener('storage', function(event) {
+        if (!event || event.key === STORAGE_KEY) {
+          refreshRequestData();
+          renderSummary();
+          renderMonthPills();
+          renderTable();
+        }
       });
     })();
   </script>

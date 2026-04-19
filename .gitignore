@@ -4,3 +4,14 @@ __pycache__/
 *.pyc
 Thumbs.db
 .DS_Store
+auth.local.json
+uploads/
+*.log
+.env
+.env.*
+!.env.example
+deploy/.env.external
+deploy/.env.external.local
+parse_xlsx_temp.txt
+sales_parsed.txt
+

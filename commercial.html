@@ -494,9 +494,9 @@
         <span class="nav-icon">🚚</span> Логистика
         <span class="nav-badge nb-gold">12</span>
       </a>
-      <a class="nav-item" href="#">
+      <a class="nav-item" href="zakupki.html">
         <span class="nav-icon">🛒</span> Закупки
-        <span class="nav-badge nb-red">6</span>
+        <span class="nav-badge nb-red" id="purchases-nav-badge">0</span>
       </a>
       <a class="nav-item" href="#">
         <span class="nav-icon">🌾</span> Сырьё
@@ -506,7 +506,7 @@
         <span class="nav-icon">🏢</span> Клиенты
         <span class="nav-badge nb-cyan">22</span>
       </a>
-      <a class="nav-item" href="#">
+      <a class="nav-item" href="suppliers.html">
         <span class="nav-icon">🤝</span> Поставщики
         <span class="nav-badge nb-cyan">38</span>
       </a>
@@ -626,14 +626,14 @@
           </div>
         </a>
 
-        <a class="mod-card" href="#">
+        <a class="mod-card" href="zakupki.html">
           <div class="mod-icon mi-red">🛒</div>
           <div>
             <div class="mod-name">Закупки</div>
             <div class="mod-desc">Заявки, заказы поставщикам, приёмка</div>
           </div>
           <div class="mod-footer">
-            <div class="mod-badge mb-red">6 заявок</div>
+            <div class="mod-badge mb-red" id="purchases-module-badge">0 заказов</div>
             <div class="mod-arrow">↗</div>
           </div>
         </a>
@@ -650,7 +650,7 @@
           </div>
         </a>
 
-        <a class="mod-card" href="#">
+        <a class="mod-card" href="suppliers.html">
           <div class="mod-icon mi-purple">🤝</div>
           <div>
             <div class="mod-name">Поставщики</div>
@@ -679,6 +679,31 @@
 
   </main>
 </div>
+
+<script>
+  (function() {
+    var PURCHASE_ORDERS_KEY = 'cloto_purchase_orders_v1';
+    var orders = [];
+
+    try {
+      orders = JSON.parse(localStorage.getItem(PURCHASE_ORDERS_KEY) || '[]') || [];
+    } catch (error) {
+      orders = [];
+    }
+
+    var count = orders.length;
+    var navBadge = document.getElementById('purchases-nav-badge');
+    var moduleBadge = document.getElementById('purchases-module-badge');
+
+    if (navBadge) {
+      navBadge.textContent = String(count);
+    }
+
+    if (moduleBadge) {
+      moduleBadge.textContent = count + ' ' + (count === 1 ? 'заказ' : (count >= 2 && count <= 4 ? 'заказа' : 'заказов'));
+    }
+  })();
+</script>
 
 </body>
 </html>

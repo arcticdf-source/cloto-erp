@@ -92,6 +92,7 @@
     }
     .btn:hover { transform: translateY(-1px); background: var(--surface2); }
     .btn.primary { color: var(--gold); background: rgba(245, 201, 95, 0.14); border-color: rgba(245, 201, 95, 0.24); }
+    .btn.green { color: var(--green); background: rgba(114, 216, 154, 0.14); border-color: rgba(114, 216, 154, 0.24); }
     .hero-side { display: grid; gap: 12px; }
     .mini-card { padding: 16px; }
     .mini-title { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; }
@@ -120,6 +121,7 @@
     td { font-size: 13px; color: var(--text); }
     tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
     tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+    .clickable-row { cursor: pointer; }
     .order-main { display: grid; gap: 4px; }
     .order-main strong { font-size: 14px; font-weight: 800; }
     .cell-meta { color: var(--muted); font-size: 11px; line-height: 1.55; }
@@ -186,7 +188,7 @@
           <div class="section-title">Таблица отгруженных заказов</div>
           <div class="copy">Архив отгруженных заказов с датой отгрузки, суммой и количеством выгруженных строк.</div>
         </div>
-        <div class="chip">Архив отгрузок</div>
+        <a class="btn green" href="shipments-live.html">Перейти в отгрузки</a>
       </div>
 
       <div class="table-wrap">
@@ -208,6 +210,11 @@
 
   <script>
     var SHIPPED_ORDERS_KEY = 'cloto_sales_orders_shipped';
+    var SHIPMENTS_KEY = 'cloto_orders_added';
+    function openOrder(orderNumber) {
+      if (!orderNumber) return;
+      window.location.href = 'sales-order-builder.html?order=' + encodeURIComponent(orderNumber) + '&source=shipped';
+    }
     function escapeHtml(value) {
       return String(value || '')
         .replace(/&/g, '&amp;')
@@ -239,6 +246,11 @@
     function getOrderTons(order) {
       return getOrderLines(order).reduce(function(sum, line) { return sum + Number(line && line.tons || 0); }, 0);
     }
+    function getMonthLabel(isoDate) {
+      var months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+      if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return months[new Date().getMonth()];
+      return months[Math.max(0, Math.min(11, Number(isoDate.split('-')[1]) - 1))];
+    }
     function getOrderDestinations(order) {
       var unique = {};
       getOrderLines(order).forEach(function(line) {
@@ -247,8 +259,78 @@
       });
       return Object.keys(unique).join(', ') || '—';
     }
+    function getShipmentType(line, shipmentDetails) {
+      if (shipmentDetails && shipmentDetails.mode === 'pickup') return 'self';
+      if (line && line.module === 'container') return 'cnt';
+      return 'trk';
+    }
+    function getShipmentNote(order, line, shipmentDetails) {
+      var parts = [];
+      if (order && order.comment) parts.push(order.comment);
+      if (shipmentDetails && shipmentDetails.mode === 'pickup') parts.push('Отгрузка: самовывоз');
+      if (shipmentDetails && shipmentDetails.mode === 'delivery') parts.push('Отгрузка: доставка');
+      if (shipmentDetails && shipmentDetails.driver) parts.push('Водитель: ' + shipmentDetails.driver);
+      if (shipmentDetails && shipmentDetails.vehicleNumber) parts.push('Транспорт: ' + shipmentDetails.vehicleNumber);
+      return parts.join(' · ');
+    }
+    function orderToShipmentRows(order) {
+      var shipmentDetails = order && order.shipmentDetails || null;
+      return getOrderLines(order).map(function(line) {
+        var dateValue = line && line.deliveryDate ? line.deliveryDate : (order.date || '').slice(0, 10);
+        var destination = shipmentDetails && shipmentDetails.mode === 'delivery'
+          ? shipmentDetails.destination
+          : ((line && line.deliveryType === 'pickup') ? 'Архангельск' : (line && line.destination) || 'Архангельск');
+        return [
+          getMonthLabel(dateValue),
+          getShipmentNote(order, line, shipmentDetails),
+          order.number || '',
+          order.buyer && order.buyer.name || '',
+          line && line.productName || '',
+          Math.round(Number(line && line.tons || 0) * 1000),
+          Math.round(Number(line && line.units || 0)),
+          destination || 'Архангельск',
+          'отгружено',
+          formatDate(order.shippedAt || dateValue),
+          shipmentDetails && shipmentDetails.vehicleNumber || '',
+          shipmentDetails && shipmentDetails.driver || '',
+          shipmentDetails && shipmentDetails.driverPhone || '',
+          '',
+          Number(line && line.priceWithoutVat || 0),
+          Number(line && line.amountWithoutVat || 0),
+          getShipmentType(line, shipmentDetails)
+        ];
+      });
+    }
+    function getShipmentRowKey(row) {
+      return [row[2] || '', row[4] || '', row[5] || 0, row[7] || '', row[9] || ''].join('|');
+    }
+    function reconcileShipmentExports(shippedOrders) {
+      var existingRows = readStorageArray(SHIPMENTS_KEY);
+      var existingKeys = {};
+      existingRows.forEach(function(row) {
+        existingKeys[getShipmentRowKey(row)] = true;
+      });
+
+      var appended = false;
+      shippedOrders.forEach(function(order) {
+        orderToShipmentRows(order).forEach(function(row) {
+          var key = getShipmentRowKey(row);
+          if (existingKeys[key]) return;
+          existingKeys[key] = true;
+          existingRows.push(row);
+          appended = true;
+        });
+      });
+
+      if (appended) {
+        localStorage.setItem(SHIPMENTS_KEY, JSON.stringify(existingRows));
+      }
+
+      return existingRows;
+    }
     function renderShippedOrders() {
       var shippedOrders = readStorageArray(SHIPPED_ORDERS_KEY);
+      reconcileShipmentExports(shippedOrders);
       var body = document.getElementById('shipped-orders-body');
       var totalAmount = shippedOrders.reduce(function(sum, order) {
         return sum + Number(order && order.totals && order.totals.withVat || 0);
@@ -268,7 +350,7 @@
       }
 
       body.innerHTML = shippedOrders.map(function(order) {
-        return '<tr>' +
+        return '<tr class="clickable-row" onclick="openOrder(\'' + escapeHtml(order.number || '') + '\')">' +
           '<td><div class="order-main"><strong>' + escapeHtml(order.number || 'Без номера') + '</strong><div class="cell-meta">' + escapeHtml(formatDate(order.date)) + '</div></div></td>' +
           '<td><div class="order-main"><strong>' + escapeHtml(order.buyer && order.buyer.name || '—') + '</strong><div class="cell-meta">' + escapeHtml(getOrderDestinations(order)) + '</div></div></td>' +
           '<td><div class="order-main"><strong>' + escapeHtml(formatDate(order.shippedAt)) + '</strong><div class="cell-meta">' + getOrderLines(order).length + ' строк · ' + escapeHtml(formatTons(getOrderTons(order))) + '</div></div></td>' +

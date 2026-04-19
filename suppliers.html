@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Клото — Поставщики</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080c14;
+      --bg2: #0d1320;
+      --surface: rgba(255,255,255,0.04);
+      --surface2: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --text: #e8eaf0;
+      --muted: #7f89a8;
+      --gold: #f5c842;
+      --cyan: #3de8c7;
+      --blue: #63b3ed;
+      --red: #ff5e7d;
+      --purple: #b07dff;
+      --orange: #f6ad55;
+      --green: #48bb78;
+      --radius: 18px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(124,92,252,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,252,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 {
+      width: 620px;
+      height: 620px;
+      background: radial-gradient(circle, rgba(176,125,255,.15) 0%, transparent 70%);
+      top: -220px;
+      right: -100px;
+    }
+    .bg-orb-2 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(61,232,199,.12) 0%, transparent 70%);
+      bottom: -180px;
+      left: -140px;
+    }
+
+    .layout { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 250px;
+      min-height: 100vh;
+      background: rgba(13,19,32,.9);
+      backdrop-filter: blur(24px);
+      border-right: 1px solid var(--border);
+      padding: 28px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-back {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .logo-back:hover { color: var(--purple); border-color: rgba(176,125,255,.35); background: rgba(176,125,255,.12); }
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      background: linear-gradient(135deg, #fff 15%, var(--purple) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-sub { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+    .nav { padding: 16px 10px; display: flex; flex-direction: column; gap: 3px; }
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 12px 12px 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 13px;
+      border-radius: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all .2s;
+      position: relative;
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active {
+      background: rgba(176,125,255,.14);
+      color: var(--purple);
+      border: 1px solid rgba(176,125,255,.2);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 24%;
+      bottom: 24%;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--purple);
+    }
+    .nav-icon { width: 18px; text-align: center; }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(176,125,255,.14);
+      color: var(--purple);
+    }
+    .sidebar-user {
+      margin: 14px 10px 0;
+      padding: 13px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .user-name { font-size: 12.5px; font-weight: 600; }
+    .user-role { font-size: 11px; color: var(--muted); }
+
+    .main {
+      flex: 1;
+      padding: 32px 36px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 20%, var(--purple) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 760px;
+      line-height: 1.5;
+    }
+    .search-box {
+      min-width: min(360px, 100%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+    }
+    .search-box:focus-within { border-color: rgba(176,125,255,.4); box-shadow: 0 0 0 3px rgba(176,125,255,.1); }
+    .search-box input {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .kpi-card {
+      position: relative;
+      overflow: hidden;
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+    .kc-purple::after { background: linear-gradient(90deg, var(--purple), #d4a8ff); }
+    .kc-cyan::after { background: linear-gradient(90deg, var(--cyan), #71f1db); }
+    .kc-gold::after { background: linear-gradient(90deg, var(--gold), var(--orange)); }
+    .kc-blue::after { background: linear-gradient(90deg, var(--blue), #86c7ff); }
+    .kpi-label { color: var(--muted); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; }
+    .kpi-value { margin-top: 8px; font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; line-height: 1; }
+    .kc-purple .kpi-value { color: var(--purple); }
+    .kc-cyan .kpi-value { color: var(--cyan); }
+    .kc-gold .kpi-value { color: var(--gold); }
+    .kc-blue .kpi-value { color: var(--blue); }
+    .kpi-sub { margin-top: 6px; color: var(--muted); font-size: 12px; }
+
+    .panel {
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      overflow: hidden;
+    }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-title {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .panel-meta { color: var(--muted); font-size: 13px; }
+
+    .suppliers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      padding: 20px;
+    }
+    .supplier-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 18px;
+      border-radius: 18px;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(176,125,255,.14);
+      background:
+        linear-gradient(135deg, rgba(176,125,255,.08), rgba(13,19,32,.96)),
+        rgba(255,255,255,.03);
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+      min-height: 230px;
+    }
+    .supplier-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(176,125,255,.28);
+      box-shadow: 0 20px 40px rgba(5,10,20,.35);
+    }
+    .supplier-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .supplier-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: rgba(176,125,255,.16);
+      border: 1px solid rgba(176,125,255,.22);
+      color: #f4eaff;
+      flex-shrink: 0;
+    }
+    .supplier-arrow {
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .supplier-name {
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 700;
+      color: #f2eeff;
+    }
+    .supplier-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .supplier-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .stat-chip {
+      padding: 10px 11px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .stat-value { margin-top: 5px; font-size: 15px; font-weight: 700; }
+    .supplier-products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .prod-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(61,232,199,.1);
+      color: var(--cyan);
+      border: 1px solid rgba(61,232,199,.18);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .empty-state {
+      padding: 54px 20px 60px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .empty-state strong { color: var(--text); }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(176,125,255,.2);
+      border-top-color: var(--purple);
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1180px) {
+      .kpi-row, .suppliers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 940px) {
+      .layout { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        min-height: auto;
+        height: auto;
+        position: relative;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .main { padding: 24px 18px 32px; }
+      .search-box { min-width: 100%; }
+    }
+    @media (max-width: 700px) {
+      .kpi-row, .suppliers-grid { grid-template-columns: 1fr; }
+      .supplier-name { font-size: 19px; }
+      .supplier-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">
+        <a class="logo-back" href="commercial.html" title="Назад">←</a>
+        <div>
+          <div class="logo-text">Поставщики</div>
+          <div class="logo-sub">коммерческий модуль</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-section-label">Навигация</div>
+        <a class="nav-item" href="commercial.html"><span class="nav-icon">⊞</span> Коммерческий отдел</a>
+        <a class="nav-item" href="products.html"><span class="nav-icon">📦</span> Продукты</a>
+        <a class="nav-item" href="clients.html"><span class="nav-icon">🏢</span> Клиенты</a>
+        <a class="nav-item" href="syryo.html"><span class="nav-icon">🌾</span> Сырьё</a>
+        <a class="nav-item active" href="suppliers.html"><span class="nav-icon">🤝</span> Поставщики <span class="nav-badge" id="nav-suppliers-count">0</span></a>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar">АК</div>
+        <div>
+          <div class="user-name">Андрей К.</div>
+          <div class="user-role">Руководитель</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="topbar">
+        <div>
+          <div class="page-title">Поставщики сырья и компонентов</div>
+          <div class="page-sub">Список поставщиков собран из страницы Сырьё. По карточке поставщика открывается отдельная страница с товарами, ценами FCA, доставкой и ценой с доставкой.</div>
+        </div>
+        <label class="search-box">
+          <span>🔎</span>
+          <input id="search-input" type="text" placeholder="Поиск по поставщику, товару, городу, категории" />
+        </label>
+      </section>
+
+      <section class="kpi-row">
+        <article class="kpi-card kc-purple">
+          <div class="kpi-label">Поставщиков</div>
+          <div class="kpi-value" id="kpi-suppliers">0</div>
+          <div class="kpi-sub">активных карточек</div>
+        </article>
+        <article class="kpi-card kc-cyan">
+          <div class="kpi-label">Номенклатура</div>
+          <div class="kpi-value" id="kpi-products">0</div>
+          <div class="kpi-sub">товаров у поставщиков</div>
+        </article>
+        <article class="kpi-card kc-gold">
+          <div class="kpi-label">Локаций</div>
+          <div class="kpi-value" id="kpi-locations">0</div>
+          <div class="kpi-sub">склады и города отгрузки</div>
+        </article>
+        <article class="kpi-card kc-blue">
+          <div class="kpi-label">Лидер по SKU</div>
+          <div class="kpi-value" id="kpi-leader">—</div>
+          <div class="kpi-sub" id="kpi-leader-sub">ожидание данных</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Реестр поставщиков</div>
+          <div class="panel-meta" id="results-meta">Загрузка данных…</div>
+        </div>
+        <div id="content-area">
+          <div class="empty-state">
+            <div class="loading"><span class="spinner"></span>Читаю данные из Сырья…</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    var STORAGE_KEY = 'cloto_raw_materials_v2';
+    var suppliersIndex = [];
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatNumber(value) {
+      return Math.round(value || 0).toLocaleString('ru-RU');
+    }
+
+    function getSupplierIcon(name) {
+      var icons = ['🏭', '🧪', '🚚', '🧱', '⚗️', '📦', '🛢️', '🔩'];
+      var sum = 0;
+      for (var index = 0; index < name.length; index += 1) sum += name.charCodeAt(index);
+      return icons[sum % icons.length];
+    }
+
+    function getQueryValue(search, key) {
+      var params = new URLSearchParams(search);
+      return params.get(key) || '';
+    }
+
+    function normalizeSupplierName(value) {
+      return String(value || '').trim();
+    }
+
+    function isExternalSupplier(value) {
+      var supplier = normalizeSupplierName(value);
+      if (!supplier) return false;
+      if (supplier.toLowerCase() === 'полуфабрикат собственный') return false;
+      return true;
+    }
+
+    function getStatusLabel(status) {
+      var labels = {
+        active: 'Актуально',
+        order: 'Под обновление',
+        critical: 'Устарело',
+        none: 'Без даты',
+        own: 'Внутреннее'
+      };
+      return labels[status] || 'Без статуса';
+    }
+
+    function loadRawMaterialsData() {
+      try {
+        var localData = localStorage.getItem(STORAGE_KEY);
+        if (localData) {
+          var parsed = JSON.parse(localData);
+          if (Array.isArray(parsed) && parsed.length) return Promise.resolve(parsed);
+        }
+      } catch (error) {}
+
+      return fetch('syryo.html')
+        .then(function(response) { return response.text(); })
+        .then(function(html) {
+          var match = html.match(/var\s+DEFAULT_DATA\s*=\s*\[([\s\S]*?)\];/);
+          if (!match) throw new Error('Не удалось прочитать DEFAULT_DATA из syryo.html');
+          return new Function('return [' + match[1] + '];')();
+        });
+    }
+
+    function buildSuppliersIndex(rows) {
+      var groups = {};
+
+      rows.forEach(function(row) {
+        var supplier = normalizeSupplierName(row.sup);
+        if (!isExternalSupplier(supplier)) return;
+        if (!groups[supplier]) {
+          groups[supplier] = {
+            name: supplier,
+            items: [],
+            categories: new Set(),
+            storages: new Set(),
+            statuses: new Set()
+          };
+        }
+
+        groups[supplier].items.push(row);
+        if (row.cat) groups[supplier].categories.add(row.cat);
+        if (row.storage) groups[supplier].storages.add(row.storage);
+        if (row.status) groups[supplier].statuses.add(getStatusLabel(row.status));
+      });
+
+      return Object.keys(groups)
+        .sort(function(left, right) { return left.localeCompare(right, 'ru'); })
+        .map(function(key) {
+          var group = groups[key];
+          var locations = Array.from(group.storages);
+          var categories = Array.from(group.categories);
+          var products = group.items.map(function(item) { return item.name; });
+          return {
+            name: group.name,
+            icon: getSupplierIcon(group.name),
+            itemCount: group.items.length,
+            categories: categories,
+            locations: locations,
+            statuses: Array.from(group.statuses),
+            productsPreview: products.slice(0, 4),
+            searchBlob: [group.name].concat(products, locations, categories).join(' ').toLowerCase()
+          };
+        });
+    }
+
+    function updateKpis() {
+      var suppliersCount = suppliersIndex.length;
+      var productsCount = suppliersIndex.reduce(function(sum, supplier) { return sum + supplier.itemCount; }, 0);
+      var locationsSet = new Set();
+      suppliersIndex.forEach(function(supplier) {
+        supplier.locations.forEach(function(location) { locationsSet.add(location); });
+      });
+      var leader = suppliersIndex.slice().sort(function(left, right) { return right.itemCount - left.itemCount; })[0];
+
+      document.getElementById('kpi-suppliers').textContent = formatNumber(suppliersCount);
+      document.getElementById('kpi-products').textContent = formatNumber(productsCount);
+      document.getElementById('kpi-locations').textContent = formatNumber(locationsSet.size);
+      document.getElementById('nav-suppliers-count').textContent = String(suppliersCount);
+      document.getElementById('kpi-leader').textContent = leader ? String(leader.itemCount) : '—';
+      document.getElementById('kpi-leader-sub').textContent = leader ? leader.name : 'нет поставщиков';
+    }
+
+    function renderSuppliers() {
+      var query = (document.getElementById('search-input').value || '').trim().toLowerCase();
+      var filtered = suppliersIndex.filter(function(item) {
+        if (!query) return true;
+        return item.searchBlob.indexOf(query) !== -1;
+      });
+
+      document.getElementById('results-meta').textContent = 'Показано ' + filtered.length + ' из ' + suppliersIndex.length;
+
+      if (!filtered.length) {
+        document.getElementById('content-area').innerHTML = '' +
+          '<div class="empty-state">' +
+            '<div style="font-size:34px;margin-bottom:12px">🤝</div>' +
+            '<p><strong>Поставщики не найдены.</strong></p>' +
+            '<p style="margin-top:8px">Измените строку поиска или проверьте данные на странице Сырьё.</p>' +
+          '</div>';
+        return;
+      }
+
+      var html = '<div class="suppliers-grid">';
+      filtered.forEach(function(item) {
+        var locationsLabel = item.locations.length ? item.locations.slice(0, 2).join(' · ') : 'Локация не указана';
+        var categoriesLabel = item.categories.length ? item.categories.slice(0, 2).join(' · ') : 'Категория не указана';
+        html += '' +
+          '<a class="supplier-card" href="supplier-profile.html#supplier=' + encodeURIComponent(item.name) + '">' +
+            '<div class="supplier-top">' +
+              '<div class="supplier-icon">' + item.icon + '</div>' +
+              '<div class="supplier-arrow">↗</div>' +
+            '</div>' +
+            '<div>' +
+              '<div class="supplier-name">' + escapeHtml(item.name) + '</div>' +
+              '<div class="supplier-sub">' + escapeHtml(locationsLabel) + '</div>' +
+            '</div>' +
+            '<div class="supplier-stats">' +
+              '<div class="stat-chip"><div class="stat-label">Номенклатура</div><div class="stat-value">' + item.itemCount + ' SKU</div></div>' +
+              '<div class="stat-chip"><div class="stat-label">Категории</div><div class="stat-value">' + escapeHtml(categoriesLabel) + '</div></div>' +
+            '</div>' +
+            '<div class="supplier-products">' +
+              item.productsPreview.map(function(product) {
+                return '<span class="prod-pill" title="' + escapeHtml(product) + '">' + escapeHtml(product) + '</span>';
+              }).join('') +
+            '</div>' +
+          '</a>';
+      });
+      html += '</div>';
+
+      document.getElementById('content-area').innerHTML = html;
+    }
+
+    function initPage() {
+      document.getElementById('search-input').addEventListener('input', renderSuppliers);
+
+      loadRawMaterialsData()
+        .then(function(rows) {
+          suppliersIndex = buildSuppliersIndex(rows);
+          updateKpis();
+          renderSuppliers();
+        })
+        .catch(function(error) {
+          document.getElementById('results-meta').textContent = 'Ошибка загрузки';
+          document.getElementById('content-area').innerHTML = '' +
+            '<div class="empty-state">' +
+              '<div style="font-size:34px;margin-bottom:12px">⚠️</div>' +
+              '<p><strong>Не удалось загрузить поставщиков.</strong></p>' +
+              '<p style="margin-top:8px">Проверьте страницу Сырьё или локальное хранилище браузера.</p>' +
+              '<p style="margin-top:10px;font-size:12px">' + escapeHtml(error && error.message ? error.message : 'Неизвестная ошибка') + '</p>' +
+            '</div>';
+        });
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

@@ -129,7 +129,16 @@
     .user-role { font-size: 11px; color: var(--muted); }
 
     /* main */
-    .main { flex: 1; padding: 36px 44px; overflow-y: auto; display: flex; flex-direction: column; gap: 28px; max-width: 900px; }
+    .main { flex: 1; width: 100%; padding: 36px 44px; overflow-y: auto; display: flex; flex-direction: column; gap: 28px; }
+
+    .content-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.9fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .left-column { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+    .right-column { min-width: 0; }
 
     /* topbar */
     .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
@@ -234,7 +243,7 @@
       background-repeat: no-repeat; background-position: right 14px center;
       padding-right: 36px;
     }
-    select.field-input option { background: #0d1320; }
+    select.field-input option { background: #0d1320; color: var(--text); }
 
     /* calc indicator */
     .auto-badge {
@@ -251,6 +260,139 @@
     }
     .price-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
     .price-dot.offline { background: var(--red); }
+
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .field-side-note {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(245,200,66,.12);
+      border: 1px solid rgba(245,200,66,.24);
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .documents-card {
+      position: sticky;
+      top: 24px;
+    }
+    .document-dropzone {
+      border: 1px dashed rgba(61,232,199,.28);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(61,232,199,.06), rgba(255,255,255,.02));
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .document-dropzone.is-dragover {
+      border-color: rgba(245,200,66,.5);
+      background: linear-gradient(180deg, rgba(245,200,66,.10), rgba(255,255,255,.03));
+      transform: translateY(-1px);
+    }
+    .document-dropzone-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .document-dropzone-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .document-dropzone-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .btn-upload {
+      justify-content: center;
+      min-height: 42px;
+    }
+    .documents-input { display: none; }
+    .documents-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .document-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+    }
+    .document-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .document-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .document-meta {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .document-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .document-link,
+    .document-remove {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .document-link:hover,
+    .document-remove:hover {
+      border-color: var(--border2);
+      background: rgba(255,255,255,.07);
+    }
+    .document-remove {
+      color: #ffd1da;
+      background: rgba(255,94,125,.08);
+      border-color: rgba(255,94,125,.2);
+    }
+    .documents-empty {
+      margin-top: 18px;
+      padding: 16px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
 
     /* divider */
     .divider {
@@ -277,6 +419,10 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 99px; }
 
+    @media(max-width:1200px) {
+      .content-layout { grid-template-columns: 1fr; }
+      .documents-card { position: static; }
+    }
     @media(max-width:900px) { .sidebar{display:none} .main{padding:20px} .fg-4{grid-template-columns:1fr 1fr} .fg-3{grid-template-columns:1fr 1fr} }
     @media(max-width:600px) { .fg-2,.fg-3,.fg-4{grid-template-columns:1fr} }
   </style>
@@ -353,116 +499,140 @@
       </div>
     </div>
 
-    <!-- Основные данные -->
-    <div class="card fade-up du-2">
-      <div class="card-title"><span class="card-title-icon">📋</span> Основные данные</div>
+    <div class="content-layout">
+      <div class="left-column">
+        <!-- Основные данные -->
+        <div class="card fade-up du-2">
+          <div class="card-title"><span class="card-title-icon">📋</span> Основные данные</div>
 
-      <div class="field-grid fg-2">
-        <div class="field" style="grid-column:1/-1">
-          <label class="field-label" for="f-name">Наименование</label>
-          <input class="field-input" id="f-name" type="text" value="Стабилайт II" placeholder="Название продукта" />
-        </div>
+          <div class="field-grid fg-2">
+            <div class="field" style="grid-column:1/-1">
+              <label class="field-label" for="f-name">Наименование</label>
+              <input class="field-input" id="f-name" type="text" value="Стабилайт II" placeholder="Название продукта" />
+            </div>
 
-        <div class="field">
-          <label class="field-label" for="f-pack">Упаковка</label>
-          <select class="field-input" id="f-pack" onchange="onPackChange()">
-            <option value="bags">Мешки</option>
-            <option value="drums">Бочки</option>
-          </select>
-        </div>
+            <div class="field">
+              <label class="field-label" for="f-pack">Упаковка</label>
+              <select class="field-input" id="f-pack" onchange="onPackChange()">
+                <option value="bags">Мешки</option>
+                <option value="drums">Бочки</option>
+              </select>
+            </div>
 
-        <div class="field">
-          <label class="field-label" for="f-weight">Вес единицы, кг</label>
-          <input class="field-input" id="f-weight" type="number" min="0.1" step="0.1" value="25" placeholder="кг" oninput="recalc()" />
-          <div class="field-hint" id="weight-hint">1 мешок = 25 кг</div>
-        </div>
+            <div class="field">
+              <label class="field-label" for="f-weight">Вес единицы, кг</label>
+              <input class="field-input" id="f-weight" type="number" min="0.1" step="0.1" value="25" placeholder="кг" oninput="recalc()" />
+              <div class="field-hint" id="weight-hint">1 мешок = 25 кг</div>
+            </div>
 
-        <div class="field">
-          <label class="field-label" for="f-pallet">Количество на паллете, ед.</label>
-          <input class="field-input" id="f-pallet" type="number" min="1" step="1" value="40" placeholder="ед." />
-          <div class="field-hint" id="pallet-hint">40 мешков = 1 000 кг / паллет</div>
-        </div>
+            <div class="field">
+              <label class="field-label" for="f-pallet">Количество на паллете, ед.</label>
+              <input class="field-input" id="f-pallet" type="number" min="1" step="1" value="40" placeholder="ед." oninput="recalc()" />
+              <div class="field-hint" id="pallet-hint">40 мешков = 1 000 кг / паллет</div>
+            </div>
 
-        <div class="field">
-          <label class="field-label">Вес паллета, кг <span class="auto-badge">АВТО</span></label>
-          <input class="field-input" id="f-pallet-tons" type="text" readonly placeholder="—" />
-          <div class="field-hint">= кол-во на паллете × вес ед.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Логистика -->
-    <div class="card fade-up du-3" id="logistics-section">
-      <div class="card-title"><span class="card-title-icon">🚚</span> Логистика — Вместимость</div>
-
-      <!-- Автомобиль -->
-      <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">🚛 Автомобиль (еврофура)</div>
-      <div class="field-grid fg-2">
-        <div class="field">
-          <label class="field-label" for="f-truck-units">Вместимость в единицах</label>
-          <input class="field-input" id="f-truck-units" type="number" min="1" step="1" value="880" placeholder="ед." oninput="recalc()" />
-          <div class="field-hint">кол-во мешков / бочек в 1 авто</div>
-        </div>
-        <div class="field">
-          <label class="field-label">Вместимость в тоннах <span class="auto-badge">АВТО</span></label>
-          <input class="field-input" id="f-truck-tons" type="text" readonly placeholder="—" />
-          <div class="field-hint">= ед. × вес ед. / 1 000</div>
-        </div>
-      </div>
-
-      <div class="divider" style="margin:20px 0"></div>
-
-      <!-- 20ft контейнер -->
-      <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">🚢 20-футовый контейнер</div>
-      <div class="field-grid fg-2">
-        <div class="field">
-          <label class="field-label" for="f-cont-units">Вместимость в единицах</label>
-          <input class="field-input" id="f-cont-units" type="number" min="1" step="1" value="1000" placeholder="ед." oninput="recalc()" />
-          <div class="field-hint">кол-во мешков / бочек в 1 контейнере</div>
-        </div>
-        <div class="field">
-          <label class="field-label">Вместимость в тоннах <span class="auto-badge">АВТО</span></label>
-          <input class="field-input" id="f-cont-tons" type="text" readonly placeholder="—" />
-          <div class="field-hint">= ед. × вес ед. / 1 000</div>
-        </div>
-      </div>
-
-      <!-- итоговая сводка -->
-      <div class="logistics-summary">
-        <div class="ls-item">
-          <div class="ls-label">🚛 Еврофура</div>
-          <div class="ls-value" id="sum-truck-tons" style="color:var(--blue)">22.0</div>
-          <div class="ls-unit" id="sum-truck-units">880 ед. · тонн</div>
-        </div>
-        <div class="ls-item">
-          <div class="ls-label">🚢 20-фут. контейнер</div>
-          <div class="ls-value" id="sum-cont-tons" style="color:var(--cyan)">25.0</div>
-          <div class="ls-unit" id="sum-cont-units">1 000 ед. · тонн</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Цена -->
-    <div class="card fade-up du-4" id="price-section">
-      <div class="card-title"><span class="card-title-icon">💰</span> Цена по прайсу</div>
-      <div class="field-grid fg-2">
-        <div class="field" style="grid-column:1/-1">
-          <label class="field-label">Цена на сегодня, ₽/ед.</label>
-          <input class="field-input price-field" id="f-price" type="text" readonly placeholder="Загрузка..." />
-          <div class="price-source">
-            <div class="price-dot" id="price-dot"></div>
-            <span id="price-source-text">Подгружается из модуля Прайс-лист</span>
+            <div class="field">
+              <label class="field-label">Вес паллета, кг <span class="auto-badge">АВТО</span></label>
+              <input class="field-input" id="f-pallet-tons" type="text" readonly placeholder="—" />
+              <div class="field-hint">= кол-во на паллете × вес ед.</div>
+            </div>
           </div>
         </div>
-        <div class="field">
-          <label class="field-label">Единица измерения цены</label>
-          <input class="field-input" id="f-price-unit" type="text" value="кг" readonly style="color:var(--muted)" />
+
+        <!-- Логистика -->
+        <div class="card fade-up du-3" id="logistics-section">
+          <div class="card-title"><span class="card-title-icon">🚚</span> Логистика — Вместимость</div>
+
+          <!-- Автомобиль -->
+          <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">🚛 Автомобиль (еврофура)</div>
+          <div class="field-grid fg-2">
+            <div class="field">
+              <label class="field-label" for="f-truck-units">Вместимость в единицах</label>
+              <input class="field-input" id="f-truck-units" type="number" min="1" step="1" value="880" placeholder="ед." oninput="recalc()" />
+              <div class="field-hint">кол-во мешков / бочек в 1 авто</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Вместимость в тоннах <span class="auto-badge">АВТО</span></label>
+              <input class="field-input" id="f-truck-tons" type="text" readonly placeholder="—" />
+              <div class="field-hint">= ед. × вес ед. / 1 000</div>
+            </div>
+          </div>
+
+          <div class="divider" style="margin:20px 0"></div>
+
+          <!-- 20ft контейнер -->
+          <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">🚢 20-футовый контейнер</div>
+          <div class="field-grid fg-2">
+            <div class="field">
+              <label class="field-label" for="f-cont-units">Вместимость в единицах</label>
+              <input class="field-input" id="f-cont-units" type="number" min="1" step="1" value="1000" placeholder="ед." oninput="recalc()" />
+              <div class="field-hint">кол-во мешков / бочек в 1 контейнере</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Вместимость в тоннах <span class="auto-badge">АВТО</span></label>
+              <input class="field-input" id="f-cont-tons" type="text" readonly placeholder="—" />
+              <div class="field-hint">= ед. × вес ед. / 1 000</div>
+            </div>
+          </div>
+
+          <!-- итоговая сводка -->
+          <div class="logistics-summary">
+            <div class="ls-item">
+              <div class="ls-label">🚛 Еврофура</div>
+              <div class="ls-value" id="sum-truck-tons" style="color:var(--blue)">22.0</div>
+              <div class="ls-unit" id="sum-truck-units">880 ед. · тонн</div>
+            </div>
+            <div class="ls-item">
+              <div class="ls-label">🚢 20-фут. контейнер</div>
+              <div class="ls-value" id="sum-cont-tons" style="color:var(--cyan)">25.0</div>
+              <div class="ls-unit" id="sum-cont-units">1 000 ед. · тонн</div>
+            </div>
+          </div>
         </div>
-        <div class="field">
-          <label class="field-label">Дата обновления прайса</label>
-          <input class="field-input" id="f-price-date" type="text" readonly style="color:var(--muted)" placeholder="—" />
+
+        <!-- Цена -->
+        <div class="card fade-up du-4" id="price-section">
+          <div class="card-title"><span class="card-title-icon">💰</span> Цена по прайсу</div>
+          <div class="field-grid fg-2">
+            <div class="field" style="grid-column:1/-1">
+              <div class="label-row">
+                <label class="field-label" for="f-price">Цена на сегодня</label>
+                <span class="field-side-note">Без НДС EXW Архангельск</span>
+              </div>
+              <input class="field-input price-field" id="f-price" type="number" min="0" step="0.01" value="485" placeholder="Введите цену" />
+              <div class="price-source">
+                <div class="price-dot" id="price-dot"></div>
+                <span id="price-source-text">Цена задается вручную в карточке товара</span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Единица измерения цены</label>
+              <input class="field-input" id="f-price-unit" type="text" value="тонна" readonly style="color:var(--muted)" />
+            </div>
+            <div class="field">
+              <label class="field-label">Дата обновления прайса</label>
+              <input class="field-input" id="f-price-date" type="text" readonly style="color:var(--muted)" placeholder="—" />
+            </div>
+          </div>
         </div>
       </div>
+
+      <aside class="right-column">
+        <div class="card documents-card fade-up du-5" id="documents-section">
+          <div class="card-title"><span class="card-title-icon">📎</span> Документы на продукцию</div>
+          <div class="document-dropzone" id="document-dropzone">
+            <div class="document-dropzone-title">Добавьте паспорта, спецификации и сертификаты</div>
+            <div class="document-dropzone-subtitle">Перетащите файлы в эту область или используйте кнопку загрузки. Документы сохраняются локально в браузере для этой карточки товара.</div>
+            <div class="document-dropzone-actions">
+              <button class="btn btn-primary btn-upload" type="button" id="documents-upload-button">⬆ Drag and drop или загрузить документ</button>
+              <span class="field-hint">Поддерживаются PDF, DOC, DOCX, XLSX, ZIP и другие файлы.</span>
+            </div>
+            <input class="documents-input" id="documents-input" type="file" multiple />
+          </div>
+          <div class="documents-list" id="documents-list"></div>
+          <div class="documents-empty" id="documents-empty">Документы пока не добавлены. После загрузки они появятся здесь и будут доступны для скачивания.</div>
+        </div>
+      </aside>
     </div>
 
   </main>
@@ -472,7 +642,173 @@
 
 <script>
   const STORAGE_KEY = 'cloto_product_stabilight';
-  const PRICELIST_KEY = 'cloto_pricelist';
+  let productDocuments = [];
+
+  function getTodayDateString() {
+    return new Date().toLocaleDateString('ru-RU');
+  }
+
+  function syncPriceDate() {
+    document.getElementById('f-price-date').value = getTodayDateString();
+  }
+
+  function formatFileSize(bytes) {
+    if (!bytes) return '0 Б';
+    if (bytes < 1024) return bytes + ' Б';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1).replace('.', ',') + ' КБ';
+    return (bytes / (1024 * 1024)).toFixed(2).replace('.', ',') + ' МБ';
+  }
+
+  function createDocumentId() {
+    return 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  }
+
+  function renderDocuments() {
+    const list = document.getElementById('documents-list');
+    const empty = document.getElementById('documents-empty');
+
+    list.innerHTML = '';
+
+    if (!productDocuments.length) {
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+
+    productDocuments.forEach((doc) => {
+      const item = document.createElement('div');
+      item.className = 'document-item';
+
+      const main = document.createElement('div');
+      main.className = 'document-main';
+
+      const name = document.createElement('div');
+      name.className = 'document-name';
+      name.textContent = doc.name;
+
+      const meta = document.createElement('div');
+      meta.className = 'document-meta';
+      meta.textContent = [formatFileSize(doc.size), doc.type || 'тип не указан'].join(' · ');
+
+      main.appendChild(name);
+      main.appendChild(meta);
+
+      const actions = document.createElement('div');
+      actions.className = 'document-actions';
+
+      const link = document.createElement('a');
+      link.className = 'document-link';
+      link.href = doc.content;
+      link.download = doc.name;
+      link.textContent = 'Скачать';
+
+      const remove = document.createElement('button');
+      remove.className = 'document-remove';
+      remove.type = 'button';
+      remove.textContent = 'Удалить';
+      remove.onclick = () => removeDocument(doc.id);
+
+      actions.appendChild(link);
+      actions.appendChild(remove);
+      item.appendChild(main);
+      item.appendChild(actions);
+      list.appendChild(item);
+    });
+  }
+
+  function readFiles(files) {
+    const readers = Array.from(files).map((file) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({
+        id: createDocumentId(),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        content: reader.result,
+      });
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    }));
+
+    return Promise.all(readers);
+  }
+
+  async function handleDocuments(files) {
+    if (!files || !files.length) return;
+
+    try {
+      const prepared = await readFiles(files);
+      productDocuments = productDocuments.concat(prepared);
+      renderDocuments();
+      persistData(true);
+    } catch (error) {
+      alert('Не удалось загрузить документы. Попробуйте выбрать файлы меньшего размера.');
+    }
+  }
+
+  function removeDocument(id) {
+    productDocuments = productDocuments.filter((doc) => doc.id !== id);
+    renderDocuments();
+    persistData(true);
+  }
+
+  function collectFormData() {
+    syncPriceDate();
+    return {
+      name:        document.getElementById('f-name').value,
+      pack:        document.getElementById('f-pack').value,
+      weight:      document.getElementById('f-weight').value,
+      pallet:      document.getElementById('f-pallet').value,
+      truckUnits:  document.getElementById('f-truck-units').value,
+      contUnits:   document.getElementById('f-cont-units').value,
+      price:       document.getElementById('f-price').value,
+      priceUnit:   'тонна',
+      priceDate:   document.getElementById('f-price-date').value,
+      documents:   productDocuments,
+      savedAt:     new Date().toISOString()
+    };
+  }
+
+  function persistData(showNotification) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectFormData()));
+      if (showNotification) showToast();
+    } catch (error) {
+      alert('Не удалось сохранить карточку. Локальное хранилище браузера переполнено. Уменьшите размер документов и попробуйте снова.');
+    }
+  }
+
+  function initDocumentsUi() {
+    const input = document.getElementById('documents-input');
+    const button = document.getElementById('documents-upload-button');
+    const dropzone = document.getElementById('document-dropzone');
+
+    button.addEventListener('click', () => input.click());
+
+    input.addEventListener('change', async (event) => {
+      await handleDocuments(event.target.files);
+      input.value = '';
+    });
+
+    ['dragenter', 'dragover'].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.add('is-dragover');
+      });
+    });
+
+    ['dragleave', 'dragend', 'drop'].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('is-dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', async (event) => {
+      await handleDocuments(event.dataTransfer.files);
+    });
+  }
 
   // auto-calc on load
   function recalc() {
@@ -513,24 +849,16 @@
     return n ? n.toLocaleString('ru') : '0';
   }
 
-  // save to localStorage
   function saveData() {
-    const data = {
-      name:        document.getElementById('f-name').value,
-      pack:        document.getElementById('f-pack').value,
-      weight:      document.getElementById('f-weight').value,
-      pallet:      document.getElementById('f-pallet').value,
-      truckUnits:  document.getElementById('f-truck-units').value,
-      contUnits:   document.getElementById('f-cont-units').value,
-      savedAt:     new Date().toISOString()
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    showToast();
+    persistData(true);
   }
 
   function resetForm() {
     localStorage.removeItem(STORAGE_KEY);
     loadDefaults();
+    syncPriceDate();
+    productDocuments = [];
+    renderDocuments();
     recalc();
   }
 
@@ -541,9 +869,10 @@
     document.getElementById('f-pallet').value      = '40';
     document.getElementById('f-truck-units').value = '880';
     document.getElementById('f-cont-units').value  = '1000';
+    document.getElementById('f-price').value       = '485';
+    document.getElementById('f-price-unit').value  = 'тонна';
   }
 
-  // load saved data
   function loadSaved() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -555,42 +884,28 @@
         if (d.pallet)     document.getElementById('f-pallet').value      = d.pallet;
         if (d.truckUnits) document.getElementById('f-truck-units').value = d.truckUnits;
         if (d.contUnits)  document.getElementById('f-cont-units').value  = d.contUnits;
+        if (d.price)      document.getElementById('f-price').value       = d.price;
+        productDocuments = Array.isArray(d.documents) ? d.documents : [];
       } catch(e) {}
     }
+
+    renderDocuments();
   }
 
-  // load price from pricelist module
   function loadPrice() {
     const priceField  = document.getElementById('f-price');
     const priceDate   = document.getElementById('f-price-date');
     const dot         = document.getElementById('price-dot');
     const sourceText  = document.getElementById('price-source-text');
 
-    const raw = localStorage.getItem(PRICELIST_KEY);
-    if (raw) {
-      try {
-        const pl = JSON.parse(raw);
-        // прайс-лист: массив [{sku, price, unit, date}] или объект {STB002: {...}}
-        const entry = Array.isArray(pl)
-          ? pl.find(r => r.sku === 'STB-002' || r.name === 'Стабилайт II')
-          : (pl['STB-002'] || pl['Стабилайт II']);
-
-        if (entry) {
-          priceField.value  = (entry.price || '—') + (entry.unit ? ' ₽/' + entry.unit : ' ₽/кг');
-          priceDate.value   = entry.date || '—';
-          dot.className     = 'price-dot';
-          sourceText.textContent = 'Из модуля Прайс-лист · ' + (entry.date || 'дата не указана');
-          document.getElementById('f-price-unit').value = entry.unit || 'кг';
-          return;
-        }
-      } catch(e) {}
+    if (!priceField.value) {
+      priceField.value = '485';
     }
 
-    // fallback — прайс не найден
-    priceField.value  = '485 ₽/кг';
-    priceDate.value   = '10.04.2026';
-    dot.className     = 'price-dot offline';
-    sourceText.textContent = 'Модуль Прайс-лист не подключён — показана последняя известная цена';
+    priceDate.value = getTodayDateString();
+    dot.className = 'price-dot';
+    sourceText.textContent = 'Ручная цена без НДС · EXW Архангельск';
+    document.getElementById('f-price-unit').value = 'тонна';
   }
 
   function showToast() {
@@ -599,7 +914,7 @@
     setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // init
+  initDocumentsUi();
   loadSaved();
   recalc();
   loadPrice();

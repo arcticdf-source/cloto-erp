@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.venv
+uploads
+lab
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+parse_xlsx_temp.txt
+sales_parsed.txt
+parse_xlsx_temp.txt

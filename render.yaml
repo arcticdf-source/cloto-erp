@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: cloto-new-test
+    runtime: node
+    plan: starter
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: AUTH_USER
+        sync: false
+      - key: AUTH_PASS
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: TRUST_PROXY
+        value: 1
+      - key: MAX_UPLOAD_MB
+        value: 50
+      - key: API_RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: API_RATE_LIMIT_MAX
+        value: 300

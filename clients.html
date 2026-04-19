@@ -5,296 +5,1130 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Клиенты CRM — Клото</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#080c14;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);
-      --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);
-      --text:#e8eaf0;--muted:#6b7491;--cyan:#3de8c7;--gold:#f5c842;--green:#48bb78;--red:#ff5e7d;--blue:#63b3ed;
-      --radius:16px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06111b;
+      --surface: rgba(10, 24, 37, 0.86);
+      --surface-strong: rgba(12, 28, 43, 0.96);
+      --border: rgba(141, 210, 223, 0.12);
+      --border-strong: rgba(141, 210, 223, 0.24);
+      --text: #edf7fb;
+      --muted: #8ea6b4;
+      --cyan: #4ce1c6;
+      --blue: #7dc8ff;
+      --gold: #ffcf66;
+      --green: #81e6a8;
+      --red: #ff8c93;
+      --shadow: 0 28px 60px rgba(2, 9, 16, 0.42);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
     }
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-    .bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(61,232,199,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(61,232,199,.03) 1px,transparent 1px);background-size:48px 48px}
-    .orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0}
-    .o1{width:560px;height:560px;left:-170px;top:-190px;background:radial-gradient(circle,rgba(61,232,199,.12),transparent 70%)}
-    .o2{width:480px;height:480px;right:-140px;bottom:-160px;background:radial-gradient(circle,rgba(124,92,252,.14),transparent 70%)}
+    body {
+      font-family: 'Manrope', sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(76, 225, 198, 0.2), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(125, 200, 255, 0.18), transparent 24%),
+        linear-gradient(180deg, #05101a 0%, #07131e 42%, #091723 100%);
+      overflow-x: hidden;
+    }
 
-    .wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:28px 22px 34px}
-    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-    .title{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:800;line-height:1.1;background:linear-gradient(135deg,#fff 22%,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .sub{font-size:13px;color:var(--muted);margin-top:5px}
+    .bg-grid,
+    .bg-noise,
+    .bg-orb {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);text-decoration:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s}
-    .btn:hover{background:var(--surface2);border-color:var(--border2)}
+    .bg-grid {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.52), transparent 92%);
+    }
 
-    .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
-    .k{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
-    .k-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-    .k-v{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;margin-top:4px}
-      .k-sub{font-size:11px;color:var(--muted);margin-top:2px}
-      .k-trend{font-size:11px;font-weight:700;margin-top:4px}
-      .up{color:var(--green)}.dn{color:var(--red)}
+    .bg-noise {
+      opacity: 0.08;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.6) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 40%, rgba(255, 255, 255, 0.6) 0 1px, transparent 1px),
+        radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.6) 0 1px, transparent 1px);
+      background-size: 180px 180px;
+    }
 
-      .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-    .tab{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-    .tab:hover{border-color:var(--border2);color:var(--text)}
-    .tab.active{background:rgba(61,232,199,.12);border-color:rgba(61,232,199,.35);color:var(--cyan)}
+    .bg-orb::before,
+    .bg-orb::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+    }
 
-    .pane{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-    .pane.active{display:block}
+    .bg-orb::before {
+      width: 420px;
+      height: 420px;
+      left: -120px;
+      top: -80px;
+      background: rgba(76, 225, 198, 0.18);
+    }
 
-    .pane-head{padding:14px 16px;border-bottom:1px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+    .bg-orb::after {
+      width: 360px;
+      height: 360px;
+      right: -80px;
+      top: 140px;
+      background: rgba(125, 200, 255, 0.14);
+    }
 
-    table{width:100%;border-collapse:collapse;min-width:980px}
-    th{padding:11px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border)}
-    td{padding:12px;border-bottom:1px solid rgba(255,255,255,.03);font-size:12.5px;vertical-align:top}
-    tr:last-child td{border-bottom:none}
-    .table-wrap{overflow:auto}
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 26px 24px 48px;
+    }
 
-    .badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
-    .b-active{background:rgba(72,187,120,.16);color:var(--green)}
-    .b-warm{background:rgba(245,200,66,.16);color:var(--gold)}
-    .b-cold{background:rgba(99,179,237,.16);color:var(--blue)}
-    .b-risk{background:rgba(255,94,125,.16);color:var(--red)}
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
 
-    .cards{padding:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;padding:12px}
-    .card h4{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-    .card .v{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;margin-top:5px}
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
 
-    .funnel{padding:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-    .stage{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;padding:10px}
-    .stage h5{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-    .deal{background:rgba(61,232,199,.08);border:1px solid rgba(61,232,199,.2);border-radius:10px;padding:8px;margin-bottom:8px}
-    .deal:last-child{margin-bottom:0}
-    .deal .n{font-size:12px;font-weight:700}
-    .deal .m{font-size:11px;color:var(--muted);margin-top:2px}
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), #8effd5);
+      box-shadow: 0 0 18px rgba(76, 225, 198, 0.48);
+    }
 
-    .bars{padding:14px;display:flex;flex-direction:column;gap:10px}
-    .bar-row{display:grid;grid-template-columns:220px 1fr 90px;gap:10px;align-items:center}
-    .bar-name{font-size:12px;font-weight:600}
-    .bar-track{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
-    .bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan),rgba(61,232,199,.35))}
-    .bar-val{text-align:right;font-size:12px;color:var(--muted);font-weight:700}
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-      .chart-area{padding:14px}
-      .month-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-      .m-card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;padding:12px}
-      .m-card h5{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-      .m-card .mv{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800}
-      .m-card .ms{font-size:11px;color:var(--muted);margin-top:3px}
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
 
-    @media(max-width:1120px){.kpis{grid-template-columns:repeat(3,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.funnel{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.funnel{grid-template-columns:1fr}.bar-row{grid-template-columns:1fr}}
-      @media(max-width:760px){.month-bars{grid-template-columns:1fr}.bar-row{grid-template-columns:1fr}}
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-primary {
+      color: #04221f;
+      background: linear-gradient(135deg, #77f4db, #4ce1c6);
+      border-color: rgba(119, 244, 219, 0.35);
+      box-shadow: 0 18px 34px rgba(76, 225, 198, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #8dfbe3, #5ce8ce);
+      border-color: rgba(119, 244, 219, 0.5);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .hero-main,
+    .hero-side,
+    .stat-card,
+    .insight-card,
+    .pane,
+    .spot-card,
+    .snapshot-card {
+      background: linear-gradient(180deg, rgba(14, 30, 45, 0.94), rgba(10, 24, 37, 0.94));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-main {
+      position: relative;
+      padding: 34px;
+      min-height: 290px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+      gap: 22px;
+    }
+
+    .hero-main::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(76, 225, 198, 0.18), transparent 42%),
+        radial-gradient(circle at 80% 30%, rgba(125, 200, 255, 0.14), transparent 28%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: rgba(76, 225, 198, 0.46);
+    }
+
+    .hero-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(34px, 4vw, 54px);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      margin-bottom: 16px;
+      max-width: 700px;
+    }
+
+    .hero-title span { color: var(--cyan); }
+    .hero-copy { position: relative; z-index: 1; }
+
+    .hero-sub {
+      max-width: 660px;
+      color: #9db4bf;
+      font-size: 15px;
+      line-height: 1.72;
+      margin-bottom: 22px;
+    }
+
+    .hero-actions,
+    .hero-meta,
+    .top-actions,
+    .segment-filters,
+    .tabs,
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .meta-chip,
+    .pane-chip,
+    .result-pill,
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .meta-chip strong { color: var(--text); font-weight: 800; }
+
+    .hero-panel {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .spot-card,
+    .snapshot-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(6, 18, 28, 0.44);
+    }
+
+    .spot-label,
+    .snapshot-title,
+    .stat-label,
+    .section-tag,
+    .mini-card h4,
+    .month-card h4,
+    .account-card h4,
+    .stage-card h4 {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .spot-label { margin-bottom: 8px; }
+    .spot-value,
+    .snapshot-value,
+    .stat-value,
+    .mini-card .big,
+    .month-card .big,
+    .value {
+      font-family: 'Sora', sans-serif;
+    }
+
+    .spot-value { font-size: 28px; margin-bottom: 8px; }
+    .spot-sub,
+    .snapshot-note,
+    .section-sub,
+    .account-card p,
+    .mini-card p,
+    .month-card p,
+    .pane-copy p,
+    .muted,
+    .account-sub,
+    .priority-main span,
+    .priority-meta {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .spot-list,
+    .priority-list,
+    .bars,
+    .account-grid,
+    .funnel-grid,
+    .mini-grid,
+    .month-bars,
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .spot-item,
+    .snapshot-top,
+    .side-head,
+    .section-head,
+    .pane-top,
+    .stat-foot,
+    .company-toolbar,
+    .bar-row,
+    .priority-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .side-title,
+    .section-title,
+    .pane-copy h3 {
+      font-family: 'Sora', sans-serif;
+    }
+
+    .side-title,
+    .section-title,
+    .pane-copy h3 { font-size: 22px; margin-bottom: 6px; }
+    .snapshot-value { font-size: 26px; }
+    .stat-value { font-size: 30px; letter-spacing: -0.03em; margin-bottom: 10px; }
+
+    .pulse,
+    .stat-pill,
+    .badge,
+    .trend,
+    .segment-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 999px;
+    }
+
+    .pulse {
+      min-width: 108px;
+      padding: 9px 12px;
+      border: 1px solid rgba(129, 230, 168, 0.16);
+      background: rgba(129, 230, 168, 0.08);
+      color: var(--green);
+    }
+
+    .snapshot-track,
+    .micro-bar,
+    .bar-track {
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .snapshot-track { height: 9px; margin-top: 12px; }
+    .micro-bar { height: 8px; }
+    .bar-track { height: 10px; }
+
+    .snapshot-fill,
+    .micro-bar span,
+    .bar-fill {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), #b3fff2);
+    }
+
+    .stats-grid { grid-template-columns: repeat(4, 1fr); margin-bottom: 18px; }
+    .stat-card { padding: 20px; border-radius: 22px; }
+    .stat-foot { align-items: center; color: var(--muted); font-size: 12px; }
+    .stat-pill { padding: 7px 10px; }
+    .pill-up { color: #04221f; background: linear-gradient(135deg, #8dfbe3, #61ebcf); }
+    .pill-blue { color: #062133; background: linear-gradient(135deg, #a7e0ff, #7dc8ff); }
+    .pill-gold { color: #3b2500; background: linear-gradient(135deg, #ffe7a1, #ffcf66); }
+
+    .insight-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 14px; margin-bottom: 18px; }
+    .insight-card { padding: 22px; border-radius: 24px; }
+    .section-head, .pane-top { align-items: flex-start; flex-wrap: wrap; margin-bottom: 18px; }
+    .section-sub, .pane-copy p { font-size: 13px; max-width: 720px; }
+    .section-tag, .pane-chip { color: var(--cyan); }
+
+    .account-grid { grid-template-columns: repeat(3, 1fr); }
+    .account-card,
+    .mini-card,
+    .stage-card,
+    .priority-item,
+    .month-card {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .account-card { min-height: 188px; align-content: start; }
+    .account-card strong { display: block; font-size: 18px; margin-bottom: 4px; }
+    .priority-item { display: grid; grid-template-columns: auto 1fr auto; }
+    .priority-rank {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(76, 225, 198, 0.12);
+      color: var(--cyan);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .tabs-shell {
+      margin-bottom: 18px;
+      padding: 10px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: rgba(10, 24, 37, 0.72);
+      box-shadow: var(--shadow);
+    }
+
+    .tab,
+    .segment-btn {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font: inherit;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .tab {
+      border: 0;
+      padding: 12px 16px;
+      border-radius: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+    }
+
+    .tab:hover,
+    .segment-btn:hover,
+    .segment-btn.active,
+    .tab.active {
+      color: var(--text);
+      background: linear-gradient(135deg, rgba(76, 225, 198, 0.18), rgba(125, 200, 255, 0.14));
+    }
+
+    .pane {
+      display: none;
+      border-radius: 28px;
+      padding: 22px;
+    }
+
+    .pane.active { display: block; }
+
+    .company-toolbar {
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) 1fr auto auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .search-shell { position: relative; }
+
+    .search-shell input {
+      width: 100%;
+      padding: 14px 16px 14px 48px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .search-shell input:focus {
+      border-color: rgba(76, 225, 198, 0.42);
+      box-shadow: 0 0 0 4px rgba(76, 225, 198, 0.1);
+    }
+
+    .search-shell::before {
+      content: '⌕';
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .segment-btn { padding: 10px 14px; font-size: 12px; }
+
+    .table-shell {
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(4, 13, 21, 0.36);
+      overflow: hidden;
+    }
+
+    .table-wrap { overflow: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1180px;
+    }
+
+    th {
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      font-weight: 800;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.025); }
+
+    .account-cell {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      font-weight: 800;
+      color: #032420;
+      background: linear-gradient(135deg, #a1ffe6, #4ce1c6);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .account-main,
+    .owner-card,
+    .next-step,
+    .momentum { display: grid; gap: 4px; }
+
+    .account-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .account-link:hover { color: var(--cyan); }
+    .account-sub, .muted { font-size: 12px; }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .b-active { color: var(--green); background: rgba(129, 230, 168, 0.14); }
+    .b-warm { color: var(--gold); background: rgba(255, 207, 102, 0.14); }
+    .b-cold { color: var(--blue); background: rgba(125, 200, 255, 0.14); }
+    .b-risk { color: var(--red); background: rgba(255, 140, 147, 0.14); }
+    .b-plan { color: var(--cyan); background: rgba(76, 225, 198, 0.14); }
+
+    .value { font-size: 18px; margin-bottom: 4px; }
+    .owner-card strong, .next-step strong, .momentum strong, .priority-main strong { font-size: 13px; }
+
+    .trend {
+      width: fit-content;
+      padding: 7px 10px;
+      font-size: 11px;
+    }
+
+    .trend.up { color: var(--green); background: rgba(129, 230, 168, 0.14); }
+    .trend.mid { color: var(--gold); background: rgba(255, 207, 102, 0.14); }
+    .trend.down { color: var(--red); background: rgba(255, 140, 147, 0.14); }
+
+    .mini-grid { grid-template-columns: repeat(4, 1fr); margin-bottom: 18px; }
+    .mini-card .big, .month-card .big { font-size: 24px; margin-bottom: 6px; }
+
+    .funnel-grid { grid-template-columns: repeat(5, 1fr); }
+    .stage-card { min-height: 220px; }
+    .deal {
+      padding: 12px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      background: rgba(76, 225, 198, 0.08);
+      border: 1px solid rgba(76, 225, 198, 0.12);
+    }
+
+    .deal:last-child { margin-bottom: 0; }
+    .deal strong { display: block; font-size: 13px; margin-bottom: 4px; }
+    .deal span { color: var(--muted); font-size: 12px; }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 220px 1fr 90px;
+      gap: 12px;
+    }
+
+    .bar-name { font-size: 13px; font-weight: 700; }
+    .bar-val { text-align: right; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .month-bars { grid-template-columns: repeat(3, 1fr); margin-bottom: 18px; }
+
+    .empty-state {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(3, 10, 18, 0.72);
+      backdrop-filter: blur(8px);
+      z-index: 20;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-card {
+      width: min(520px, 100%);
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid var(--border-strong);
+      background: linear-gradient(180deg, rgba(14, 30, 45, 0.98), rgba(10, 24, 37, 0.98));
+      box-shadow: var(--shadow);
+    }
+
+    .modal-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .modal-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .modal-field {
+      margin-top: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .modal-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .modal-input:focus {
+      border-color: rgba(76, 225, 198, 0.42);
+      box-shadow: 0 0 0 4px rgba(76, 225, 198, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1240px) {
+      .hero,
+      .insight-grid { grid-template-columns: 1fr; }
+      .stats-grid,
+      .mini-grid { grid-template-columns: repeat(2, 1fr); }
+      .account-grid { grid-template-columns: 1fr; }
+      .funnel-grid { grid-template-columns: repeat(2, 1fr); }
+      .company-toolbar { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 980px) {
+      .hero-main { grid-template-columns: 1fr; padding: 26px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .month-bars { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 18px 14px 32px; }
+      .hero-main,
+      .hero-side,
+      .pane,
+      .insight-card,
+      .stat-card { border-radius: 22px; }
+      .stats-grid,
+      .mini-grid,
+      .funnel-grid { grid-template-columns: 1fr; }
+      .btn,
+      .tab { width: 100%; }
+      .hero-title { font-size: 34px; }
+    }
   </style>
 </head>
 <body>
-  <div class="bg"></div>
-  <div class="orb o1"></div>
-  <div class="orb o2"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+  <div class="bg-orb"></div>
 
   <div class="wrap">
-    <div class="top">
-      <div>
-        <div class="title">Клиенты CRM</div>
-        <div class="sub">Компании, контакты, история взаимодействий, лиды, продажи и аналитика</div>
-      </div>
-      <div class="actions">
-        <a class="btn" href="commercial.html">← В коммерческий отдел</a>
+    <div class="topbar">
+      <div class="brand"><span class="brand-dot"></span> Customer Revenue Mission Control</div>
+      <div class="top-actions">
+        <a class="btn btn-primary" href="client-card.html?company=%D0%A5%D0%B0%D0%BB%D0%BB%D0%B8%D0%B1%D1%83%D1%80%D1%82%D0%BE%D0%BD%20%2F%20%D0%91%D1%83%D1%80%D0%A1%D0%B5%D1%80%D0%B2%D0%B8%D1%81">Открыть ключевой аккаунт</a>
+        <a class="btn" href="commercial.html">В коммерческий отдел</a>
         <a class="btn" href="portal.html">На главную</a>
       </div>
     </div>
 
-    <div class="kpis">
-      <div class="k"><div class="k-l">Клиентов (Q1 2026)</div><div class="k-v" style="color:var(--cyan)">25</div><div class="k-sub">активные покупатели</div></div>
-      <div class="k"><div class="k-l">Выручка янв</div><div class="k-v" style="color:var(--blue)">26,9 млн</div><div class="k-sub">26 935 200 ₽</div></div>
-      <div class="k"><div class="k-l">Выручка фев</div><div class="k-v" style="color:var(--gold)">39,6 млн</div><div class="k-trend up">+47% к янв</div></div>
-      <div class="k"><div class="k-l">Выручка март</div><div class="k-v" style="color:var(--green)">46,6 млн</div><div class="k-trend up">+18% к фев</div></div>
-      <div class="k"><div class="k-l">Итого Q1 2026</div><div class="k-v" style="color:var(--cyan)">113,1 млн</div><div class="k-sub">113 111 865 ₽</div></div>
-    </div>
+    <section class="hero">
+      <div class="hero-main">
+        <div class="hero-copy">
+          <div class="eyebrow">CRM cockpit</div>
+          <h1 class="hero-title">Клиентский портфель в формате <span>executive CRM</span>, а не просто таблицы.</h1>
+          <p class="hero-sub">Здесь собраны ключевые покупатели, контакты, текущие переговоры и динамика продаж. Страница переработана под логику B2B CRM: сначала сигналы и приоритеты, затем портфель компаний, потом воронка, история касаний и коммерческая аналитика.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#pane-companies">Перейти к аккаунтам</a>
+            <a class="btn" href="#pane-funnel">Открыть воронку</a>
+          </div>
+          <div class="hero-meta">
+            <div class="meta-chip"><strong>25</strong> активных покупателей Q1</div>
+            <div class="meta-chip"><strong>113,1 млн ₽</strong> выручка за квартал</div>
+            <div class="meta-chip"><strong>68</strong> сделок закрыто</div>
+          </div>
+        </div>
 
-    <div class="tabs" id="tabs">
-      <button class="tab active" data-pane="companies">Компании</button>
-      <button class="tab" data-pane="contacts">Контакты</button>
-      <button class="tab" data-pane="history">История взаимодействия</button>
-      <button class="tab" data-pane="funnel">Воронка продаж</button>
-      <button class="tab" data-pane="stages">Стадии переговоров</button>
-      <button class="tab" data-pane="leads">Лиды</button>
-      <button class="tab" data-pane="sales">Продажи</button>
-      <button class="tab" data-pane="analytics">Анализ продаж</button>
+        <div class="hero-panel">
+          <div class="spot-card">
+            <div class="spot-label">Revenue pulse</div>
+            <div class="spot-value">46,6 млн ₽</div>
+            <div class="spot-sub">Март стал лучшим месяцем квартала. Главный вклад дали Халлибуртон / БурСервис, Мад-Сервис и ОМАС.</div>
+          </div>
+          <div class="spot-card">
+            <div class="spot-label">Главные акценты недели</div>
+            <div class="spot-list">
+              <div class="spot-item"><strong>АКРОС</strong><span>счет на апрельскую поставку</span></div>
+              <div class="spot-item"><strong>ТКШ / Петроальянс</strong><span>встреча по ценам 17.04</span></div>
+              <div class="spot-item"><strong>KazPetroDrilling</strong><span>фиксируем объем Q2</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-side">
+        <div class="side-head">
+          <div>
+            <div class="side-title">Снимок портфеля</div>
+            <div class="muted">Быстрый взгляд на квартал, темп роста и концентрацию выручки в топ-аккаунтах.</div>
+          </div>
+          <div class="pulse">Q1 strong</div>
+        </div>
+
+        <div class="snapshot-card">
+          <div class="snapshot-top">
+            <div class="snapshot-title">Top 6 accounts</div>
+            <div class="snapshot-value">79%</div>
+          </div>
+          <div class="snapshot-note">Доля квартальной выручки, сосредоточенная в шести ключевых клиентах. Нужен контролируемый рост среднего эшелона.</div>
+          <div class="snapshot-track"><div class="snapshot-fill" style="width:79%"></div></div>
+        </div>
+
+        <div class="snapshot-card">
+          <div class="snapshot-top">
+            <div class="snapshot-title">Pipeline coverage</div>
+            <div class="snapshot-value">1,8x</div>
+          </div>
+          <div class="snapshot-note">Текущая воронка Q2 закрывает план по выручке почти в два раза, но часть объема еще на стадиях переговоров и согласования.</div>
+          <div class="snapshot-track"><div class="snapshot-fill" style="width:68%"></div></div>
+        </div>
+
+        <div class="snapshot-card">
+          <div class="snapshot-top">
+            <div class="snapshot-title">Attention list</div>
+            <div class="snapshot-value">3</div>
+          </div>
+          <div class="snapshot-note">Сургутнефтегаз, БУРИНТЕХ и ПОЛИХИМПРОМ требуют отдельного дожима либо реактивации.</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card"><div class="stat-label">Квартальная выручка</div><div class="stat-value">113,1 млн ₽</div><div class="stat-foot"><span>Q1 2026, 68 сделок</span><span class="stat-pill pill-up">+31% vs Q4</span></div></article>
+      <article class="stat-card"><div class="stat-label">Средний чек</div><div class="stat-value">1,66 млн ₽</div><div class="stat-foot"><span>выше февраля и января</span><span class="stat-pill pill-blue">рост mix</span></div></article>
+      <article class="stat-card"><div class="stat-label">Активные переговоры</div><div class="stat-value">7 сделок</div><div class="stat-foot"><span>в стадиях 40%–95%</span><span class="stat-pill pill-gold">Q2 focus</span></div></article>
+      <article class="stat-card"><div class="stat-label">Retention core</div><div class="stat-value">6 якорных</div><div class="stat-foot"><span>основа повторных продаж</span><span class="stat-pill pill-up">stable base</span></div></article>
+    </section>
+
+    <section class="insight-grid">
+      <article class="insight-card">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Приоритеты по аккаунтам</div>
+            <div class="section-sub">Секция показывает, куда смотреть в первую очередь: растущие ключевые клиенты, теплый пул на расширение и зона риска, где нужна активная коммерческая работа.</div>
+          </div>
+          <div class="section-tag">Account health radar</div>
+        </div>
+        <div class="account-grid">
+          <div class="account-card"><h4>Expansion</h4><div><strong>Халлибуртон / БурСервис</strong><p>Продление контракта Q2 практически закрыто. Это главный драйвер квартала и база для upsell по новым SKU.</p></div><div class="micro-bar"><span style="width:95%"></span></div></div>
+          <div class="account-card"><h4>Warm pipeline</h4><div><strong>ТКШ / Петроальянс</strong><p>Нужно перевести разговор о ценах 2026 в закрепленный график закупок и не оставлять диалог на уровне обещаний.</p></div><div class="micro-bar"><span style="width:70%"></span></div></div>
+          <div class="account-card"><h4>Recovery</h4><div><strong>Сургутнефтегаз</strong><p>Тест Stabilight II требует плотного сопровождения. Без следующего шага клиент останется на этапе оценки и не зайдет в реальную выручку.</p></div><div class="micro-bar"><span style="width:40%"></span></div></div>
+        </div>
+      </article>
+
+      <article class="insight-card">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Что делать сейчас</div>
+            <div class="section-sub">Набор коротких коммерческих действий, которые влияют на ближайший денежный поток.</div>
+          </div>
+          <div class="section-tag">This week</div>
+        </div>
+        <div class="priority-list">
+          <div class="priority-item"><div class="priority-rank">1</div><div class="priority-main"><strong>АКРОС</strong><span>Счет и финальная синхронизация поставки на апрель.</span></div><div class="priority-meta">Потенциал 7 млн ₽</div></div>
+          <div class="priority-item"><div class="priority-rank">2</div><div class="priority-main"><strong>KazPetroDrilling</strong><span>Зафиксировать объем Q2 по Реасолт и снять паузу.</span></div><div class="priority-meta">Потенциал 3 млн ₽</div></div>
+          <div class="priority-item"><div class="priority-rank">3</div><div class="priority-main"><strong>ПЕТРОИНЖИНИРИНГ</strong><span>Не отпускать после тестов, перевести в pilot-to-order.</span></div><div class="priority-meta">Потенциал 3 млн ₽</div></div>
+        </div>
+      </article>
+    </section>
+
+    <div class="tabs-shell">
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-pane="companies">Компании</button>
+        <button class="tab" data-pane="contacts">Контакты</button>
+        <button class="tab" data-pane="history">История взаимодействия</button>
+        <button class="tab" data-pane="funnel">Воронка продаж</button>
+        <button class="tab" data-pane="stages">Стадии переговоров</button>
+        <button class="tab" data-pane="leads">Лиды</button>
+        <button class="tab" data-pane="sales">Продажи</button>
+        <button class="tab" data-pane="analytics">Аналитика</button>
+      </div>
     </div>
 
     <section class="pane active" id="pane-companies">
-      <div class="pane-head">Компании</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Компания</th><th>Сегмент</th><th>Город</th><th>Ответственный</th><th>Статус</th><th>Оборот</th></tr></thead>
-          <tbody>
-              <tr><td>Халлибуртон / БурСервис</td><td>Нефтесервис</td><td>Тюмень</td><td>И. Петров</td><td><span class="badge b-active">Активный</span></td><td>21,0 млн</td></tr>
-              <tr><td>Мад-Сервис</td><td>Буровой сервис</td><td>Москва</td><td>Н. Орлова</td><td><span class="badge b-active">Активный</span></td><td>20,7 млн</td></tr>
-              <tr><td>ОМАС</td><td>Буровой сервис</td><td>Уфа</td><td>А. Сидоров</td><td><span class="badge b-active">Активный</span></td><td>17,3 млн</td></tr>
-              <tr><td>ИНКО-Сервис</td><td>Нефтесервис</td><td>Нижневартовск</td><td>И. Петров</td><td><span class="badge b-active">Активный</span></td><td>12,6 млн</td></tr>
-              <tr><td>ССК-Технологии</td><td>Подрядчик</td><td>Новый Уренгой</td><td>Н. Орлова</td><td><span class="badge b-active">Активный</span></td><td>9,7 млн</td></tr>
-              <tr><td>АКРОС</td><td>Буровой сервис</td><td>Краснодар</td><td>А. Сидоров</td><td><span class="badge b-active">Активный</span></td><td>7,9 млн</td></tr>
-              <tr><td>ТКШ / Петроальянс</td><td>Нефтесервис</td><td>Альметьевск</td><td>И. Петров</td><td><span class="badge b-warm">Тёплый</span></td><td>5,1 млн</td></tr>
-              <tr><td>KazPetroDrilling</td><td>Бурение</td><td>Атырау (Казахстан)</td><td>Н. Орлова</td><td><span class="badge b-warm">Тёплый</span></td><td>3,3 млн</td></tr>
-              <tr><td>ПЕТРОИНЖИНИРИНГ</td><td>Инжиниринг</td><td>Москва</td><td>А. Сидоров</td><td><span class="badge b-warm">Тёплый</span></td><td>3,1 млн</td></tr>
-              <tr><td>FWL</td><td>Нефтесервис</td><td>Иностранный</td><td>И. Петров</td><td><span class="badge b-warm">Тёплый</span></td><td>3,1 млн</td></tr>
-              <tr><td>ПОЛИХИМПРОМ</td><td>Химия</td><td>Нижнекамск</td><td>Н. Орлова</td><td><span class="badge b-cold">Разовый</span></td><td>1,6 млн</td></tr>
-              <tr><td>БУРИНТЕХ</td><td>Буровой сервис</td><td>Уфа</td><td>А. Сидоров</td><td><span class="badge b-cold">Разовый</span></td><td>1,0 млн</td></tr>
-              <tr><td>Комар эпокси</td><td>Дистрибьютор</td><td>Казань</td><td>И. Петров</td><td><span class="badge b-cold">Разовый</span></td><td>1,3 млн</td></tr>
-              <tr><td>Сургутнефтегаз</td><td>Нефтегаз</td><td>Сургут</td><td>Н. Орлова</td><td><span class="badge b-cold">Разовый</span></td><td>0,5 млн</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="pane" id="pane-contacts">
-      <div class="pane-head">Контакты</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>ФИО</th><th>Компания</th><th>Должность</th><th>Email</th><th>Телефон</th><th>Приоритет</th></tr></thead>
-          <tbody>
-            <tr><td>Абубакиров Ринат</td><td>АО «Технологии ОФС»</td><td>Инженер</td><td>r.abubakirov@ofs.ru</td><td>+7 919 550-35-86</td><td><span class="badge b-active">A</span></td></tr>
-            <tr><td>Фадин Сергей</td><td>АО «Технологии ОФС»</td><td>Нач. участка</td><td>s.fadin@ofs.ru</td><td>+7 912 444-10-22</td><td><span class="badge b-warm">B</span></td></tr>
-            <tr><td>Орлов Максим</td><td>БурСервис</td><td>Закупки</td><td>m.orlov@burservis.ru</td><td>+7 923 700-31-10</td><td><span class="badge b-active">A</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="pane" id="pane-history">
-      <div class="pane-head">История взаимодействия</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Дата</th><th>Компания</th><th>Тип</th><th>Суть</th><th>Менеджер</th></tr></thead>
-          <tbody>
-              <tr><td>12.04.2026</td><td>Халлибуртон/БурСервис</td><td>Email</td><td>Запрос на продолжение поставок Q2 2026</td><td>И. Петров</td></tr>
-              <tr><td>10.04.2026</td><td>Мад-Сервис</td><td>Встреча</td><td>Обсуждение расширения номенклатуры в апреле</td><td>Н. Орлова</td></tr>
-              <tr><td>09.04.2026</td><td>ОМАС</td><td>Звонок</td><td>Уточнение объёмов март, согласование заказа на май</td><td>А. Сидоров</td></tr>
-              <tr><td>07.04.2026</td><td>ССК-Технологии</td><td>Email</td><td>Отправлен счёт за партию февраля, закрыты акты</td><td>И. Петров</td></tr>
-              <tr><td>04.04.2026</td><td>KazPetroDrilling</td><td>Email</td><td>Согласованы условия поставки Реасолт на Q2</td><td>Н. Орлова</td></tr>
-              <tr><td>02.04.2026</td><td>ИНКО-Сервис</td><td>Встреча</td><td>Технический аудит применения ОПТИТРОЛ на скважинах</td><td>А. Сидоров</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="pane" id="pane-funnel">
-      <div class="pane-head">Воронка продаж</div>
-      <div class="funnel">
-          <div class="stage"><h5>Первичный контакт</h5>
-            <div class="deal"><div class="n">Сургутнефтегаз</div><div class="m">Тест Stabilight II</div></div>
-            <div class="deal"><div class="n">БЕЙКЕР ХЬЮЗ</div><div class="m">Оценка UNITROL</div></div>
-          </div>
-          <div class="stage"><h5>КП отправлено</h5>
-            <div class="deal"><div class="n">БУРИНТЕХ</div><div class="m">~0,9 млн</div></div>
-            <div class="deal"><div class="n">ПЕТРОИНЖИНИРИНГ</div><div class="m">~3,1 млн</div></div>
-          </div>
-          <div class="stage"><h5>Переговоры</h5>
-            <div class="deal"><div class="n">KazPetroDrilling</div><div class="m">Q2 Реасолт</div></div>
-            <div class="deal"><div class="n">FWL</div><div class="m">~3,1 млн</div></div>
-          </div>
-          <div class="stage"><h5>Согласование</h5>
-            <div class="deal"><div class="n">ТКШ/Петроальянс</div><div class="m">~5,1 млн</div></div>
-            <div class="deal"><div class="n">АКРОС</div><div class="m">Апр поставка</div></div>
-          </div>
-          <div class="stage"><h5>Активные Q2</h5>
-            <div class="deal"><div class="n">Халлибуртон/БурСервис</div><div class="m">↑ рост объёмов</div></div>
-            <div class="deal"><div class="n">Мад-Сервис</div><div class="m">Плановая отгрузка</div></div>
-            <div class="deal"><div class="n">ОМАС</div><div class="m">Плановая отгрузка</div></div>
-          </div>
-      </div>
-    </section>
-
-    <section class="pane" id="pane-stages">
-      <div class="pane-head">Стадии переговоров</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Сделка</th><th>Компания</th><th>Стадия</th><th>Вероятность</th><th>Сумма</th><th>Следующий шаг</th></tr></thead>
-          <tbody>
-              <tr><td>DL-2601</td><td>Халлибуртон/БурСервис</td><td>Продление контракта Q2</td><td>95%</td><td>18+ млн</td><td>Договор до 15.04</td></tr>
-              <tr><td>DL-2602</td><td>Мад-Сервис</td><td>Расширение SKU</td><td>85%</td><td>8 млн/мес</td><td>КП на MEX-ASR до 14.04</td></tr>
-              <tr><td>DL-2603</td><td>АКРОС</td><td>Q2 поставка</td><td>90%</td><td>7 млн</td><td>Счёт до 13.04</td></tr>
-              <tr><td>DL-2604</td><td>ТКШ/Петроальянс</td><td>Согласование цен 2026</td><td>70%</td><td>5 млн</td><td>Встреча 17.04</td></tr>
-              <tr><td>DL-2605</td><td>KazPetroDrilling</td><td>Объём Q2 Реасолт</td><td>80%</td><td>3 млн</td><td>Email до 13.04</td></tr>
-              <tr><td>DL-2606</td><td>ПЕТРОИНЖИНИРИНГ</td><td>Новый продукт PetroASF</td><td>60%</td><td>3 млн</td><td>Технические тесты</td></tr>
-              <tr><td>DL-2607</td><td>Сургутнефтегаз</td><td>Тест Stabilight II</td><td>40%</td><td>2 млн</td><td>Образцы до 16.04</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="pane" id="pane-leads">
-      <div class="pane-head">Лиды</div>
-      <div class="cards">
-          <div class="card"><h4>Входящих Q1</h4><div class="v" style="color:var(--cyan)">18</div></div>
-          <div class="card"><h4>Стали покупателями</h4><div class="v" style="color:var(--green)">25</div></div>
-          <div class="card"><h4>В работе апрель</h4><div class="v" style="color:var(--gold)">7</div></div>
-          <div class="card"><h4>Конверсия Q1</h4><div class="v" style="color:var(--cyan)">69%</div></div>
-      </div>
-    </section>
-
-    <section class="pane" id="pane-sales">
-      <div class="pane-head">Продажи</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Период</th><th>Выручка</th><th>Сделок</th><th>Средний чек</th><th>Маржа</th></tr></thead>
-          <tbody>
-              <tr><td>Январь 2026</td><td><b>26 935 200 ₽</b></td><td>22</td><td>1 224 тыс</td><td>—</td></tr>
-              <tr><td>Февраль 2026</td><td><b>39 591 660 ₽</b></td><td>23</td><td>1 721 тыс</td><td>—</td></tr>
-              <tr><td>Март 2026</td><td><b>46 585 005 ₽</b></td><td>23</td><td>2 025 тыс</td><td>—</td></tr>
-              <tr style="color:var(--cyan);font-weight:700"><td>Q1 ИТОГО</td><td><b>113 111 865 ₽</b></td><td>68</td><td>1 664 тыс</td><td>—</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="pane" id="pane-analytics">
-      <div class="pane-head">Анализ продаж</div>
-      <div class="bars">
-        <div class="chart-area">
-          <div class="month-bars">
-            <div class="m-card"><h5>Январь 2026</h5><div class="mv" style="color:var(--blue)">26,9 млн ₽</div><div class="ms">22 клиента • 5 млн — ОМАС (лидер)</div></div>
-            <div class="m-card"><h5>Февраль 2026</h5><div class="mv" style="color:var(--gold)">39,6 млн ₽</div><div class="ms">23 клиента • +47% к янв • ССК рост</div></div>
-            <div class="m-card"><h5>Март 2026</h5><div class="mv" style="color:var(--cyan)">46,6 млн ₽</div><div class="ms">23 клиента • +18% к фев • Халлибуртон 18 млн</div></div>
-          </div>
-          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding:0 2px">Топ клиентов — выручка Q1 2026</div>
-          <div class="bar-row"><div class="bar-name">Халлибуртон/БурСервис</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><div class="bar-val">21,0 млн</div></div>
-          <div class="bar-row"><div class="bar-name">Мад-Сервис</div><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><div class="bar-val">20,7 млн</div></div>
-          <div class="bar-row"><div class="bar-name">ОМАС</div><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><div class="bar-val">17,3 млн</div></div>
-          <div class="bar-row"><div class="bar-name">ИНКО-Сервис</div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><div class="bar-val">12,6 млн</div></div>
-          <div class="bar-row"><div class="bar-name">ССК-Технологии</div><div class="bar-track"><div class="bar-fill" style="width:46%"></div></div><div class="bar-val">9,7 млн</div></div>
-          <div class="bar-row"><div class="bar-name">АКРОС</div><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div><div class="bar-val">7,9 млн</div></div>
-          <div class="bar-row"><div class="bar-name">ТКШ / Петроальянс</div><div class="bar-track"><div class="bar-fill" style="width:24%"></div></div><div class="bar-val">5,1 млн</div></div>
-          <div class="bar-row"><div class="bar-name">KazPetroDrilling</div><div class="bar-track"><div class="bar-fill" style="width:16%"></div></div><div class="bar-val">3,3 млн</div></div>
-          <div class="bar-row"><div class="bar-name">ПЕТРОИНЖИНИРИНГ</div><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><div class="bar-val">3,1 млн</div></div>
-          <div class="bar-row"><div class="bar-name">FWL</div><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><div class="bar-val">3,1 млн</div></div>
-          <div class="bar-row"><div class="bar-name">ПОЛИХИМПРОМ</div><div class="bar-track"><div class="bar-fill" style="width:8%"></div></div><div class="bar-val">1,6 млн</div></div>
-          <div class="bar-row"><div class="bar-name">Прочие (14 клиент.)</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">~2,8 млн</div></div>
-      </div>
+      <div class="pane-top">
+        <div class="pane-copy">
+          <h3>Портфель компаний</h3>
+          <p>Основная CRM-таблица теперь показывает не только название клиента и оборот, но и сегмент, владельца аккаунта, следующий шаг и температуру взаимодействия. Это уже ближе к Salesforce-подходу, где строка помогает принимать решение, а не просто хранит данные.</p>
         </div>
+        <div class="pane-chip">14 аккаунтов в фокусе</div>
+      </div>
+
+      <div class="mini-grid">
+        <article class="mini-card"><h4>Active base</h4><div class="big" style="color:var(--green)">6</div><p>Якорные клиенты, которые обеспечивают основную выручку квартала и имеют высокую вероятность повтора.</p></article>
+        <article class="mini-card"><h4>Warm growth</h4><div class="big" style="color:var(--gold)">4</div><p>Клиенты, где нужна структурированная работа по расширению номенклатуры или частоты закупки.</p></article>
+        <article class="mini-card"><h4>One-off / low depth</h4><div class="big" style="color:var(--blue)">4</div><p>Разовые или неглубокие отношения, которые можно либо усилить, либо не тратить на них критический ресурс.</p></article>
+        <article class="mini-card"><h4>Revenue concentration</h4><div class="big" style="color:var(--cyan)">79%</div><p>Топ-6 клиентов дают основную массу квартальной выручки. Средний эшелон стоит выращивать отдельно.</p></article>
+      </div>
+
+      <div class="company-toolbar">
+        <label class="search-shell"><input id="clients-search" type="search" placeholder="Поиск по названию клиента, менеджеру или следующему шагу"></label>
+        <div class="segment-filters" id="segment-filters">
+          <button class="segment-btn active" data-segment="all">Все аккаунты</button>
+          <button class="segment-btn" data-segment="active">Активные</button>
+          <button class="segment-btn" data-segment="warm">Теплые</button>
+          <button class="segment-btn" data-segment="cold">Разовые</button>
+        </div>
+        <button class="btn btn-primary" type="button" id="add-client-button">Добавить клиента</button>
+        <div class="result-pill" id="companies-count">14 аккаунтов</div>
+      </div>
+
+      <div class="table-shell">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Аккаунт</th><th>Сегмент</th><th>Q1 выручка</th><th>Владелец</th><th>Следующий шаг</th><th>Динамика</th></tr></thead>
+            <tbody id="companies-body">
+              <tr data-segment="active" data-search="халлибуртон бурсервис контракт q2 и. петров"><td><div class="account-cell"><div class="avatar">HB</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%A5%D0%B0%D0%BB%D0%BB%D0%B8%D0%B1%D1%83%D1%80%D1%82%D0%BE%D0%BD%20%2F%20%D0%91%D1%83%D1%80%D0%A1%D0%B5%D1%80%D0%B2%D0%B8%D1%81">Халлибуртон / БурСервис</a><div class="account-sub">Ключевой контрактный клиент • глубокая связь с производством и сервисом</div></div></div></td><td><div class="badges"><span class="badge b-active">Активный</span><span class="badge b-plan">Q2 renewal</span></div></td><td><div class="value">21,0 млн ₽</div><div class="muted">Лидер квартала</div></td><td><div class="owner-card"><strong>И. Петров</strong><div class="muted">Enterprise account owner</div></div></td><td><div class="next-step"><strong>Договор до 15.04</strong><div class="muted">Закрыть продление и поднять объемы по новой спецификации</div></div></td><td><div class="momentum"><span class="trend up">↑ +18% к базе</span><div class="muted">Очень высокая вероятность</div></div></td></tr>
+              <tr data-segment="active" data-search="мад сервис расширение sku н. орлова"><td><div class="account-cell"><div class="avatar">MS</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%9C%D0%B0%D0%B4-%D0%A1%D0%B5%D1%80%D0%B2%D0%B8%D1%81">Мад-Сервис</a><div class="account-sub">Один из опорных клиентов, потенциал расширения ассортимента в апреле</div></div></div></td><td><div class="badges"><span class="badge b-active">Активный</span><span class="badge b-plan">Expansion</span></div></td><td><div class="value">20,7 млн ₽</div><div class="muted">Стабильный поток заказов</div></td><td><div class="owner-card"><strong>Н. Орлова</strong><div class="muted">Growth manager</div></div></td><td><div class="next-step"><strong>КП по MEX-ASR</strong><div class="muted">Дожать расширение SKU и закрепить график поставок</div></div></td><td><div class="momentum"><span class="trend up">↑ strong</span><div class="muted">Клиент в зеленой зоне</div></div></td></tr>
+              <tr data-segment="active" data-search="омас майский заказ а. сидоров"><td><div class="account-cell"><div class="avatar">OM</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%9E%D0%9C%D0%90%D0%A1">ОМАС</a><div class="account-sub">Плотный клиент с повторяемым спросом и понятной сезонностью</div></div></div></td><td><div class="badges"><span class="badge b-active">Активный</span></div></td><td><div class="value">17,3 млн ₽</div><div class="muted">Одна из главных опор портфеля</div></td><td><div class="owner-card"><strong>А. Сидоров</strong><div class="muted">Commercial lead</div></div></td><td><div class="next-step"><strong>Согласовать май</strong><div class="muted">Уточнить объемы и зафиксировать следующий заказ</div></div></td><td><div class="momentum"><span class="trend up">↑ repeat</span><div class="muted">Высокая частота касаний</div></div></td></tr>
+              <tr data-segment="active" data-search="инко сервис аудит оптитрол а. сидоров"><td><div class="account-cell"><div class="avatar">IN</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%98%D0%9D%D0%9A%D0%9E-%D0%A1%D0%B5%D1%80%D0%B2%D0%B8%D1%81">ИНКО-Сервис</a><div class="account-sub">Технически чувствительный клиент, хорошо реагирует на предметную инженерную работу</div></div></div></td><td><div class="badges"><span class="badge b-active">Активный</span></div></td><td><div class="value">12,6 млн ₽</div><div class="muted">Надежный средний сегмент</div></td><td><div class="owner-card"><strong>А. Сидоров</strong><div class="muted">Technical sales</div></div></td><td><div class="next-step"><strong>Аудит применения</strong><div class="muted">Закрыть техвопросы и перевести в повторные месячные заказы</div></div></td><td><div class="momentum"><span class="trend up">↑ steady</span><div class="muted">Растет вместе с внедрением</div></div></td></tr>
+              <tr data-segment="active" data-search="сск технологии закрыты акты и. петров"><td><div class="account-cell"><div class="avatar">CT</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%A1%D0%A1%D0%9A-%D0%A2%D0%B5%D1%85%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D0%B8">ССК-Технологии</a><div class="account-sub">Хороший рабочий аккаунт с нормальной скоростью документооборота</div></div></div></td><td><div class="badges"><span class="badge b-active">Активный</span></div></td><td><div class="value">9,7 млн ₽</div><div class="muted">Закрытые акты за февраль</div></td><td><div class="owner-card"><strong>И. Петров</strong><div class="muted">Account manager</div></div></td><td><div class="next-step"><strong>Следующий счет</strong><div class="muted">Подготовить апрельскую волну отгрузок без паузы между циклами</div></div></td><td><div class="momentum"><span class="trend up">↑ positive</span><div class="muted">Низкий риск срыва</div></div></td></tr>
+              <tr data-segment="active" data-search="акрос q2 поставка счет 13.04"><td><div class="account-cell"><div class="avatar">AK</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%90%D0%9A%D0%A0%D0%9E%D0%A1">АКРОС</a><div class="account-sub">Готов к быстрой коммерческой реализации при хорошем сопровождении</div></div></div></td><td><div class="badges"><span class="badge b-active">Активный</span><span class="badge b-plan">Need close</span></div></td><td><div class="value">7,9 млн ₽</div><div class="muted">Важная точка апреля</div></td><td><div class="owner-card"><strong>Н. Орлова</strong><div class="muted">Closing owner</div></div></td><td><div class="next-step"><strong>Счет до 13.04</strong><div class="muted">Закрепить поставку Q2 и провести сделку в заказ</div></div></td><td><div class="momentum"><span class="trend up">↑ hot</span><div class="muted">Высокая вероятность закрытия</div></div></td></tr>
+              <tr data-segment="warm" data-search="ткш петроальянс цены 2026 встреча 17.04"><td><div class="account-cell"><div class="avatar">TP</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%A2%D0%9A%D0%A8%20%2F%20%D0%9F%D0%B5%D1%82%D1%80%D0%BE%D0%B0%D0%BB%D1%8C%D1%8F%D0%BD%D1%81">ТКШ / Петроальянс</a><div class="account-sub">Хороший теплый клиент, но сделка еще нуждается в управляемом дожиме</div></div></div></td><td><div class="badges"><span class="badge b-warm">Теплый</span><span class="badge b-plan">Negotiation</span></div></td><td><div class="value">5,1 млн ₽</div><div class="muted">Потенциал роста в 2026</div></td><td><div class="owner-card"><strong>И. Петров</strong><div class="muted">Negotiation lead</div></div></td><td><div class="next-step"><strong>Встреча 17.04</strong><div class="muted">Снять вопрос по цене и перейти к графику закупки</div></div></td><td><div class="momentum"><span class="trend mid">→ 70%</span><div class="muted">Нужно ускорение</div></div></td></tr>
+              <tr data-segment="warm" data-search="kazpetrodrilling q2 реасолт email н. орлова"><td><div class="account-cell"><div class="avatar">KP</div><div class="account-main"><a class="account-link" href="client-card.html?company=KazPetroDrilling">KazPetroDrilling</a><div class="account-sub">Перспективный международный аккаунт, где важна аккуратная последовательность касаний</div></div></div></td><td><div class="badges"><span class="badge b-warm">Теплый</span></div></td><td><div class="value">3,3 млн ₽</div><div class="muted">Окно роста в Q2</div></td><td><div class="owner-card"><strong>Н. Орлова</strong><div class="muted">Regional growth</div></div></td><td><div class="next-step"><strong>Email до 13.04</strong><div class="muted">Зафиксировать объем по Реасолт и подтянуть решение по срокам</div></div></td><td><div class="momentum"><span class="trend mid">→ 80%</span><div class="muted">Теплый, но не закрытый</div></div></td></tr>
+              <tr data-segment="warm" data-search="петроинжиниринг petroasf технические тесты"><td><div class="account-cell"><div class="avatar">PE</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%9F%D0%95%D0%A2%D0%A0%D0%9E%D0%98%D0%9D%D0%96%D0%98%D0%9D%D0%98%D0%A0%D0%98%D0%9D%D0%93">ПЕТРОИНЖИНИРИНГ</a><div class="account-sub">Новый продукт может открыть регулярный канал, но решение держится на тестах</div></div></div></td><td><div class="badges"><span class="badge b-warm">Теплый</span><span class="badge b-plan">Pilot</span></div></td><td><div class="value">3,1 млн ₽</div><div class="muted">Потенциал нового SKU</div></td><td><div class="owner-card"><strong>А. Сидоров</strong><div class="muted">Technical development</div></div></td><td><div class="next-step"><strong>Техтесты</strong><div class="muted">Перевести лабораторный интерес в закупочное обязательство</div></div></td><td><div class="momentum"><span class="trend mid">→ 60%</span><div class="muted">Зависит от тестов</div></div></td></tr>
+              <tr data-segment="warm" data-search="fwl прогрев коммерческий трек"><td><div class="account-cell"><div class="avatar">FW</div><div class="account-main"><a class="account-link" href="client-card.html?company=FWL">FWL</a><div class="account-sub">Нуждается в системном прогреве, чтобы не остаться единичной историей</div></div></div></td><td><div class="badges"><span class="badge b-warm">Теплый</span></div></td><td><div class="value">3,1 млн ₽</div><div class="muted">Можно углублять отношения</div></td><td><div class="owner-card"><strong>И. Петров</strong><div class="muted">Relationship owner</div></div></td><td><div class="next-step"><strong>Коммерческий follow-up</strong><div class="muted">Подтянуть решение по следующей партии и сервисному сценарию</div></div></td><td><div class="momentum"><span class="trend mid">→ watch</span><div class="muted">Нужно не отпускать</div></div></td></tr>
+              <tr data-segment="cold" data-search="полихимпром разовый клиент реактивация"><td><div class="account-cell"><div class="avatar">PH</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%9F%D0%9E%D0%9B%D0%98%D0%A5%D0%98%D0%9C%D0%9F%D0%A0%D0%9E%D0%9C">ПОЛИХИМПРОМ</a><div class="account-sub">Разовая покупка, relationship depth низкая</div></div></div></td><td><div class="badges"><span class="badge b-cold">Разовый</span><span class="badge b-risk">Need revive</span></div></td><td><div class="value">1,6 млн ₽</div><div class="muted">Небольшой вклад, без системы</div></td><td><div class="owner-card"><strong>Н. Орлова</strong><div class="muted">Revival queue</div></div></td><td><div class="next-step"><strong>Реактивационный звонок</strong><div class="muted">Понять, есть ли окно на повторный спрос в Q2</div></div></td><td><div class="momentum"><span class="trend down">↓ low</span><div class="muted">Низкая предсказуемость</div></div></td></tr>
+              <tr data-segment="cold" data-search="буринтех оценка unitrol образцы"><td><div class="account-cell"><div class="avatar">BT</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%91%D0%A3%D0%A0%D0%98%D0%9D%D0%A2%D0%95%D0%A5">БУРИНТЕХ</a><div class="account-sub">Есть интерес, но клиент пока не перешел из оценки в системную закупку</div></div></div></td><td><div class="badges"><span class="badge b-cold">Разовый</span></div></td><td><div class="value">1,0 млн ₽</div><div class="muted">Сделка в тонком слое</div></td><td><div class="owner-card"><strong>А. Сидоров</strong><div class="muted">Evaluation owner</div></div></td><td><div class="next-step"><strong>Оценка UNITROL</strong><div class="muted">Перевести тестовый интерес в конкретный объем</div></div></td><td><div class="momentum"><span class="trend down">↓ weak</span><div class="muted">Требуется новая причина покупки</div></div></td></tr>
+              <tr data-segment="cold" data-search="комар эпокси разовый проект"><td><div class="account-cell"><div class="avatar">KE</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%9A%D0%BE%D0%BC%D0%B0%D1%80%20%D1%8D%D0%BF%D0%BE%D0%BA%D1%81%D0%B8">Комар эпокси</a><div class="account-sub">Разовый проект без сформированной повторяемости</div></div></div></td><td><div class="badges"><span class="badge b-cold">Разовый</span></div></td><td><div class="value">1,3 млн ₽</div><div class="muted">Нужен сценарий закрепления</div></td><td><div class="owner-card"><strong>И. Петров</strong><div class="muted">Project account</div></div></td><td><div class="next-step"><strong>Повторный контакт</strong><div class="muted">Проверить следующий цикл потребления и сервисные боли</div></div></td><td><div class="momentum"><span class="trend down">↓ uncertain</span><div class="muted">Нет понятной повторности</div></div></td></tr>
+              <tr data-segment="cold" data-search="сургутнефтегаз stabilight тест образцы"><td><div class="account-cell"><div class="avatar">SN</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%A1%D1%83%D1%80%D0%B3%D1%83%D1%82%D0%BD%D0%B5%D1%84%D1%82%D0%B5%D0%B3%D0%B0%D0%B7">Сургутнефтегаз</a><div class="account-sub">Большое имя, но фактическая глубина отношений пока минимальна</div></div></div></td><td><div class="badges"><span class="badge b-cold">Разовый</span><span class="badge b-risk">High attention</span></div></td><td><div class="value">0,5 млн ₽</div><div class="muted">Пока стадия оценки</div></td><td><div class="owner-card"><strong>Н. Орлова</strong><div class="muted">Strategic prospect</div></div></td><td><div class="next-step"><strong>Образцы до 16.04</strong><div class="muted">Нужен плотный post-sample follow-up после теста</div></div></td><td><div class="momentum"><span class="trend down">↓ 40%</span><div class="muted">Нужно сопровождение вручную</div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="empty-state" id="companies-empty" hidden>Нет клиентов по текущему фильтру. Снимите фильтр или измените поисковый запрос.</div>
     </section>
+
+    <section class="pane" id="pane-contacts"><div class="pane-top"><div class="pane-copy"><h3>Контактная база</h3><p>Ключевые контакты с выделением приоритета, чтобы было видно, кому можно писать по текущим коммерческим задачам без лишнего поиска.</p></div><div class="pane-chip">Контакты уровня A/B</div></div><div class="table-shell table-wrap"><table><thead><tr><th>Контакт</th><th>Компания</th><th>Роль</th><th>Email</th><th>Телефон</th><th>Приоритет</th></tr></thead><tbody><tr><td><strong>Абубакиров Ринат</strong><div class="muted">технический контакт</div></td><td>АО «Технологии ОФС»</td><td>Инженер</td><td>r.abubakirov@ofs.ru</td><td>+7 919 550-35-86</td><td><span class="badge b-active">A</span></td></tr><tr><td><strong>Фадин Сергей</strong><div class="muted">операционный контур</div></td><td>АО «Технологии ОФС»</td><td>Нач. участка</td><td>s.fadin@ofs.ru</td><td>+7 912 444-10-22</td><td><span class="badge b-warm">B</span></td></tr><tr><td><strong>Орлов Максим</strong><div class="muted">коммерческий вход</div></td><td>БурСервис</td><td>Закупки</td><td>m.orlov@burservis.ru</td><td>+7 923 700-31-10</td><td><span class="badge b-active">A</span></td></tr></tbody></table></div></section>
+
+    <section class="pane" id="pane-history"><div class="pane-top"><div class="pane-copy"><h3>История взаимодействия</h3><p>Последние заметные касания по ключевым аккаунтам: видно, кто был в контакте, по какому поводу и какой менеджер ведет следующий шаг.</p></div><div class="pane-chip">Последние активности</div></div><div class="table-shell table-wrap"><table><thead><tr><th>Дата</th><th>Компания</th><th>Канал</th><th>Суть</th><th>Менеджер</th></tr></thead><tbody><tr><td>12.04.2026</td><td>Халлибуртон / БурСервис</td><td>Email</td><td>Запрос на продолжение поставок Q2 2026</td><td>И. Петров</td></tr><tr><td>10.04.2026</td><td>Мад-Сервис</td><td>Встреча</td><td>Обсуждение расширения номенклатуры в апреле</td><td>Н. Орлова</td></tr><tr><td>09.04.2026</td><td>ОМАС</td><td>Звонок</td><td>Уточнение объемов марта и согласование заказа на май</td><td>А. Сидоров</td></tr><tr><td>07.04.2026</td><td>ССК-Технологии</td><td>Email</td><td>Отправлен счет за февральскую партию, закрыты акты</td><td>И. Петров</td></tr><tr><td>04.04.2026</td><td>KazPetroDrilling</td><td>Email</td><td>Согласованы условия поставки Реасолт на Q2</td><td>Н. Орлова</td></tr><tr><td>02.04.2026</td><td>ИНКО-Сервис</td><td>Встреча</td><td>Технический аудит применения ОПТИТРОЛ на скважинах</td><td>А. Сидоров</td></tr></tbody></table></div></section>
+
+    <section class="pane" id="pane-funnel"><div class="pane-top"><div class="pane-copy"><h3>Воронка продаж</h3><p>Визуальная раскладка по этапам, чтобы быстро понимать, где именно лежит потенциальная выручка и какие сделки нельзя оставлять без движения.</p></div><div class="pane-chip">Pipeline by stage</div></div><div class="funnel-grid"><article class="stage-card"><h4>Первичный контакт</h4><div class="deal"><strong>Сургутнефтегаз</strong><span>Тест Stabilight II</span></div><div class="deal"><strong>БЕЙКЕР ХЬЮЗ</strong><span>Оценка UNITROL</span></div></article><article class="stage-card"><h4>КП отправлено</h4><div class="deal"><strong>БУРИНТЕХ</strong><span>~0,9 млн ₽</span></div><div class="deal"><strong>ПЕТРОИНЖИНИРИНГ</strong><span>~3,1 млн ₽</span></div></article><article class="stage-card"><h4>Переговоры</h4><div class="deal"><strong>KazPetroDrilling</strong><span>Q2 Реасолт</span></div><div class="deal"><strong>FWL</strong><span>~3,1 млн ₽</span></div></article><article class="stage-card"><h4>Согласование</h4><div class="deal"><strong>ТКШ / Петроальянс</strong><span>~5,1 млн ₽</span></div><div class="deal"><strong>АКРОС</strong><span>Апрельская поставка</span></div></article><article class="stage-card"><h4>Активные Q2</h4><div class="deal"><strong>Халлибуртон / БурСервис</strong><span>Рост объемов</span></div><div class="deal"><strong>Мад-Сервис</strong><span>Плановая отгрузка</span></div><div class="deal"><strong>ОМАС</strong><span>Плановая отгрузка</span></div></article></div></section>
+
+    <section class="pane" id="pane-stages"><div class="pane-top"><div class="pane-copy"><h3>Стадии переговоров</h3><p>Рабочий список сделок с вероятностью и следующим шагом. Это уже ближе к нормальному pipeline view, чем стандартная ведомость.</p></div><div class="pane-chip">Deal inspection</div></div><div class="table-shell table-wrap"><table><thead><tr><th>Сделка</th><th>Компания</th><th>Стадия</th><th>Вероятность</th><th>Сумма</th><th>Следующий шаг</th></tr></thead><tbody><tr><td>DL-2601</td><td>Халлибуртон / БурСервис</td><td>Продление контракта Q2</td><td>95%</td><td>18+ млн ₽</td><td>Договор до 15.04</td></tr><tr><td>DL-2602</td><td>Мад-Сервис</td><td>Расширение SKU</td><td>85%</td><td>8 млн ₽ / мес</td><td>КП на MEX-ASR до 14.04</td></tr><tr><td>DL-2603</td><td>АКРОС</td><td>Q2 поставка</td><td>90%</td><td>7 млн ₽</td><td>Счет до 13.04</td></tr><tr><td>DL-2604</td><td>ТКШ / Петроальянс</td><td>Согласование цен 2026</td><td>70%</td><td>5 млн ₽</td><td>Встреча 17.04</td></tr><tr><td>DL-2605</td><td>KazPetroDrilling</td><td>Объем Q2 Реасолт</td><td>80%</td><td>3 млн ₽</td><td>Email до 13.04</td></tr><tr><td>DL-2606</td><td>ПЕТРОИНЖИНИРИНГ</td><td>Новый продукт PetroASF</td><td>60%</td><td>3 млн ₽</td><td>Технические тесты</td></tr><tr><td>DL-2607</td><td>Сургутнефтегаз</td><td>Тест Stabilight II</td><td>40%</td><td>2 млн ₽</td><td>Образцы до 16.04</td></tr></tbody></table></div></section>
+
+    <section class="pane" id="pane-leads"><div class="pane-top"><div class="pane-copy"><h3>Лиды и конверсия</h3><p>Компактный блок, который показывает, насколько хорошо верх воронки превращается в оплаченные аккаунты и где нужно дорабатывать lead management.</p></div><div class="pane-chip">Lead health</div></div><div class="mini-grid"><article class="mini-card"><h4>Входящих Q1</h4><div class="big" style="color:var(--cyan)">18</div><p>Количество новых входов, появившихся в первом квартале.</p></article><article class="mini-card"><h4>Стали покупателями</h4><div class="big" style="color:var(--green)">25</div><p>Общее число клиентов, совершивших покупки в квартале.</p></article><article class="mini-card"><h4>В работе апрель</h4><div class="big" style="color:var(--gold)">7</div><p>Наиболее важные лиды, которые сейчас в активной коммерческой обработке.</p></article><article class="mini-card"><h4>Конверсия Q1</h4><div class="big" style="color:var(--blue)">69%</div><p>Ориентир по качеству лида и скорости прохождения верхней части воронки.</p></article></div></section>
+
+    <section class="pane" id="pane-sales"><div class="pane-top"><div class="pane-copy"><h3>Продажи</h3><p>Финансовый срез по месяцам с акцентом на выручку, число сделок и средний чек. Нужен для быстрой сверки коммерческого ритма.</p></div><div class="pane-chip">Revenue table</div></div><div class="table-shell table-wrap"><table><thead><tr><th>Период</th><th>Выручка</th><th>Сделок</th><th>Средний чек</th><th>Маржа</th></tr></thead><tbody><tr><td>Январь 2026</td><td><strong>26 935 200 ₽</strong></td><td>22</td><td>1 224 тыс ₽</td><td>—</td></tr><tr><td>Февраль 2026</td><td><strong>39 591 660 ₽</strong></td><td>23</td><td>1 721 тыс ₽</td><td>—</td></tr><tr><td>Март 2026</td><td><strong>46 585 005 ₽</strong></td><td>23</td><td>2 025 тыс ₽</td><td>—</td></tr><tr><td><strong>Q1 Итого</strong></td><td><strong style="color:var(--cyan)">113 111 865 ₽</strong></td><td>68</td><td>1 664 тыс ₽</td><td>—</td></tr></tbody></table></div></section>
+
+    <section class="pane" id="pane-analytics"><div class="pane-top"><div class="pane-copy"><h3>Коммерческая аналитика</h3><p>Квартальная картина по месяцам и распределение выручки по клиентам. Это не BI-система, но визуально уже работает как верхнеуровневый CRM dashboard.</p></div><div class="pane-chip">Portfolio analytics</div></div><div class="month-bars"><article class="month-card"><h4>Январь 2026</h4><div class="big" style="color:var(--blue)">26,9 млн ₽</div><p>22 клиента • лидер месяца ОМАС • формирование базы квартала.</p></article><article class="month-card"><h4>Февраль 2026</h4><div class="big" style="color:var(--gold)">39,6 млн ₽</div><p>23 клиента • +47% к январю • усилился средний сегмент.</p></article><article class="month-card"><h4>Март 2026</h4><div class="big" style="color:var(--cyan)">46,6 млн ₽</div><p>23 клиента • +18% к февралю • Халлибуртон / БурСервис дал основной вклад.</p></article></div><div class="bars"><div class="bar-row"><div class="bar-name">Халлибуртон / БурСервис</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><div class="bar-val">21,0 млн</div></div><div class="bar-row"><div class="bar-name">Мад-Сервис</div><div class="bar-track"><div class="bar-fill" style="width:98%"></div></div><div class="bar-val">20,7 млн</div></div><div class="bar-row"><div class="bar-name">ОМАС</div><div class="bar-track"><div class="bar-fill" style="width:82%"></div></div><div class="bar-val">17,3 млн</div></div><div class="bar-row"><div class="bar-name">ИНКО-Сервис</div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><div class="bar-val">12,6 млн</div></div><div class="bar-row"><div class="bar-name">ССК-Технологии</div><div class="bar-track"><div class="bar-fill" style="width:46%"></div></div><div class="bar-val">9,7 млн</div></div><div class="bar-row"><div class="bar-name">АКРОС</div><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div><div class="bar-val">7,9 млн</div></div><div class="bar-row"><div class="bar-name">ТКШ / Петроальянс</div><div class="bar-track"><div class="bar-fill" style="width:24%"></div></div><div class="bar-val">5,1 млн</div></div><div class="bar-row"><div class="bar-name">KazPetroDrilling</div><div class="bar-track"><div class="bar-fill" style="width:16%"></div></div><div class="bar-val">3,3 млн</div></div><div class="bar-row"><div class="bar-name">ПЕТРОИНЖИНИРИНГ</div><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><div class="bar-val">3,1 млн</div></div><div class="bar-row"><div class="bar-name">FWL</div><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><div class="bar-val">3,1 млн</div></div><div class="bar-row"><div class="bar-name">ПОЛИХИМПРОМ</div><div class="bar-track"><div class="bar-fill" style="width:8%"></div></div><div class="bar-val">1,6 млн</div></div><div class="bar-row"><div class="bar-name">Прочие</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">~2,8 млн</div></div></div></section>
+  </div>
+
+  <div class="modal-overlay" id="add-client-modal">
+    <div class="modal-card">
+      <div class="modal-title">Добавить клиента</div>
+      <div class="modal-copy">Введите название нового клиента. После этого откроется его карточка, где можно заполнить профиль компании, контакты и продукты.</div>
+      <div class="modal-field">
+        <label class="modal-label" for="new-client-name">Название клиента</label>
+        <input class="modal-input" id="new-client-name" type="text" placeholder="Например, Новая буровая компания" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cancel-add-client-button">Отмена</button>
+        <button class="btn btn-primary" type="button" id="confirm-add-client-button">Открыть карточку</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    (function(){
+    (function () {
       var tabs = document.querySelectorAll('.tab');
       var panes = document.querySelectorAll('.pane');
-      tabs.forEach(function(tab){
-        tab.addEventListener('click', function(){
-          tabs.forEach(function(t){ t.classList.remove('active'); });
-          panes.forEach(function(p){ p.classList.remove('active'); });
+      var searchInput = document.getElementById('clients-search');
+      var segmentButtons = document.querySelectorAll('.segment-btn');
+      var companyRows = document.querySelectorAll('#companies-body tr');
+      var companiesCount = document.getElementById('companies-count');
+      var emptyState = document.getElementById('companies-empty');
+      var addClientButton = document.getElementById('add-client-button');
+      var addClientModal = document.getElementById('add-client-modal');
+      var newClientNameInput = document.getElementById('new-client-name');
+      var cancelAddClientButton = document.getElementById('cancel-add-client-button');
+      var confirmAddClientButton = document.getElementById('confirm-add-client-button');
+      var activeSegment = 'all';
+
+      function normalize(value) {
+        return String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      }
+
+      function updateCompanyView() {
+        var query = normalize(searchInput ? searchInput.value : '');
+        var visible = 0;
+
+        companyRows.forEach(function (row) {
+          var segment = row.getAttribute('data-segment') || 'all';
+          var haystack = normalize(row.getAttribute('data-search') || row.textContent);
+          var bySegment = activeSegment === 'all' || segment === activeSegment;
+          var bySearch = !query || haystack.indexOf(query) !== -1;
+          var show = bySegment && bySearch;
+          row.style.display = show ? '' : 'none';
+          if (show) visible += 1;
+        });
+
+        companiesCount.textContent = visible + ' аккаунтов';
+        emptyState.hidden = visible !== 0;
+      }
+
+      function openAddClientModal() {
+        if (!addClientModal) return;
+        addClientModal.classList.add('open');
+        if (newClientNameInput) {
+          newClientNameInput.value = '';
+          newClientNameInput.focus();
+        }
+      }
+
+      function closeAddClientModal() {
+        if (!addClientModal) return;
+        addClientModal.classList.remove('open');
+      }
+
+      function submitNewClient() {
+        var companyName = (newClientNameInput ? newClientNameInput.value : '').trim();
+        if (!companyName) {
+          if (newClientNameInput) newClientNameInput.focus();
+          return;
+        }
+
+        window.location.href = 'client-card.html#company=' + encodeURIComponent(companyName);
+      }
+
+      function normalizeClientLinks() {
+        document.querySelectorAll('a[href^="client-card.html?company="]').forEach(function (link) {
+          link.href = link.href.replace('client-card.html?company=', 'client-card.html#company=');
+        });
+      }
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          tabs.forEach(function (item) { item.classList.remove('active'); });
+          panes.forEach(function (pane) { pane.classList.remove('active'); });
           tab.classList.add('active');
-          var id = 'pane-' + tab.getAttribute('data-pane');
-          var pane = document.getElementById(id);
+          var pane = document.getElementById('pane-' + tab.getAttribute('data-pane'));
           if (pane) pane.classList.add('active');
         });
       });
+
+      segmentButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          segmentButtons.forEach(function (item) { item.classList.remove('active'); });
+          button.classList.add('active');
+          activeSegment = button.getAttribute('data-segment') || 'all';
+          updateCompanyView();
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', updateCompanyView);
+      }
+
+      if (addClientButton) {
+        addClientButton.addEventListener('click', openAddClientModal);
+      }
+
+      if (cancelAddClientButton) {
+        cancelAddClientButton.addEventListener('click', closeAddClientModal);
+      }
+
+      if (confirmAddClientButton) {
+        confirmAddClientButton.addEventListener('click', submitNewClient);
+      }
+
+      if (newClientNameInput) {
+        newClientNameInput.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') submitNewClient();
+          if (event.key === 'Escape') closeAddClientModal();
+        });
+      }
+
+      if (addClientModal) {
+        addClientModal.addEventListener('click', function (event) {
+          if (event.target === addClientModal) closeAddClientModal();
+        });
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeAddClientModal();
+      });
+
+      normalizeClientLinks();
+      updateCompanyView();
     })();
   </script>
 </body>

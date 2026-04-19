@@ -331,6 +331,10 @@
 
         <div class="header-grid">
           <div class="header-row">
+            <strong>Номер заявки:</strong>
+            <input id="request-number" readonly>
+          </div>
+          <div class="header-row">
             <strong>Подразделение Заявителя:</strong>
             <input id="applicant-department" value="Коммерческий отдел" oninput="syncPreview()">
           </div>
@@ -433,6 +437,7 @@
 
   <script>
     var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
+    var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
 
     function readStorageArray(key) {
       try {
@@ -454,6 +459,97 @@
     function getDefaultRequestNumber() {
       var existing = readStorageArray(PRODUCTION_ORDERS_KEY).length + 1;
       return '№' + String(existing).padStart(3, '0');
+    }
+
+    function getExistingRequest(requestNumber) {
+      return readStorageArray(PRODUCTION_ORDERS_KEY).filter(function(item) {
+        return String(item && item.requestNumber || '') === String(requestNumber || '');
+      })[0] || null;
+    }
+
+    function getExistingOrder(orderNumber) {
+      return readStorageArray(NEW_ORDERS_KEY).filter(function(item) {
+        return normalizeValue(item && item.number) === normalizeValue(orderNumber);
+      })[0] || null;
+    }
+
+    function normalizeValue(value) {
+      return String(value || '').trim().toLowerCase();
+    }
+
+    function resolveSourceOrderNumber(orderSpecification) {
+      var explicitOrder = new URLSearchParams(window.location.search).get('order');
+      if (explicitOrder) return explicitOrder;
+      if (!orderSpecification) return '';
+
+      var specification = String(orderSpecification || '');
+      var newOrders = readStorageArray(NEW_ORDERS_KEY);
+      var matched = newOrders.filter(function(item) {
+        var orderNumber = String(item && item.number || '');
+        return orderNumber && specification.indexOf(orderNumber) >= 0;
+      })[0];
+
+      return matched && matched.number ? matched.number : '';
+    }
+
+    function fillField(id, value) {
+      document.getElementById(id).value = value || '';
+    }
+
+    function loadExistingRequest(payload) {
+      if (!payload) return;
+      fillField('request-number', payload.requestNumber);
+      fillField('applicant-department', payload.applicantDepartment);
+      fillField('applicant-name', payload.applicantName);
+      fillField('posted-date', payload.postedDate);
+      fillField('nomenclature-1c', payload.nomenclature1c);
+      fillField('company-receiver', payload.companyReceiver);
+      fillField('product-name', payload.productName);
+      fillField('recipe', payload.recipe);
+      fillField('order-specification', payload.orderSpecification);
+      fillField('shipment-date', payload.shipmentDate);
+      fillField('volume', payload.volume);
+      fillField('batch-number', payload.batchNumber);
+      fillField('package-type', payload.packageType);
+      fillField('package-weight', payload.packageWeight);
+      fillField('packages-per-pallet', payload.packagesPerPallet);
+      fillField('label-availability', payload.labelAvailability);
+      fillField('special-requirements', payload.specialRequirements);
+      fillField('notes', payload.notes);
+    }
+
+    function prefillFromOrder(order) {
+      if (!order) return;
+      fillField('company-receiver', order.buyer && order.buyer.name);
+      fillField('order-specification', order.number);
+      fillField('shipment-date', order.lines && order.lines[0] && order.lines[0].deliveryDate ? order.lines[0].deliveryDate : order.date);
+      fillField('volume', String((order.lines || []).reduce(function(sum, line) {
+        return sum + Number(line && line.tons || 0);
+      }, 0)).replace('.', ',') + ' т');
+      fillField('product-name', order.lines && order.lines[0] && order.lines[0].productName);
+      fillField('package-type', order.lines && order.lines[0] && order.lines[0].unitLabel);
+      if (!document.getElementById('notes').value.trim()) {
+        fillField('notes', order.comment || '');
+      }
+    }
+
+    function syncSalesOrderSentToProduction(payload) {
+      var sourceOrderNumber = payload && payload.sourceOrderNumber;
+      if (!sourceOrderNumber) return;
+
+      var newOrders = readStorageArray(NEW_ORDERS_KEY);
+      var orderIndex = newOrders.findIndex(function(item) {
+        return normalizeValue(item && item.number) === normalizeValue(sourceOrderNumber);
+      });
+      if (orderIndex < 0) return;
+
+      newOrders[orderIndex] = Object.assign({}, newOrders[orderIndex], {
+        productionRequestNumber: payload.requestNumber || '',
+        productionStage: 'sent',
+        productionStageLabel: 'Заказ отправлен на производство',
+        productionStageUpdatedAt: new Date().toISOString()
+      });
+      writeStorageArray(NEW_ORDERS_KEY, newOrders);
     }
 
     function syncPreview() {
@@ -487,6 +583,7 @@
         labelAvailability: document.getElementById('label-availability').value.trim(),
         specialRequirements: document.getElementById('special-requirements').value.trim(),
         notes: document.getElementById('notes').value.trim(),
+        sourceOrderNumber: resolveSourceOrderNumber(document.getElementById('order-specification').value.trim()),
         createdAt: new Date().toISOString()
       };
     }
@@ -508,23 +605,34 @@
       });
 
       if (index >= 0) {
-        items[index] = payload;
+        items[index] = Object.assign({}, items[index], payload, {
+          sourceOrderNumber: payload.sourceOrderNumber || items[index].sourceOrderNumber || ''
+        });
       } else {
         items.unshift(payload);
       }
 
       writeStorageArray(PRODUCTION_ORDERS_KEY, items.slice(0, 200));
-      window.location.href = 'production-orders.html';
+      syncSalesOrderSentToProduction(payload);
+
+      var returnTo = new URLSearchParams(window.location.search).get('returnTo');
+      if (returnTo === 'sales-new-orders') {
+        window.location.href = 'sales-new-orders.html?productionSent=' + encodeURIComponent(payload.sourceOrderNumber || '');
+        return;
+      }
+
+      window.location.href = 'production-orders.html?created=' + encodeURIComponent(payload.requestNumber || '');
     }
 
     (function init() {
-      var defaultNumber = getDefaultRequestNumber();
-      var requestNumberInput = document.createElement('input');
-      requestNumberInput.type = 'hidden';
-      requestNumberInput.id = 'request-number';
-      requestNumberInput.value = defaultNumber;
-      document.body.appendChild(requestNumberInput);
-      document.getElementById('posted-date').value = getTodayIso();
+      var requestFromUrl = new URLSearchParams(window.location.search).get('request');
+      var orderFromUrl = new URLSearchParams(window.location.search).get('order');
+      var existingRequest = requestFromUrl ? getExistingRequest(requestFromUrl) : null;
+      var existingOrder = orderFromUrl ? getExistingOrder(orderFromUrl) : null;
+      document.getElementById('request-number').value = existingRequest && existingRequest.requestNumber ? existingRequest.requestNumber : getDefaultRequestNumber();
+      document.getElementById('posted-date').value = existingRequest && existingRequest.postedDate ? existingRequest.postedDate : getTodayIso();
+      if (existingRequest) loadExistingRequest(existingRequest);
+      if (!existingRequest && existingOrder) prefillFromOrder(existingOrder);
       document.getElementById('saved-count').textContent = String(readStorageArray(PRODUCTION_ORDERS_KEY).length);
       syncPreview();
     })();

@@ -136,6 +136,31 @@
 
     .btn:hover { transform: translateY(-1px); background: var(--surface2); }
     .btn.primary { color: var(--gold); background: rgba(245, 201, 95, 0.14); border-color: rgba(245, 201, 95, 0.24); }
+    .btn.stage {
+      min-height: 34px;
+      padding: 8px 10px;
+      font-size: 11px;
+      border-radius: 10px;
+    }
+    .btn.stage-accepted {
+      color: #8ad7ff;
+      border-color: rgba(126, 191, 255, 0.24);
+      background: rgba(126, 191, 255, 0.12);
+    }
+    .btn.stage-produced {
+      color: #f5c95f;
+      border-color: rgba(245, 201, 95, 0.26);
+      background: rgba(245, 201, 95, 0.12);
+    }
+    .btn.stage-warehouse {
+      color: #72d89a;
+      border-color: rgba(114, 216, 154, 0.26);
+      background: rgba(114, 216, 154, 0.12);
+    }
+    .btn.stage.active {
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      transform: translateY(-1px);
+    }
 
     .hero-side {
       display: grid;
@@ -265,6 +290,7 @@
 
     tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
     tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+    .clickable-row { cursor: pointer; }
 
     .table-main {
       display: grid;
@@ -280,6 +306,16 @@
       color: var(--muted);
       font-size: 11px;
       line-height: 1.55;
+    }
+
+    .actions-cell {
+      min-width: 270px;
+    }
+
+    .status-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .empty-state {
@@ -306,6 +342,12 @@
   <div class="bg-grid"></div>
 
   <div class="wrap">
+    <div class="status-bar" id="status-bar" style="display:none;margin-bottom:14px;">
+      <div class="mini-title">Новая заявка</div>
+      <strong id="status-title">Заявка отправлена</strong>
+      <p id="status-copy">Заявка добавлена в реестр производства.</p>
+    </div>
+
     <section class="hero">
       <div>
         <div class="eyebrow">Production Requests</div>
@@ -370,6 +412,7 @@
               <th>Продукция</th>
               <th>Отгрузка</th>
               <th>Объем</th>
+              <th>Действия</th>
             </tr>
           </thead>
           <tbody id="production-orders-body"></tbody>
@@ -380,6 +423,7 @@
 
   <script>
     var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
+    var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
 
     function readStorageArray(key) {
       try {
@@ -388,6 +432,14 @@
       } catch (error) {
         return [];
       }
+    }
+
+    function writeStorageArray(key, items) {
+      localStorage.setItem(key, JSON.stringify(items));
+    }
+
+    function normalizeValue(value) {
+      return String(value || '').trim().toLowerCase();
     }
 
     function escapeHtml(value) {
@@ -408,6 +460,89 @@
       return value;
     }
 
+    function showCreatedStatus() {
+      var created = new URLSearchParams(window.location.search).get('created');
+      if (!created) return;
+      var bar = document.getElementById('status-bar');
+      document.getElementById('status-title').textContent = 'Заявка ' + created + ' отправлена';
+      document.getElementById('status-copy').textContent = 'Заявка ' + created + ' добавлена в реестр производства и видна в таблице ниже.';
+      bar.style.display = 'block';
+    }
+
+    function getStageLabel(stage) {
+      if (stage === 'accepted') return 'Заказ принят';
+      if (stage === 'produced') return 'Заказ произведен';
+      if (stage === 'warehouse') return 'Заказ отправлен на склад';
+      return 'Новая заявка';
+    }
+
+    function getCommercialStageLabel(stage) {
+      if (stage === 'accepted') return 'Заказ принят производством';
+      if (stage === 'produced') return 'Заказ произведен';
+      if (stage === 'warehouse') return 'Заказ отправлен на склад';
+      return 'Новая заявка';
+    }
+
+    function resolveSourceOrderNumber(order) {
+      if (order && order.sourceOrderNumber) return String(order.sourceOrderNumber);
+      if (!order || !order.orderSpecification) return '';
+
+      var specification = String(order.orderSpecification || '');
+      var newOrders = readStorageArray(NEW_ORDERS_KEY);
+      var matched = newOrders.filter(function(item) {
+        var orderNumber = String(item && item.number || '');
+        return orderNumber && specification.indexOf(orderNumber) >= 0;
+      })[0];
+
+      return matched && matched.number ? String(matched.number) : '';
+    }
+
+    function syncCommercialOrderStage(order, stage) {
+      var sourceOrderNumber = resolveSourceOrderNumber(order);
+      if (!sourceOrderNumber) return;
+
+      var newOrders = readStorageArray(NEW_ORDERS_KEY);
+      var orderIndex = newOrders.findIndex(function(item) {
+        return normalizeValue(item && item.number) === normalizeValue(sourceOrderNumber);
+      });
+      if (orderIndex < 0) return;
+
+      newOrders[orderIndex] = Object.assign({}, newOrders[orderIndex], {
+        productionRequestNumber: order.requestNumber || '',
+        productionStage: stage,
+        productionStageLabel: getCommercialStageLabel(stage),
+        productionStageUpdatedAt: new Date().toISOString()
+      });
+      writeStorageArray(NEW_ORDERS_KEY, newOrders);
+    }
+
+    function setStage(requestNumber, stage, event) {
+      if (event) event.stopPropagation();
+      var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
+      var orderIndex = orders.findIndex(function(item) {
+        return String(item && item.requestNumber || '') === String(requestNumber || '');
+      });
+      if (orderIndex < 0) return;
+
+      orders[orderIndex] = Object.assign({}, orders[orderIndex], {
+        productionStage: stage,
+        stageUpdatedAt: new Date().toISOString()
+      });
+      writeStorageArray(PRODUCTION_ORDERS_KEY, orders);
+      syncCommercialOrderStage(orders[orderIndex], stage);
+
+      var bar = document.getElementById('status-bar');
+      document.getElementById('status-title').textContent = 'Статус обновлен';
+      document.getElementById('status-copy').textContent = 'Для заявки ' + requestNumber + ' установлен этап: ' + getStageLabel(stage) + '.';
+      bar.style.display = 'block';
+      renderRegistry();
+    }
+
+    function openRequest(requestNumber) {
+      if (!requestNumber) return;
+      window.location.href = 'production-order-form.html?request=' + encodeURIComponent(requestNumber);
+    }
+
     function renderRegistry() {
       var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
       var body = document.getElementById('production-orders-body');
@@ -416,23 +551,30 @@
       document.getElementById('draft-count').textContent = String(orders.length);
 
       if (!orders.length) {
-        body.innerHTML = '<tr><td colspan="5" class="empty-state">Реестр пока пуст. Создайте первую производственную заявку через кнопку “Новый заказ на производство”.</td></tr>';
+        body.innerHTML = '<tr><td colspan="6" class="empty-state">Реестр пока пуст. Создайте первую производственную заявку через кнопку “Новый заказ на производство”.</td></tr>';
         return;
       }
 
       body.innerHTML = orders.map(function(order) {
-        return '<tr>' +
+        var stage = order.productionStage || '';
+        return '<tr class="clickable-row" onclick="openRequest(\'' + escapeHtml(order.requestNumber || '') + '\')">' +
           '<td><div class="table-main"><strong>' + escapeHtml(order.requestNumber || 'Без номера') + '</strong><div class="cell-meta">' + escapeHtml(order.applicantDepartment || '—') + ' · ' + escapeHtml(formatDate(order.postedDate)) + '</div></div></td>' +
           '<td><div class="table-main"><strong>' + escapeHtml(order.companyReceiver || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.orderSpecification || '—') + '</div></div></td>' +
           '<td><div class="table-main"><strong>' + escapeHtml(order.productName || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.recipe || '—') + '</div></div></td>' +
           '<td><div class="table-main"><strong>' + escapeHtml(order.shipmentDate || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.batchNumber || '—') + '</div></div></td>' +
           '<td><div class="table-main"><strong>' + escapeHtml(order.volume || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.packageType || '—') + '</div></div></td>' +
+          '<td class="actions-cell"><div class="status-actions">' +
+            '<button class="btn stage stage-accepted' + (stage === 'accepted' ? ' active' : '') + '" type="button" onclick="setStage(\'' + escapeHtml(order.requestNumber || '') + '\', \'accepted\', event)">Заказ принят</button>' +
+            '<button class="btn stage stage-produced' + (stage === 'produced' ? ' active' : '') + '" type="button" onclick="setStage(\'' + escapeHtml(order.requestNumber || '') + '\', \'produced\', event)">Заказ произведен</button>' +
+            '<button class="btn stage stage-warehouse' + (stage === 'warehouse' ? ' active' : '') + '" type="button" onclick="setStage(\'' + escapeHtml(order.requestNumber || '') + '\', \'warehouse\', event)">Заказ отправлен на склад</button>' +
+          '</div><div class="cell-meta">Текущий этап: ' + escapeHtml(getStageLabel(stage)) + '</div></td>' +
         '</tr>';
       }).join('');
     }
 
     (function init() {
       renderRegistry();
+      showCreatedStatus();
       window.addEventListener('storage', renderRegistry);
     })();
   </script>
