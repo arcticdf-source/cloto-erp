@@ -354,33 +354,33 @@
 <input type="file" id="bg-file-input" accept="image/*" onchange="handleBgUpload(event)" />
 
 <script>
-  // ── Учётные данные для входа ──────────────────────────────
-  // Чтобы сменить пароль — измените значения ниже и запушьте
-  const USERS = {
-    'admin': 'cloto2026',
-    'user':  'kloto123'
-  };
-  const SESSION_KEY = 'cloto_auth';
+  var CREDS = [
+    {u: "admin", p: "cloto2026"},
+    {u: "user",  p: "kloto123"}
+  ];
 
   function doLogin() {
-    const u = document.getElementById('inp-user').value.trim();
-    const p = document.getElementById('inp-pass').value;
-    if (USERS[u] && USERS[u] === p) {
-      sessionStorage.setItem(SESSION_KEY, u);
-      document.getElementById('login-overlay').style.display = 'none';
-      document.getElementById('main-page').style.display = '';
+    var u = (document.getElementById("inp-user").value || "").trim();
+    var p = (document.getElementById("inp-pass").value || "").trim();
+    var ok = false;
+    for (var i = 0; i < CREDS.length; i++) {
+      if (CREDS[i].u === u && CREDS[i].p === p) { ok = true; break; }
+    }
+    if (ok) {
+      sessionStorage.setItem("cloto_auth", u);
+      document.getElementById("login-overlay").style.display = "none";
+      document.getElementById("main-page").style.display = "";
     } else {
-      document.getElementById('login-err').style.display = 'block';
-      document.getElementById('inp-pass').value = '';
-      document.getElementById('inp-pass').focus();
+      document.getElementById("login-err").style.display = "block";
+      document.getElementById("inp-pass").value = "";
+      document.getElementById("inp-pass").focus();
     }
   }
 
-  // Если уже залогинен в этой сессии — сразу показываем портал
-  (function checkSession() {
-    if (sessionStorage.getItem(SESSION_KEY)) {
-      document.getElementById('login-overlay').style.display = 'none';
-      document.getElementById('main-page').style.display = '';
+  (function() {
+    if (sessionStorage.getItem("cloto_auth")) {
+      document.getElementById("login-overlay").style.display = "none";
+      document.getElementById("main-page").style.display = "";
     }
   })();
 
