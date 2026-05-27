@@ -266,8 +266,65 @@
 </div>
 <div class="bg-grid"></div>
 
+<!-- Login modal -->
+<div id="login-overlay" style="
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(5,8,18,0.7);backdrop-filter:blur(12px);
+">
+  <div style="
+    background:rgba(13,19,40,0.97);
+    border:1px solid rgba(124,92,252,0.3);
+    border-radius:20px;padding:40px 44px;width:360px;
+    box-shadow:0 0 60px rgba(124,92,252,0.2);
+    animation:fadeUp .4s ease both;
+  ">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="
+        width:52px;height:52px;border-radius:14px;margin:0 auto 16px;
+        background:linear-gradient(135deg,#7c5cfc,#3de8c7);
+        display:flex;align-items:center;justify-content:center;
+        font-size:22px;font-weight:800;color:#fff;font-family:'Space Grotesk',sans-serif;
+        box-shadow:0 0 28px rgba(124,92,252,0.5);
+      ">К</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff">Клото ERP</div>
+      <div style="font-size:13px;color:#6b7491;margin-top:4px">Введите данные для входа</div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;color:#6b7491;font-weight:500;display:block;margin-bottom:6px">ЛОГИН</label>
+      <input id="inp-user" type="text" placeholder="admin"
+        style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+        border-radius:10px;padding:11px 14px;color:#e8eaf0;font-size:14px;outline:none;font-family:'Inter',sans-serif;"
+        onkeydown="if(event.key==='Enter')document.getElementById('inp-pass').focus()"
+      />
+    </div>
+    <div style="margin-bottom:22px">
+      <label style="font-size:12px;color:#6b7491;font-weight:500;display:block;margin-bottom:6px">ПАРОЛЬ</label>
+      <input id="inp-pass" type="password" placeholder="••••••••"
+        style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+        border-radius:10px;padding:11px 14px;color:#e8eaf0;font-size:14px;outline:none;font-family:'Inter',sans-serif;"
+        onkeydown="if(event.key==='Enter')doLogin()"
+      />
+    </div>
+
+    <div id="login-err" style="display:none;color:#ff5e7d;font-size:12px;margin-bottom:12px;text-align:center">
+      Неверный логин или пароль
+    </div>
+
+    <button onclick="doLogin()" style="
+      width:100%;padding:13px;border-radius:11px;border:none;cursor:pointer;
+      background:linear-gradient(135deg,#7c5cfc,#6040e0);
+      color:#fff;font-size:15px;font-weight:600;font-family:'Space Grotesk',sans-serif;
+      box-shadow:0 4px 20px rgba(124,92,252,0.4);transition:opacity .2s;
+    " onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+      Войти →
+    </button>
+  </div>
+</div>
+
 <!-- Main content -->
-<div class="page">
+<div class="page" id="main-page" style="display:none">
   <div class="logo-ring">К</div>
   <div class="company-name">Клото</div>
   <div class="company-tagline">Единая внутренняя платформа — все процессы компании в одном месте</div>
@@ -297,6 +354,37 @@
 <input type="file" id="bg-file-input" accept="image/*" onchange="handleBgUpload(event)" />
 
 <script>
+  // ── Учётные данные для входа ──────────────────────────────
+  // Чтобы сменить пароль — измените значения ниже и запушьте
+  const USERS = {
+    'admin': 'cloto2026',
+    'user':  'kloto123'
+  };
+  const SESSION_KEY = 'cloto_auth';
+
+  function doLogin() {
+    const u = document.getElementById('inp-user').value.trim();
+    const p = document.getElementById('inp-pass').value;
+    if (USERS[u] && USERS[u] === p) {
+      sessionStorage.setItem(SESSION_KEY, u);
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('main-page').style.display = '';
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+      document.getElementById('inp-pass').value = '';
+      document.getElementById('inp-pass').focus();
+    }
+  }
+
+  // Если уже залогинен в этой сессии — сразу показываем портал
+  (function checkSession() {
+    if (sessionStorage.getItem(SESSION_KEY)) {
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('main-page').style.display = '';
+    }
+  })();
+
+  // ── Фон ──────────────────────────────────────────────────
   const BG_KEY = 'cloto_landing_bg';
   const bgLayer = document.getElementById('bg-layer');
   const bgBtn   = document.getElementById('bg-btn');
