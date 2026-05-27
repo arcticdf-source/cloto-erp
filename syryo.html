@@ -9,16 +9,16 @@
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     :root {
-      --bg:#111827; --bg2:#1a2540;
-      --surface:rgba(255,255,255,.08); --surface2:rgba(255,255,255,.14);
-      --border:rgba(255,255,255,.16); --border2:rgba(255,255,255,.28);
+      --bg:#eef4fb; --bg2:#e3edf8;
+      --surface:rgba(255,255,255,.86); --surface2:rgba(255,255,255,.97);
+      --border:rgba(136,158,186,.25); --border2:rgba(94,143,199,.38);
       --accent:#7c5cfc; --accent2:#b07dff;
-      --cyan:#3de8c7; --gold:#f5c842; --red:#ff5e7d;
-      --green:#48bb78; --blue:#63b3ed; --orange:#f6ad55; --pink:#ed64a6;
-      --text:#f0f2f9; --muted:#8b96b5; --radius:16px;
+      --cyan:#24b7ad; --gold:#d9a83a; --red:#d96576;
+      --green:#3ea66d; --blue:#3b91da; --orange:#f6ad55; --pink:#d96aa4;
+      --text:#1e2c3c; --muted:#6f839c; --radius:16px;
     }
     html { scroll-behavior:smooth; }
-    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:14px; }
+    body { background:linear-gradient(180deg,var(--bg),var(--bg2)); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:14px; }
 
     .bg-grid { position:fixed; inset:0; z-index:0;
       background-image:linear-gradient(rgba(246,173,85,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(246,173,85,.025) 1px,transparent 1px);
@@ -32,7 +32,7 @@
     .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
 
     /* ── Sidebar ── */
-    .sidebar { width:250px; min-height:100vh; background:rgba(14,22,40,.96); backdrop-filter:blur(24px);
+    .sidebar { width:250px; min-height:100vh; background:rgba(255,255,255,.84); backdrop-filter:blur(24px);
       border-right:1px solid var(--border); display:flex; flex-direction:column; padding:28px 0;
       position:sticky; top:0; height:100vh; flex-shrink:0; overflow-y:auto; }
     .logo { display:flex; align-items:center; gap:12px; padding:0 22px 28px; border-bottom:1px solid var(--border); }
@@ -62,7 +62,7 @@
     /* ── Topbar ── */
     .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
     .page-title { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;
-      background:linear-gradient(135deg,#fff 30%,var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+      background:linear-gradient(135deg,#2a3d54 30%,var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     .page-sub { color:var(--muted); font-size:13px; margin-top:4px; }
 
     /* ── KPI ── */
@@ -90,7 +90,7 @@
     .search-wrap input::placeholder { color:var(--muted); }
     .filter-select { background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:13px; font-family:inherit; padding:9px 14px; outline:none; cursor:pointer; transition:border-color .2s; }
     .filter-select:focus { border-color:rgba(246,173,85,.45); }
-    .filter-select option { background:#131a2a; color:var(--text); }
+    .filter-select option { background:var(--surface2); color:var(--text); }
     .ml-auto { margin-left:auto; }
 
     /* ── Buttons ── */
@@ -115,14 +115,29 @@
     .inline-num:hover { border-bottom-color:rgba(255,255,255,.22); background:rgba(255,255,255,.05); }
     .inline-num:focus { border-bottom-color:var(--orange); background:rgba(246,173,85,.07); box-shadow:0 2px 0 -1px rgba(246,173,85,.25); }
     .inline-num::-webkit-inner-spin-button,.inline-num::-webkit-outer-spin-button { -webkit-appearance:none; }
-    .inline-num[type=number] { -moz-appearance:textfield; }
+    .inline-num[type=number] { appearance:textfield; -moz-appearance:textfield; }
 
     /* ── Sticky horizontal scrollbar ── */
-    #sticky-hscroll { position:fixed; bottom:0; left:250px; right:0; height:14px; background:var(--bg2); border-top:1px solid var(--border); z-index:9999; overflow-x:auto; overflow-y:hidden; }
-    #sticky-hscroll::-webkit-scrollbar { height:8px; }
-    #sticky-hscroll::-webkit-scrollbar-track { background:transparent; }
-    #sticky-hscroll::-webkit-scrollbar-thumb { background:rgba(255,255,255,.22); border-radius:99px; }
-    #sticky-hscroll::-webkit-scrollbar-thumb:hover { background:rgba(246,173,85,.55); }
+    #sticky-hscroll {
+      position: fixed;
+      bottom: 10px;
+      left: 266px;
+      right: 14px;
+      height: 18px;
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--border2);
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(45, 80, 122, .16);
+      z-index: 9999;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(246,173,85,.9) rgba(113,138,168,.2);
+    }
+    #sticky-hscroll::-webkit-scrollbar { height: 10px; }
+    #sticky-hscroll::-webkit-scrollbar-track { background: rgba(113,138,168,.2); border-radius: 999px; }
+    #sticky-hscroll::-webkit-scrollbar-thumb { background: rgba(246,173,85,.9); border-radius: 999px; }
+    #sticky-hscroll::-webkit-scrollbar-thumb:hover { background: rgba(232,160,32,.95); }
     #sticky-hscroll-inner { height:1px; }
 
     table.mtbl { width:100%; border-collapse:collapse; min-width:1100px; }
@@ -134,7 +149,7 @@
     table.mtbl thead th.nr { text-align:right; }
     table.mtbl thead th.cloto-th { background:rgba(245,200,66,.07); color:var(--gold) !important; border-bottom:2px solid rgba(245,200,66,.3); }
 
-    table.mtbl tbody td { padding:9px 10px; font-size:13px; border-bottom:1px solid rgba(255,255,255,.03); vertical-align:middle; }
+    table.mtbl tbody td { padding:9px 10px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
     table.mtbl tbody tr:last-child td { border-bottom:none; }
     table.mtbl tbody tr:hover td { background:rgba(255,255,255,.02); }
     table.mtbl td.nr { text-align:right; font-family:'Space Grotesk',sans-serif; }
@@ -186,9 +201,9 @@
     .empty-state .es-icon { font-size:40px; margin-bottom:12px; opacity:.4; }
 
     /* ── Modal ── */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(6px); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .25s; }
+    .modal-overlay { position:fixed; inset:0; background:rgba(149,168,192,.32); backdrop-filter:blur(6px); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .25s; }
     .modal-overlay.open { opacity:1; pointer-events:all; }
-    .modal { background:#18253d; border:1px solid var(--border2); border-radius:20px; width:100%; max-width:700px; max-height:92vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.6); transform:translateY(16px) scale(.98); transition:transform .25s; }
+    .modal { background:var(--surface2); border:1px solid var(--border2); border-radius:20px; width:100%; max-width:700px; max-height:92vh; overflow-y:auto; box-shadow:0 16px 34px rgba(36,66,100,.2); transform:translateY(16px) scale(.98); transition:transform .25s; }
     .modal-overlay.open .modal { transform:translateY(0) scale(1); }
     .modal-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 16px; border-bottom:1px solid var(--border); }
     .modal-title { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; }
@@ -201,11 +216,11 @@
     .form-group.full { grid-column:1/-1; }
     .form-group.g3 { grid-column:span 1; }
     label.fld { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
-    .fld-input { background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.26); border-radius:10px; padding:10px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none; width:100%; transition:all .2s; }
+    .fld-input { background:rgba(255,255,255,.74); border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none; width:100%; transition:all .2s; }
     .fld-input:focus { border-color:rgba(246,173,85,.75); background:rgba(246,173,85,.07); box-shadow:0 0 0 3px rgba(246,173,85,.12); }
     .fld-input::placeholder { color:rgba(255,255,255,.35); }
     .fld-input.gold-focus:focus { border-color:rgba(245,200,66,.85); background:rgba(245,200,66,.08); }
-    select.fld-input option { background:#1a2540; color:var(--text); }
+    select.fld-input option { background:var(--surface2); color:var(--text); }
     .sect-divider { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:4px 0; border-bottom:1px solid var(--border); margin-top:4px; }
 
     /* ── Toast ── */
@@ -221,7 +236,7 @@
     ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:99px; }
 
     @media(max-width:1100px) { .kpi-row{grid-template-columns:repeat(2,1fr);} }
-    @media(max-width:900px)  { .sidebar{display:none} .main{padding:16px} }
+    @media(max-width:900px)  { .sidebar{display:none} .main{padding:16px} #sticky-hscroll{left:14px;right:14px;} }
     @media(max-width:600px)  { .kpi-row{grid-template-columns:1fr 1fr;} .form-grid{grid-template-columns:1fr} }
   </style>
 </head>
@@ -245,6 +260,7 @@
     <nav class="nav">
       <div class="nav-label">Разделы</div>
       <a class="nav-item active" href="#"><span class="nav-icon">🌾</span> Все позиции</a>
+      <a class="nav-item" href="procurement-plans-hub.html"><span class="nav-icon">📋</span> Планы закупок</a>
       <div class="nav-label">Связанные</div>
       <a class="nav-item" href="sebescost.html"><span class="nav-icon">🧮</span> Себестоимость</a>
       <a class="nav-item" href="products.html"><span class="nav-icon">📦</span> Продукты</a>
@@ -341,7 +357,8 @@
         <table class="mtbl">
           <thead>
             <tr>
-              <th style="width:36px" onclick="sortBy('id'">#</th>
+              <th style="width:36px" onclick="sortBy('id')">#</th>
+              <th onclick="sortBy('sku')" style="width:110px">SKU</th>
               <th onclick="sortBy('name')">Наименование</th>
               <th onclick="sortBy('norm')" style="width:80px">Норма</th>
               <th onclick="sortBy('dateStr')" style="width:120px">Актуальность</th>
@@ -378,6 +395,10 @@
         <div class="form-group full">
           <label class="fld">Наименование</label>
           <input class="fld-input" id="f-name" type="text" placeholder="Битум 90/10" />
+        </div>
+        <div class="form-group">
+          <label class="fld">SKU</label>
+          <input class="fld-input" id="f-sku" type="text" placeholder="RM-00001" />
         </div>
         <div class="form-group">
           <label class="fld">Категория</label>
@@ -466,7 +487,12 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="sticky-hscroll"><div id="sticky-hscroll-inner"></div></div>
 
+<script>
+window.__sharedStateConfig = { keys: ['cloto_raw_materials_v2'] };
+</script>
+<script src="shared-state-sync.js"></script>
 <script>
 var SK = 'cloto_raw_materials_v2';
 
@@ -591,6 +617,19 @@ function init(){
   initStickyScroll();
 }
 
+function buildMaterialSku(id){
+  return 'RM-' + String(Number(id) || 0).padStart(5,'0');
+}
+
+function normalizeRow(row){
+  var base = row && typeof row === 'object' ? row : {};
+  var id = Number(base.id) || 0;
+  return Object.assign({}, base, {
+    id: id,
+    sku: String(base.sku || buildMaterialSku(id)).trim()
+  });
+}
+
 function inlineUpdate(inp, id, field){
   var row = data.find(function(r){ return r.id===id; });
   if(!row) return;
@@ -610,25 +649,39 @@ function initStickyScroll(){
   var inn  = document.getElementById('sticky-hscroll-inner');
   if(!wrap||!bar||!inn) return;
   var locked = false;
-  function syncW(){ inn.style.width = wrap.scrollWidth+'px'; }
+  function syncW(){
+    var hasOverflow = wrap.scrollWidth > wrap.clientWidth + 1;
+    bar.style.display = hasOverflow ? 'block' : 'none';
+    inn.style.width = wrap.scrollWidth + 'px';
+    if(bar.scrollLeft !== wrap.scrollLeft) bar.scrollLeft = wrap.scrollLeft;
+  }
   syncW();
   bar.addEventListener('scroll', function(){ if(!locked){ locked=true; wrap.scrollLeft=bar.scrollLeft; locked=false; } });
   wrap.addEventListener('scroll', function(){ if(!locked){ locked=true; bar.scrollLeft=wrap.scrollLeft; locked=false; } });
   new MutationObserver(syncW).observe(document.getElementById('mtbl-body'),{childList:true,subtree:false});
+  window.addEventListener('resize', syncW);
 }
 
 function loadData(){
   try {
     var raw = localStorage.getItem(SK);
-    if(raw){ data = JSON.parse(raw); nextId = data.reduce(function(m,r){ return Math.max(m,r.id||0); },0) + 1; return; }
+    if(raw){
+      var parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length){
+        data = parsed.map(normalizeRow);
+        nextId = data.reduce(function(m,r){ return Math.max(m,r.id||0); },0) + 1;
+        return;
+      }
+    }
   } catch(e){}
-  data = DEFAULT_DATA.map(function(r){ return Object.assign({},r); });
+  data = DEFAULT_DATA.map(function(r){ return normalizeRow(r); });
   nextId = 200;
   /* Auto-persist defaults so other pages (stabilight-cost etc.) can read this data */
   try { localStorage.setItem(SK, JSON.stringify(data)); } catch(e){}
 }
 
 function saveData(){
+  data = data.map(normalizeRow);
   localStorage.setItem(SK, JSON.stringify(data));
   showToast('✓ Сохранено');
 }
@@ -664,6 +717,7 @@ function getFiltered(){
     if(cat && r.cat!==cat) return false;
     if(st  && r.status!==st) return false;
     if(q && !(
+      (r.sku||'').toLowerCase().includes(q) ||
       (r.name||'').toLowerCase().includes(q) ||
       (r.sup||'').toLowerCase().includes(q)  ||
       (r.storage||'').toLowerCase().includes(q) ||
@@ -709,6 +763,7 @@ function renderTable(){
 
     html += '<tr>'+
       '<td class="rn">'+r.id+'</td>'+
+      '<td class="mu" style="white-space:nowrap;font-family:\'Space Grotesk\',sans-serif">'+esc(r.sku||buildMaterialSku(r.id))+'</td>'+
       '<td class="nm">'+
         '<span class="name-main">'+esc(r.name)+'</span>'+
         (r.note?'<span class="name-note">'+esc(r.note)+'</span>':'')+
@@ -765,6 +820,7 @@ function openModal(id){
   var r = id ? data.find(function(x){ return x.id===id; }) : null;
   document.getElementById('modal-title').textContent = id ? 'Редактировать позицию' : 'Новая позиция';
   document.getElementById('f-name').value    = r ? esc(r.name)    : '';
+  document.getElementById('f-sku').value     = r ? (r.sku || buildMaterialSku(r.id)) : buildMaterialSku(nextId);
   document.getElementById('f-cat').value     = r ? r.cat          : 'Битуминозные';
   document.getElementById('f-status').value  = r ? r.status       : 'active';
   document.getElementById('f-unit').value    = r ? (r.unit||'т')  : 'т';
@@ -797,6 +853,7 @@ function saveItemModal(){
   var item = {
     id:           editId || nextId++,
     name:         name,
+    sku:          (document.getElementById('f-sku').value || '').trim() || buildMaterialSku(editId || (nextId - 1)),
     cat:          document.getElementById('f-cat').value,
     status:       document.getElementById('f-status').value,
     unit:         document.getElementById('f-unit').value.trim()||'т',
@@ -835,10 +892,10 @@ function deleteItem(id){
 /* ════════ CSV EXPORT ════════ */
 function exportCsv(){
   var rows = getFiltered();
-  var hdr = ['№','Наименование','Ед.','Норма отгр.','Актуальность','Цена FCA ₽/т','У.Е.','Доставка ₽/т','Цена КЛОТО ₽/т','Поставщик','Склад','Перевозчик','Категория','Статус','Примечание'];
+  var hdr = ['№','SKU','Наименование','Ед.','Норма отгр.','Актуальность','Цена FCA ₽/т','У.Е.','Доставка ₽/т','Цена КЛОТО ₽/т','Поставщик','Склад','Перевозчик','Категория','Статус','Примечание'];
   var lines = [hdr.join(';')];
   rows.forEach(function(r){
-    lines.push([r.id,'"'+r.name+'"',r.unit||'',r.norm||'',r.dateStr||'',r.priceFca||'','"'+(r.priceUe||'')+'"',r.deliveryUnit||'',r.priceCloto||'','"'+(r.sup||'')+'"','"'+(r.storage||'')+'"','"'+(r.carrier||'')+'"',r.cat||'',r.status||'','"'+(r.note||'')+'"'].join(';'));
+    lines.push([r.id,r.sku||buildMaterialSku(r.id),'"'+r.name+'"',r.unit||'',r.norm||'',r.dateStr||'',r.priceFca||'','"'+(r.priceUe||'')+'"',r.deliveryUnit||'',r.priceCloto||'','"'+(r.sup||'')+'"','"'+(r.storage||'')+'"','"'+(r.carrier||'')+'"',r.cat||'',r.status||'','"'+(r.note||'')+'"'].join(';'));
   });
   var blob = new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
   var a = document.createElement('a');
@@ -854,8 +911,6 @@ document.addEventListener('keydown', function(e){
 
 init();
 </script>
-
-<div id="sticky-hscroll"><div id="sticky-hscroll-inner"></div></div>
 
 </body>
 </html>

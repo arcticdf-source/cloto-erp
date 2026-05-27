@@ -9,11 +9,11 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg:#080c14;--surface:rgba(255,255,255,.04);--surface2:rgba(255,255,255,.07);
-      --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--text:#e8eaf0;--muted:#6b7491;
-      --cyan:#3de8c7;--blue:#63b3ed;--radius:16px;
+      --bg:#eef4fb;--bg2:#e3edf8;--surface:rgba(255,255,255,.86);--surface2:rgba(255,255,255,.97);
+      --border:rgba(136,158,186,.25);--border2:rgba(94,143,199,.38);--text:#1e2c3c;--muted:#6f839c;
+      --cyan:#24b7ad;--blue:#3b91da;--radius:16px;
     }
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+    body{font-family:'Inter',sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);min-height:100vh;overflow-x:hidden}
     .bg{position:fixed;inset:0;z-index:0;pointer-events:none;
       background-image:linear-gradient(rgba(61,232,199,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(61,232,199,.03) 1px,transparent 1px);
       background-size:48px 48px}
@@ -24,14 +24,14 @@
     .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:30px 24px 40px}
     .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
     .title{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:800;
-      background:linear-gradient(135deg,#fff 25%,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+      background:linear-gradient(135deg,#2a3d54 25%,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     .sub{margin-top:4px;color:var(--muted);font-size:13px}
     .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:10px;background:var(--surface);
       border:1px solid var(--border);color:var(--text);text-decoration:none;font-size:12.5px;font-weight:600;transition:all .18s}
     .btn:hover{background:var(--surface2);border-color:var(--border2)}
 
-    .modules-grid{display:grid;grid-template-columns:repeat(3,280px);gap:16px}
-    .module{width:280px;height:280px;background:linear-gradient(135deg,rgba(61,232,199,.10),rgba(13,19,32,.9));border:1px solid rgba(61,232,199,.22);
+    .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+    .module{width:100%;min-height:250px;background:linear-gradient(135deg,rgba(61,232,199,.10),rgba(255,255,255,.92));border:1px solid rgba(61,232,199,.22);
       border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit;transition:all .2s}
     .module:hover{transform:translateY(-3px);box-shadow:0 16px 42px rgba(0,0,0,.45);border-color:rgba(61,232,199,.35)}
     .m-head{display:flex;align-items:center;gap:12px}
@@ -40,7 +40,7 @@
     .m-desc{font-size:12.5px;color:var(--muted);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .chips{display:flex;gap:8px;flex-wrap:wrap}
     .chip{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(61,232,199,.14);color:var(--cyan)}
-    .m-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)}
+    .m-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border)}
     .m-count{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:var(--blue)}
     .m-link{font-size:12px;color:var(--cyan);font-weight:700}
 
@@ -67,7 +67,7 @@
     </div>
 
     <div class="modules-grid">
-      <a class="module" href="incoming-sample-requests.html" style="background:linear-gradient(135deg,rgba(99,179,237,.10),rgba(13,19,32,.9));border-color:rgba(99,179,237,.22)">
+      <a class="module" href="incoming-sample-requests.html" style="background:linear-gradient(135deg,rgba(99,179,237,.10),rgba(255,255,255,.92));border-color:rgba(99,179,237,.22)">
         <div class="m-head">
           <div class="m-ico" style="background:rgba(99,179,237,.2)">📥</div>
           <div>
@@ -79,12 +79,12 @@
           <span class="chip" style="background:rgba(99,179,237,.14);color:#63b3ed">● Новый модуль</span>
         </div>
         <div class="m-foot">
-          <div class="m-count">Inbox</div>
+          <div class="m-count">Входящие</div>
           <div class="m-link">Открыть →</div>
         </div>
       </a>
 
-      <a class="module" href="laboratory-work-plan.html" style="background:linear-gradient(135deg,rgba(61,232,199,.14),rgba(14,29,44,.92));border-color:rgba(61,232,199,.28)">
+      <a class="module" href="laboratory-work-plan.html" style="background:linear-gradient(135deg,rgba(61,232,199,.14),rgba(255,255,255,.92));border-color:rgba(61,232,199,.28)">
         <div class="m-head">
           <div class="m-ico">📅</div>
           <div>
@@ -97,25 +97,43 @@
           <span class="chip">Q2 2026</span>
         </div>
         <div class="m-foot">
-          <div class="m-count">Roadmap</div>
+          <div class="m-count">План</div>
           <div class="m-link">Открыть →</div>
         </div>
       </a>
 
-      <a class="module" href="daily-laboratory-reports.html" style="background:linear-gradient(135deg,rgba(242,203,111,.14),rgba(16,22,40,.92));border-color:rgba(242,203,111,.24)">
+      <a class="module" href="laboratory-reports-hub.html" style="background:linear-gradient(135deg,rgba(242,203,111,.14),rgba(255,255,255,.92));border-color:rgba(242,203,111,.24)">
         <div class="m-head">
           <div class="m-ico" style="background:rgba(242,203,111,.16)">🗂️</div>
           <div>
-            <div class="m-name">Ежедневные лабораторные отчеты</div>
-            <div class="m-desc">Загрузка Word-файлов за день, быстрая систематизация по дате, смене и зоне испытаний.</div>
+            <div class="m-name">Лабораторные отчеты</div>
+            <div class="m-desc">Ежедневные, недельные, месячные, квартальные и годовые отчеты в одном модуле.</div>
           </div>
         </div>
         <div class="chips">
-          <span class="chip" style="background:rgba(242,203,111,.14);color:#f2cb6f">● Ежедневный поток</span>
-          <span class="chip" style="background:rgba(99,179,237,.14);color:#63b3ed">Word upload</span>
+          <span class="chip" style="background:rgba(242,203,111,.14);color:#f2cb6f">● Ежедневно</span>
+          <span class="chip" style="background:rgba(99,179,237,.14);color:#63b3ed">● Недельные / Месячные / Квартальные / Годовые</span>
         </div>
         <div class="m-foot">
-          <div class="m-count" style="color:#f2cb6f">Daily</div>
+          <div class="m-count" style="color:#f2cb6f">Отчеты</div>
+          <div class="m-link">Открыть →</div>
+        </div>
+      </a>
+
+      <a class="module" href="laboratory-kpi-finance.html" style="background:linear-gradient(135deg,rgba(35,166,109,.14),rgba(255,255,255,.94));border-color:rgba(35,166,109,.28)">
+        <div class="m-head">
+          <div class="m-ico" style="background:rgba(35,166,109,.2)">📊</div>
+          <div>
+            <div class="m-name">Показатели лаборатории</div>
+            <div class="m-desc">Финансовые метрики, формулы, интерпретация и автоматические расчеты в рублях.</div>
+          </div>
+        </div>
+        <div class="chips">
+          <span class="chip" style="background:rgba(35,166,109,.14);color:#23a66d">● Показатели + ROI</span>
+          <span class="chip" style="background:rgba(99,179,237,.14);color:#63b3ed">● Интерактивный расчет</span>
+        </div>
+        <div class="m-foot">
+          <div class="m-count" style="color:#23a66d">Финансы</div>
           <div class="m-link">Открыть →</div>
         </div>
       </a>

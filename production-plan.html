@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -10,18 +10,21 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #09111b;
-      --bg2: #122033;
-      --surface: rgba(255,255,255,0.05);
-      --surface2: rgba(255,255,255,0.08);
-      --border: rgba(255,255,255,0.08);
-      --text: #edf3fa;
-      --muted: #8e9caf;
-      --blue: #7ebfff;
-      --cyan: #5de5cf;
-      --gold: #f5c95f;
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255,255,255,0.86);
+      --surface2: rgba(255,255,255,0.97);
+      --border: rgba(136,158,186,0.25);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --blue: #3b91da;
+      --cyan: #24b7ad;
+      --gold: #d9a83a;
+      --wk1: #3b91da;
+      --wk2: #24b7ad;
+      --wkmix: #d9a83a;
       --radius: 20px;
-      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+      --shadow: 0 14px 30px rgba(36,66,100,0.14);
     }
 
     body {
@@ -67,12 +70,12 @@
 
     .hero {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+      grid-template-columns: 1fr;
       gap: 18px;
       padding: 24px;
       margin-bottom: 14px;
       background:
-        linear-gradient(135deg, rgba(126,191,255,0.16), rgba(9,17,27,0.34)),
+        linear-gradient(135deg, rgba(126,191,255,0.16), rgba(255,255,255,0.92)),
         var(--surface);
     }
 
@@ -213,12 +216,41 @@
       padding: 20px;
     }
 
+    .plan-card-link {
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .plan-card-link:hover,
+    .plan-card-link:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 34px rgba(36,66,100,0.2);
+      outline: none;
+    }
+
+    .plan-card-link.workshop-cex1 {
+      border-color: rgba(59,145,218,0.44);
+      background: linear-gradient(135deg, rgba(59,145,218,0.12), rgba(255,255,255,0.92));
+    }
+    .plan-card-link.workshop-cex2 {
+      border-color: rgba(36,183,173,0.44);
+      background: linear-gradient(135deg, rgba(36,183,173,0.12), rgba(255,255,255,0.92));
+    }
+    .plan-card-link.workshop-smesh {
+      border-color: rgba(217,168,58,0.44);
+      background: linear-gradient(135deg, rgba(217,168,58,0.12), rgba(255,255,255,0.92));
+    }
+    .plan-card-link.workshop-cex1 .mini-title { color: var(--wk1); }
+    .plan-card-link.workshop-cex2 .mini-title { color: var(--wk2); }
+    .plan-card-link.workshop-smesh .mini-title { color: var(--wkmix); }
+
     .plan-name {
       margin-top: 14px;
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px;
+      font-size: 32px;
       font-weight: 800;
       color: var(--blue);
+      line-height: 1.1;
     }
 
     .plan-copy {
@@ -262,6 +294,12 @@
       font-size: 12px;
       line-height: 1.6;
       max-width: 860px;
+    }
+
+    .section-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .schedule-layout {
@@ -313,7 +351,7 @@
     }
 
     .gantt-label-head {
-      color: var(--muted);
+      color: #dbe7f7;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
@@ -325,7 +363,7 @@
       display: block;
       font-size: 14px;
       font-weight: 800;
-      color: var(--text);
+      color: #f4f8ff;
       text-transform: none;
       letter-spacing: 0;
     }
@@ -335,6 +373,7 @@
       gap: 5px;
       align-content: center;
       min-height: 74px;
+      background: rgba(255,255,255,0.04);
     }
 
     .gantt-track-head,
@@ -361,18 +400,41 @@
     .gantt-head-cell strong {
       font-size: 12px;
       font-weight: 800;
-      color: var(--text);
+      color: #f5f8ff;
     }
 
     .gantt-head-cell span {
       font-size: 10px;
-      color: var(--muted);
+      color: #dbe8fc;
       line-height: 1.35;
     }
 
     .gantt-row {
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
+
+    .gantt-row-sep {
+      min-height: 42px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(126,191,255,0.08);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .gantt-row-sep.ws-cex1 { background: rgba(59,145,218,0.14); color: #1f5f98; }
+    .gantt-row-sep.ws-cex2 { background: rgba(36,183,173,0.14); color: #157870; }
+    .gantt-row-sep.ws-smesh { background: rgba(217,168,58,0.16); color: #8a6314; }
+
+    .gantt-row-label.ws-cex1 { border-left: 3px solid var(--wk1); }
+    .gantt-row-label.ws-cex2 { border-left: 3px solid var(--wk2); }
+    .gantt-row-label.ws-smesh { border-left: 3px solid var(--wkmix); }
+
+    .gantt-bar.ws-cex1 { border-color: rgba(59,145,218,0.56) !important; box-shadow: 0 10px 24px rgba(59,145,218,0.2); }
+    .gantt-bar.ws-cex2 { border-color: rgba(36,183,173,0.56) !important; box-shadow: 0 10px 24px rgba(36,183,173,0.2); }
+    .gantt-bar.ws-smesh { border-color: rgba(217,168,58,0.56) !important; box-shadow: 0 10px 24px rgba(217,168,58,0.2); }
 
     .gantt-row:last-child {
       border-bottom: none;
@@ -381,15 +443,15 @@
     .gantt-track {
       min-height: 74px;
       align-items: stretch;
-      background: rgba(255,255,255,0.015);
+      background: rgba(255,255,255,0.025);
     }
 
     .gantt-slot {
-      border-left: 1px solid rgba(255,255,255,0.06);
+      border-left: 1px solid rgba(255,255,255,0.12);
     }
 
     .gantt-slot.today {
-      background: rgba(126,191,255,0.08);
+      background: rgba(126,191,255,0.16);
     }
 
     .gantt-bar {
@@ -404,11 +466,13 @@
       border: 1px solid transparent;
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
       min-width: 0;
+      color: #f7fbff;
     }
 
     .gantt-bar strong {
       font-size: 12px;
       font-weight: 800;
+      color: #ffffff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -417,40 +481,35 @@
     .gantt-bar span {
       font-size: 10px;
       line-height: 1.35;
-      opacity: 0.9;
+      color: rgba(247,251,255,0.95);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .gantt-bar.is-new {
-      color: #dbe7f5;
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.26);
     }
 
     .gantt-bar.is-sent {
-      color: var(--cyan);
-      background: rgba(93,229,207,0.14);
-      border-color: rgba(93,229,207,0.22);
+      background: rgba(93,229,207,0.28);
+      border-color: rgba(93,229,207,0.38);
     }
 
     .gantt-bar.is-accepted {
-      color: var(--blue);
-      background: rgba(126,191,255,0.16);
-      border-color: rgba(126,191,255,0.22);
+      background: rgba(126,191,255,0.28);
+      border-color: rgba(126,191,255,0.42);
     }
 
     .gantt-bar.is-produced {
-      color: var(--gold);
-      background: rgba(245,201,95,0.16);
-      border-color: rgba(245,201,95,0.22);
+      background: rgba(245,201,95,0.26);
+      border-color: rgba(245,201,95,0.40);
     }
 
     .gantt-bar.is-warehouse {
-      color: #86f0b0;
-      background: rgba(114,216,154,0.16);
-      border-color: rgba(114,216,154,0.22);
+      background: rgba(114,216,154,0.24);
+      border-color: rgba(114,216,154,0.38);
     }
 
     .table-wrap {
@@ -584,6 +643,11 @@
       line-height: 1.7;
     }
 
+    #monthly-gantt .gantt-head,
+    #monthly-gantt .gantt-row {
+      grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+    }
+
     @media (max-width: 1180px) {
       .hero,
       .kpi-grid,
@@ -596,6 +660,99 @@
       .title { font-size: 38px; }
       table { min-width: 760px; }
     }
+
+    /* ---- Editable weekly Gantt ---- */
+    .gantt-track--editable {
+      position: relative;
+    }
+    .gantt-track--editable .gantt-bar {
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      height: auto;
+      margin: 0;
+      cursor: grab;
+      user-select: none;
+      padding: 8px 16px;
+      min-width: 30px;
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+    .gantt-track--editable .gantt-bar.is-dragging {
+      cursor: grabbing;
+      z-index: 20;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.55);
+      opacity: 0.88;
+    }
+    .drag-handle {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 10px;
+      cursor: ew-resize;
+      z-index: 3;
+      opacity: 0;
+      background: rgba(255,255,255,0.42);
+      transition: opacity 0.15s;
+    }
+    .drag-handle-l { left: 0; border-radius: 14px 0 0 14px; }
+    .drag-handle-r { right: 0; border-radius: 0 14px 14px 0; }
+    .gantt-bar:hover .drag-handle { opacity: 1; }
+
+    /* Inline label editor */
+    .gantt-label-inner { cursor: default; }
+    .gantt-label-inner strong { display: block; font-size: 14px; font-weight: 800; }
+    .gantt-label-inner .cell-meta { margin-top: 3px; }
+    .gantt-row-label .cell-meta { color: #ffffff; }
+    .gantt-label-inner .edit-field {
+      display: block;
+      width: 100%;
+      margin-bottom: 4px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(126,191,255,0.3);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12px;
+      padding: 4px 7px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .gantt-label-inner .edit-field:focus {
+      border-color: rgba(126,191,255,0.65);
+      background: rgba(255,255,255,0.13);
+    }
+    .gantt-label-inner .edit-select {
+      background: rgba(12,24,40,0.95);
+    }
+    .btn.btn-add-row {
+      color: var(--cyan);
+      border-color: rgba(93,229,207,0.28);
+      background: rgba(93,229,207,0.08);
+      white-space: nowrap;
+    }
+    .btn.btn-add-row:hover { background: rgba(93,229,207,0.15); }
+    .btn.btn-del-row {
+      color: #f87171;
+      border-color: rgba(248,113,113,0.28);
+      background: rgba(248,113,113,0.08);
+      white-space: nowrap;
+    }
+    .btn.btn-del-row:hover { background: rgba(248,113,113,0.16); }
+    .row-del-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      margin-top: 6px;
+      border: none; border-radius: 6px;
+      background: rgba(248,113,113,0.0);
+      color: rgba(248,113,113,0.45);
+      font-size: 15px; line-height: 1;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .row-del-btn:hover { background: rgba(248,113,113,0.18); color: #f87171; }
   </style>
 </head>
 <body>
@@ -614,56 +771,17 @@
         </div>
       </div>
 
-      <div class="hero-side">
-        <div class="mini-card">
-          <div class="mini-title">Горизонт</div>
-          <strong>Неделя / Месяц</strong>
-          <p>План производства можно развивать как недельный и месячный график работ.</p>
-        </div>
-        <div class="mini-card">
-          <div class="mini-title">Статус</div>
-          <strong>Шаблон готов</strong>
-          <p>Страница создана как точка входа для дальнейшего наполнения производственным планом.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="kpi-grid">
-      <article class="kpi-card">
-        <div class="mini-title">Линии</div>
-        <div class="kpi-value" id="line-count">3</div>
-        <div class="kpi-copy">Активные линии или производственные контуры текущего плана.</div>
-      </article>
-      <article class="kpi-card">
-        <div class="mini-title">Окна отгрузки</div>
-        <div class="kpi-value" id="shipment-window-count">5</div>
-        <div class="kpi-copy">Ближайшие отгрузочные окна и контроль сроков по заявкам.</div>
-      </article>
-      <article class="kpi-card">
-        <div class="mini-title">Источник</div>
-        <div class="kpi-value" id="request-count">0</div>
-        <div class="kpi-copy">Заявок учтено в производственном плане из входящего реестра.</div>
-      </article>
     </section>
 
     <section class="plan-grid">
-      <article class="plan-card">
-        <div class="mini-title">Блок 1</div>
-        <div class="plan-name">Недельные приоритеты</div>
-        <div class="plan-copy">Гант по дням недели показывает, какие партии уже отправлены в производство, какие приняты, какие в работе и какие готовы к складу.</div>
-        <div class="plan-stat" id="priority-stat">Основа для календарного плана</div>
+      <article class="plan-card plan-card-link workshop-cex1" role="link" tabindex="0" onclick="location.href='cex1-weekly-gantt.html'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href='cex1-weekly-gantt.html';}">
+        <div class="mini-title">Цех №1 (Ильича 6)</div>
       </article>
-      <article class="plan-card">
-        <div class="mini-title">Блок 2</div>
-        <div class="plan-name">Загрузка мощностей</div>
-        <div class="plan-copy">Месячный Гант по неделям даёт обзор всей загрузки производства и показывает, где формируется перегруз по линиям.</div>
-        <div class="plan-stat" id="load-stat">Основа для ресурсного плана</div>
+      <article class="plan-card plan-card-link workshop-cex2" role="link" tabindex="0" onclick="location.href='cex2-weekly-gantt.html'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href='cex2-weekly-gantt.html';}">
+        <div class="mini-title">Цех№2 (ЛХЦ)</div>
       </article>
-      <article class="plan-card">
-        <div class="mini-title">Блок 3</div>
-        <div class="plan-name">Критичные сроки</div>
-        <div class="plan-copy">Статусы на диаграммах дают быстрый ответ, на каком именно этапе находится каждая заявка и сколько до отгрузки.</div>
-        <div class="plan-stat" id="deadline-stat">Основа для диспетчеризации</div>
+      <article class="plan-card plan-card-link workshop-smesh" role="link" tabindex="0" onclick="location.href='smesh-weekly-gantt.html'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();location.href='smesh-weekly-gantt.html';}">
+        <div class="mini-title">Участок смешения</div>
       </article>
     </section>
 
@@ -672,23 +790,16 @@
         <article class="panel">
           <div class="section-head">
             <div>
-              <div class="section-title">Недельный Гант</div>
-              <div class="section-copy">Диаграмма по дням текущей недели. Каждый бар показывает партию, окно выполнения и текущий этап производства.</div>
+              <div class="section-title">Общий недельный график Ганта</div>
+              <div class="section-copy">Недельные задачи по производству из Цеха №1, Цеха №2 и Участка смешения в одном общем графике.</div>
+            </div>
+            <div class="section-actions">
+              <button class="btn" type="button" onclick="shiftWeek(-1)">Пред. неделя</button>
+              <button class="btn" type="button" onclick="shiftWeek(1)">След. неделя</button>
             </div>
           </div>
-          <div class="gantt-summary" id="weekly-summary">График строится из заявок на производство текущего браузера.</div>
+          <div class="gantt-summary" id="weekly-summary">График строится из данных трех цехов.</div>
           <div class="gantt-board" id="weekly-gantt"></div>
-        </article>
-
-        <article class="panel">
-          <div class="section-head">
-            <div>
-              <div class="section-title">Месячный Гант</div>
-              <div class="section-copy">Диаграмма по неделям текущего месяца. Удобно видеть, где заявки концентрируются и на каком этапе они находятся.</div>
-            </div>
-          </div>
-          <div class="gantt-summary" id="monthly-summary">Помесячный обзор обновляется автоматически по изменениям в реестре производства.</div>
-          <div class="gantt-board" id="monthly-gantt"></div>
         </article>
       </div>
 
@@ -702,365 +813,479 @@
         <div class="queue-list" id="queue-list"></div>
       </aside>
     </section>
+
+    <article class="panel" style="margin-bottom:14px;">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Общий месячный график Ганта</div>
+          <div class="section-copy">Месячные задачи по производству из Цеха №1, Цеха №2 и Участка смешения в одном общем графике.</div>
+        </div>
+        <div class="section-actions">
+          <button class="btn" type="button" onclick="shiftMonth(-1)">Пред. месяц</button>
+          <button class="btn" type="button" onclick="shiftMonth(1)">След. месяц</button>
+        </div>
+      </div>
+      <div class="gantt-summary" id="monthly-summary">Помесячный обзор строится из данных трех цехов.</div>
+      <div class="gantt-board" id="monthly-gantt"></div>
+    </article>
   </div>
 
   <script>
+    if (window.location.hostname === '127.0.0.1') {
+      window.location.replace('http://localhost:8080' + window.location.pathname + window.location.search + window.location.hash);
+    }
+    window.__sharedStateConfig = { 
+      keys: [
+        'cloto_production_orders', 
+        'cloto_sales_orders_new',
+        'cloto_plan_rows_cex1_weekly',
+        'cloto_plan_rows_cex2_weekly',
+        'cloto_plan_rows_smesh_weekly'
+      ] 
+    };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
+    var PLAN_ROWS_KEYS = {
+      cex1: 'cloto_plan_rows_cex1_weekly',
+      cex2: 'cloto_plan_rows_cex2_weekly',
+      smesh: 'cloto_plan_rows_smesh_weekly'
+    };
+    var WORKSHOP_LABELS = {
+      cex1: 'Цех №1',
+      cex2: 'Цех №2',
+      smesh: 'Линия смешения'
+    };
+    var WORKSHOP_ORDER = ['cex1', 'cex2', 'smesh'];
     var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
     var DAY_MS = 24 * 60 * 60 * 1000;
-    var DEFAULT_PLAN_ROWS = [
-      {
-        line: 'Линия A',
-        product: 'ПОЛИКАП жидкий',
-        batch: 'Партия 150425',
-        receiver: 'ТОО «ОМАС ИНТЕГРЕЙТЕД»',
-        shipmentDate: '2026-04-17',
-        volume: '8,64 т / 288 канистр',
-        lineIndex: 0,
-        durationDays: 3,
-        stage: 'accepted'
-      },
-      {
-        line: 'Линия B',
-        product: 'Стабилайт II',
-        batch: 'Партия ST-2604',
-        receiver: 'АКРОС',
-        shipmentDate: '2026-04-21',
-        volume: '12 т / мешки',
-        lineIndex: 1,
-        durationDays: 4,
-        stage: 'produced'
-      },
-      {
-        line: 'Линия C',
-        product: 'УЩР сухой',
-        batch: 'Партия US-2704',
-        receiver: 'Мад-Сервис',
-        shipmentDate: '2026-04-25',
-        volume: '9 т / мешки',
-        lineIndex: 2,
-        durationDays: 5,
-        stage: 'warehouse'
-      }
-    ];
+    var GANTT_COLS = 7;
+    var planState = [];
+    var dragState = null;
+    var monthSegsCache = [];
+    var currentWeekAnchor = cloneDate(new Date());
+    var currentMonthAnchor = cloneDate(new Date());
 
-    function readStorageArray(key) {
-      try {
-        var parsed = JSON.parse(localStorage.getItem(key) || '[]');
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (error) {
-        return [];
-      }
-    }
-
-    function escapeHtml(value) {
-      return String(value || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function pickLoadClass(value) {
-      if (value === 'Высокая') return 'load-high';
-      if (value === 'Средняя') return 'load-mid';
-      return 'load-low';
-    }
-
-    function pickStatusClass(value) {
-      if (/горяч|крит/i.test(value || '')) return 'hot';
-      if (/работ/i.test(value || '')) return 'work';
-      return 'ready';
-    }
-
-    function cloneDate(date) {
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    }
-
-    function addDays(date, count) {
-      return new Date(cloneDate(date).getTime() + (count * DAY_MS));
-    }
-
-    function startOfWeek(date) {
-      var normalized = cloneDate(date);
-      var day = normalized.getDay() || 7;
-      normalized.setDate(normalized.getDate() - day + 1);
-      return normalized;
-    }
-
-    function startOfMonth(date) {
-      return new Date(date.getFullYear(), date.getMonth(), 1);
-    }
-
-    function endOfMonth(date) {
-      return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    }
-
-    function diffInDays(start, end) {
-      return Math.round((cloneDate(end).getTime() - cloneDate(start).getTime()) / DAY_MS);
-    }
-
-    function formatDayMonth(date) {
-      return String(date.getDate()).padStart(2, '0') + '.' + String(date.getMonth() + 1).padStart(2, '0');
-    }
-
-    function formatWeekday(date) {
-      return ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][date.getDay()];
-    }
-
-    function parseDateValue(value) {
-      var text = String(value || '').trim();
-      if (!text) return null;
-
-      if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-        var isoParts = text.split('-');
-        return new Date(Number(isoParts[0]), Number(isoParts[1]) - 1, Number(isoParts[2]));
-      }
-
-      if (/^\d{4}-\d{2}-\d{2}T/.test(text)) {
-        return parseDateValue(text.slice(0, 10));
-      }
-
-      if (/^\d{2}\.\d{2}\.\d{4}$/.test(text)) {
-        var dotParts = text.split('.');
-        return new Date(Number(dotParts[2]), Number(dotParts[1]) - 1, Number(dotParts[0]));
-      }
-
-      var months = {
-        'янв': 0, 'январ': 0,
-        'фев': 1, 'феврал': 1,
-        'мар': 2, 'март': 2,
-        'апр': 3, 'апрел': 3,
-        'мая': 4, 'май': 4,
-        'июн': 5, 'июнь': 5,
-        'июл': 6, 'июль': 6,
-        'авг': 7, 'август': 7,
-        'сен': 8, 'сентябр': 8,
-        'окт': 9, 'октябр': 9,
-        'ноя': 10, 'ноябр': 10,
-        'дек': 11, 'декабр': 11
-      };
-      var match = text.toLowerCase().match(/(\d{1,2})(?:\s*[-–]\s*\d{1,2})?\s+([а-яё]+)/i);
-      if (match) {
-        var day = Number(match[1]);
-        var monthKey = Object.keys(months).filter(function(key) {
-          return match[2].indexOf(key) === 0;
-        })[0];
-        if (monthKey !== undefined) {
-          return new Date(new Date().getFullYear(), months[monthKey], day);
-        }
-      }
-
+    /* ---- Date utils ---- */
+    function cloneDate(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function addDays(d, n) { return new Date(cloneDate(d).getTime() + n * DAY_MS); }
+    function startOfWeek(d) { var n = cloneDate(d); var day = n.getDay() || 7; n.setDate(n.getDate() - day + 1); return n; }
+    function startOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+    function endOfMonth(d) { return new Date(d.getFullYear(), d.getMonth() + 1, 0); }
+    function diffInDays(a, b) { return Math.round((cloneDate(b).getTime() - cloneDate(a).getTime()) / DAY_MS); }
+    function formatDayMonth(d) { return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0'); }
+    function formatWeekday(d) { return ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()]; }
+    function formatISO(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    function parseDateValue(v) {
+      var t = String(v || '').trim();
+      if (!t) return null;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(t)) { var p = t.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+      if (/^\d{4}-\d{2}-\d{2}T/.test(t)) return parseDateValue(t.slice(0,10));
+      if (/^\d{2}\.\d{2}\.\d{4}$/.test(t)) { var p2 = t.split('.'); return new Date(+p2[2], +p2[1]-1, +p2[0]); }
       return null;
     }
 
-    function parseVolumeTons(value) {
-      var text = String(value || '').replace(/,/g, '.');
-      var match = text.match(/\d+(?:\.\d+)?/);
-      return match ? Number(match[0]) : 0;
+    /* ---- Helpers ---- */
+    function escapeHtml(v) {
+      return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
-
-    function estimateDurationDays(order) {
-      var tons = parseVolumeTons(order && order.volume);
-      if (tons >= 15) return 5;
-      if (tons >= 8) return 4;
-      if (tons >= 3) return 3;
-      return 2;
-    }
-
-    function getStageLabel(stage) {
-      if (stage === 'sent') return 'Отправлен в производство';
-      if (stage === 'accepted') return 'Заказ принят';
-      if (stage === 'produced') return 'Заказ произведен';
-      if (stage === 'warehouse') return 'На складе';
+    function getStageLabel(s) {
+      if (s==='sent')      return 'Отправлен в производство';
+      if (s==='accepted')  return 'Заказ принят';
+      if (s==='produced')  return 'Заказ произведен';
+      if (s==='warehouse') return 'На складе';
       return 'Новая заявка';
     }
-
-    function getStageClass(stage) {
-      if (stage === 'sent') return 'is-sent';
-      if (stage === 'accepted') return 'is-accepted';
-      if (stage === 'produced') return 'is-produced';
-      if (stage === 'warehouse') return 'is-warehouse';
+    function getStageClass(s) {
+      if (s==='sent')      return 'is-sent';
+      if (s==='accepted')  return 'is-accepted';
+      if (s==='produced')  return 'is-produced';
+      if (s==='warehouse') return 'is-warehouse';
       return 'is-new';
     }
-
-    function getLoadLabel(item) {
-      var tons = parseVolumeTons(item.volume);
-      if (tons >= 15) return 'Высокая';
-      if (tons >= 8) return 'Средняя';
-      return 'Низкая';
+    function readStorageArray(key) {
+      try { var p = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(p) ? p : []; } catch(e) { return []; }
+    }
+    function parseVolumeTons(v) {
+      var t = String(v||'').replace(/,/g,'.'); var m = t.match(/\d+(?:\.\d+)?/); return m ? +m[0] : 0;
     }
 
-    function buildPlanItems(orders) {
-      var today = cloneDate(new Date());
-      if (!orders.length) {
-        return DEFAULT_PLAN_ROWS.map(function(row, index) {
-          var start = addDays(startOfWeek(today), index);
-          var end = addDays(start, row.durationDays - 1);
-          return {
-            id: 'sample-' + index,
-            line: row.line,
-            product: row.product,
-            batch: row.batch,
-            receiver: row.receiver,
-            shipmentDate: row.shipmentDate,
-            volume: row.volume,
-            stage: row.stage,
-            start: start,
-            end: end,
-            load: getLoadLabel({ volume: row.volume })
-          };
+    /* ---- Plan state ---- */
+    function loadPlanState() {
+      var merged = [];
+      WORKSHOP_ORDER.forEach(function(code) {
+        readStorageArray(PLAN_ROWS_KEYS[code]).forEach(function(item, idx) {
+          merged.push({
+            id: code + '-' + String(item.id || ('row-' + idx)),
+            workshopCode: code,
+            workshopLabel: WORKSHOP_LABELS[code],
+            product: item.product || 'Без названия',
+            line: item.line || 'Линия',
+            batch: item.batch || 'Партия —',
+            receiver: item.receiver || 'Получатель',
+            volume: item.volume || '0 т',
+            stage: item.stage || 'sent',
+            startDate: item.startDate || formatISO(cloneDate(new Date())),
+            durationDays: Math.max(1, parseInt(item.durationDays, 10) || 1)
+          });
         });
-      }
-
-      return orders.map(function(order, index) {
-        var start = parseDateValue(order.postedDate || order.createdAt) || addDays(startOfWeek(today), index);
-        var shipment = parseDateValue(order.shipmentDate);
-        var end = shipment || addDays(start, estimateDurationDays(order) - 1);
-        if (diffInDays(start, end) < 0) end = cloneDate(start);
-
-        return {
-          id: order.requestNumber || ('order-' + index),
-          line: ['Линия A', 'Линия B', 'Линия C'][index % 3],
-          product: order.productName || order.nomenclature1c || 'Без названия',
-          batch: order.batchNumber || 'Партия не назначена',
-          receiver: order.companyReceiver || 'Не указан',
-          shipmentDate: order.shipmentDate || 'Окно уточняется',
-          volume: order.volume || order.packageWeight || 'Объем уточняется',
-          stage: order.productionStage || 'sent',
-          start: start,
-          end: end,
-          load: getLoadLabel(order),
-          requestNumber: order.requestNumber || ''
-        };
       });
+      planState = merged;
+    }
+    function savePlanState() { return; }
+    function getItemById(id) { for (var i=0;i<planState.length;i++) { if (planState[i].id===id) return planState[i]; } return null; }
+
+    function shiftWeek(delta) {
+      currentWeekAnchor = addDays(currentWeekAnchor, delta * 7);
+      renderWeeklyGantt();
     }
 
-    function renderEmptyGantt(containerId, message) {
-      document.getElementById(containerId).innerHTML = '<div class="empty-state">' + escapeHtml(message) + '</div>';
+    function shiftMonth(delta) {
+      currentMonthAnchor = new Date(currentMonthAnchor.getFullYear(), currentMonthAnchor.getMonth() + delta, 1);
+      renderMonthlyGantt();
     }
 
-    function renderWeeklyGantt(items) {
-      var container = document.getElementById('weekly-gantt');
-      var summary = document.getElementById('weekly-summary');
-      var today = cloneDate(new Date());
-      var weekStart = startOfWeek(today);
-      var days = Array.from({ length: 7 }, function(_, index) { return addDays(weekStart, index); });
-      var visibleItems = items.filter(function(item) {
-        return diffInDays(item.start, addDays(weekStart, 6)) >= 0 && diffInDays(weekStart, item.end) >= 0;
-      });
-
-      summary.textContent = 'Текущая неделя: ' + formatDayMonth(weekStart) + ' - ' + formatDayMonth(addDays(weekStart, 6)) + '. В графике ' + visibleItems.length + ' производственных задач.';
-
-      if (!visibleItems.length) {
-        renderEmptyGantt('weekly-gantt', 'На текущую неделю нет задач в производственном плане.');
-        return;
-      }
-
-      container.innerHTML = '<div class="gantt-head">' +
-        '<div class="gantt-label-head"><strong>Линия / заявка</strong><span>Этап производства и окно выполнения</span></div>' +
-        '<div class="gantt-track-head" style="--cols:7">' + days.map(function(day) {
-          return '<div class="gantt-head-cell"><strong>' + escapeHtml(formatWeekday(day)) + '</strong><span>' + escapeHtml(formatDayMonth(day)) + '</span></div>';
-        }).join('') + '</div>' +
-      '</div>' + visibleItems.map(function(item) {
-        var startColumn = Math.max(1, diffInDays(weekStart, item.start) + 1);
-        var endColumn = Math.min(8, diffInDays(weekStart, item.end) + 2);
-        var todayIndex = diffInDays(weekStart, today);
-        return '<div class="gantt-row">' +
-          '<div class="gantt-row-label"><strong>' + escapeHtml(item.product) + '</strong><div class="cell-meta">' + escapeHtml(item.line) + ' · ' + escapeHtml(item.receiver) + ' · ' + escapeHtml(getStageLabel(item.stage)) + '</div></div>' +
-          '<div class="gantt-track" style="--cols:7">' +
-            days.map(function(_, index) {
-              return '<div class="gantt-slot' + (index === todayIndex ? ' today' : '') + '"></div>';
-            }).join('') +
-            '<div class="gantt-bar ' + getStageClass(item.stage) + '" style="grid-column:' + startColumn + ' / ' + endColumn + '"><strong>' + escapeHtml(item.batch) + '</strong><span>' + escapeHtml(item.volume) + ' · отгрузка ' + escapeHtml(item.shipmentDate) + '</span></div>' +
-          '</div>' +
-        '</div>';
-      }).join('');
-    }
-
-    function getMonthSegments(date) {
-      var segments = [];
-      var monthStart = startOfMonth(date);
-      var monthEnd = endOfMonth(date);
-      var cursor = startOfWeek(monthStart);
-      var index = 1;
-      while (diffInDays(cursor, monthEnd) >= 0) {
-        var segmentStart = diffInDays(cursor, monthStart) > 0 ? cloneDate(cursor) : cloneDate(monthStart);
-        var segmentEnd = addDays(cursor, 6);
-        if (diffInDays(segmentEnd, monthEnd) < 0) segmentEnd = cloneDate(monthEnd);
-        segments.push({
-          label: 'Нед ' + index,
-          sublabel: formatDayMonth(segmentStart) + ' - ' + formatDayMonth(segmentEnd),
-          start: segmentStart,
-          end: segmentEnd
-        });
-        cursor = addDays(cursor, 7);
-        index += 1;
-      }
-      return segments;
-    }
-
-    function renderMonthlyGantt(items) {
-      var container = document.getElementById('monthly-gantt');
-      var summary = document.getElementById('monthly-summary');
-      var today = cloneDate(new Date());
-      var monthSegments = getMonthSegments(today);
-      var monthStart = startOfMonth(today);
-      var monthEnd = endOfMonth(today);
-      var visibleItems = items.filter(function(item) {
-        return diffInDays(item.start, monthEnd) >= 0 && diffInDays(monthStart, item.end) >= 0;
-      });
-
-      summary.textContent = 'Текущий месяц: ' + escapeHtml(today.toLocaleString('ru-RU', { month: 'long', year: 'numeric' })) + '. В месячном плане ' + visibleItems.length + ' задач.';
-
-      if (!visibleItems.length) {
-        renderEmptyGantt('monthly-gantt', 'На текущий месяц пока нет заявок в производственном плане.');
-        return;
-      }
-
-      container.innerHTML = '<div class="gantt-head">' +
-        '<div class="gantt-label-head"><strong>Продукт / получатель</strong><span>Распределение по неделям месяца</span></div>' +
-        '<div class="gantt-track-head" style="--cols:' + monthSegments.length + '">' + monthSegments.map(function(segment) {
-          return '<div class="gantt-head-cell"><strong>' + escapeHtml(segment.label) + '</strong><span>' + escapeHtml(segment.sublabel) + '</span></div>';
-        }).join('') + '</div>' +
-      '</div>' + visibleItems.map(function(item) {
-        var startColumn = 1;
-        var endColumn = monthSegments.length + 1;
-
-        monthSegments.forEach(function(segment, index) {
-          if (diffInDays(item.end, segment.start) >= 0 && diffInDays(segment.end, item.start) >= 0) {
-            startColumn = Math.min(startColumn, index + 1);
-            endColumn = Math.max(endColumn, index + 2);
+    function renderGroupedWeeklyRows(days, todayIdx, weekStart) {
+      var rowsHtml = '';
+      WORKSHOP_ORDER.forEach(function(code) {
+        var group = planState.filter(function(item) { return item.workshopCode === code; });
+        if (!group.length) return;
+        rowsHtml += '<div class="gantt-row-sep ws-' + escapeHtml(code) + '">' + escapeHtml(WORKSHOP_LABELS[code]) + '</div>';
+        rowsHtml += group.map(function(item) {
+          var sd  = parseDateValue(item.startDate);
+          var off = sd ? diffInDays(weekStart, sd) : 0;
+          var dur = Math.max(1, item.durationDays);
+          var startIdx = Math.max(0, off);
+          var endIdxExclusive = Math.min(GANTT_COLS, off + dur);
+          var visibleLen = endIdxExclusive - startIdx;
+          var pct = 100 / GANTT_COLS;
+          var lft = (startIdx * pct).toFixed(3);
+          var wid = (Math.max(0, visibleLen) * pct).toFixed(3);
+          var wsClass = 'ws-' + item.workshopCode;
+          var barHtml = '';
+          if (visibleLen > 0) {
+            barHtml = '<div class="gantt-bar ' + getStageClass(item.stage) + ' ' + wsClass + '" style="left:' + lft + '%;width:' + wid + '%">' +
+              '<strong>' + escapeHtml(item.batch) + '</strong>' +
+              '<span>' + escapeHtml(item.volume) + (item.startDate ? ' · ' + item.startDate : '') + '</span>' +
+            '</div>';
           }
-        });
-
-        var currentWeekIndex = monthSegments.findIndex(function(segment) {
-          return diffInDays(segment.start, today) <= 0 && diffInDays(today, segment.end) <= 0;
-        });
-
-        return '<div class="gantt-row">' +
-          '<div class="gantt-row-label"><strong>' + escapeHtml(item.product) + '</strong><div class="cell-meta">' + escapeHtml(item.receiver) + ' · ' + escapeHtml(item.requestNumber || item.batch) + ' · ' + escapeHtml(getStageLabel(item.stage)) + '</div></div>' +
-          '<div class="gantt-track" style="--cols:' + monthSegments.length + '">' +
-            monthSegments.map(function(_, index) {
-              return '<div class="gantt-slot' + (index === currentWeekIndex ? ' today' : '') + '"></div>';
-            }).join('') +
-            '<div class="gantt-bar ' + getStageClass(item.stage) + '" style="grid-column:' + startColumn + ' / ' + endColumn + '"><strong>' + escapeHtml(item.line) + ' · ' + escapeHtml(item.batch) + '</strong><span>' + escapeHtml(item.volume) + ' · ' + escapeHtml(item.shipmentDate) + '</span></div>' +
-          '</div>' +
-        '</div>';
-      }).join('');
+          return '<div class="gantt-row" data-row-id="' + escapeHtml(item.id) + '">' +
+            '<div class="gantt-row-label ' + wsClass + '">' +
+              '<div class="gantt-label-inner" style="flex:1;min-width:0;">' +
+                '<strong>' + escapeHtml(item.product) + '</strong>' +
+                '<div class="cell-meta">' + escapeHtml(item.workshopLabel) + ' · ' + escapeHtml(item.line) + ' · ' + escapeHtml(item.receiver) + ' · ' + escapeHtml(getStageLabel(item.stage)) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="gantt-track gantt-track--editable" style="--cols:7">' +
+              days.map(function(_,di) { return '<div class="gantt-slot' + (di===todayIdx?' today':'') + '"></div>'; }).join('') +
+              barHtml +
+            '</div>' +
+          '</div>';
+        }).join('');
+      });
+      return rowsHtml;
     }
 
-    function renderQueue(orders) {
-      var list = document.getElementById('queue-list');
+    /* ---- Weekly Gantt render ---- */
+    function renderWeeklyGantt() {
+      loadPlanState();
+      var container = document.getElementById('weekly-gantt');
+      var summaryEl  = document.getElementById('weekly-summary');
+      if (!container || !summaryEl) return;
+      var today      = cloneDate(new Date());
+      var weekStart  = startOfWeek(currentWeekAnchor);
+      var days = [];
+      for (var i=0; i<7; i++) days.push(addDays(weekStart, i));
+      var todayIdx = diffInDays(weekStart, today);
+
+      summaryEl.textContent = 'Текущая неделя: ' + formatDayMonth(weekStart) + ' — ' + formatDayMonth(addDays(weekStart,6)) + '. В общем графике ' + planState.length + ' задач по трем цехам.';
+
+      if (!planState.length) {
+        container.innerHTML = '<div class="empty-state">Нет данных в графиках цехов.</div>';
+        return;
+      }
+
+      var headHtml = '<div class="gantt-head">' +
+        '<div class="gantt-label-head"><strong>Линия / заявка</strong><span>Этап производства и окно выполнения</span></div>' +
+        '<div class="gantt-track-head" style="--cols:7">' +
+        days.map(function(day) {
+          return '<div class="gantt-head-cell"><strong>' + escapeHtml(formatWeekday(day)) + '</strong><span>' + escapeHtml(formatDayMonth(day)) + '</span></div>';
+        }).join('') + '</div></div>';
+
+      var rowsHtml = renderGroupedWeeklyRows(days, todayIdx, weekStart);
+
+      container.innerHTML = headHtml + rowsHtml;
+    }
+
+    /* ---- Drag / Resize ---- */
+    function getColWidth(itemId) {
+      var el = document.querySelector('[data-track-id="' + itemId + '"]');
+      return el ? el.getBoundingClientRect().width / GANTT_COLS : 80;
+    }
+
+    function onBarMouseDown(e) {
+      if (e.target.classList.contains('drag-handle')) return;
+      e.preventDefault();
+      var itemId = e.currentTarget.dataset.barId;
+      var item = getItemById(itemId);
+      if (!item) return;
+      dragState = { type: 'move', itemId: itemId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getColWidth(itemId) };
+      e.currentTarget.classList.add('is-dragging');
+    }
+
+    function onHandleMouseDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var itemId = e.currentTarget.dataset.barId;
+      var dir    = e.currentTarget.dataset.resize;
+      var item   = getItemById(itemId);
+      if (!item) return;
+      dragState = { type: dir==='left'?'resize-l':'resize-r', itemId: itemId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getColWidth(itemId) };
+    }
+
+    function getMonthColWidth(itemId) {
+      var el = document.querySelector('[data-track-id="month-' + itemId + '"]');
+      return (el && monthSegsCache.length) ? el.getBoundingClientRect().width / monthSegsCache.length : 100;
+    }
+
+    function onMonthBarMouseDown(e) {
+      if (e.target.classList.contains('drag-handle')) return;
+      e.preventDefault();
+      var rawId  = e.currentTarget.dataset.barId.replace(/^month-/, '');
+      var item   = getItemById(rawId);
+      if (!item) return;
+      dragState = { type: 'month-move', itemId: rawId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getMonthColWidth(rawId) };
+      e.currentTarget.classList.add('is-dragging');
+    }
+
+    function onMonthHandleMouseDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var rawId  = e.currentTarget.dataset.barId.replace(/^month-/, '');
+      var dir    = e.currentTarget.dataset.resize;
+      var item   = getItemById(rawId);
+      if (!item) return;
+      dragState = { type: dir==='left'?'month-resize-l':'month-resize-r', itemId: rawId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getMonthColWidth(rawId) };
+    }
+
+    function updateMonthBarVisual(itemId) {
+      var item = getItemById(itemId);
+      if (!item || !monthSegsCache.length) return;
+      var bar  = document.querySelector('#monthly-gantt .gantt-bar[data-bar-id="month-' + itemId + '"]');
+      if (!bar) return;
+      var span = monthSegsCache.length * 7;
+      var sd   = parseDateValue(item.startDate);
+      var off  = sd ? diffInDays(monthSegsCache[0].start, sd) : 0;
+      bar.style.left  = ((off / span) * 100).toFixed(3) + '%';
+      bar.style.width = ((Math.max(1, item.durationDays) / span) * 100).toFixed(3) + '%';
+    }
+
+    function onDocMouseMove(e) {
+      if (!dragState) return;
+      e.preventDefault();
+      var dx    = e.clientX - dragState.startX;
+      var delta = dx / dragState.colWidth;
+      var item  = getItemById(dragState.itemId);
+      if (!item) return;
+      var origDate = parseDateValue(dragState.origDate);
+      if (!origDate) return;
+      var isMonth = dragState.type.indexOf('month-') === 0;
+      // monthly: 1 col = 7 days; weekly: 1 col = 1 day
+      var daysPerCol = isMonth ? 7 : 1;
+      var rd = Math.round(delta);
+      if (dragState.type === 'move' || dragState.type === 'month-move') {
+        item.startDate = formatISO(addDays(origDate, rd * daysPerCol));
+      } else if (dragState.type === 'resize-r' || dragState.type === 'month-resize-r') {
+        item.durationDays = Math.max(daysPerCol, Math.round((dragState.origDur + delta * daysPerCol) / daysPerCol) * daysPerCol);
+      } else if (dragState.type === 'resize-l' || dragState.type === 'month-resize-l') {
+        var newDur = Math.max(daysPerCol, Math.round((dragState.origDur - rd * daysPerCol) / daysPerCol) * daysPerCol);
+        item.durationDays = newDur;
+        item.startDate = formatISO(addDays(origDate, dragState.origDur - newDur));
+      }
+      if (isMonth) updateMonthBarVisual(dragState.itemId);
+      else         updateBarVisual(dragState.itemId);
+    }
+
+    function onDocMouseUp() {
+      if (!dragState) return;
+      var isMonth = dragState.type.indexOf('month-') === 0;
+      var barSel  = isMonth
+        ? '#monthly-gantt .gantt-bar[data-bar-id="month-' + dragState.itemId + '"]'
+        : '.gantt-bar[data-bar-id="' + dragState.itemId + '"]';
+      var bar = document.querySelector(barSel);
+      if (bar) bar.classList.remove('is-dragging');
+      savePlanState();
+      if (isMonth) renderMonthlyGantt(); else renderWeeklyGantt();
+      dragState = null;
+    }
+
+    function updateBarVisual(itemId) {
+      var item = getItemById(itemId);
+      if (!item) return;
+      var bar  = document.querySelector('.gantt-bar[data-bar-id="' + itemId + '"]');
+      if (!bar) return;
+      var weekStart = startOfWeek(currentWeekAnchor);
+      var sd  = parseDateValue(item.startDate);
+      var off = sd ? diffInDays(weekStart, sd) : 0;
+      var pct = 100 / GANTT_COLS;
+      bar.style.left  = (off * pct).toFixed(3) + '%';
+      bar.style.width = (Math.max(1, item.durationDays) * pct).toFixed(3) + '%';
+    }
+
+    /* ---- Inline edit ---- */
+    function startEditing(itemId) {
+      var item = getItemById(itemId);
+      if (!item) return;
+      var el = document.querySelector('[data-edit-id="' + itemId + '"]');
+      if (!el) return;
+      var stageOpts = ['sent','accepted','produced','warehouse'].map(function(s) {
+        return '<option value="' + s + '"' + (item.stage===s?' selected':'') + '>' + escapeHtml(getStageLabel(s)) + '</option>';
+      }).join('');
+      el.innerHTML =
+        '<input type="text" class="edit-field" data-field="product"  value="' + escapeHtml(item.product)  + '" placeholder="Продукт">'   +
+        '<input type="text" class="edit-field" data-field="line"     value="' + escapeHtml(item.line)     + '" placeholder="Линия">'      +
+        '<input type="text" class="edit-field" data-field="batch"    value="' + escapeHtml(item.batch)    + '" placeholder="Партия">'     +
+        '<input type="text" class="edit-field" data-field="receiver" value="' + escapeHtml(item.receiver) + '" placeholder="Получатель">' +
+        '<input type="text" class="edit-field" data-field="volume"   value="' + escapeHtml(item.volume)   + '" placeholder="Объем">'      +
+        '<select class="edit-field edit-select" data-field="stage">' + stageOpts + '</select>';
+      var fields = el.querySelectorAll('.edit-field');
+      var committed = false;
+      function doSave() {
+        if (committed) return;
+        committed = true;
+        fields.forEach(function(f) { var v = f.value.trim(); if (v) item[f.dataset.field] = v; });
+        savePlanState();
+        renderWeeklyGantt();
+        renderMonthlyGantt();
+      }
+      fields.forEach(function(f) {
+        f.addEventListener('blur', function() { setTimeout(function() { if (!el.querySelector(':focus')) doSave(); }, 160); });
+        f.addEventListener('keydown', function(e) {
+          if (e.key==='Enter')  f.blur();
+          if (e.key==='Escape') { committed = true; renderWeeklyGantt(); }
+        });
+      });
+      fields[0].focus();
+      fields[0].select();
+    }
+
+    /* ---- Delete row ---- */
+    function deletePlanRow(id) {
+      planState = planState.filter(function(it) { return it.id !== id; });
+      savePlanState();
+      renderWeeklyGantt();
+      renderMonthlyGantt();
+      updateKPIs();
+    }
+    function deleteLastRow() {
+      if (!planState.length) return;
+      planState.pop();
+      savePlanState();
+      renderWeeklyGantt();
+      renderMonthlyGantt();
+      updateKPIs();
+    }
+
+    /* ---- Add row ---- */
+    function addPlanRow() {
+      var weekStart = startOfWeek(currentWeekAnchor);
+      var newItem = {
+        id: 'row-' + Date.now(),
+        product: 'Новый продукт', line: 'Линия A', batch: 'Партия —',
+        receiver: 'Получатель',   volume: '0 т',   stage: 'sent',
+        startDate: formatISO(weekStart), durationDays: 3
+      };
+      planState.push(newItem);
+      savePlanState();
+      renderWeeklyGantt();
+      setTimeout(function() { startEditing(newItem.id); }, 40);
+    }
+
+    /* ---- Monthly Gantt ---- */
+    function getMonthSegments(date) {
+      var segs = [], monthStart = startOfMonth(date), monthEnd = endOfMonth(date);
+      var cursor = startOfWeek(monthStart), idx = 1;
+      while (diffInDays(cursor, monthEnd) >= 0) {
+        var sS = diffInDays(cursor, monthStart) > 0 ? cloneDate(cursor) : cloneDate(monthStart);
+        var sE = addDays(cursor, 6);
+        if (diffInDays(sE, monthEnd) < 0) sE = cloneDate(monthEnd);
+        segs.push({ label: 'Нед ' + idx, sublabel: formatDayMonth(sS) + ' — ' + formatDayMonth(sE), start: sS, end: sE });
+        cursor = addDays(cursor, 7);
+        idx++;
+      }
+      return segs;
+    }
+
+    function renderMonthlyGantt() {
+      loadPlanState();
+      var container  = document.getElementById('monthly-gantt');
+      var summaryEl  = document.getElementById('monthly-summary');
+      if (!container || !summaryEl) return;
+      var today      = cloneDate(new Date());
+      var segs       = getMonthSegments(currentMonthAnchor);
+      monthSegsCache = segs;
+      var span       = segs.length * 7;
+      var curWeekIdx = segs.findIndex(function(s) { return diffInDays(s.start,today)<=0 && diffInDays(today,s.end)<=0; });
+
+      summaryEl.textContent = 'Текущий месяц: ' + currentMonthAnchor.toLocaleString('ru-RU', { month: 'long', year: 'numeric' }) + '. В общем месячном графике ' + planState.length + ' задач по трем цехам.';
+
+      if (!planState.length) {
+        container.innerHTML = '<div class="empty-state">Нет данных в графиках цехов.</div>';
+        return;
+      }
+
+      var headHtml = '<div class="gantt-head">' +
+        '<div class="gantt-label-head"><strong>Продукт / получатель</strong><span>Распределение по неделям месяца</span></div>' +
+        '<div class="gantt-track-head" style="--cols:' + segs.length + '">' +
+        segs.map(function(s) {
+          return '<div class="gantt-head-cell"><strong>' + escapeHtml(s.label) + '</strong><span>' + escapeHtml(s.sublabel) + '</span></div>';
+        }).join('') + '</div></div>';
+
+      var rowsHtml = '';
+      WORKSHOP_ORDER.forEach(function(code) {
+        var group = planState.filter(function(item) { return item.workshopCode === code; });
+        if (!group.length) return;
+        rowsHtml += '<div class="gantt-row-sep ws-' + escapeHtml(code) + '">' + escapeHtml(WORKSHOP_LABELS[code]) + '</div>';
+        rowsHtml += group.map(function(item) {
+          var sd  = parseDateValue(item.startDate) || cloneDate(today);
+          var off = diffInDays(segs[0].start, sd);
+          var pct = 100 / span;
+          var lft = (off * pct).toFixed(3);
+          var wid = (Math.max(1, item.durationDays) * pct).toFixed(3);
+          var wsClass = 'ws-' + item.workshopCode;
+          return '<div class="gantt-row" data-row-id="' + escapeHtml(item.id) + '">' +
+            '<div class="gantt-row-label ' + wsClass + '">' +
+              '<div class="gantt-label-inner" style="flex:1;min-width:0;">' +
+                '<strong>' + escapeHtml(item.product) + '</strong>' +
+                '<div class="cell-meta">' + escapeHtml(item.workshopLabel) + ' · ' + escapeHtml(item.line) + ' · ' + escapeHtml(item.receiver) + ' · ' + escapeHtml(getStageLabel(item.stage)) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="gantt-track gantt-track--editable" style="--cols:' + segs.length + '">' +
+              segs.map(function(_,di) { return '<div class="gantt-slot' + (di===curWeekIdx?' today':'') + '"></div>'; }).join('') +
+              '<div class="gantt-bar ' + getStageClass(item.stage) + ' ' + wsClass + '" style="left:' + lft + '%;width:' + wid + '%">' +
+                '<strong>' + escapeHtml(item.line) + ' · ' + escapeHtml(item.batch) + '</strong>' +
+                '<span>' + escapeHtml(item.volume) + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      });
+
+      container.innerHTML = headHtml + rowsHtml;
+    }
+
+    /* ---- Queue ---- */
+    function renderQueue() {
+      var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
+      var list   = document.getElementById('queue-list');
       if (!orders.length) {
         list.innerHTML = '<div class="empty-state">Полученных заявок пока нет. Перейдите в модуль заявок и создайте первую производственную форму.</div>';
         return;
       }
-
-      list.innerHTML = orders.slice(0, 4).map(function(order, index) {
+      list.innerHTML = orders.slice(0,4).map(function(order, i) {
         var stage = order.productionStage || 'sent';
         return '<article class="queue-card">' +
-          '<div class="mini-title">Заявка ' + escapeHtml(order.requestNumber || ('№' + String(index + 1).padStart(3, '0'))) + '</div>' +
+          '<div class="mini-title">Заявка ' + escapeHtml(order.requestNumber || ('№' + String(i+1).padStart(3,'0'))) + '</div>' +
           '<strong>' + escapeHtml(order.productName || order.nomenclature1c || 'Без названия') + '</strong>' +
           '<p>' + escapeHtml(order.companyReceiver || 'Получатель не указан') + '</p>' +
           '<div class="queue-meta">' +
@@ -1072,35 +1297,45 @@
       }).join('');
     }
 
-    function renderPlan() {
-      var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
-      var planItems = buildPlanItems(orders);
+    /* ---- KPIs ---- */
+    function updateKPIs() {
       var activeLines = {};
-      var shipmentCount = 0;
-      var activeCount = 0;
-
-      planItems.forEach(function(item) {
-        activeLines[item.line] = true;
-        if (item.shipmentDate && item.shipmentDate !== 'Окно уточняется') shipmentCount += 1;
-        if (item.stage !== 'warehouse') activeCount += 1;
-      });
-
-      document.getElementById('request-count').textContent = String(orders.length);
-      document.getElementById('line-count').textContent = String(Object.keys(activeLines).length || 1);
-      document.getElementById('shipment-window-count').textContent = String(shipmentCount || planItems.length);
-      document.getElementById('priority-stat').textContent = planItems.length ? ('На неделе активны ' + activeCount + ' задач') : 'Основа для календарного плана';
-      document.getElementById('load-stat').textContent = planItems.length > 2 ? ('Линий в работе: ' + Object.keys(activeLines).length) : 'Основа для ресурсного плана';
-      document.getElementById('deadline-stat').textContent = planItems.length ? ('Этапы видны по ' + planItems.length + ' заявкам') : 'Основа для диспетчеризации';
-
-      renderWeeklyGantt(planItems);
-      renderMonthlyGantt(planItems);
-      renderQueue(orders);
+      planState.forEach(function(it) { activeLines[it.line] = true; });
+      var lineEl = document.getElementById('line-count');
+      var shipEl = document.getElementById('shipment-window-count');
+      var reqEl = document.getElementById('request-count');
+      if (lineEl) lineEl.textContent = String(Object.keys(activeLines).length || 0);
+      if (shipEl) shipEl.textContent = String(planState.length);
+      if (reqEl) reqEl.textContent = String(readStorageArray(PRODUCTION_ORDERS_KEY).length);
+      var activeTasks = planState.filter(function(it) { return it.stage !== 'warehouse'; }).length;
+      var pStat = document.getElementById('priority-stat');
+      var lStat = document.getElementById('load-stat');
+      var dStat = document.getElementById('deadline-stat');
+      if (pStat) pStat.textContent = planState.length ? ('На неделе активны ' + activeTasks + ' задач') : 'Основа для календарного плана';
+      if (lStat) lStat.textContent = planState.length ? ('Линий в работе: ' + Object.keys(activeLines).length) : 'Основа для ресурсного плана';
+      if (dStat) dStat.textContent = planState.length ? ('Этапы видны по ' + planState.length + ' заявкам') : 'Основа для диспетчеризации';
     }
 
-    (function init() {
-      renderPlan();
-      window.addEventListener('storage', renderPlan);
-    })();
+    /* ---- Render all ---- */
+    function renderAll() {
+      loadPlanState();
+      renderWeeklyGantt();
+      renderMonthlyGantt();
+      renderQueue();
+      updateKPIs();
+    }
+
+    document.addEventListener('mousemove', onDocMouseMove);
+    document.addEventListener('mouseup',   onDocMouseUp);
+
+    renderAll();
+    window.addEventListener('storage', renderAll);
+    window.addEventListener('focus', renderAll);
+    window.addEventListener('pageshow', renderAll);
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) renderAll();
+    });
+
   </script>
 </body>
 </html>

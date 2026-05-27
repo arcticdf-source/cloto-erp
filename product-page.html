@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Карточка товара — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#eef4fb; --surface:rgba(255,255,255,0.86); --surface2:rgba(255,255,255,0.97);
+      --border:rgba(136,158,186,0.25); --border2:rgba(94,143,199,0.38); --accent:#7c5cfc;
+      --accent2:#b07dff; --cyan:#24b7ad; --gold:#d9a83a; --green:#3ea66d; --blue:#3b91da;
+      --red:#d96576; --muted:#6f839c; --text:#1e2c3c; --radius:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: linear-gradient(180deg, #eef4fb, #e3edf8); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    .bg-grid { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(124,92,252,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(124,92,252,.04) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; }
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .bg-orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(245,200,66,.10) 0%, transparent 70%); top: -200px; right: -100px; }
+    .bg-orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,92,252,.12) 0%, transparent 70%); bottom: -100px; left: -80px; }
+    .layout { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+    .sidebar { width: 250px; min-height: 100vh; background: rgba(255,255,255,0.84); backdrop-filter: blur(24px); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 28px 0; position: sticky; top: 0; height: 100vh; flex-shrink: 0; overflow-y: auto; }
+    .logo { display: flex; align-items: center; gap: 12px; padding: 0 22px 28px; border-bottom: 1px solid var(--border); }
+    .logo-back { width: 32px; height: 32px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; text-decoration: none; }
+    .logo-back:hover { background: rgba(245,200,66,.15); color: var(--gold); border-color: rgba(245,200,66,.3); }
+    .logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--gold), #f6ad55); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .logo-sub { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-top: 1px; }
+    .nav { padding: 16px 10px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .nav-label { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 10px 12px 5px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 13px; border-radius: 10px; color: var(--muted); font-size: 13.5px; font-weight: 500; text-decoration: none; }
+    .nav-item.active { background: rgba(245,200,66,.12); color: var(--gold); border: 1px solid rgba(245,200,66,.2); }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; flex-shrink: 0; }
+    .sidebar-user { margin: 0 10px 4px; padding: 13px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: #fff; flex-shrink: 0; }
+    .user-name { font-size: 12.5px; font-weight: 600; }
+    .user-role { font-size: 11px; color: var(--muted); }
+    .main { flex: 1; width: 100%; padding: 36px 44px; overflow-y: auto; display: flex; flex-direction: column; gap: 28px; }
+    .content-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.9fr); gap: 24px; align-items: start; }
+    .left-column { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+    .right-column { min-width: 0; }
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .page-title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #2a3d54 30%, var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .page-badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .b-green { background: rgba(72,187,120,.15); color: var(--green); }
+    .b-gold { background: rgba(245,200,66,.15); color: var(--gold); }
+    .b-cyan { background: rgba(61,232,199,.15); color: var(--cyan); }
+    .b-purple { background: rgba(124,92,252,.18); color: var(--accent2); }
+    .bom-open-btn { font-size: 12px; font-weight: 700; border-radius: 999px; border: 1px solid rgba(59,145,218,.28); background: rgba(59,145,218,.12); color: var(--blue); padding: 6px 14px; cursor: pointer; }
+    .bom-open-btn:hover { background: rgba(59,145,218,.2); border-color: rgba(59,145,218,.45); }
+    .cost-open-btn { border-color: rgba(217,168,58,.35); background: rgba(217,168,58,.14); color: var(--gold); text-decoration: none; display: inline-flex; align-items: center; }
+    .cost-open-btn:hover { background: rgba(217,168,58,.22); border-color: rgba(217,168,58,.52); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: 10px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all .2s; border: none; }
+    .btn-primary { background: linear-gradient(135deg, var(--gold), #e6b800); color: #1a1200; box-shadow: 0 4px 16px rgba(245,200,66,.3); }
+    .btn-ghost { background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+    .toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; background: rgba(72,187,120,.15); border: 1px solid rgba(72,187,120,.35); color: var(--green); font-size: 13px; font-weight: 600; padding: 12px 20px; border-radius: 12px; backdrop-filter: blur(12px); opacity: 0; transform: translateY(12px); transition: all .3s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 26px; position: relative; overflow: hidden; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--gold), #f6ad55); border-radius: var(--radius) var(--radius) 0 0; }
+    .card-title { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .card-title-icon { font-size: 15px; }
+    .field-grid { display: grid; gap: 16px; }
+    .fg-2 { grid-template-columns: 1fr 1fr; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .field-input { background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 14px; font-family: inherit; width: 100%; }
+    .field-input[readonly] { background: rgba(61,232,199,.04); border-color: rgba(61,232,199,.18); color: var(--cyan); cursor: default; }
+    .field-input.price-field { background: rgba(245,200,66,.06); border-color: rgba(245,200,66,.25); color: var(--gold); font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
+    .field-hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    select.field-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7491' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    select.field-input option { background: var(--surface2); color: var(--text); }
+    .auto-badge { font-size: 9px; font-weight: 700; letter-spacing: .06em; padding: 2px 7px; border-radius: 4px; background: rgba(61,232,199,.12); color: var(--cyan); margin-left: 6px; vertical-align: middle; }
+    .price-source { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+    .price-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    .field-side-note { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); background: rgba(245,200,66,.12); border: 1px solid rgba(245,200,66,.24); border-radius: 999px; padding: 6px 10px; }
+    .label-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .documents-card { position: sticky; top: 24px; }
+    .document-dropzone { border: 1px dashed rgba(61,232,199,.28); border-radius: 14px; background: linear-gradient(180deg, rgba(61,232,199,.06), rgba(255,255,255,.02)); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .document-dropzone-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); }
+    .document-dropzone-subtitle { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .document-dropzone-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .documents-input { display: none; }
+    .documents-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+    .document-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px 14px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--border); }
+    .document-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .document-meta { font-size: 11px; color: var(--muted); }
+    .document-actions { display: flex; gap: 8px; align-items: center; }
+    .document-link, .document-remove { border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); border-radius: 10px; padding: 8px 10px; font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer; }
+    .document-remove { color: #ffd1da; background: rgba(255,94,125,.08); border-color: rgba(255,94,125,.2); }
+    .documents-empty { margin-top: 18px; padding: 16px 14px; border-radius: 12px; background: rgba(255,255,255,.02); border: 1px dashed var(--border); color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .divider { height: 1px; background: var(--border); margin: 4px 0; }
+    .logistics-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+    .ls-item { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+    .ls-label { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+    .ls-value { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; line-height: 1; }
+    .ls-unit { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .bom-modal-overlay { position: fixed; inset: 0; background: rgba(149,168,192,.32); backdrop-filter: blur(6px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .bom-modal-overlay.open { display: flex; }
+    .bom-modal { width: min(1100px, 96vw); max-height: 92vh; overflow: auto; border-radius: 18px; border: 1px solid var(--border2); background: var(--surface2); box-shadow: 0 16px 34px rgba(36,66,100,.2); }
+    .bom-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--border); }
+    .bom-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
+    .bom-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .bom-body { padding: 14px 18px 18px; }
+    .bom-table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: 12px; }
+    .bom-table { width: 100%; border-collapse: collapse; min-width: 860px; }
+    .bom-table th, .bom-table td { border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); padding: 8px 10px; }
+    .bom-table th:last-child, .bom-table td:last-child { border-right: none; }
+    .bom-table tr:last-child td { border-bottom: none; }
+    .bom-table th { background: rgba(59,145,218,.08); font-size: 12px; text-align: center; font-weight: 700; }
+    .bom-table tfoot td { background: rgba(59,145,218,.06); font-weight: 700; }
+    .bom-no { width: 48px; text-align: center; font-weight: 700; }
+    .bom-material { min-width: 360px; }
+    .bom-num { width: 160px; }
+    .bom-input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; background: #fff; color: var(--text); font: inherit; }
+    .bom-actions { width: 52px; text-align: center; }
+    .bom-total-label { text-align: right; letter-spacing: .04em; }
+    .bom-total-value { text-align: center; }
+    .bom-row-delete { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(217,101,118,.35); background: rgba(217,101,118,.12); color: var(--red); cursor: pointer; }
+    .bom-row-delete:hover { background: rgba(217,101,118,.2); }
+    .bom-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .bom-note { font-size: 11px; color: var(--muted); }
+    .bom-btn-row { display: flex; gap: 8px; }
+    @media(max-width:1200px) { .content-layout { grid-template-columns: 1fr; } .documents-card { position: static; } }
+    @media(max-width:900px) { .sidebar { display: none; } .main { padding: 20px; } }
+    @media(max-width:600px) { .fg-2, .logistics-summary { grid-template-columns: 1fr; } }
+    @media(max-width:600px) { .fg-2, .logistics-summary { grid-template-columns: 1fr; } .bom-head { flex-direction: column; } .bom-modal { width: 100%; } }
+  </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <a class="logo-back" href="products.html" title="Назад к продуктам">←</a>
+      <div>
+        <div class="logo-text" id="logo-text">Карточка товара</div>
+        <div class="logo-sub">Продукты · Клото</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Карточка товара</div>
+      <a class="nav-item active" href="#"><span class="nav-icon">📋</span> Основные данные</a>
+      <a class="nav-item" href="#logistics-section"><span class="nav-icon">🚚</span> Логистика</a>
+      <a class="nav-item" href="#price-section"><span class="nav-icon">💰</span> Цена</a>
+      <div class="nav-label">Связанные</div>
+      <a class="nav-item" href="products.html"><span class="nav-icon">📦</span> Каталог продуктов</a>
+      <a class="nav-item" id="cost-link" href="sebescost.html"><span class="nav-icon">🧮</span> Себестоимость</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="avatar">АК</div>
+      <div>
+        <div class="user-name">Андрей К.</div>
+        <div class="user-role">Руководитель</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="page-title">Карточка товара</div>
+        <div class="page-sub" id="page-sub">SKU: — · Карточка товара</div>
+        <div class="page-badges" id="page-badges"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-ghost" onclick="resetForm()">↺ Сбросить</button>
+        <button class="btn btn-primary" onclick="saveData()">💾 Сохранить</button>
+      </div>
+    </div>
+
+    <div class="content-layout">
+      <div class="left-column">
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">📋</span> Основные данные</div>
+          <div class="field-grid fg-2">
+            <div class="field" style="grid-column:1/-1">
+              <label class="field-label" for="f-name">Наименование</label>
+              <input class="field-input" id="f-name" type="text" placeholder="Название продукта" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="f-sku">SKU</label>
+              <input class="field-input" id="f-sku" type="text" readonly />
+            </div>
+            <div class="field">
+              <label class="field-label" for="f-pack">Упаковка</label>
+              <select class="field-input" id="f-pack" onchange="onPackChange()">
+                <option value="bags">Мешки</option>
+                <option value="drums">Бочки</option>
+                <option value="ibc">IBC</option>
+                <option value="canisters">Канистры</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="f-pack-material">Материал упаковки</label>
+              <select class="field-input" id="f-pack-material">
+                <option value="">—</option>
+                <option value="paper">Бум</option>
+                <option value="pp">П/П</option>
+                <option value="metal">Металл</option>
+                <option value="pe">П/Эт</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="f-weight">Вес единицы, кг</label>
+              <input class="field-input" id="f-weight" type="number" min="0.1" step="0.1" placeholder="кг" oninput="recalc()" />
+              <div class="field-hint" id="weight-hint">1 мешок = 25 кг</div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="f-pallet">Количество на паллете, ед.</label>
+              <input class="field-input" id="f-pallet" type="number" min="1" step="1" placeholder="ед." oninput="recalc()" />
+              <div class="field-hint" id="pallet-hint">40 мешков = 1 000 кг / паллет</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Вес паллета, кг <span class="auto-badge">АВТО</span></label>
+              <input class="field-input" id="f-pallet-tons" type="text" readonly placeholder="—" />
+              <div class="field-hint">= кол-во на паллете × вес ед.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="logistics-section">
+          <div class="card-title"><span class="card-title-icon">🚚</span> Логистика — Вместимость</div>
+          <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">🚛 Автомобиль (еврофура)</div>
+          <div class="field-grid fg-2">
+            <div class="field">
+              <label class="field-label" for="f-truck-units">Вместимость в единицах</label>
+              <input class="field-input" id="f-truck-units" type="number" min="1" step="1" placeholder="ед." oninput="recalc()" />
+              <div class="field-hint" id="truck-hint">кол-во единиц в 1 авто</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Вместимость в тоннах <span class="auto-badge">АВТО</span></label>
+              <input class="field-input" id="f-truck-tons" type="text" readonly placeholder="—" />
+              <div class="field-hint">= ед. × вес ед. / 1 000</div>
+            </div>
+          </div>
+          <div class="divider" style="margin:20px 0"></div>
+          <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">🚢 20-футовый контейнер</div>
+          <div class="field-grid fg-2">
+            <div class="field">
+              <label class="field-label" for="f-cont-units">Вместимость в единицах</label>
+              <input class="field-input" id="f-cont-units" type="number" min="1" step="1" placeholder="ед." oninput="recalc()" />
+              <div class="field-hint" id="cont-hint">кол-во единиц в 1 контейнере</div>
+            </div>
+            <div class="field">
+              <label class="field-label">Вместимость в тоннах <span class="auto-badge">АВТО</span></label>
+              <input class="field-input" id="f-cont-tons" type="text" readonly placeholder="—" />
+              <div class="field-hint">= ед. × вес ед. / 1 000</div>
+            </div>
+          </div>
+          <div class="logistics-summary">
+            <div class="ls-item">
+              <div class="ls-label">🚛 Еврофура</div>
+              <div class="ls-value" id="sum-truck-tons" style="color:var(--blue)">—</div>
+              <div class="ls-unit" id="sum-truck-units">—</div>
+            </div>
+            <div class="ls-item">
+              <div class="ls-label">🚢 20-фут. контейнер</div>
+              <div class="ls-value" id="sum-cont-tons" style="color:var(--cyan)">—</div>
+              <div class="ls-unit" id="sum-cont-units">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="price-section">
+          <div class="card-title"><span class="card-title-icon">💰</span> Цена по прайсу</div>
+          <div class="field-grid fg-2">
+            <div class="field" style="grid-column:1/-1">
+              <div class="label-row">
+                <label class="field-label" for="f-price">Цена на сегодня</label>
+                <span class="field-side-note">Без НДС EXW Архангельск</span>
+              </div>
+              <input class="field-input price-field" id="f-price" type="number" min="0" step="0.01" placeholder="Введите цену" />
+              <div class="price-source">
+                <div class="price-dot"></div>
+                <span id="price-source-text">Цена задается вручную в карточке товара</span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Единица измерения цены</label>
+              <input class="field-input" id="f-price-unit" type="text" value="тонна" readonly style="color:var(--muted)" />
+            </div>
+            <div class="field">
+              <label class="field-label">Дата обновления прайса</label>
+              <input class="field-input" id="f-price-date" type="text" readonly style="color:var(--muted)" placeholder="—" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="right-column">
+        <div class="card documents-card" id="documents-section">
+          <div class="card-title"><span class="card-title-icon">📎</span> Документы на продукцию</div>
+          <div class="document-dropzone">
+            <div class="document-dropzone-title">Добавьте паспорта, спецификации и сертификаты</div>
+            <div class="document-dropzone-subtitle">Перетащите файлы в эту область или используйте кнопку загрузки. Документы сохраняются локально в браузере для этой карточки товара.</div>
+            <div class="document-dropzone-actions">
+              <button class="btn btn-primary" type="button" id="documents-upload-button">⬆ Загрузить документ</button>
+              <span class="field-hint">Поддерживаются PDF, DOC, DOCX, XLSX, ZIP и другие файлы.</span>
+            </div>
+            <input class="documents-input" id="documents-input" type="file" multiple />
+          </div>
+          <div class="documents-list" id="documents-list"></div>
+          <div class="documents-empty" id="documents-empty">Документы пока не добавлены. После загрузки они появятся здесь и будут доступны для скачивания.</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">✓ Данные сохранены</div>
+
+<div class="bom-modal-overlay" id="bom-modal" onclick="onBomOverlayClick(event)">
+  <div class="bom-modal">
+    <div class="bom-head">
+      <div>
+        <div class="bom-title">Технологическая карта (BOM)</div>
+        <div class="bom-sub" id="bom-subtitle">Bill of Material</div>
+      </div>
+      <button class="btn btn-ghost" type="button" id="bom-close-btn">✕ Закрыть</button>
+    </div>
+    <div class="bom-body">
+      <div class="bom-table-wrap">
+        <table class="bom-table">
+          <thead>
+            <tr>
+              <th class="bom-no">№</th>
+              <th class="bom-material">Наименование сырья</th>
+              <th class="bom-num">Кол-во, %</th>
+              <th class="bom-num">На 1000 кг готовой продукции</th>
+              <th class="bom-actions"></th>
+            </tr>
+          </thead>
+          <tbody id="bom-rows"></tbody>
+          <tfoot>
+            <tr>
+              <td class="bom-no"></td>
+              <td class="bom-total-label">ИТОГО</td>
+              <td class="bom-total-value" id="bom-total-percent">0,0%</td>
+              <td class="bom-total-value" id="bom-total-per1000">0</td>
+              <td class="bom-actions"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="bom-foot">
+        <div class="bom-note">Подсказки сырья загружаются из страницы Сырьё. Поле «На 1000 кг» считается автоматически по формуле % × 10.05, но можно редактировать вручную.</div>
+        <div class="bom-btn-row">
+          <button class="btn btn-ghost" type="button" id="bom-add-row-btn">＋ Добавить строку</button>
+          <button class="btn btn-primary" type="button" id="bom-save-close-btn">✓ Готово</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<datalist id="raw-material-options"></datalist>
+
+<script>
+  const PRODUCT_CONFIG = {
+    stabilight: {
+      icon: '🧪',
+      name: 'Стабилайт II',
+      sku: 'STB-002',
+      storageKey: 'cloto_product_stabilight',
+      costHref: 'stabilight-cost.html',
+      tags: ['● Активен', 'Стабилизатор', 'ПВХ', 'Термо + Свето'],
+      tagClasses: ['b-green', 'b-gold', 'b-cyan', 'b-purple'],
+      defaults: { pack: 'bags', weight: '25', pallet: '40', truckUnits: '880', contUnits: '1000', price: '485' }
+    },
+    uschr: {
+      icon: '🪨',
+      name: 'УЩР (собственный)',
+      sku: 'UShR-001',
+      storageKey: 'cloto_product_uschr',
+      costHref: 'uschr-cost.html',
+      tags: ['● Активен', 'Сухой продукт', 'Минеральный', 'Бурение'],
+      tagClasses: ['b-green', 'b-gold', 'b-cyan', 'b-purple'],
+      defaults: { pack: 'bags', weight: '25', pallet: '40', truckUnits: '880', contUnits: '1000', price: '320' }
+    },
+    optitrol: {
+      icon: '🛢️',
+      name: 'Оптитрол жидкий',
+      sku: 'OPT-LIQ-001',
+      storageKey: 'cloto_product_optitrol',
+      costHref: 'optitrol-cost.html',
+      tags: ['● Активен', 'Жидкий', 'ПВХ', 'Бочка 200 кг'],
+      tagClasses: ['b-green', 'b-gold', 'b-cyan', 'b-purple'],
+      defaults: { pack: 'drums', weight: '200', pallet: '4', truckUnits: '100', contUnits: '110', price: '380' }
+    },
+    blacktrol: {
+      icon: '🖤',
+      name: 'Блэктрол',
+      sku: 'BLK-001',
+      storageKey: 'cloto_product_blacktrol',
+      costHref: 'blacktrol-cost.html',
+      tags: ['● Активен', 'Жидкий', 'Пигмент', 'Бочка 200 кг'],
+      tagClasses: ['b-green', 'b-gold', 'b-cyan', 'b-purple'],
+      defaults: { pack: 'drums', weight: '200', pallet: '4', truckUnits: '100', contUnits: '110', price: '450' }
+    },
+    maksflex: {
+      icon: '🟢',
+      name: 'Макс-Флекс',
+      sku: 'MF-001',
+      storageKey: 'cloto_product_maksflex',
+      costHref: 'maksflex-cost.html',
+      tags: ['● Активен', 'Жидкий', 'Добавка', 'Бочка 227 кг'],
+      tagClasses: ['b-green', 'b-gold', 'b-cyan', 'b-purple'],
+      defaults: { pack: 'drums', weight: '227', pallet: '4', truckUnits: '88', contUnits: '96', price: '199' }
+    }
+  };
+
+  function getProductId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('product') || 'stabilight';
+  }
+
+  function buildDynamicProductConfig(dynamicId) {
+    const safeId = String(dynamicId || '').trim() || ('new_' + Date.now());
+    const costHref = safeId === 'new_1778247211605'
+      ? 'stabilight-cost.html'
+      : 'cost-custom.html#id=' + encodeURIComponent(safeId);
+    return {
+      icon: '🧩',
+      name: 'Новый продукт',
+      initialName: '',
+      sku: 'NEW-' + safeId.slice(0, 8).toUpperCase(),
+      storageKey: 'cloto_product_' + safeId,
+      costHref: costHref,
+      tags: ['● Черновик', 'Новый продукт'],
+      tagClasses: ['b-gold', 'b-purple'],
+      defaults: { pack: 'bags', weight: '', pallet: '', truckUnits: '', contUnits: '', price: '' }
+    };
+  }
+
+  const productId = getProductId();
+  const productConfig = PRODUCT_CONFIG[productId] || buildDynamicProductConfig(productId);
+  const STORAGE_KEY = productConfig.storageKey;
+  const RAW_MATERIALS_KEY = 'cloto_raw_materials_v2';
+  const BOM_PERCENT_TO_1000_COEF = 10.05;
+  let productSku = productConfig.sku;
+  let productDocuments = [];
+  let bomRows = [];
+  let rawMaterialOptions = [];
+
+  function setText(id, value) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  }
+
+  function getTodayDateString() {
+    return new Date().toLocaleDateString('ru-RU');
+  }
+
+  function syncPriceDate() {
+    document.getElementById('f-price-date').value = getTodayDateString();
+  }
+
+  function updateDisplayedProductName(name) {
+    const resolvedName = String(name || '').trim() || productConfig.name;
+    document.title = resolvedName + ' — Клото';
+    setText('logo-text', resolvedName);
+    setText('page-title', productConfig.icon + ' ' + resolvedName);
+  }
+
+  function applyProductMeta() {
+    updateDisplayedProductName(productConfig.name);
+    setText('page-sub', 'SKU: ' + productSku + ' · Карточка товара');
+    document.getElementById('f-sku').value = productSku;
+    document.getElementById('cost-link').href = productConfig.costHref;
+    const badges = document.getElementById('page-badges');
+    badges.innerHTML = '<button class="bom-open-btn" type="button" id="bom-open-btn">📄 Тех. карта (BOM файл)</button>'
+      + '<a class="bom-open-btn cost-open-btn" id="cost-open-btn" href="' + productConfig.costHref + '">🧮 Расчет себестоимости</a>';
+    setText('truck-hint', productConfig.defaults.pack === 'drums' ? 'кол-во бочек в 1 авто' : 'кол-во мешков в 1 авто');
+    setText('cont-hint', productConfig.defaults.pack === 'drums' ? 'кол-во бочек в 1 контейнере' : 'кол-во мешков в 1 контейнере');
+  }
+
+  function toInputNumber(value) {
+    if (value == null || value === '') return '';
+    const num = Number(String(value).replace(',', '.'));
+    if (!isFinite(num)) return '';
+    const rounded = Math.round(num * 1000) / 1000;
+    return String(rounded).replace(/\.?0+$/, '');
+  }
+
+  function parseNumberInput(value) {
+    const num = Number(String(value || '').replace(',', '.'));
+    return isFinite(num) ? num : 0;
+  }
+
+  function calcPer1000(percentValue) {
+    return toInputNumber(parseNumberInput(percentValue) * BOM_PERCENT_TO_1000_COEF);
+  }
+
+  function createBomRow(seed) {
+    const percent = seed && seed.percent != null ? seed.percent : '';
+    const per1000 = seed && seed.per1000 != null ? seed.per1000 : '';
+    return {
+      id: 'bom_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      material: seed && seed.material ? String(seed.material) : '',
+      percent: toInputNumber(percent),
+      per1000: toInputNumber(per1000),
+      manual1000: !!(seed && seed.manual1000)
+    };
+  }
+
+  function normalizeBomRows(payload) {
+    if (!Array.isArray(payload) || !payload.length) return [createBomRow()];
+    return payload.map(function(row) { return createBomRow(row); });
+  }
+
+  function loadRawMaterials() {
+    try {
+      const raw = localStorage.getItem(RAW_MATERIALS_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      const names = parsed.map(function(item) {
+        if (!item || typeof item !== 'object') return '';
+        return String(item.name || '').trim();
+      }).filter(Boolean);
+      return Array.from(new Set(names)).sort(function(a, b) { return a.localeCompare(b, 'ru'); });
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function renderRawMaterialOptions() {
+    const datalist = document.getElementById('raw-material-options');
+    datalist.innerHTML = rawMaterialOptions.map(function(name) {
+      return '<option value="' + String(name).replace(/"/g, '&quot;') + '"></option>';
+    }).join('');
+  }
+
+  function renderBomRows() {
+    const tbody = document.getElementById('bom-rows');
+    tbody.innerHTML = bomRows.map(function(row, index) {
+      return '<tr data-row-id="' + row.id + '">' +
+        '<td class="bom-no">' + (index + 1) + '</td>' +
+        '<td><input class="bom-input bom-material-input" list="raw-material-options" type="text" value="' + String(row.material).replace(/"/g, '&quot;') + '" placeholder="Выберите из списка или введите вручную" /></td>' +
+        '<td><input class="bom-input bom-percent-input" type="number" min="0" step="0.001" value="' + toInputNumber(row.percent) + '" /></td>' +
+        '<td><input class="bom-input bom-per1000-input" type="number" min="0" step="0.001" value="' + toInputNumber(row.per1000) + '" /></td>' +
+        '<td class="bom-actions"><button class="bom-row-delete" type="button" title="Удалить строку">🗑</button></td>' +
+      '</tr>';
+    }).join('');
+    updateBomTotals();
+  }
+
+  function formatBomTotal(value, minimumFractionDigits, maximumFractionDigits) {
+    return new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: minimumFractionDigits,
+      maximumFractionDigits: maximumFractionDigits
+    }).format(value);
+  }
+
+  function updateBomTotals() {
+    const totalPercent = bomRows.reduce(function(sum, row) {
+      return sum + parseNumberInput(row.percent);
+    }, 0);
+    const totalPer1000 = bomRows.reduce(function(sum, row) {
+      return sum + parseNumberInput(row.per1000);
+    }, 0);
+    setText('bom-total-percent', formatBomTotal(totalPercent, 1, 1) + '%');
+    setText('bom-total-per1000', formatBomTotal(totalPer1000, 0, 3));
+  }
+
+  function recalcBomRow(row, forceAuto) {
+    if (!row) return;
+    if (forceAuto || !row.manual1000) {
+      row.per1000 = calcPer1000(row.percent);
+      row.manual1000 = false;
+    }
+  }
+
+  function openBomModal() {
+    setText('bom-subtitle', 'Bill of Material · ' + (document.getElementById('f-name').value || productConfig.name || 'Новый продукт'));
+    document.getElementById('bom-modal').classList.add('open');
+  }
+
+  function closeBomModal() {
+    document.getElementById('bom-modal').classList.remove('open');
+  }
+
+  function onBomOverlayClick(event) {
+    if (event.target.id === 'bom-modal') closeBomModal();
+  }
+
+  function applyDefaults() {
+    document.getElementById('f-name').value = productConfig.initialName != null ? productConfig.initialName : productConfig.name;
+    updateDisplayedProductName(productConfig.name);
+    document.getElementById('f-pack').value = productConfig.defaults.pack;
+    document.getElementById('f-weight').value = productConfig.defaults.weight;
+    document.getElementById('f-pallet').value = productConfig.defaults.pallet;
+    document.getElementById('f-truck-units').value = productConfig.defaults.truckUnits;
+    document.getElementById('f-cont-units').value = productConfig.defaults.contUnits;
+    document.getElementById('f-price').value = productConfig.defaults.price;
+    document.getElementById('f-price-unit').value = 'тонна';
+    syncPriceDate();
+  }
+
+  function formatFileSize(bytes) {
+    if (!bytes) return '0 Б';
+    if (bytes < 1024) return bytes + ' Б';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1).replace('.', ',') + ' КБ';
+    return (bytes / (1024 * 1024)).toFixed(2).replace('.', ',') + ' МБ';
+  }
+
+  function createDocumentId() {
+    return 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  }
+
+  function renderDocuments() {
+    const list = document.getElementById('documents-list');
+    const empty = document.getElementById('documents-empty');
+    list.innerHTML = '';
+    if (!productDocuments.length) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'block';
+    empty.style.display = 'none';
+    productDocuments.forEach(function(doc) {
+      const item = document.createElement('div');
+      item.className = 'document-item';
+      item.innerHTML = '<div><div class="document-name">' + doc.name + '</div><div class="document-meta">' + [formatFileSize(doc.size), doc.type || 'тип не указан'].join(' · ') + '</div></div>';
+      const actions = document.createElement('div');
+      actions.className = 'document-actions';
+      const link = document.createElement('a');
+      link.className = 'document-link';
+      link.href = doc.content;
+      link.download = doc.name;
+      link.textContent = 'Скачать';
+      const remove = document.createElement('button');
+      remove.className = 'document-remove';
+      remove.type = 'button';
+      remove.textContent = 'Удалить';
+      remove.onclick = function() { removeDocument(doc.id); };
+      actions.appendChild(link);
+      actions.appendChild(remove);
+      item.appendChild(actions);
+      list.appendChild(item);
+    });
+  }
+
+  function readFiles(files) {
+    return Promise.all(Array.from(files).map(function(file) {
+      return new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          resolve({ id: createDocumentId(), name: file.name, size: file.size, type: file.type, content: reader.result });
+        };
+        reader.onerror = function() { reject(reader.error); };
+        reader.readAsDataURL(file);
+      });
+    }));
+  }
+
+  async function handleDocuments(files) {
+    if (!files || !files.length) return;
+    try {
+      const prepared = await readFiles(files);
+      productDocuments = productDocuments.concat(prepared);
+      renderDocuments();
+      persistData(true);
+    } catch (error) {
+      alert('Не удалось загрузить документы. Попробуйте выбрать файлы меньшего размера.');
+    }
+  }
+
+  function removeDocument(id) {
+    productDocuments = productDocuments.filter(function(doc) { return doc.id !== id; });
+    renderDocuments();
+    persistData(true);
+  }
+
+  function collectFormData() {
+    syncPriceDate();
+    return {
+      name: document.getElementById('f-name').value,
+      sku: productSku,
+      pack: document.getElementById('f-pack').value,
+      packMaterial: document.getElementById('f-pack-material').value,
+      weight: document.getElementById('f-weight').value,
+      pallet: document.getElementById('f-pallet').value,
+      truckUnits: document.getElementById('f-truck-units').value,
+      contUnits: document.getElementById('f-cont-units').value,
+      price: document.getElementById('f-price').value,
+      priceUnit: 'тонна',
+      priceDate: document.getElementById('f-price-date').value,
+      bomRows: bomRows,
+      documents: productDocuments,
+      savedAt: new Date().toISOString()
+    };
+  }
+
+  function persistData(showNotification) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectFormData()));
+      if (showNotification) showToast();
+    } catch (error) {
+      alert('Не удалось сохранить карточку. Локальное хранилище браузера переполнено.');
+    }
+  }
+
+  function initDocumentsUi() {
+    const input = document.getElementById('documents-input');
+    const button = document.getElementById('documents-upload-button');
+    button.addEventListener('click', function() { input.click(); });
+    input.addEventListener('change', async function(event) {
+      await handleDocuments(event.target.files);
+      input.value = '';
+    });
+  }
+
+  function recalc() {
+    const wt = parseFloat(document.getElementById('f-weight').value) || 0;
+    const palletUnits = parseFloat(document.getElementById('f-pallet').value) || 0;
+    const truckUnits = parseFloat(document.getElementById('f-truck-units').value) || 0;
+    const contUnits = parseFloat(document.getElementById('f-cont-units').value) || 0;
+    const palletKg = palletUnits * wt;
+    const packIsDrums = document.getElementById('f-pack').value === 'drums';
+    document.getElementById('f-pallet-tons').value = palletKg > 0 ? palletKg.toLocaleString('ru') + ' кг' : '';
+    const truckT = truckUnits * wt / 1000;
+    document.getElementById('f-truck-tons').value = truckUnits > 0 && wt > 0 ? truckT.toFixed(2) + ' т' : '';
+    setText('sum-truck-tons', truckUnits > 0 && wt > 0 ? truckT.toFixed(2) : '—');
+    setText('sum-truck-units', (truckUnits ? truckUnits.toLocaleString('ru') : '0') + ' ед. · тонн');
+    const contT = contUnits * wt / 1000;
+    document.getElementById('f-cont-tons').value = contUnits > 0 && wt > 0 ? contT.toFixed(2) + ' т' : '';
+    setText('sum-cont-tons', contUnits > 0 && wt > 0 ? contT.toFixed(2) : '—');
+    setText('sum-cont-units', (contUnits ? contUnits.toLocaleString('ru') : '0') + ' ед. · тонн');
+    setText('weight-hint', '1 ' + (packIsDrums ? 'бочка' : 'мешок') + ' = ' + (wt || '?') + ' кг');
+    setText('pallet-hint', palletUnits + ' ' + (packIsDrums ? 'бочек' : 'мешков') + (palletKg > 0 ? ' = ' + palletKg.toLocaleString('ru') + ' кг / паллет' : ''));
+    setText('truck-hint', packIsDrums ? 'кол-во бочек в 1 авто' : 'кол-во мешков в 1 авто');
+    setText('cont-hint', packIsDrums ? 'кол-во бочек в 1 контейнере' : 'кол-во мешков в 1 контейнере');
+  }
+
+  function onPackChange() { recalc(); }
+
+  function saveData() { persistData(true); }
+
+  function resetForm() {
+    localStorage.removeItem(STORAGE_KEY);
+    productSku = productConfig.sku;
+    applyDefaults();
+    bomRows = [createBomRow()];
+    renderBomRows();
+    productDocuments = [];
+    renderDocuments();
+    recalc();
+  }
+
+  function loadSaved() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      if (data.sku) {
+        productSku = data.sku;
+        document.getElementById('f-sku').value = productSku;
+        setText('page-sub', 'SKU: ' + productSku + ' · Карточка товара');
+      }
+      if (data.name) {
+        document.getElementById('f-name').value = data.name;
+        updateDisplayedProductName(data.name);
+      }
+      if (data.pack) document.getElementById('f-pack').value = data.pack;
+      if (data.packMaterial) document.getElementById('f-pack-material').value = data.packMaterial;
+      if (data.weight) document.getElementById('f-weight').value = data.weight;
+      if (data.pallet) document.getElementById('f-pallet').value = data.pallet;
+      if (data.truckUnits) document.getElementById('f-truck-units').value = data.truckUnits;
+      if (data.contUnits) document.getElementById('f-cont-units').value = data.contUnits;
+      if (data.price) document.getElementById('f-price').value = data.price;
+      bomRows = normalizeBomRows(data.bomRows);
+      productDocuments = Array.isArray(data.documents) ? data.documents : [];
+    } catch (error) {}
+  }
+
+  function initBomUi() {
+    rawMaterialOptions = loadRawMaterials();
+    renderRawMaterialOptions();
+
+    if (!bomRows.length) {
+      bomRows = [createBomRow()];
+    }
+    renderBomRows();
+
+    const badges = document.getElementById('page-badges');
+    badges.addEventListener('click', function(event) {
+      const btn = event.target.closest('#bom-open-btn');
+      if (!btn) return;
+      openBomModal();
+    });
+
+    document.getElementById('bom-close-btn').addEventListener('click', closeBomModal);
+    document.getElementById('bom-save-close-btn').addEventListener('click', function() {
+      closeBomModal();
+      persistData(true);
+    });
+    document.getElementById('bom-add-row-btn').addEventListener('click', function() {
+      bomRows.push(createBomRow());
+      renderBomRows();
+    });
+
+    const tbody = document.getElementById('bom-rows');
+    tbody.addEventListener('input', function(event) {
+      const rowNode = event.target.closest('tr[data-row-id]');
+      if (!rowNode) return;
+      const rowId = rowNode.getAttribute('data-row-id');
+      const row = bomRows.find(function(item) { return item.id === rowId; });
+      if (!row) return;
+
+      if (event.target.classList.contains('bom-material-input')) {
+        row.material = event.target.value;
+        updateBomTotals();
+        return;
+      }
+
+      if (event.target.classList.contains('bom-percent-input')) {
+        row.percent = event.target.value;
+        recalcBomRow(row, false);
+        const perInput = rowNode.querySelector('.bom-per1000-input');
+        if (perInput) perInput.value = toInputNumber(row.per1000);
+        updateBomTotals();
+        return;
+      }
+
+      if (event.target.classList.contains('bom-per1000-input')) {
+        row.per1000 = event.target.value;
+        if (!String(event.target.value).trim()) {
+          recalcBomRow(row, true);
+          event.target.value = toInputNumber(row.per1000);
+        } else {
+          row.manual1000 = true;
+        }
+        updateBomTotals();
+      }
+    });
+
+    tbody.addEventListener('click', function(event) {
+      const removeBtn = event.target.closest('.bom-row-delete');
+      if (!removeBtn) return;
+      const rowNode = event.target.closest('tr[data-row-id]');
+      if (!rowNode) return;
+      const rowId = rowNode.getAttribute('data-row-id');
+      bomRows = bomRows.filter(function(item) { return item.id !== rowId; });
+      if (!bomRows.length) bomRows = [createBomRow()];
+      renderBomRows();
+    });
+  }
+
+  function initNameSync() {
+    const nameInput = document.getElementById('f-name');
+    nameInput.addEventListener('input', function() {
+      updateDisplayedProductName(nameInput.value);
+    });
+  }
+
+  function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2200);
+  }
+
+  applyProductMeta();
+  applyDefaults();
+  loadSaved();
+  initNameSync();
+  initBomUi();
+  initDocumentsUi();
+  renderDocuments();
+  recalc();
+
+  window.onBomOverlayClick = onBomOverlayClick;
+</script>
+</body>
+</html>

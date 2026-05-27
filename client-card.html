@@ -10,30 +10,79 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #080c14;
-      --surface: rgba(255,255,255,.04);
-      --surface2: rgba(255,255,255,.07);
-      --surface3: rgba(255,255,255,.03);
-      --border: rgba(255,255,255,.08);
-      --border2: rgba(255,255,255,.14);
-      --text: #e8eaf0;
-      --muted: #6b7491;
-      --cyan: #3de8c7;
-      --gold: #f5c842;
-      --green: #48bb78;
-      --blue: #63b3ed;
-      --red: #ff5e7d;
+      --bg: #eef4fb;
+      --surface: rgba(255,255,255,.86);
+      --surface2: rgba(255,255,255,.97);
+      --surface3: rgba(255,255,255,.78);
+      --border: rgba(136,158,186,.25);
+      --border2: rgba(94,143,199,.38);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --cyan: #24b7ad;
+      --gold: #d9a83a;
+      --green: #3ea66d;
+      --blue: #3b91da;
+      --red: #d96576;
       --radius: 18px;
-      --shadow: 0 22px 48px rgba(0,0,0,.28);
+      --shadow: 0 14px 30px rgba(36,66,100,.14);
     }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(180deg, #eef4fb, #e3edf8); color: var(--text); min-height: 100vh; overflow-x: hidden; }
     .bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: linear-gradient(rgba(61,232,199,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(61,232,199,.03) 1px, transparent 1px); background-size: 48px 48px; }
     .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
     .o1 { width: 560px; height: 560px; left: -170px; top: -190px; background: radial-gradient(circle, rgba(61,232,199,.12), transparent 70%); }
     .o2 { width: 480px; height: 480px; right: -140px; bottom: -160px; background: radial-gradient(circle, rgba(124,92,252,.14), transparent 70%); }
     .wrap { position: relative; z-index: 1; max-width: 1460px; margin: 0 auto; padding: 30px 22px 42px; }
     .top { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 18px; }
-    .title { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 800; line-height: 1.08; background: linear-gradient(135deg, #fff 22%, var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .top-head { min-width: 280px; }
+    .client-logo-panel {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      align-self: center;
+      margin-inline: auto;
+    }
+    .client-logo-frame {
+      width: 126px;
+      height: 94px;
+      border-radius: 14px;
+      border: 1px dashed var(--border2);
+      background: rgba(255,255,255,.56);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .client-logo-empty {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0 8px;
+      line-height: 1.4;
+    }
+    .client-logo-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #fff;
+    }
+    .client-logo-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .logo-btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.7);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .logo-btn:hover { border-color: var(--border2); background: var(--surface2); }
+    .logo-btn.danger { border-color: rgba(255,94,125,.22); color: #c14f67; background: rgba(255,94,125,.08); }
+    .logo-btn[hidden] { display: none; }
+    .title { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 800; line-height: 1.08; background: linear-gradient(135deg, #2a3d54 22%, var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
     .actions { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); text-decoration: none; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .18s; }
@@ -41,7 +90,27 @@
     .btn-primary { background: rgba(61,232,199,.12); border-color: rgba(61,232,199,.3); color: var(--cyan); }
     .btn-primary:hover { background: rgba(61,232,199,.2); }
     .btn.is-hidden { display: none; }
-    .grid { display: grid; grid-template-columns: minmax(0, 1.28fr) minmax(320px, .72fr); gap: 18px; align-items: start; }
+    .grid { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }
+    .left-nav { position: sticky; top: 16px; align-self: start; }
+    .left-nav-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
+    .left-nav-list { display: flex; flex-direction: column; gap: 8px; }
+    .left-nav-btn {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.56);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .left-nav-btn:hover { border-color: var(--border2); background: var(--surface2); }
+    .left-nav-btn.active { background: rgba(61,232,199,.14); border-color: rgba(61,232,199,.35); color: #168b84; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
     .stack { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; overflow: hidden; position: relative; box-shadow: var(--shadow); }
     .card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, var(--cyan), var(--gold)); }
@@ -56,9 +125,10 @@
     .field.full { grid-column: 1 / -1; }
     .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
     .input, .textarea, .cell-input, .cell-select { width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: var(--text); font-size: 13px; font-family: inherit; line-height: 1.5; }
-    .cell-select option { background: #0d1320; color: var(--text); }
+    .cell-select option { background: var(--surface2); color: var(--text); }
     .textarea { min-height: 120px; resize: vertical; }
     .input:focus, .textarea:focus, .cell-input:focus, .cell-select:focus { outline: none; border-color: rgba(61,232,199,.4); box-shadow: 0 0 0 3px rgba(61,232,199,.08); }
+    .input:disabled, .textarea:disabled { opacity: .72; cursor: not-allowed; background: rgba(255,255,255,.02); }
     .timeline { display: flex; flex-direction: column; gap: 10px; }
     .event { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
     .event-date { font-size: 11px; color: var(--cyan); font-weight: 700; margin-bottom: 4px; }
@@ -81,7 +151,7 @@
       background: rgba(61,232,199,.05);
       transform: translateY(-1px);
     }
-    .product-quote-toggle { display: none; align-items: center; justify-content: center; width: 18px; height: 18px; margin-top: 2px; accent-color: var(--cyan); cursor: pointer; flex: 0 0 auto; }
+    .product-quote-toggle { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-top: 2px; margin-right: 8px; accent-color: var(--cyan); cursor: pointer; flex: 0 0 auto; }
     .product-quote-toggle.visible { display: inline-flex; }
     .product-link { color: var(--text); text-decoration: none; font-size: 15px; font-weight: 800; }
     .product-link:hover { color: var(--cyan); }
@@ -229,10 +299,46 @@
     }
     .empty-state { padding: 24px 18px; color: var(--muted); font-size: 13px; line-height: 1.7; text-align: center; }
     @media (max-width: 1240px) { .hero-stats, .orders-summary, .month-cards { grid-template-columns: repeat(2, 1fr); } .orders-dashboard { grid-template-columns: 1fr; } }
-    @media (max-width: 1080px) { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1080px) { .grid { grid-template-columns: 1fr; } .left-nav { position: static; } }
     @media (max-width: 940px) { .product-item { grid-template-columns: 1fr; } .product-actions { justify-content: flex-start; } }
     @media (max-width: 900px) { .file-row { grid-template-columns: 1fr; } .file-actions { justify-content: flex-start; } }
     @media (max-width: 840px) { .hero-stats, .orders-summary, .month-cards, .form-grid { grid-template-columns: 1fr; } .shipment-bar-row { grid-template-columns: 1fr; } .wrap { padding: 22px 16px 30px; } }
+    /* ── КП Modal ──────────────────────────────────────────── */
+    .kp-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(8,16,32,.82); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: flex-start; justify-content: center; padding: 28px 16px 40px; overflow-y: auto; }
+    .kp-overlay.hidden { display: none; }
+    .kp-dialog { background: #111c2e; border: 1px solid rgba(61,232,199,.24); border-radius: 22px; box-shadow: 0 48px 120px rgba(0,0,0,.58); width: 100%; max-width: 760px; display: flex; flex-direction: column; margin: auto; color: #e8f2ff; }
+    .kp-dialog-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 22px 26px 16px; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .kp-dialog-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 800; line-height: 1.2; color: #f2f8ff; }
+    .kp-dialog-sub { font-size: 12px; color: #9cb4d0; margin-top: 3px; }
+    .kp-close { width: 36px; height: 36px; border-radius: 10px; border: 1px solid rgba(150,176,205,.35); background: transparent; color: #b8cbe2; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; transition: all .15s; }
+    .kp-close:hover { background: rgba(255,255,255,.07); color: #ffffff; }
+    .kp-body { padding: 22px 26px; display: flex; flex-direction: column; gap: 22px; }
+    .kp-section { display: flex; flex-direction: column; gap: 12px; }
+    .kp-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--cyan); font-weight: 700; padding-bottom: 6px; border-bottom: 1px solid rgba(61,232,199,.12); }
+    .kp-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .kp-field { display: flex; flex-direction: column; gap: 5px; }
+    .kp-label { font-size: 11px; color: #adc2da; font-weight: 700; }
+    .kp-input, .kp-select { width: 100%; background: rgba(255,255,255,.08); border: 1px solid rgba(150,176,205,.32); border-radius: 10px; padding: 10px 12px; color: #eef5ff; font-size: 13px; font-family: inherit; }
+    .kp-input::placeholder { color: #90a8c5; }
+    .kp-select option { color: #10263f; background: #f0f6ff; }
+    .kp-input:focus, .kp-select:focus { outline: none; border-color: rgba(61,232,199,.45); box-shadow: 0 0 0 3px rgba(61,232,199,.1); }
+    .kp-locations { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .kp-loc-row { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center; padding: 11px 14px; border-radius: 12px; background: rgba(255,255,255,.03); border: 1px solid var(--border); transition: border-color .18s, background .18s; }
+    .kp-loc-row.kp-loc-checked { border-color: rgba(61,232,199,.35); background: rgba(61,232,199,.05); }
+    .kp-loc-check { width: 16px; height: 16px; accent-color: var(--cyan); cursor: pointer; flex: 0 0 auto; }
+    .kp-loc-name { font-size: 13px; font-weight: 700; line-height: 1.3; color: #edf5ff; }
+    .kp-loc-rates { font-size: 11px; color: #9ab4d2; margin-top: 2px; }
+    .kp-transport-sel { background: rgba(255,255,255,.09); border: 1px solid rgba(150,176,205,.32); border-radius: 9px; padding: 7px 10px; color: #edf5ff; font-size: 12px; font-family: inherit; min-width: 158px; }
+    .kp-transport-sel:focus { outline: none; border-color: rgba(61,232,199,.4); }
+    .kp-preview-wrap { border: 1px solid var(--border); border-radius: 14px; overflow-x: auto; overflow-y: hidden; }
+    .kp-preview-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 12px; }
+    .kp-preview-table th { padding: 8px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #9db9d8; background: rgba(255,255,255,.04); border-bottom: 1px solid var(--border); font-weight: 700; }
+    .kp-preview-table td { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.06); vertical-align: top; color: #eaf3ff; }
+    .kp-preview-table tr:last-child td { border-bottom: none; }
+    .kp-price-muted { color: #a8c2dd; font-size: 11px; margin-top: 2px; }
+    .kp-price-total { font-weight: 800; color: var(--cyan); }
+    .kp-foot { padding: 16px 26px 22px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,.07); }
+    @media (max-width: 600px) { .kp-grid2 { grid-template-columns: 1fr; } .kp-body { padding: 18px 16px; } .kp-dialog-head { padding: 18px 16px 14px; } .kp-foot { padding: 14px 16px 18px; } }
   </style>
 </head>
 <body>
@@ -241,134 +347,265 @@
   <div class="orb o2"></div>
   <div class="wrap">
     <div class="top">
-      <div>
+      <div class="top-head">
         <div class="title" id="client-title">Карточка клиента</div>
         <div class="sub" id="client-subtitle">CRM-профиль компании и отгрузок</div>
       </div>
+      <div class="client-logo-panel">
+        <div class="client-logo-frame">
+          <img class="client-logo-image" id="client-logo-image" alt="Логотип клиента" hidden>
+          <div class="client-logo-empty" id="client-logo-empty">Логотип клиента</div>
+        </div>
+        <div class="client-logo-actions">
+          <input class="hidden-file-input" id="client-logo-input" type="file" accept="image/*">
+          <button class="logo-btn" type="button" id="client-logo-upload-button">Загрузить логотип</button>
+          <button class="logo-btn danger" type="button" id="client-logo-remove-button" hidden>Убрать</button>
+        </div>
+      </div>
       <div class="actions">
+        <button class="btn" type="button" id="edit-client-button">Изменить</button>
         <button class="btn btn-primary" type="button" id="save-client-button">Сохранить</button>
-        <a class="btn" href="clients.html">К списку клиентов</a>
+        <a class="btn" href="companies.html">К списку клиентов</a>
         <a class="btn" href="portal.html">На главную</a>
       </div>
     </div>
 
     <div class="grid">
-      <div class="stack">
-        <section class="card">
-          <div class="card-title">Обзор</div>
-          <div class="hero-stats">
-            <div class="stat"><div class="stat-l">Оборот Q1 2026</div><div class="stat-v" id="client-turnover">—</div><div class="stat-sub">Коммерческий профиль клиента</div></div>
-            <div class="stat"><div class="stat-l">Статус</div><div class="stat-v" id="client-status-text">—</div><div class="stat-sub">Текущий уровень взаимодействия</div></div>
-            <div class="stat"><div class="stat-l">Потенциал</div><div class="stat-v" id="client-potential">—</div><div class="stat-sub">Оценка роста в ближайших периодах</div></div>
-            <div class="stat"><div class="stat-l">Отгрузки янв-апр</div><div class="stat-v" id="client-shipment-count">—</div><div class="stat-sub">Данные по shipments / orders</div></div>
+      <aside class="left-nav">
+        <div class="left-nav-card">
+          <div class="left-nav-list" id="client-sections-menu">
+            <button class="left-nav-btn active" type="button" data-section="profile">Профиль компании</button>
+            <button class="left-nav-btn" type="button" data-section="contacts">Контакты</button>
+            <button class="left-nav-btn" type="button" data-section="products">Продукты клиента</button>
+            <button class="left-nav-btn" type="button" data-section="documents">Документы</button>
+            <button class="left-nav-btn" type="button" data-section="orders">Заказы</button>
+            <button class="left-nav-btn" type="button" data-section="tasks">Дела</button>
           </div>
+        </div>
+      </aside>
+
+      <main>
+        <section class="tab-panel active" data-section-panel="profile">
+          <section class="card">
+            <div class="card-title">Обзор</div>
+            <div class="hero-stats">
+              <div class="stat"><div class="stat-l">Оборот Q1 2026</div><div class="stat-v" id="client-turnover">—</div><div class="stat-sub">Коммерческий профиль клиента</div></div>
+              <div class="stat"><div class="stat-l">Статус</div><div class="stat-v" id="client-status-text">—</div><div class="stat-sub">Текущий уровень взаимодействия</div></div>
+              <div class="stat"><div class="stat-l">Потенциал</div><div class="stat-v" id="client-potential">—</div><div class="stat-sub">Оценка роста в ближайших периодах</div></div>
+              <div class="stat"><div class="stat-l">Отгрузки янв-апр</div><div class="stat-v" id="client-shipment-count">—</div><div class="stat-sub">Данные по shipments / orders</div></div>
+            </div>
+          </section>
+
+          <section class="card" style="margin-top:18px;">
+            <div class="card-title">Профиль компании</div>
+            <div class="form-grid">
+              <div class="field full"><label class="label" for="client-name-field">Компания</label><input class="input" id="client-name-field" type="text"></div>
+              <div class="field"><label class="label" for="client-turnover-field">Оборот Q1 2026</label><input class="input" id="client-turnover-field" type="text" placeholder="Например, 21,0 млн"></div>
+              <div class="field"><label class="label" for="client-status-field">Статус</label><input class="input" id="client-status-field" type="text" placeholder="Например, Активный"></div>
+              <div class="field full"><label class="label" for="client-potential-field">Потенциал</label><input class="input" id="client-potential-field" type="text" placeholder="Например, Высокий"></div>
+              <div class="field full"><label class="label" for="client-info">Информация о компании</label><textarea class="textarea" id="client-info" placeholder="Краткое описание компании, профиль, особенности закупок"></textarea></div>
+              <div class="field full"><label class="label" for="client-address">Адрес</label><input class="input" id="client-address" type="text" placeholder="Юридический или фактический адрес"></div>
+            </div>
+          </section>
+
+          <section class="card" style="margin-top:18px;">
+            <div class="card-title">Последние взаимодействия</div>
+            <div class="field" style="margin-bottom:12px;"><label class="label" for="client-events-input">События (по одному на строку)</label><textarea class="textarea" id="client-events-input" placeholder="12.04.2026 · Запрос на продолжение поставок Q2 2026"></textarea></div>
+            <div class="timeline" id="client-events"></div>
+          </section>
         </section>
 
-        <section class="card">
-          <div class="card-title">Профиль компании</div>
-          <div class="form-grid">
-            <div class="field full"><label class="label" for="client-name-field">Компания</label><input class="input" id="client-name-field" type="text" readonly></div>
-            <div class="field full"><label class="label" for="client-info">Информация о компании</label><textarea class="textarea" id="client-info" placeholder="Краткое описание компании, профиль, особенности закупок"></textarea></div>
-            <div class="field full"><label class="label" for="client-address">Адрес</label><input class="input" id="client-address" type="text" placeholder="Юридический или фактический адрес"></div>
-          </div>
-        </section>
-      </div>
-
-      <div class="stack">
-        <section class="card">
-          <div class="card-title">Последние взаимодействия</div>
-          <div class="timeline" id="client-events"></div>
-        </section>
-      </div>
-
-      <section class="card full-span-card contacts-card">
-        <div class="table-toolbar">
-          <div>
-            <div class="card-title" style="margin-bottom:4px">Контакты</div>
-            <div class="hint">Таблица расширена по ширине и высоте, чтобы удобно вести несколько контактов и назначать руководителя внутри компании.</div>
-          </div>
-          <button class="btn btn-primary" type="button" id="add-contact-button">Добавить контакт</button>
-        </div>
-        <div class="contacts-table-wrap">
-          <table>
-            <thead><tr><th>Имя</th><th>E-mail</th><th>Телефон</th><th>Должность</th><th>Руководитель</th><th></th></tr></thead>
-            <tbody id="contacts-body"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="card full-span-card">
-        <div class="table-toolbar">
-          <div>
-            <div class="card-title" style="margin-bottom:4px">Продукты клиента</div>
-            <div class="hint">Сетка локаций и цен с доставкой убрана у всех клиентов. В карточке продукта остается сам продукт, его заметка и EXW цена.</div>
-          </div>
-          <div class="toolbar-actions">
-            <button class="btn is-hidden" type="button" id="build-quote-button">Сформировать КП</button>
-            <button class="btn" type="button" id="generate-quote-button">Выбор для КП</button>
-            <button class="btn btn-primary" type="button" id="add-product-button">Добавить продукт</button>
-          </div>
-        </div>
-        <div class="products-list" id="products-list"></div>
-      </section>
-
-      <section class="card full-span-card">
-        <div class="table-toolbar">
-          <div>
-            <div class="card-title" style="margin-bottom:4px">Документы клиента</div>
-            <div class="hint">Здесь хранится отдельная папка с требованиями к химреагентам и материалам для текущего клиента. На защищённом сервере файлы сохраняются на диск, локально остается fallback-режим.</div>
-          </div>
-        </div>
-
-        <div class="folder-shell">
-          <div class="folder-card">
-            <div class="folder-head">
-              <div class="folder-title-wrap">
-                <div class="folder-title-line">
-                  <span class="folder-icon">▣</span>
-                  <span class="folder-name">Требования к химреагентам и материалам</span>
-                  <span class="folder-badge" id="requirements-folder-count">0 файлов</span>
-                </div>
-                <div class="folder-meta">Папка привязана к карточке клиента <span id="requirements-folder-company"></span>. Можно добавлять PDF, DOCX, XLSX, архивы и другие рабочие файлы.</div>
+        <section class="tab-panel" data-section-panel="contacts">
+          <section class="card contacts-card">
+            <div class="table-toolbar">
+              <div>
+                <div class="card-title" style="margin-bottom:4px">Контакты</div>
+                <div class="hint">Таблица расширена по ширине и высоте, чтобы удобно вести несколько контактов и назначать руководителя внутри компании.</div>
               </div>
-              <div class="folder-actions">
-                <input class="hidden-file-input" id="requirements-files-input" type="file" multiple>
-                <button class="btn btn-primary" type="button" id="requirements-upload-button">Добавить файлы</button>
+              <button class="btn btn-primary" type="button" id="add-contact-button">Добавить контакт</button>
+            </div>
+            <div class="contacts-table-wrap">
+              <table>
+                <thead><tr><th>Имя</th><th>E-mail</th><th>Телефон Рабочий</th><th>Телефон мобильный</th><th>Должность</th><th>Руководитель</th><th></th></tr></thead>
+                <tbody id="contacts-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="tab-panel" data-section-panel="products">
+          <section class="card">
+            <div class="table-toolbar">
+              <div>
+                <div class="card-title" style="margin-bottom:4px">Продукты клиента</div>
+                <div class="hint">Сетка локаций и цен с доставкой убрана у всех клиентов. В карточке продукта остается сам продукт, его заметка и EXW цена.</div>
+              </div>
+              <div class="toolbar-actions">
+                <button class="btn" type="button" id="generate-quote-button">Сформировать КП</button>
+                <button class="btn btn-primary" type="button" id="add-product-button">Добавить продукт</button>
+              </div>
+            </div>
+            <div class="products-list" id="products-list"></div>
+          </section>
+        </section>
+
+        <section class="tab-panel" data-section-panel="documents">
+          <section class="card">
+            <div class="table-toolbar">
+              <div>
+                <div class="card-title" style="margin-bottom:4px">Документы клиента</div>
+                <div class="hint">Здесь хранится отдельная папка с требованиями к химреагентам и материалам для текущего клиента. На защищённом сервере файлы сохраняются на диск, локально остается fallback-режим.</div>
               </div>
             </div>
 
-            <div class="file-list" id="requirements-file-list"></div>
-            <div class="folder-empty" id="requirements-folder-empty">Папка создана, но файлы пока не добавлены. Если пришлёте файлы в чат или выберете их кнопкой выше, я добавлю их сюда.</div>
-          </div>
-        </div>
-      </section>
+            <div class="folder-shell">
+              <div class="folder-card">
+                <div class="folder-head">
+                  <div class="folder-title-wrap">
+                    <div class="folder-title-line">
+                      <span class="folder-icon">▣</span>
+                      <span class="folder-name">Требования к химреагентам и материалам</span>
+                      <span class="folder-badge" id="requirements-folder-count">0 файлов</span>
+                    </div>
+                    <div class="folder-meta">Папка привязана к карточке клиента <span id="requirements-folder-company"></span>. Можно добавлять PDF, DOCX, XLSX, архивы и другие рабочие файлы.</div>
+                  </div>
+                  <div class="folder-actions">
+                    <input class="hidden-file-input" id="requirements-files-input" type="file" multiple>
+                    <button class="btn btn-primary" type="button" id="requirements-upload-button">Добавить файлы</button>
+                  </div>
+                </div>
 
-      <section class="card full-span-card">
-        <div class="table-toolbar">
-          <div>
-            <div class="card-title" style="margin-bottom:4px">Заказы клиента</div>
-            <div class="hint">Заказы подбираются по клиенту из данных отгрузок января-апреля. Сначала идет инфографика, ниже последние отгруженные позиции.</div>
-          </div>
-        </div>
+                <div class="file-list" id="requirements-file-list"></div>
+                <div class="folder-empty" id="requirements-folder-empty">Папка создана, но файлы пока не добавлены. Если пришлёте файлы в чат или выберете их кнопкой выше, я добавлю их сюда.</div>
+              </div>
+            </div>
+          </section>
+        </section>
 
-        <div class="orders-dashboard">
-          <div>
-            <div class="orders-summary" id="orders-summary"></div>
-            <div class="month-cards" id="orders-month-cards" style="margin-top:12px"></div>
-          </div>
-          <div class="shipment-bars" id="orders-bars"></div>
-        </div>
+        <section class="tab-panel" data-section-panel="orders">
+          <section class="card">
+            <div class="table-toolbar">
+              <div>
+                <div class="card-title" style="margin-bottom:4px">Заказы клиента</div>
+                <div class="hint">Заказы подбираются по клиенту из данных отгрузок января-апреля. Сначала идет инфографика, ниже последние отгруженные позиции.</div>
+              </div>
+            </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Заказ</th><th>Дата</th><th>Продукт</th><th>Объем и сумма</th><th>Доставка</th></tr></thead>
-            <tbody id="client-orders-body"></tbody>
-          </table>
-        </div>
-      </section>
+            <div class="orders-dashboard">
+              <div>
+                <div class="orders-summary" id="orders-summary"></div>
+                <div class="month-cards" id="orders-month-cards" style="margin-top:12px"></div>
+              </div>
+              <div class="shipment-bars" id="orders-bars"></div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Заказ</th><th>Дата</th><th>Продукт</th><th>Объем и сумма</th><th>Доставка</th></tr></thead>
+                <tbody id="client-orders-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="tab-panel" data-section-panel="tasks">
+          <section class="card"></section>
+        </section>
+      </main>
     </div>
   </div>
 
+  <!-- КП Modal -->
+  <div class="kp-overlay hidden" id="kp-overlay">
+    <div class="kp-dialog">
+      <div class="kp-dialog-head">
+        <div>
+          <div class="kp-dialog-title">Коммерческое предложение</div>
+          <div class="kp-dialog-sub" id="kp-dialog-sub">Настройте параметры перед формированием</div>
+        </div>
+        <button class="kp-close" type="button" id="kp-close" title="Закрыть">✕</button>
+      </div>
+      <div class="kp-body">
+        <div class="kp-section">
+          <div class="kp-section-label">Участники сделки</div>
+          <div class="kp-grid2">
+            <div class="kp-field">
+              <label class="kp-label">Продавец</label>
+              <input class="kp-input" id="kp-seller" type="text" readonly>
+            </div>
+            <div class="kp-field">
+              <label class="kp-label">Покупатель</label>
+              <input class="kp-input" id="kp-buyer" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="kp-section">
+          <div class="kp-section-label">Условия поставки</div>
+          <div class="kp-grid2">
+            <div class="kp-field">
+              <label class="kp-label">Доставка</label>
+              <select class="kp-select" id="kp-delivery-mode">
+                <option value="exw">Без доставки (EXW Архангельск)</option>
+                <option value="delivery">С доставкой до локации</option>
+              </select>
+            </div>
+            <div class="kp-field">
+              <label class="kp-label">Срок поставки</label>
+              <input class="kp-input" id="kp-delivery-time" type="text" placeholder="Например: 10–14 рабочих дней">
+            </div>
+          </div>
+          <div id="kp-locations-wrap" style="display:none">
+            <div class="kp-label" style="margin-bottom:8px">Выберите локации и тип транспорта:</div>
+            <div class="kp-locations" id="kp-locations-list"></div>
+          </div>
+        </div>
+        <div class="kp-section" id="kp-preview-section" style="display:none">
+          <div class="kp-section-label">Предварительный расчет цен</div>
+          <div class="kp-preview-wrap">
+            <table class="kp-preview-table">
+              <thead><tr><th>Продукт</th><th>Локация</th><th>EXW ₽/т</th><th>Доставка ₽/т</th><th>Цена с доставкой ₽/т</th></tr></thead>
+              <tbody id="kp-preview-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="kp-section">
+          <div class="kp-section-label">Условия договора</div>
+          <div class="kp-field">
+            <label class="kp-label">Условия оплаты</label>
+            <select class="kp-select" id="kp-payment-terms">
+              <option value="Предоплата 100%">Предоплата 100%</option>
+              <option value="30 календарных дней с момента отгрузки">30 дней с момента отгрузки</option>
+              <option value="60 календарных дней с момента отгрузки">60 дней с момента отгрузки</option>
+              <option value="90 календарных дней с момента отгрузки">90 дней с момента отгрузки</option>
+              <option value="180 календарных дней с момента отгрузки">180 дней с момента отгрузки</option>
+            </select>
+          </div>
+        </div>
+        <div class="kp-section">
+          <div class="kp-section-label">Реквизиты документа</div>
+          <div class="kp-grid2">
+            <div class="kp-field">
+              <label class="kp-label">Исполнитель</label>
+              <select class="kp-select" id="kp-executor"></select>
+            </div>
+            <div class="kp-field">
+              <label class="kp-label">Подпись</label>
+              <select class="kp-select" id="kp-signature"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kp-foot">
+        <button class="btn" type="button" id="kp-cancel">Отмена</button>
+        <button class="btn btn-primary" type="button" id="kp-confirm">Сформировать КП →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_client_cards_v2', 'cloto_sales_orders_shipped', 'cloto_client_documents_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script src="orders_data.js"></script>
   <script>
     const CLIENT_STORAGE_KEY = 'cloto_client_cards_v2';
@@ -378,6 +615,13 @@
     const REQUIREMENTS_FOLDER_NAME = 'Требования к химреагентам и материалам';
     const FILES_API_BASE = '/api/client-files';
     const SELLER = {name:'ООО "КЛОТО"',inn:'2928001770',kpp:'290101001',address:'163012, Архангельская обл, г. Архангельск, ул. Кировская, дом 10, корпус 2',phone:'7(8182)23-45-96'};
+    const STAFF = [
+      { name: 'Бобрецов Денис Владимирович', title: 'Руководитель коммерческого отдела' },
+      { name: 'Трушков Илья Сергеевич', title: 'Менеджер по продажам' },
+      { name: 'Кривошеин Дмитрий Олегович', title: 'Технический специалист' },
+      { name: 'Фофанов Михаил Игоревич', title: 'Менеджер по продажам' },
+    ];
+    const LOGISTIC_RATES_KEY = 'cloto_logistic_rates';
     const ACTIVE_MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель'];
     const CLIENT_ALIASES = {
       'Халлибуртон / БурСервис': ['БУРСЕРВИС', 'ХАЛЛИБУРТОН'],
@@ -436,16 +680,98 @@
     function productId() { return 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8); }
     function contactId() { return 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8); }
     function documentId() { return 'd_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8); }
-    function createProductDraft(name) { return { id: productId(), name: (name || '').trim(), recipe: '', notes: '', exwPrice: '', includedInQuote: false }; }
+    function hashKey(value) {
+      const text = String(value || '');
+      let hash = 0;
+      for (let i = 0; i < text.length; i += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash).toString(36).toUpperCase();
+    }
+    function sanitizeSkuToken(value, fallback) {
+      const cleaned = String(value || '').toUpperCase().replace(/[^A-Z0-9]+/g, '');
+      if (cleaned) return cleaned.slice(0, 8);
+      return String(fallback || '').toUpperCase().replace(/[^A-Z0-9]+/g, '').slice(0, 8) || 'ITEM';
+    }
+    function buildLegacyClientProductSku(companyName, productIdValue) {
+      return 'CPL-' + sanitizeSkuToken(hashKey(companyName), 'CL') + '-' + sanitizeSkuToken(productIdValue, 'ITEM');
+    }
+    function buildClientProductSku(companyName, productIdValue) {
+      return 'CPL-' + sanitizeSkuToken(hashKey(companyName), 'CL') + '-' + sanitizeSkuToken(hashKey(productIdValue), 'ITEM');
+    }
+    function resolveClientProductSku(companyName, product) {
+      const base = product && typeof product === 'object' ? product : {};
+      const id = base.id || productId();
+      const currentSku = String(base.sku || '').trim();
+      const legacySku = buildLegacyClientProductSku(companyName, id);
+      if (!currentSku || currentSku === legacySku) {
+        return buildClientProductSku(companyName, id);
+      }
+      return currentSku;
+    }
+    function createProductDraft(name) {
+      const id = productId();
+      return {
+        id: id,
+        sku: resolveClientProductSku(company, { id: id }),
+        name: (name || '').trim(),
+        recipe: '',
+        notes: '',
+        exwPrice: '',
+        packType: 'bags',
+        unitWeightKg: '25',
+        palletUnits: '40',
+        truckUnits: '800',
+        containerUnits: '1000',
+        includedInQuote: false
+      };
+    }
     function normalizeProduct(product) {
       const base = product && typeof product === 'object' ? product : {};
-      return { id: base.id || productId(), name: base.name || '', recipe: base.recipe || '', notes: base.notes || '', exwPrice: base.exwPrice || '', includedInQuote: !!base.includedInQuote };
+      const id = base.id || productId();
+      return {
+        id: id,
+        sku: resolveClientProductSku(company, { id: id, sku: base.sku }),
+        name: base.name || '',
+        recipe: base.recipe || '',
+        notes: base.notes || '',
+        exwPrice: base.exwPrice || '',
+        packType: base.packType || 'bags',
+        unitWeightKg: base.unitWeightKg || '25',
+        palletUnits: base.palletUnits || '40',
+        truckUnits: base.truckUnits || '800',
+        containerUnits: base.containerUnits || '1000',
+        includedInQuote: !!base.includedInQuote
+      };
+    }
+    function normalizeContact(contact) {
+      const base = contact && typeof contact === 'object' ? contact : {};
+      return {
+        id: base.id || contactId(),
+        name: base.name || '',
+        email: base.email || '',
+        phoneWork: base.phoneWork || base.phone || '',
+        phoneMobile: base.phoneMobile || '',
+        position: base.position || '',
+        leaderId: base.leaderId || ''
+      };
     }
     function getStore() {
       const raw = localStorage.getItem(CLIENT_STORAGE_KEY);
       const defaults = deepClone(DEFAULT_CLIENTS);
       if (!raw) return defaults;
       try { return { ...defaults, ...JSON.parse(raw) }; } catch (error) { return defaults; }
+    }
+    function getRawStore() {
+      const raw = localStorage.getItem(CLIENT_STORAGE_KEY);
+      if (!raw) return {};
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch (error) {
+        return {};
+      }
     }
     function saveStore(store) { localStorage.setItem(CLIENT_STORAGE_KEY, JSON.stringify(store)); }
     function getClientAliases(companyName) {
@@ -548,17 +874,20 @@
       return decodeURIComponent(queryValue || hashValue || '').trim();
     }
 
-    const company = getCompanyFromLocation() || 'Халлибуртон / БурСервис';
+    let company = getCompanyFromLocation() || 'Халлибуртон / БурСервис';
     const store = getStore();
     const clientDocumentsStore = readStorageObject(CLIENT_DOCUMENTS_KEY);
+    const profileEditableFieldIds = ['client-name-field', 'client-turnover-field', 'client-status-field', 'client-potential-field', 'client-info', 'client-address', 'client-events-input'];
+    let isProfileEditing = false;
     let requirementsApiAvailable = null;
     if (!store[company]) {
-      store[company] = { turnover: '—', statusText: 'Разовый', potential: '—', info: '', address: '', events: [], contacts: [], products: [] };
+      store[company] = { turnover: '', statusText: '', potential: '', info: '', address: '', events: [], contacts: [], products: [], logoData: '' };
     }
     const client = store[company];
     let quoteSelectionMode = false;
-    client.contacts = Array.isArray(client.contacts) ? client.contacts : [];
+    client.contacts = (Array.isArray(client.contacts) ? client.contacts : []).map(normalizeContact);
     client.products = (Array.isArray(client.products) ? client.products : []).map(normalizeProduct);
+    store[company] = client;
 
     function getClientDocumentsEntry() {
       if (!clientDocumentsStore[company]) clientDocumentsStore[company] = {};
@@ -722,16 +1051,78 @@
       await refreshRequirementsFolder();
     }
 
+    function parseEventsText(value) {
+      return String(value || '')
+        .split(/\r?\n/)
+        .map(function(line) { return line.trim(); })
+        .filter(Boolean);
+    }
+
+    function eventsToText(events) {
+      return (Array.isArray(events) ? events : []).join('\n');
+    }
+
+    function setProfileEditing(enabled) {
+      isProfileEditing = !!enabled;
+      profileEditableFieldIds.forEach(function(fieldId) {
+        const el = document.getElementById(fieldId);
+        if (el) el.disabled = !isProfileEditing;
+      });
+      const editButton = document.getElementById('edit-client-button');
+      if (editButton) editButton.textContent = isProfileEditing ? 'Редактирование…' : 'Изменить';
+    }
+
     function persistClient(showNotification) {
+      const companyField = document.getElementById('client-name-field');
+      const requestedCompany = String(companyField && companyField.value || '').trim();
+      client.turnover = document.getElementById('client-turnover-field').value;
+      client.statusText = document.getElementById('client-status-field').value;
+      client.potential = document.getElementById('client-potential-field').value;
       client.info = document.getElementById('client-info').value;
       client.address = document.getElementById('client-address').value;
-      saveStore(store);
+      client.events = parseEventsText(document.getElementById('client-events-input').value);
+      const rawStore = getRawStore();
+
+      if (showNotification && requestedCompany && requestedCompany !== company) {
+        if (rawStore[requestedCompany]) {
+          window.alert('Компания с таким названием уже существует. Выберите другое имя.');
+          if (companyField) companyField.value = company;
+          return false;
+        }
+
+        store[requestedCompany] = client;
+        delete store[company];
+
+        if (clientDocumentsStore[company]) {
+          clientDocumentsStore[requestedCompany] = clientDocumentsStore[company];
+          delete clientDocumentsStore[company];
+          persistClientDocuments();
+        }
+
+        if (rawStore[company]) delete rawStore[company];
+        company = requestedCompany;
+
+        var params = new URLSearchParams(window.location.search || '');
+        params.set('company', company);
+        window.history.replaceState(null, '', window.location.pathname + '?' + params.toString() + window.location.hash);
+      }
+
+      store[company] = client;
+      rawStore[company] = JSON.parse(JSON.stringify(client));
+      saveStore(rawStore);
+
+      if (showNotification) {
+        renderHeader();
+        renderEvents();
+      }
+
       if (showNotification) {
         const button = document.getElementById('save-client-button');
         const original = button.textContent;
         button.textContent = 'Сохранено';
         setTimeout(function() { button.textContent = original; }, 1400);
       }
+      return true;
     }
     function syncClientFromStore() {
       const freshStore = getStore();
@@ -749,9 +1140,11 @@
       Object.assign(client, freshClient);
       client.contacts = Array.isArray(client.contacts) ? client.contacts : [];
       client.products = (Array.isArray(client.products) ? client.products : []).map(normalizeProduct);
+      store[company] = client;
       renderHeader();
       renderContacts();
       renderProducts();
+      renderEvents();
     }
     function renderHeader() {
       const shipments = buildClientShipments();
@@ -759,12 +1152,31 @@
       document.getElementById('client-title').textContent = company;
       document.getElementById('client-subtitle').textContent = 'CRM-профиль компании, контактов и отгруженных заказов';
       document.getElementById('client-name-field').value = company;
+      document.getElementById('client-turnover-field').value = client.turnover || '';
+      document.getElementById('client-status-field').value = client.statusText || '';
+      document.getElementById('client-potential-field').value = client.potential || '';
       document.getElementById('client-turnover').textContent = client.turnover || '—';
       document.getElementById('client-status-text').textContent = client.statusText || '—';
       document.getElementById('client-potential').textContent = client.potential || '—';
       document.getElementById('client-shipment-count').textContent = String(shipments.length || 0);
       document.getElementById('client-info').value = client.info || '';
       document.getElementById('client-address').value = client.address || '';
+      document.getElementById('client-events-input').value = eventsToText(client.events);
+      renderClientLogo();
+    }
+    function renderClientLogo() {
+      const logoImage = document.getElementById('client-logo-image');
+      const logoEmpty = document.getElementById('client-logo-empty');
+      const removeButton = document.getElementById('client-logo-remove-button');
+      const hasLogo = !!client.logoData;
+      logoImage.hidden = !hasLogo;
+      logoEmpty.hidden = hasLogo;
+      removeButton.hidden = !hasLogo;
+      if (hasLogo) {
+        logoImage.src = client.logoData;
+      } else {
+        logoImage.removeAttribute('src');
+      }
     }
     function renderEvents() {
       const root = document.getElementById('client-events');
@@ -793,14 +1205,15 @@
       const root = document.getElementById('contacts-body');
       root.innerHTML = '';
       if (!client.contacts.length) {
-        root.innerHTML = '<tr><td colspan="6" class="empty-state">Контакты пока не добавлены. Нажмите «Добавить контакт».</td></tr>';
+        root.innerHTML = '<tr><td colspan="7" class="empty-state">Контакты пока не добавлены. Нажмите «Добавить контакт».</td></tr>';
         return;
       }
       client.contacts.forEach(function(contact) {
         const row = document.createElement('tr');
         row.innerHTML = '<td><input class="cell-input" data-field="name" data-id="' + contact.id + '" type="text" value="' + escapeHtml(contact.name || '') + '"></td>' +
           '<td><input class="cell-input" data-field="email" data-id="' + contact.id + '" type="email" value="' + escapeHtml(contact.email || '') + '"></td>' +
-          '<td><input class="cell-input" data-field="phone" data-id="' + contact.id + '" type="text" value="' + escapeHtml(contact.phone || '') + '"></td>' +
+          '<td><input class="cell-input" data-field="phoneWork" data-id="' + contact.id + '" type="text" value="' + escapeHtml(contact.phoneWork || '') + '"></td>' +
+          '<td><input class="cell-input" data-field="phoneMobile" data-id="' + contact.id + '" type="text" value="' + escapeHtml(contact.phoneMobile || '') + '"></td>' +
           '<td><input class="cell-input" data-field="position" data-id="' + contact.id + '" type="text" value="' + escapeHtml(contact.position || '') + '"></td>' +
           '<td><select class="cell-select" data-field="leaderId" data-id="' + contact.id + '">' + createLeaderOptions(contact.leaderId, contact.id) + '</select></td>' +
           '<td><div class="contact-actions"><button class="remove-btn" type="button" data-remove-contact="' + contact.id + '">Удалить</button></div></td>';
@@ -808,12 +1221,7 @@
       });
     }
     function renderQuoteButton() {
-      const selectButton = document.getElementById('generate-quote-button');
-      const buildButton = document.getElementById('build-quote-button');
-      const selectedCount = client.products.filter(function(product) { return product.includedInQuote; }).length;
-      selectButton.classList.toggle('btn-primary', quoteSelectionMode);
-      selectButton.textContent = quoteSelectionMode ? ('Выбор для КП: ' + selectedCount) : 'Выбор для КП';
-      buildButton.classList.toggle('is-hidden', !(quoteSelectionMode && selectedCount > 0));
+      // Button is now always visible and directly generates the proposal
     }
     function renderProducts() {
       const root = document.getElementById('products-list');
@@ -828,34 +1236,52 @@
         item.className = 'product-item';
         const main = document.createElement('div');
         main.className = 'product-main' + (product.includedInQuote ? ' selected' : '');
-        const mainLink = document.createElement('a');
+        main.style.cursor = 'pointer';
+        main.addEventListener('click', function() {
+          window.location.href = 'client-product.html?company=' + encodeURIComponent(company) + '&product=' + encodeURIComponent(product.id);
+        });
+        const mainLink = document.createElement('div');
         mainLink.className = 'product-main-link';
-        mainLink.href = 'client-product.html?company=' + encodeURIComponent(company) + '&product=' + encodeURIComponent(product.id);
         const head = document.createElement('div');
         head.className = 'product-main-head';
         const checkbox = document.createElement('input');
-        checkbox.className = 'product-quote-toggle' + ((quoteSelectionMode || product.includedInQuote) ? ' visible' : '');
+        checkbox.className = 'product-quote-toggle visible';
         checkbox.type = 'checkbox';
         checkbox.checked = !!product.includedInQuote;
         checkbox.setAttribute('data-product-id', product.id);
         checkbox.setAttribute('data-product-field', 'includedInQuote');
+        checkbox.addEventListener('click', function(event) { event.stopPropagation(); });
         const link = document.createElement('span');
         link.className = 'product-link';
         link.textContent = product.name || 'Новый продукт';
+        const sku = document.createElement('span');
+        sku.className = 'product-sub';
+        sku.textContent = product.sku || buildClientProductSku(company, product.id);
         head.appendChild(checkbox);
         head.appendChild(link);
         const sub = document.createElement('div');
         sub.className = 'product-sub';
         sub.textContent = product.notes || 'Откройте карточку продукта, чтобы заполнить рецептуру и детали.';
         mainLink.appendChild(head);
+        mainLink.appendChild(sku);
         mainLink.appendChild(sub);
         main.appendChild(mainLink);
         const pricing = document.createElement('div');
         pricing.className = 'product-pricing';
         pricing.innerHTML = '<div class="product-price-field"><label class="product-price-label">Цена без НДС EXW Архангельск</label><input class="product-price-input" data-product-id="' + product.id + '" data-product-field="exwPrice" type="number" min="0" step="0.01" value="' + escapeHtml(product.exwPrice || '') + '" placeholder="₽/т"></div>';
+        pricing.addEventListener('click', function(event) { event.stopPropagation(); });
         const actions = document.createElement('div');
         actions.className = 'product-actions';
-        actions.innerHTML = '<button class="remove-btn" type="button" data-remove-product="' + product.id + '">Удалить</button>';
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'remove-btn';
+        deleteBtn.type = 'button';
+        deleteBtn.setAttribute('data-remove-product', product.id);
+        deleteBtn.textContent = 'Удалить';
+        deleteBtn.addEventListener('click', function(event) {
+          event.stopPropagation();
+          removeProduct(product.id);
+        });
+        actions.appendChild(deleteBtn);
         item.appendChild(main);
         item.appendChild(pricing);
         item.appendChild(actions);
@@ -875,7 +1301,7 @@
         number: getProposalNumber(),
         date: getTodayIso(),
         seller: SELLER,
-        buyer: { name: company, address: client.address || '—', contact: leader && leader.name || '—', phone: leader && leader.phone || '—', email: leader && leader.email || '—' },
+        buyer: { name: company, address: client.address || '—', contact: leader && leader.name || '—', phone: leader && (leader.phoneMobile || leader.phoneWork) || '—', email: leader && leader.email || '—' },
         products: getSelectedProducts(),
         notes: client.info || '',
         executor: 'Коммерческий отдел ООО "КЛОТО"',
@@ -883,17 +1309,158 @@
         generatedAt: new Date().toISOString()
       };
     }
-    function openCommercialProposal() {
-      const payload = buildProposalPayload();
-      if (!payload.products.length) {
-        window.alert('Сначала отметьте хотя бы один продукт для КП.');
+    function openCommercialProposal() { openKpModal(); }
+    function getLogisticLocations() {
+      try { const s = JSON.parse(localStorage.getItem(LOGISTIC_RATES_KEY) || 'null'); if (Array.isArray(s) && s.length) return s; } catch (e) {}
+      return [];
+    }
+    function openKpModal() {
+      const selected = getSelectedProducts();
+      if (!selected.length) { window.alert('Сначала отметьте хотя бы один продукт для КП.'); return; }
+      document.getElementById('kp-seller').value = SELLER.name;
+      document.getElementById('kp-buyer').value = company;
+      document.getElementById('kp-dialog-sub').textContent = 'Выбрано продуктов: ' + selected.length + ' · Клиент: ' + company;
+      const execSel = document.getElementById('kp-executor');
+      const sigSel = document.getElementById('kp-signature');
+      execSel.innerHTML = '';
+      sigSel.innerHTML = '';
+      STAFF.forEach(function(s) {
+        execSel.innerHTML += '<option value="' + escapeHtml(s.name) + '">' + escapeHtml(s.name) + ' — ' + escapeHtml(s.title) + '</option>';
+        sigSel.innerHTML += '<option value="' + escapeHtml(JSON.stringify(s)) + '">' + escapeHtml(s.name) + ' — ' + escapeHtml(s.title) + '</option>';
+      });
+      document.getElementById('kp-delivery-mode').value = 'exw';
+      document.getElementById('kp-locations-wrap').style.display = 'none';
+      document.getElementById('kp-preview-section').style.display = 'none';
+      renderKpLocations();
+      document.getElementById('kp-overlay').classList.remove('hidden');
+    }
+    function renderKpLocations() {
+      const locs = getLogisticLocations();
+      const list = document.getElementById('kp-locations-list');
+      if (!locs.length) {
+        list.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:8px 0">Нет локаций. Заполните ставки доставки в разделе Логистика.</div>';
         return;
       }
+      list.innerHTML = locs.map(function(loc, i) {
+        const parts = [];
+        if (loc.truck) parts.push('Авто: ' + Number(loc.truck).toLocaleString('ru-RU') + ' ₽');
+        if (loc.cont) parts.push('20-фт конт.: ' + Number(loc.cont).toLocaleString('ru-RU') + ' ₽');
+        if (loc.wagon) parts.push('Ж/д вагон: ' + Number(loc.wagon).toLocaleString('ru-RU') + ' ₽');
+        const ratesText = parts.join(' · ') || 'Ставки не заполнены';
+        const opts = (loc.truck ? '<option value="truck">Авто (фура)</option>' : '') +
+                     (loc.cont  ? '<option value="cont">20-фт контейнер</option>' : '') +
+                     (loc.wagon ? '<option value="wagon">Ж/д вагон</option>' : '');
+        return '<div class="kp-loc-row" id="kp-loc-row-' + i + '">' +
+          '<input class="kp-loc-check" type="checkbox" id="kp-loc-chk-' + i + '" data-idx="' + i + '">' +
+          '<div><div class="kp-loc-name">' + escapeHtml(loc.name) + '</div><div class="kp-loc-rates">' + escapeHtml(ratesText) + '</div></div>' +
+          (opts ? '<select class="kp-transport-sel" id="kp-loc-tr-' + i + '" data-idx="' + i + '">' + opts + '</select>' : '<span style="color:var(--muted);font-size:11px">нет ставок</span>') +
+          '</div>';
+      }).join('');
+      list.querySelectorAll('.kp-loc-check').forEach(function(chk) {
+        chk.addEventListener('change', function() {
+          const row = document.getElementById('kp-loc-row-' + this.getAttribute('data-idx'));
+          if (row) row.classList.toggle('kp-loc-checked', this.checked);
+          updateKpPreview();
+        });
+      });
+      list.querySelectorAll('.kp-transport-sel').forEach(function(sel) {
+        sel.addEventListener('change', updateKpPreview);
+      });
+    }
+    function calcDeliveryPerTon(product, loc, transport) {
+      const unitKg = parseFloat(product.unitWeightKg) || 25;
+      const truckUnits = parseFloat(product.truckUnits) || 800;
+      const contUnits = parseFloat(product.containerUnits) || 1000;
+      let rate = 0, loadTons = 0;
+      if (transport === 'truck') { rate = parseFloat(loc.truck) || 0; loadTons = truckUnits * unitKg / 1000; }
+      else if (transport === 'cont') { rate = parseFloat(loc.cont) || 0; loadTons = contUnits * unitKg / 1000; }
+      else if (transport === 'wagon') { rate = parseFloat(loc.wagon) || 0; loadTons = contUnits * unitKg * 2.6 / 1000; }
+      if (!rate || !loadTons) return 0;
+      return Math.round(rate / loadTons);
+    }
+    function getKpCheckedLocations() {
+      const locs = getLogisticLocations();
+      return locs.map(function(loc, i) {
+        const chk = document.getElementById('kp-loc-chk-' + i);
+        if (!chk || !chk.checked) return null;
+        const trSel = document.getElementById('kp-loc-tr-' + i);
+        return { loc: loc, transport: trSel ? trSel.value : 'truck' };
+      }).filter(Boolean);
+    }
+    function updateKpPreview() {
+      const mode = document.getElementById('kp-delivery-mode').value;
+      const sec = document.getElementById('kp-preview-section');
+      if (mode !== 'delivery') { sec.style.display = 'none'; return; }
+      const checkedLocs = getKpCheckedLocations();
+      if (!checkedLocs.length) { sec.style.display = 'none'; return; }
+      sec.style.display = '';
+      const products = getSelectedProducts();
+      const transportLabels = { truck: 'Авто (фура)', cont: '20-фт контейнер', wagon: 'Ж/д вагон' };
+      let rows = '';
+      products.forEach(function(p) {
+        const exw = parseFloat(p.exwPrice) || 0;
+        checkedLocs.forEach(function(item) {
+          const del = calcDeliveryPerTon(p, item.loc, item.transport);
+          const total = exw + del;
+          rows += '<tr><td><strong>' + escapeHtml(p.name || '—') + '</strong></td>' +
+            '<td>' + escapeHtml(item.loc.name) + '<div class="kp-price-muted">' + escapeHtml(transportLabels[item.transport] || '') + '</div></td>' +
+            '<td class="kp-price-muted">' + exw.toLocaleString('ru-RU') + ' ₽</td>' +
+            '<td class="kp-price-muted">' + del.toLocaleString('ru-RU') + ' ₽</td>' +
+            '<td class="kp-price-total">' + total.toLocaleString('ru-RU') + ' ₽</td></tr>';
+        });
+      });
+      document.getElementById('kp-preview-body').innerHTML = rows;
+    }
+    function buildKpPayload() {
+      const products = getSelectedProducts();
+      const mode = document.getElementById('kp-delivery-mode').value;
+      const checkedLocs = mode === 'delivery' ? getKpCheckedLocations() : [];
+      const transportLabels = { truck: 'Авто (фура)', cont: '20-фт контейнер', wagon: 'Ж/д вагон' };
+      const productsWithOptions = products.map(function(p) {
+        const exw = parseFloat(p.exwPrice) || 0;
+        let deliveryOptions;
+        if (mode === 'delivery' && checkedLocs.length) {
+          deliveryOptions = checkedLocs.map(function(item) {
+            const del = calcDeliveryPerTon(p, item.loc, item.transport);
+            return { location: item.loc.name, transport: transportLabels[item.transport] || '', exwPrice: exw, deliveryPerTon: del, price: exw + del };
+          });
+        } else {
+          deliveryOptions = [{ location: 'EXW Архангельск', transport: '', exwPrice: exw, deliveryPerTon: 0, price: exw }];
+        }
+        return Object.assign({}, p, { deliveryOptions: deliveryOptions });
+      });
+      const leader = getClientLeader();
+      const executorName = document.getElementById('kp-executor').value;
+      let sigObj = { name: executorName, title: '' };
+      try { sigObj = JSON.parse(document.getElementById('kp-signature').value); } catch (e) {}
+      const staffEntry = STAFF.find(function(s) { return s.name === executorName; });
+      return {
+        number: getProposalNumber(),
+        date: getTodayIso(),
+        seller: SELLER,
+        buyer: { name: document.getElementById('kp-buyer').value || company, address: client.address || '—', contact: leader && leader.name || '—', phone: leader && (leader.phoneMobile || leader.phoneWork) || '—', email: leader && leader.email || '—' },
+        products: productsWithOptions,
+        withDelivery: mode === 'delivery',
+        paymentTerms: document.getElementById('kp-payment-terms').value,
+        deliveryTime: document.getElementById('kp-delivery-time').value,
+        executor: executorName,
+        executorTitle: staffEntry ? staffEntry.title : '',
+        signature: sigObj.name || executorName,
+        signatureTitle: sigObj.title || '',
+        notes: client.info || '',
+        generatedAt: new Date().toISOString()
+      };
+    }
+    function confirmKp() {
+      const payload = buildKpPayload();
+      if (!payload.products.length) { window.alert('Нет выбранных продуктов.'); return; }
       localStorage.setItem(GENERATED_QUOTE_KEY, JSON.stringify(payload));
       const target = 'commercial-proposal.html?ts=' + Date.now();
-      const proposalWindow = window.open(target, '_blank');
-      if (!proposalWindow) window.location.href = target;
+      const win = window.open(target, '_blank');
+      if (!win) window.location.href = target;
+      closeKpModal();
     }
+    function closeKpModal() { document.getElementById('kp-overlay').classList.add('hidden'); }
     function renderClientOrders() {
       const shipments = buildClientShipments();
       const metrics = getShipmentMetrics(shipments);
@@ -941,16 +1508,15 @@
       }).join('');
     }
     function addContact() {
-      client.contacts.push({ id: contactId(), name: '', email: '', phone: '', position: '', leaderId: '' });
+      client.contacts.push({ id: contactId(), name: '', email: '', phoneWork: '', phoneMobile: '', position: '', leaderId: '' });
       renderContacts();
       persistClient(false);
     }
     function addProduct() {
-      const name = window.prompt('Введите название продукта клиента');
-      if (!name) return;
-      client.products.push(createProductDraft(name));
-      renderProducts();
-      persistClient(true);
+      const newProduct = createProductDraft('Новый продукт');
+      client.products.push(newProduct);
+      persistClient(false);
+      window.location.href = 'client-product.html?company=' + encodeURIComponent(company) + '&product=' + encodeURIComponent(newProduct.id);
     }
     function updateContact(contactIdValue, field, value) {
       const item = client.contacts.find(function(contact) { return contact.id === contactIdValue; });
@@ -958,7 +1524,6 @@
       item[field] = value;
       if (field === 'name') {
         client.contacts.forEach(function(contact) { if (contact.leaderId === item.id && !item.name.trim()) contact.leaderId = ''; });
-        renderContacts();
       }
       persistClient(false);
     }
@@ -979,14 +1544,92 @@
       renderProducts();
       persistClient(true);
     }
+    function initClientLogo() {
+      const input = document.getElementById('client-logo-input');
+      const uploadButton = document.getElementById('client-logo-upload-button');
+      const removeButton = document.getElementById('client-logo-remove-button');
 
-    document.getElementById('save-client-button').addEventListener('click', function() { persistClient(true); });
+      uploadButton.addEventListener('click', function() {
+        input.click();
+      });
+
+      input.addEventListener('change', function(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (!String(file.type || '').startsWith('image/')) {
+          window.alert('Можно загрузить только изображение.');
+          input.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function() {
+          client.logoData = String(reader.result || '');
+          renderClientLogo();
+          persistClient(true);
+        };
+        reader.onerror = function() {
+          window.alert('Не удалось загрузить логотип.');
+        };
+        reader.readAsDataURL(file);
+        input.value = '';
+      });
+
+      removeButton.addEventListener('click', function() {
+        client.logoData = '';
+        renderClientLogo();
+        persistClient(true);
+      });
+
+      renderClientLogo();
+    }
+    function initClientSectionsMenu() {
+      const buttons = Array.from(document.querySelectorAll('#client-sections-menu [data-section]'));
+      const panels = Array.from(document.querySelectorAll('[data-section-panel]'));
+      function applySection(section) {
+        const target = section || 'profile';
+        buttons.forEach(function(button) {
+          button.classList.toggle('active', button.getAttribute('data-section') === target);
+        });
+        panels.forEach(function(panel) {
+          panel.classList.toggle('active', panel.getAttribute('data-section-panel') === target);
+        });
+      }
+      const requestedSection = new URLSearchParams(window.location.search).get('section') || 'profile';
+      applySection(requestedSection);
+      buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          const section = button.getAttribute('data-section') || 'profile';
+          applySection(section);
+        });
+      });
+    }
+
+    document.getElementById('edit-client-button').addEventListener('click', function() {
+      setProfileEditing(true);
+      const companyField = document.getElementById('client-name-field');
+      if (companyField) companyField.focus();
+    });
+    document.getElementById('save-client-button').addEventListener('click', function() {
+      if (persistClient(true)) setProfileEditing(false);
+    });
+    document.getElementById('client-turnover-field').addEventListener('input', function() { persistClient(false); });
+    document.getElementById('client-status-field').addEventListener('input', function() { persistClient(false); });
+    document.getElementById('client-potential-field').addEventListener('input', function() { persistClient(false); });
     document.getElementById('client-info').addEventListener('input', function() { persistClient(false); });
     document.getElementById('client-address').addEventListener('input', function() { persistClient(false); });
+    document.getElementById('client-events-input').addEventListener('input', function() { persistClient(false); });
     document.getElementById('add-contact-button').addEventListener('click', addContact);
     document.getElementById('add-product-button').addEventListener('click', addProduct);
-    document.getElementById('generate-quote-button').addEventListener('click', function() { quoteSelectionMode = !quoteSelectionMode; renderProducts(); });
-    document.getElementById('build-quote-button').addEventListener('click', openCommercialProposal);
+    document.getElementById('generate-quote-button').addEventListener('click', openKpModal);
+    document.getElementById('kp-close').addEventListener('click', closeKpModal);
+    document.getElementById('kp-cancel').addEventListener('click', closeKpModal);
+    document.getElementById('kp-confirm').addEventListener('click', confirmKp);
+    document.getElementById('kp-overlay').addEventListener('click', function(e) { if (e.target === this) closeKpModal(); });
+    document.getElementById('kp-delivery-mode').addEventListener('change', function() {
+      const withDel = this.value === 'delivery';
+      document.getElementById('kp-locations-wrap').style.display = withDel ? '' : 'none';
+      updateKpPreview();
+    });
     document.getElementById('contacts-body').addEventListener('input', function(event) {
       const id = event.target.getAttribute('data-id');
       const field = event.target.getAttribute('data-field');
@@ -995,7 +1638,10 @@
     document.getElementById('contacts-body').addEventListener('change', function(event) {
       const id = event.target.getAttribute('data-id');
       const field = event.target.getAttribute('data-field');
-      if (id && field) updateContact(id, field, event.target.value);
+      if (id && field) {
+        updateContact(id, field, event.target.value);
+        if (field === 'name') renderContacts();
+      }
     });
     document.getElementById('contacts-body').addEventListener('click', function(event) {
       const id = event.target.getAttribute('data-remove-contact');
@@ -1018,12 +1664,14 @@
     });
 
     renderHeader();
+    setProfileEditing(false);
     renderContacts();
     renderProducts();
     renderEvents();
+    initClientLogo();
     initRequirementsFolder();
     renderClientOrders();
-    saveStore(store);
+    initClientSectionsMenu();
     window.addEventListener('storage', function(event) {
       if (!event.key || event.key === CLIENT_STORAGE_KEY) syncClientFromStore();
       if (!event.key || event.key === SHIPPED_ORDERS_KEY) renderClientOrders();

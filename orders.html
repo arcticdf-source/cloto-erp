@@ -100,7 +100,7 @@
       background-repeat:no-repeat;background-position:right 12px center; }
     select.add-input:focus { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%2348bb78' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
     select.add-input:hover { border-color:var(--border2);background-color:var(--surface2); }
-    select.add-input option { background:#0d1320;color:var(--text); }
+    select.add-input option { background:var(--surface2);color:var(--text); }
     .add-divider { grid-column:1/-1;height:1px;background:var(--border);margin:4px 0; }
     .add-footer { display:flex;align-items:center;justify-content:flex-end;gap:12px;
       margin-top:22px;padding-top:18px;border-top:1px solid var(--border); }
@@ -167,6 +167,10 @@
       <div class="avatar">АК</div>
       <div>
         <div class="user-name">Андрей К.</div>
+      <script>
+      window.__sharedStateConfig = { keys: ['cloto_orders_full', 'cloto_orders_added', 'cloto_sales_orders_shipped'] };
+      </script>
+      <script src="shared-state-sync.js"></script>
         <div class="user-role">Руководитель</div>
       </div>
     </div>

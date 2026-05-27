@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Показатели лаборатории и финансовые метрики</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #eef5fb;
+      --bg2: #dfeaf7;
+      --card: #ffffff;
+      --card-soft: #f6faff;
+      --border: #d4e1ef;
+      --text: #1c2d40;
+      --muted: #627a96;
+      --accent: #1a9b8f;
+      --accent2: #2f74c8;
+      --ok: #1f915e;
+      --warn: #cf7c10;
+      --bad: #cc3a3a;
+      --shadow: 0 14px 28px rgba(43, 76, 115, 0.12);
+      --radius: 16px;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(26, 155, 143, 0.12), transparent 35%),
+        radial-gradient(circle at 100% 100%, rgba(47, 116, 200, 0.12), transparent 35%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 28px 20px 44px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 800; letter-spacing: -0.03em; }
+    .subtitle { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 880px; }
+    .btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+    .summary {
+      margin-top: 16px;
+      background: linear-gradient(135deg, #ffffff, #f4fbff);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .summary h2 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; margin-bottom: 10px; }
+    .summary table { width: 100%; border-collapse: collapse; min-width: 420px; }
+    .summary th, .summary td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; font-size: 13px; }
+    .summary th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .kpi h3 { font-family: 'Space Grotesk', sans-serif; font-size: 23px; line-height: 1.1; }
+    .desc { color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .formula {
+      background: var(--card-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #1a3a63;
+      font-weight: 600;
+    }
+    .example {
+      background: #f7fbff;
+      border-left: 4px solid #63b3ed;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .interp { width: 100%; border-collapse: collapse; }
+    .interp th, .interp td { border-bottom: 1px solid var(--border); padding: 8px; text-align: left; font-size: 12px; }
+    .interp th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .calc {
+      background: #fbfdff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+    .calc h4 { font-size: 13px; color: var(--accent2); letter-spacing: 0.02em; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .field { display: grid; gap: 5px; min-width: 0; }
+    .field label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
+    .field input {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+    .result {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .result-box span { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; word-break: break-word; overflow-wrap: anywhere; }
+    .result-box strong { display: block; margin-top: 5px; font-size: 20px; font-family: 'Space Grotesk', sans-serif; word-break: break-word; overflow-wrap: anywhere; }
+    .good { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--bad); }
+
+    .full { grid-column: 1 / -1; }
+
+    .addon-section {
+      margin-top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+    .addon-head { display: grid; gap: 6px; }
+    .addon-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .addon-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 980px;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .addon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .mini-kpi h3 { font-size: 18px; }
+    .mini-kpi .formula, .mini-kpi .example, .mini-kpi .desc { font-size: 12px; }
+    .mini-kpi .result-box strong { font-size: 18px; }
+    .mini-kpi .fields,
+    .mini-kpi .result {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    @media (max-width: 1020px) {
+      .grid { grid-template-columns: 1fr; }
+      .fields, .result { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1 class="title">Показатели лаборатории: качество, скорость и финансы</h1>
+        <p class="subtitle">Все расчеты выполнены в рублях. В каждом блоке есть формула, пример, интерпретация и поля ручного ввода, которые автоматически считают показатель и финансовый эффект.</p>
+      </div>
+      <a class="btn" href="laboratory.html">← Назад в модуль Лаборатория</a>
+      <button class="btn" id="snapBtn" type="button" title="Сформировать отчёт за текущий месяц">📋 Сформировать отчёт</button>
+    </div>
+
+    <section class="summary">
+      <h2>Самые важные показатели для дашборда директора завода</h2>
+      <table>
+        <thead>
+          <tr><th>Показатель</th><th>Тип</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Доля вне спецификации %</td><td>Качество</td></tr>
+          <tr><td>С первого раза (RFT)</td><td>Стабильность</td></tr>
+          <tr><td>Экономия сырья</td><td>Финансы</td></tr>
+          <tr><td>Выход полезного продукта %</td><td>Производство</td></tr>
+          <tr><td>TAT контроля качества</td><td>Скорость</td></tr>
+          <tr><td>Рекламации</td><td>Клиенты</td></tr>
+          <tr><td>Предотвращенные простои</td><td>Риски</td></tr>
+          <tr><td>Общий ROI %</td><td>Показатель руководителя</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid">
+      <article class="kpi" id="kpi-offspec">
+        <h3>1. Доля партий вне спецификации</h3>
+        <p class="desc">Что показывает: сколько партий вышло вне спецификации.</p>
+        <div class="formula">Формула: Доля вне спецификации % = (Партии вне спецификации / Всего партий) × 100</div>
+        <div class="example">Пример: 18 из 420 партий не прошли контроль качества. Доля вне спецификации = (18 / 420) × 100 = 4,29%.</div>
+        <table class="interp">
+          <thead><tr><th>Значение</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&lt; 1%</td><td class="good">Отлично</td></tr>
+            <tr><td>1-3%</td><td class="warn">Нормально</td></tr>
+            <tr><td>&gt; 3%</td><td class="bad">Проблема</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="offspec">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Всего партий</label><input type="number" min="0" step="1" data-f="total" value="420"></div>
+            <div class="field"><label>Партии вне спецификации</label><input type="number" min="0" step="1" data-f="offspec" value="18"></div>
+            <div class="field"><label>Потери до улучшения, ₽/мес</label><input type="number" min="0" step="1" data-f="lossBefore" value="180000"></div>
+            <div class="field"><label>Потери после улучшения, ₽/мес</label><input type="number" min="0" step="1" data-f="lossAfter" value="52000"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Доля вне спецификации %</span><strong data-r="percent">0%</strong></div>
+            <div class="result-box"><span>Эффект ROI, ₽/мес</span><strong data-r="saving">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi" id="kpi-rft">
+        <h3>2. Правильно с первого раза (RFT)</h3>
+        <p class="desc">Что показывает: сколько партий прошло с первого раза без переработки.</p>
+        <div class="formula">Формула: RFT % = (Хорошие партии / Всего партий) × 100</div>
+        <div class="example">Пример: 472 партии из 500 прошли без корректировок. RFT = 94,4%.</div>
+        <table class="interp">
+          <thead><tr><th>Значение</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&gt; 98%</td><td class="good">Мировой уровень</td></tr>
+            <tr><td>95-98%</td><td class="warn">Хорошо</td></tr>
+            <tr><td>&lt; 95%</td><td class="bad">Нестабильный процесс</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="rft">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Всего партий</label><input type="number" min="0" step="1" data-f="total" value="500"></div>
+            <div class="field"><label>Хорошие партии (без переработки)</label><input type="number" min="0" step="1" data-f="good" value="472"></div>
+            <div class="field"><label>Число переработок до</label><input type="number" min="0" step="1" data-f="reworkBefore" value="28"></div>
+            <div class="field"><label>Число переработок после</label><input type="number" min="0" step="1" data-f="reworkAfter" value="8"></div>
+            <div class="field"><label>Стоимость переработки 1 партии, ₽</label><input type="number" min="0" step="1" data-f="costPer" value="1550"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>RFT %</span><strong data-r="percent">0%</strong></div>
+            <div class="result-box"><span>Экономия, ₽</span><strong data-r="saving">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi" id="kpi-raw">
+        <h3>3. Экономия сырья</h3>
+        <p class="desc">Что показывает: сколько лаборатория сэкономила сырья и денег.</p>
+        <div class="formula">Формула: Экономия = (Расход до - Расход после) × Объем производства × Цена материала</div>
+        <div class="example">Пример: (8,5 - 7,8) × 12 000 × 6 ₽ = 50 400 ₽.</div>
+        <table class="interp">
+          <thead><tr><th>Значение</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>Экономия &gt; 0</td><td class="good">Есть финансовый эффект</td></tr>
+            <tr><td>Экономия = 0</td><td class="warn">Без улучшений</td></tr>
+            <tr><td>Экономия &lt; 0</td><td class="bad">Рост затрат</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="raw">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Расход до, кг/т</label><input type="number" min="0" step="0.01" data-f="before" value="8.5"></div>
+            <div class="field"><label>Расход после, кг/т</label><input type="number" min="0" step="0.01" data-f="after" value="7.8"></div>
+            <div class="field"><label>Объем производства, т</label><input type="number" min="0" step="1" data-f="volume" value="12000"></div>
+            <div class="field"><label>Цена сырья, ₽/кг</label><input type="number" min="0" step="0.01" data-f="cost" value="6"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Экономия сырья, кг</span><strong data-r="kg">0</strong></div>
+            <div class="result-box"><span>Экономия денег, ₽</span><strong data-r="money">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi" id="kpi-yield">
+        <h3>4. Выход полезного продукта</h3>
+        <p class="desc">Что показывает: сколько полезного продукта получается из сырья.</p>
+        <div class="formula">Формула выхода полезного продукта % = (Готовый продукт / Сырье) × 100</div>
+        <div class="example">Пример: было 91%, стало 94%. Доп. продукт = 3% × 20 000 т = 600 т. При марже 180 ₽/т прибыль = 108 000 ₽.</div>
+        <table class="interp">
+          <thead><tr><th>Рост выхода полезного продукта</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&gt;= 2 п.п.</td><td class="good">Сильное улучшение</td></tr>
+            <tr><td>0-2 п.п.</td><td class="warn">Умеренно</td></tr>
+            <tr><td>&lt; 0</td><td class="bad">Деградация</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="yield">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Выход полезного до, %</label><input type="number" min="0" step="0.01" data-f="before" value="91"></div>
+            <div class="field"><label>Выход полезного после, %</label><input type="number" min="0" step="0.01" data-f="after" value="94"></div>
+            <div class="field"><label>Объем производства, т</label><input type="number" min="0" step="1" data-f="volume" value="20000"></div>
+            <div class="field"><label>Маржа, ₽/т</label><input type="number" min="0" step="0.01" data-f="margin" value="180"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Доп. продукт, т</span><strong data-r="extraTons">0</strong></div>
+            <div class="result-box"><span>Доп. прибыль, ₽</span><strong data-r="profit">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi" id="kpi-tat">
+        <h3>5. Время выполнения контроля качества (TAT)</h3>
+        <p class="desc">Что показывает: скорость работы лаборатории от отбора пробы до результата.</p>
+        <div class="formula">Формула: TAT = Время результата - Время отбора пробы</div>
+        <div class="example">Пример: проба в 08:00, результат в 14:30. TAT = 6,5 часов.</div>
+        <table class="interp">
+          <thead><tr><th>TAT</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&lt;= 8 ч</td><td class="good">Быстро</td></tr>
+            <tr><td>8-16 ч</td><td class="warn">Приемлемо</td></tr>
+            <tr><td>&gt; 16 ч</td><td class="bad">Медленно</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="tat">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Время пробы (часы, 0-23)</label><input type="number" min="0" max="23" step="1" data-f="sampleH" value="8"></div>
+            <div class="field"><label>Время результата (часы, 0-23)</label><input type="number" min="0" max="23" step="1" data-f="resultH" value="14"></div>
+            <div class="field"><label>Снижение запасов, ₽</label><input type="number" min="0" step="1" data-f="inventory" value="220000"></div>
+            <div class="field"><label>Ставка финансирования, % годовых</label><input type="number" min="0" step="0.01" data-f="rate" value="18"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>TAT, часов</span><strong data-r="hours">0</strong></div>
+            <div class="result-box"><span>Экономический эффект, ₽</span><strong data-r="effect">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi" id="kpi-complaints">
+        <h3>6. Снижение рекламаций</h3>
+        <p class="desc">Что показывает: снижение доли рекламаций и связанных потерь.</p>
+        <div class="formula">Формула: Доля рекламаций % = (Рекламации / Отгрузки) × 100</div>
+        <div class="example">Пример: было 14 из 280 (5%), стало 4 (1,4%). При 4 500 ₽ за рекламацию экономия 45 000 ₽.</div>
+        <table class="interp">
+          <thead><tr><th>Доля рекламаций</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&lt;= 1.5%</td><td class="good">Контроль высокий</td></tr>
+            <tr><td>1.5-3%</td><td class="warn">Нужны улучшения</td></tr>
+            <tr><td>&gt; 3%</td><td class="bad">Риск для клиентов</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="complaints">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Отгрузки</label><input type="number" min="0" step="1" data-f="shipments" value="280"></div>
+            <div class="field"><label>Рекламации до</label><input type="number" min="0" step="1" data-f="before" value="14"></div>
+            <div class="field"><label>Рекламации после</label><input type="number" min="0" step="1" data-f="after" value="4"></div>
+            <div class="field"><label>Стоимость 1 рекламации, ₽</label><input type="number" min="0" step="1" data-f="cost" value="4500"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>До / после, %</span><strong data-r="rates">0% / 0%</strong></div>
+            <div class="result-box"><span>Экономия, ₽</span><strong data-r="saving">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi" id="kpi-downtime">
+        <h3>7. Предотвращение простоев</h3>
+        <p class="desc">Что показывает: сколько денег лаборатория сохранила, предотвратив простой.</p>
+        <div class="formula">Формула: Avoided Loss = Предотвращенные часы простоя × Стоимость часа простоя</div>
+        <div class="example">Пример: предотвращено 11 часов простоя при 16 000 ₽/час. Эффект = 176 000 ₽.</div>
+        <table class="interp">
+          <thead><tr><th>Эффект</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&gt;= 150 000 ₽</td><td class="good">Сильный риск-контроль</td></tr>
+            <tr><td>50 000-150 000 ₽</td><td class="warn">Хорошо</td></tr>
+            <tr><td>&lt; 50 000 ₽</td><td class="bad">Слабый эффект</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="downtime">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Предотвращенные часы, ч</label><input type="number" min="0" step="0.1" data-f="hours" value="11"></div>
+            <div class="field"><label>Стоимость простоя, ₽/ч</label><input type="number" min="0" step="1" data-f="costPerHour" value="16000"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Предотвращенный ущерб, ₽</span><strong data-r="loss">0 ₽</strong></div>
+            <div class="result-box"><span>Интерпретация</span><strong data-r="label">-</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi" id="kpi-release">
+        <h3>8. Время выпуска партии</h3>
+        <p class="desc">Что показывает: сколько времени проходит от завершения производства до QC release.</p>
+        <div class="formula">Формула: Release Time = Время QC release - Время окончания производства</div>
+        <div class="example">Пример: производство завершилось в 15:00, release в 23:00. Release Time = 8 часов.</div>
+        <table class="interp">
+          <thead><tr><th>Время выпуска</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&lt;= 8 ч</td><td class="good">Быстрый release</td></tr>
+            <tr><td>8-16 ч</td><td class="warn">Нормально</td></tr>
+            <tr><td>&gt; 16 ч</td><td class="bad">Замедляет денежный поток</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="release">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Окончание производства, часы</label><input type="number" min="0" max="23" step="1" data-f="prodH" value="15"></div>
+            <div class="field"><label>QC release, часы</label><input type="number" min="0" max="23" step="1" data-f="relH" value="23"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Время выпуска, часов</span><strong data-r="hours">0</strong></div>
+            <div class="result-box"><span>Эффект для бизнеса</span><strong data-r="effect">Меньше незавершенного производства, быстрее отгрузка, лучше денежный поток</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi full" id="kpi-full-roi">
+        <h3>9. Общий ROI лаборатории</h3>
+        <p class="desc">Что показывает: суммарную финансовую отдачу лаборатории.</p>
+        <div class="formula">Формула: ROI % = ((Общий финансовый эффект - Стоимость лаборатории) / Стоимость лаборатории) × 100</div>
+        <div class="example">Пример: создано 507 000 ₽ ценности, стоимость лаборатории 120 000 ₽. ROI = 322,5%.</div>
+        <table class="interp">
+          <thead><tr><th>ROI</th><th>Оценка</th></tr></thead>
+          <tbody>
+            <tr><td>&gt; 250%</td><td class="good">Сильный показатель руководителя</td></tr>
+            <tr><td>100-250%</td><td class="warn">Хорошо</td></tr>
+            <tr><td>&lt; 100%</td><td class="bad">Низкая отдача</td></tr>
+          </tbody>
+        </table>
+        <div class="calc" data-kpi="fullroi">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Снижение брака, ₽</label><input type="number" min="0" step="1" data-f="offspec" value="128000"></div>
+            <div class="field"><label>Экономия сырья, ₽</label><input type="number" min="0" step="1" data-f="raw" value="50400"></div>
+            <div class="field"><label>Улучшение выхода полезного продукта, ₽</label><input type="number" min="0" step="1" data-f="yield" value="108000"></div>
+            <div class="field"><label>Снижение рекламаций, ₽</label><input type="number" min="0" step="1" data-f="complaints" value="45000"></div>
+            <div class="field"><label>Предотвращенные простои, ₽</label><input type="number" min="0" step="1" data-f="downtime" value="176000"></div>
+            <div class="field"><label>Зарплаты, ₽</label><input type="number" min="0" step="1" data-f="salary" value="70000"></div>
+            <div class="field"><label>Реагенты, ₽</label><input type="number" min="0" step="1" data-f="reagents" value="18000"></div>
+            <div class="field"><label>Оборудование, ₽</label><input type="number" min="0" step="1" data-f="equipment" value="22000"></div>
+            <div class="field"><label>Амортизация, ₽</label><input type="number" min="0" step="1" data-f="depreciation" value="10000"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Общая ценность, ₽</span><strong data-r="value">0 ₽</strong></div>
+            <div class="result-box"><span>Общая стоимость, ₽</span><strong data-r="cost">0 ₽</strong></div>
+            <div class="result-box"><span>Чистый эффект, ₽</span><strong data-r="net">0 ₽</strong></div>
+            <div class="result-box"><span>ROI, %</span><strong data-r="roi">0%</strong></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="addon-section">
+      <div class="addon-head">
+        <div class="addon-title">Дополнительные метрики лаборатории</div>
+        <div class="addon-copy">Эти формы закрывают оперативные, дневные, недельные, месячные и квартальные KPI, которых не хватает для связи лаборатории с производством, клиентами и финансами.</div>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Оперативные / Почасовые</div>
+        <div class="addon-copy">Эти показатели влияют на производство прямо сейчас: выпуск партий, скорость разрешения и риск остановки.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Время цикла контроля качества</h3>
+          <p class="desc">Сколько времени лаборатория тратит на выдачу результата по текущим пробам.</p>
+          <div class="formula">Формула: Среднее время цикла = Сумма часов обработки / Количество проб</div>
+          <div class="example">Пример: 36 часов на 6 проб дают среднее время цикла 6 часов.</div>
+          <div class="calc" data-kpi="qcCycleRealtime">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Проб за часовой цикл</label><input type="number" min="1" step="1" data-f="samples" value="6"></div>
+              <div class="field"><label>Сумма часов обработки</label><input type="number" min="0" step="0.1" data-f="hours" value="36"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Среднее время цикла, ч</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Оповещения о выходе вне спецификации</h3>
+          <p class="desc">Показывает текущую нагрузку по отклонениям и риск брака.</p>
+          <div class="formula">Формула: Доля критичных = Критичные оповещения / Все оповещения × 100</div>
+          <div class="example">Пример: 9 оповещений, из них 3 критичных, дают 33,3% критичных событий.</div>
+          <div class="calc" data-kpi="offspecAlertsRealtime">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все оповещения</label><input type="number" min="0" step="1" data-f="alerts" value="9"></div>
+              <div class="field"><label>Критичные оповещения</label><input type="number" min="0" step="1" data-f="critical" value="3"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Критичные, %</span><strong data-r="share">0%</strong></div>
+              <div class="result-box"><span>Статус риска</span><strong data-r="label">-</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Статус выпуска партий</h3>
+          <p class="desc">Сколько партий уже выпущено и сколько еще задерживает отгрузку.</p>
+          <div class="formula">Формула: Доля выпущенных = Выпущенные партии / Все партии × 100</div>
+          <div class="example">Пример: 18 партий выпущено, 4 ждут, 2 на удержании. Выпущено 75%.</div>
+          <div class="calc" data-kpi="batchReleaseStatusRealtime">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Выпущено</label><input type="number" min="0" step="1" data-f="released" value="18"></div>
+              <div class="field"><label>Ожидают выпуска</label><input type="number" min="0" step="1" data-f="pending" value="4"></div>
+              <div class="field"><label>На удержании</label><input type="number" min="0" step="1" data-f="hold" value="2"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Выпущено, %</span><strong data-r="share">0%</strong></div>
+              <div class="result-box"><span>Заблокировано партий</span><strong data-r="blocked">0</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Критичные отклонения тестов</h3>
+          <p class="desc">Показывает вероятность остановки из-за серьезных аналитических отклонений.</p>
+          <div class="formula">Формула: Доля критичных отклонений = Критичные отклонения / Все тесты × 100</div>
+          <div class="example">Пример: 5 критичных отклонений на 240 тестов дают 2,1%.</div>
+          <div class="calc" data-kpi="criticalDeviationsRealtime">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все тесты</label><input type="number" min="1" step="1" data-f="tests" value="240"></div>
+              <div class="field"><label>Критичные отклонения</label><input type="number" min="0" step="1" data-f="critical" value="5"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Критичные отклонения, %</span><strong data-r="share">0%</strong></div>
+              <div class="result-box"><span>Риск остановки</span><strong data-r="label">-</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Очередь проб</h3>
+          <p class="desc">Оценивает текущую перегрузку лаборатории по пробам.</p>
+          <div class="formula">Формула: Загрузка очереди = Пробы в очереди / Нормальная мощность × 100</div>
+          <div class="example">Пример: 42 пробы в очереди при мощности 30 проб дают загрузку 140%.</div>
+          <div class="calc" data-kpi="sampleQueueRealtime">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Пробы в очереди</label><input type="number" min="0" step="1" data-f="queue" value="42"></div>
+              <div class="field"><label>Нормальная мощность, проб</label><input type="number" min="1" step="1" data-f="capacity" value="30"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Загрузка очереди, %</span><strong data-r="share">0%</strong></div>
+              <div class="result-box"><span>Статус</span><strong data-r="label">-</strong></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Ежедневные</div>
+        <div class="addon-copy">Ежедневный контроль качества, стабильности и влияния лаборатории на производство и клиентов.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Доля вне спецификации за день</h3>
+          <p class="desc">Ежедневная доля партий, не прошедших спецификацию.</p>
+          <div class="formula">Формула: Партии вне спецификации / Все партии × 100</div>
+          <div class="example">Пример: 7 партий вне спецификации из 180 дают 3,9%.</div>
+          <div class="calc" data-kpi="dailyOffspec">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все партии за день</label><input type="number" min="1" step="1" data-f="total" value="180"></div>
+              <div class="field"><label>Вне спецификации</label><input type="number" min="0" step="1" data-f="offspec" value="7"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доля, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>С первого раза за день</h3>
+          <p class="desc">Сколько партий прошло анализ без повторной проверки и корректировок.</p>
+          <div class="formula">Формула: Успешно с первого раза / Все партии × 100</div>
+          <div class="example">Пример: 164 партии из 180 прошли с первого раза. Показатель = 91,1%.</div>
+          <div class="calc" data-kpi="dailyRft">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все партии</label><input type="number" min="1" step="1" data-f="total" value="180"></div>
+              <div class="field"><label>С первого раза</label><input type="number" min="0" step="1" data-f="good" value="164"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>С первого раза, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Инциденты по рекламациям</h3>
+          <p class="desc">Сколько клиентских инцидентов лаборатория получила за день и какова их стоимость.</p>
+          <div class="formula">Формула: Потери = Инциденты × Стоимость одного инцидента</div>
+          <div class="example">Пример: 3 инцидента по 12 000 ₽ дают 36 000 ₽ риска.</div>
+          <div class="calc" data-kpi="complaintIncidentsDaily">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Инциденты</label><input type="number" min="0" step="1" data-f="count" value="3"></div>
+              <div class="field"><label>Стоимость инцидента, ₽</label><input type="number" min="0" step="1" data-f="cost" value="12000"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Инцидентов</span><strong data-r="count">0</strong></div>
+              <div class="result-box"><span>Риск потерь, ₽</span><strong data-r="loss">0 ₽</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Задержанные выпуски</h3>
+          <p class="desc">Показывает, сколько выпусков задержано лабораторией за сутки.</p>
+          <div class="formula">Формула: Задержанные выпуски / Все выпуски × 100</div>
+          <div class="example">Пример: 5 задержанных выпусков из 26 дают 19,2%.</div>
+          <div class="calc" data-kpi="delayedReleasesDaily">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все выпуски</label><input type="number" min="1" step="1" data-f="total" value="26"></div>
+              <div class="field"><label>Задержанные</label><input type="number" min="0" step="1" data-f="delayed" value="5"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Задержанные, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Провалы входного контроля сырья</h3>
+          <p class="desc">Доля партий сырья, которые не прошли входной контроль.</p>
+          <div class="formula">Формула: Не прошли / Проверено × 100</div>
+          <div class="example">Пример: 4 отказа из 55 партий сырья дают 7,3%.</div>
+          <div class="calc" data-kpi="rawFailuresDaily">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Проверено партий</label><input type="number" min="1" step="1" data-f="tested" value="55"></div>
+              <div class="field"><label>Не прошли</label><input type="number" min="0" step="1" data-f="failed" value="4"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Не прошли, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Еженедельные</div>
+        <div class="addon-copy">Недельные тренды, связь с выпуском и нагрузкой, а также улучшения и их финансовая отдача.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Тренд вне спецификации</h3>
+          <p class="desc">Сравнение текущей и прошлой недели по доле отклонений.</p>
+          <div class="formula">Формула: Текущая неделя - Прошлая неделя</div>
+          <div class="example">Пример: 3,8% против 5,2% дают улучшение на 1,4 п.п.</div>
+          <div class="calc" data-kpi="offspecTrendWeekly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Текущая неделя, %</label><input type="number" min="0" step="0.1" data-f="current" value="3.8"></div>
+              <div class="field"><label>Прошлая неделя, %</label><input type="number" min="0" step="0.1" data-f="previous" value="5.2"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Изменение, п.п.</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Влияние на выход продукта</h3>
+          <p class="desc">Как лабораторные улучшения влияют на производственный выход и прибыль.</p>
+          <div class="formula">Формула: (Новый выход - Старый выход) × Объем × Маржа</div>
+          <div class="example">Пример: рост выхода с 91,5% до 93% на 16 000 т при 220 ₽/т дает 52 800 ₽.</div>
+          <div class="calc" data-kpi="yieldImpactWeekly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Выход до, %</label><input type="number" min="0" max="100" step="0.1" data-f="before" value="91.5"></div>
+              <div class="field"><label>Выход после, %</label><input type="number" min="0" max="100" step="0.1" data-f="after" value="93"></div>
+              <div class="field"><label>Объем, т</label><input type="number" min="0" step="1" data-f="volume" value="16000"></div>
+              <div class="field"><label>Маржа, ₽/т</label><input type="number" min="0" step="1" data-f="margin" value="220"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Доп. продукт, т</span><strong data-r="tons">0</strong></div>
+              <div class="result-box"><span>Эффект, ₽</span><strong data-r="money">0 ₽</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Производительность контроля качества</h3>
+          <p class="desc">Нагрузка лаборатории по пробам на одного сотрудника.</p>
+          <div class="formula">Формула: Пробы / Аналитики</div>
+          <div class="example">Пример: 420 проб на 7 аналитиков дают 60 проб на человека.</div>
+          <div class="calc" data-kpi="qcProductivityWeekly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Проб за неделю</label><input type="number" min="0" step="1" data-f="samples" value="420"></div>
+              <div class="field"><label>Аналитиков</label><input type="number" min="1" step="1" data-f="analysts" value="7"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Проб на аналитика</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Разбор коренных причин</h3>
+          <p class="desc">Показывает дисциплину закрытия расследований и улучшений.</p>
+          <div class="formula">Формула: Закрытые RCA / Открытые RCA × 100</div>
+          <div class="example">Пример: 11 закрытых из 15 открытых RCA дают 73,3% закрытия.</div>
+          <div class="calc" data-kpi="rootCauseWeekly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Открытые RCA</label><input type="number" min="1" step="1" data-f="opened" value="15"></div>
+              <div class="field"><label>Закрытые RCA</label><input type="number" min="0" step="1" data-f="closed" value="11"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Закрытие, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Проекты экономии затрат</h3>
+          <p class="desc">Оценивает недельный финансовый эффект проектов улучшений лаборатории.</p>
+          <div class="formula">Формула: ROI = (Экономия - Затраты) / Затраты × 100</div>
+          <div class="example">Пример: 180 000 ₽ экономии при 75 000 ₽ затрат дают ROI 140%.</div>
+          <div class="calc" data-kpi="costSavingsWeekly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Экономия, ₽</label><input type="number" min="0" step="1" data-f="saving" value="180000"></div>
+              <div class="field"><label>Затраты, ₽</label><input type="number" min="1" step="1" data-f="cost" value="75000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>ROI, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Ежемесячные</div>
+        <div class="addon-copy">Месячная финансовая и операционная эффективность лаборатории.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Полный ROI лаборатории</h3>
+          <p class="desc">Суммарная отдача лаборатории по месячным эффектам и затратам.</p>
+          <div class="formula">Формула: (Ценность - Стоимость) / Стоимость × 100</div>
+          <div class="example">Пример: 920 000 ₽ ценности при 260 000 ₽ стоимости дают ROI 253,8%.</div>
+          <div class="calc" data-kpi="fullLabRoiMonthly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Созданная ценность, ₽</label><input type="number" min="0" step="1" data-f="value" value="920000"></div>
+              <div class="field"><label>Стоимость лаборатории, ₽</label><input type="number" min="1" step="1" data-f="cost" value="260000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>ROI, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Эффект снижения брака</h3>
+          <p class="desc">Экономика от сокращения брака благодаря лабораторным улучшениям.</p>
+          <div class="formula">Формула: (Брак до - Брак после) × Стоимость тонны брака</div>
+          <div class="example">Пример: сокращение брака с 26 т до 14 т при 38 000 ₽/т дает 456 000 ₽.</div>
+          <div class="calc" data-kpi="scrapReductionMonthly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Брак до, т</label><input type="number" min="0" step="0.1" data-f="before" value="26"></div>
+              <div class="field"><label>Брак после, т</label><input type="number" min="0" step="0.1" data-f="after" value="14"></div>
+              <div class="field"><label>Стоимость тонны, ₽</label><input type="number" min="0" step="1" data-f="cost" value="38000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Экономия, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Снижение рекламаций</h3>
+          <p class="desc">Финансовый эффект от уменьшения числа клиентских жалоб.</p>
+          <div class="formula">Формула: (Рекламации до - Рекламации после) × Стоимость жалобы</div>
+          <div class="example">Пример: снижение с 18 до 7 рекламаций при 15 000 ₽ за случай дает 165 000 ₽.</div>
+          <div class="calc" data-kpi="complaintReductionMonthly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Рекламации до</label><input type="number" min="0" step="1" data-f="before" value="18"></div>
+              <div class="field"><label>Рекламации после</label><input type="number" min="0" step="1" data-f="after" value="7"></div>
+              <div class="field"><label>Стоимость жалобы, ₽</label><input type="number" min="0" step="1" data-f="cost" value="15000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Экономия, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Улучшение методик</h3>
+          <p class="desc">Доля методик, которые улучшены или ускорены за месяц.</p>
+          <div class="formula">Формула: Улучшенные методики / Все методики × 100</div>
+          <div class="example">Пример: 9 улучшенных методик из 42 дают 21,4%.</div>
+          <div class="calc" data-kpi="methodImprovementMonthly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все методики</label><input type="number" min="1" step="1" data-f="total" value="42"></div>
+              <div class="field"><label>Улучшенные</label><input type="number" min="0" step="1" data-f="improved" value="9"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Улучшено, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Уровень автоматизации</h3>
+          <p class="desc">Показывает, какая доля тестов переведена на автоматизированные методы.</p>
+          <div class="formula">Формула: Автоматизированные тесты / Все тесты × 100</div>
+          <div class="example">Пример: 1 650 автоматизированных тестов из 2 200 дают 75% автоматизации.</div>
+          <div class="calc" data-kpi="automationRateMonthly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все тесты</label><input type="number" min="1" step="1" data-f="total" value="2200"></div>
+              <div class="field"><label>Автоматизированные</label><input type="number" min="0" step="1" data-f="auto" value="1650"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Автоматизация, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Квартальные</div>
+        <div class="addon-copy">Стратегические лабораторные KPI: инновации, новые методы, поддержка продуктов, инвестиции и цифровизация.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Индекс инноваций</h3>
+          <p class="desc">Выполнение квартального плана по инновационным инициативам.</p>
+          <div class="formula">Формула: Реализовано инициатив / План инициатив × 100</div>
+          <div class="example">Пример: 7 реализованных инициатив из 10 дают 70% выполнения.</div>
+          <div class="calc" data-kpi="innovationQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>План инициатив</label><input type="number" min="1" step="1" data-f="plan" value="10"></div>
+              <div class="field"><label>Реализовано</label><input type="number" min="0" step="1" data-f="done" value="7"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Выполнение, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Новые методики</h3>
+          <p class="desc">Освоение и внедрение новых аналитических методов.</p>
+          <div class="formula">Формула: Валидированные методики / Разработанные методики × 100</div>
+          <div class="example">Пример: 5 валидированных из 8 разработанных дают 62,5%.</div>
+          <div class="calc" data-kpi="newMethodsQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Разработанные</label><input type="number" min="1" step="1" data-f="developed" value="8"></div>
+              <div class="field"><label>Валидированные</label><input type="number" min="0" step="1" data-f="validated" value="5"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Валидировано, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Поддержка новых продуктов</h3>
+          <p class="desc">Насколько лаборатория успевает сопровождать вывод новых продуктов.</p>
+          <div class="formula">Формула: Поддержанные проекты / Все проекты × 100</div>
+          <div class="example">Пример: 9 поддержанных проектов из 11 дают 81,8%.</div>
+          <div class="calc" data-kpi="newProductSupportQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все проекты</label><input type="number" min="1" step="1" data-f="total" value="11"></div>
+              <div class="field"><label>Поддержанные</label><input type="number" min="0" step="1" data-f="supported" value="9"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Поддержка, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Стратегический ROI</h3>
+          <p class="desc">Отдача от крупных квартальных проектов развития лаборатории.</p>
+          <div class="formula">Формула: (Эффект - Инвестиции) / Инвестиции × 100</div>
+          <div class="example">Пример: эффект 2,4 млн ₽ при инвестициях 1,2 млн ₽ дает ROI 100%.</div>
+          <div class="calc" data-kpi="strategicRoiQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Эффект, ₽</label><input type="number" min="0" step="1" data-f="effect" value="2400000"></div>
+              <div class="field"><label>Инвестиции, ₽</label><input type="number" min="1" step="1" data-f="investment" value="1200000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>ROI, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Цифровизация лаборатории</h3>
+          <p class="desc">Доля процессов, переведенных в цифровой контур.</p>
+          <div class="formula">Формула: Цифровые процессы / Все процессы × 100</div>
+          <div class="example">Пример: 19 цифровых процессов из 28 дают 67,9% цифровизации.</div>
+          <div class="calc" data-kpi="digitalizationQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все процессы</label><input type="number" min="1" step="1" data-f="total" value="28"></div>
+              <div class="field"><label>Цифровые процессы</label><input type="number" min="0" step="1" data-f="digital" value="19"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Цифровизация, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function n(value) {
+      var x = Number(value);
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function asPercent(value, digits) {
+      return n(value).toFixed(digits) + '%';
+    }
+
+    function asNumber(value, digits) {
+      return n(value).toLocaleString('ru-RU', { maximumFractionDigits: digits, minimumFractionDigits: digits });
+    }
+
+    function asRub(value) {
+      return n(value).toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
+    }
+
+    function getInput(scope, name) {
+      var el = scope.querySelector('[data-f="' + name + '"]');
+      return el ? n(el.value) : 0;
+    }
+
+    function setResult(scope, name, text) {
+      var el = scope.querySelector('[data-r="' + name + '"]');
+      if (el) el.textContent = text;
+    }
+
+    function calcOffSpec(scope) {
+      var total = getInput(scope, 'total');
+      var off = getInput(scope, 'offspec');
+      var lossBefore = getInput(scope, 'lossBefore');
+      var lossAfter = getInput(scope, 'lossAfter');
+      var pct = total > 0 ? (off / total) * 100 : 0;
+      setResult(scope, 'percent', asPercent(pct, 2));
+      setResult(scope, 'saving', asRub(lossBefore - lossAfter));
+    }
+
+    function calcRft(scope) {
+      var total = getInput(scope, 'total');
+      var good = getInput(scope, 'good');
+      var reworkBefore = getInput(scope, 'reworkBefore');
+      var reworkAfter = getInput(scope, 'reworkAfter');
+      var costPer = getInput(scope, 'costPer');
+      var pct = total > 0 ? (good / total) * 100 : 0;
+      var saving = (reworkBefore - reworkAfter) * costPer;
+      setResult(scope, 'percent', asPercent(pct, 2));
+      setResult(scope, 'saving', asRub(saving));
+    }
+
+    function calcRaw(scope) {
+      var before = getInput(scope, 'before');
+      var after = getInput(scope, 'after');
+      var volume = getInput(scope, 'volume');
+      var cost = getInput(scope, 'cost');
+      var deltaKg = (before - after) * volume;
+      var money = deltaKg * cost;
+      setResult(scope, 'kg', asNumber(deltaKg, 0));
+      setResult(scope, 'money', asRub(money));
+    }
+
+    function calcYield(scope) {
+      var before = getInput(scope, 'before');
+      var after = getInput(scope, 'after');
+      var volume = getInput(scope, 'volume');
+      var margin = getInput(scope, 'margin');
+      var deltaPct = (after - before) / 100;
+      var extraTons = deltaPct * volume;
+      var profit = extraTons * margin;
+      setResult(scope, 'extraTons', asNumber(extraTons, 2));
+      setResult(scope, 'profit', asRub(profit));
+    }
+
+    function hoursDiff(h1, m1, h2, m2) {
+      var t1 = h1 * 60 + m1;
+      var t2 = h2 * 60 + m2;
+      if (t2 < t1) t2 += 24 * 60;
+      return (t2 - t1) / 60;
+    }
+
+    function calcTat(scope) {
+      var sampleH = getInput(scope, 'sampleH');
+      var resultH = getInput(scope, 'resultH');
+      var inventory = getInput(scope, 'inventory');
+      var rate = getInput(scope, 'rate');
+      var tatHours = hoursDiff(sampleH, 0, resultH, 0);
+      var effect = inventory * (rate / 100);
+      setResult(scope, 'hours', asNumber(tatHours, 2));
+      setResult(scope, 'effect', asRub(effect));
+    }
+
+    function calcComplaints(scope) {
+      var shipments = getInput(scope, 'shipments');
+      var before = getInput(scope, 'before');
+      var after = getInput(scope, 'after');
+      var cost = getInput(scope, 'cost');
+      var beforePct = shipments > 0 ? (before / shipments) * 100 : 0;
+      var afterPct = shipments > 0 ? (after / shipments) * 100 : 0;
+      var saving = (before - after) * cost;
+      setResult(scope, 'rates', asPercent(beforePct, 2) + ' / ' + asPercent(afterPct, 2));
+      setResult(scope, 'saving', asRub(saving));
+    }
+
+    function calcDowntime(scope) {
+      var hours = getInput(scope, 'hours');
+      var costPerHour = getInput(scope, 'costPerHour');
+      var value = hours * costPerHour;
+      var label = 'Слабый эффект';
+      if (value >= 150000) label = 'Сильный риск-контроль';
+      else if (value >= 50000) label = 'Хорошо';
+      setResult(scope, 'loss', asRub(value));
+      setResult(scope, 'label', label);
+    }
+
+    function calcRelease(scope) {
+      var prodH = getInput(scope, 'prodH');
+      var relH = getInput(scope, 'relH');
+      var h = hoursDiff(prodH, 0, relH, 0);
+      setResult(scope, 'hours', asNumber(h, 2));
+    }
+
+    function calcFullRoi(scope) {
+      var totalValue = getInput(scope, 'offspec')
+        + getInput(scope, 'raw')
+        + getInput(scope, 'yield')
+        + getInput(scope, 'complaints')
+        + getInput(scope, 'downtime');
+
+      var totalCost = getInput(scope, 'salary')
+        + getInput(scope, 'reagents')
+        + getInput(scope, 'equipment')
+        + getInput(scope, 'depreciation');
+
+      var net = totalValue - totalCost;
+      var roi = totalCost > 0 ? (net / totalCost) * 100 : 0;
+
+      setResult(scope, 'value', asRub(totalValue));
+      setResult(scope, 'cost', asRub(totalCost));
+      setResult(scope, 'net', asRub(net));
+      setResult(scope, 'roi', asPercent(roi, 1));
+    }
+
+    function calcQcCycleRealtime(scope) {
+      setResult(scope, 'v', asNumber(getInput(scope, 'hours') / Math.max(1, getInput(scope, 'samples')), 2));
+    }
+
+    function calcOffspecAlertsRealtime(scope) {
+      var alerts = getInput(scope, 'alerts');
+      var critical = getInput(scope, 'critical');
+      var share = alerts > 0 ? (critical / alerts) * 100 : 0;
+      var label = share >= 30 ? 'Высокий риск' : share >= 15 ? 'Нужно внимание' : 'Ситуация под контролем';
+      setResult(scope, 'share', asPercent(share, 1));
+      setResult(scope, 'label', label);
+    }
+
+    function calcBatchReleaseStatusRealtime(scope) {
+      var released = getInput(scope, 'released');
+      var pending = getInput(scope, 'pending');
+      var hold = getInput(scope, 'hold');
+      var total = released + pending + hold;
+      setResult(scope, 'share', asPercent(total > 0 ? (released / total) * 100 : 0, 1));
+      setResult(scope, 'blocked', asNumber(pending + hold, 0));
+    }
+
+    function calcCriticalDeviationsRealtime(scope) {
+      var tests = getInput(scope, 'tests');
+      var critical = getInput(scope, 'critical');
+      var share = tests > 0 ? (critical / tests) * 100 : 0;
+      var label = share >= 3 ? 'Высокий' : share >= 1 ? 'Средний' : 'Низкий';
+      setResult(scope, 'share', asPercent(share, 2));
+      setResult(scope, 'label', label);
+    }
+
+    function calcSampleQueueRealtime(scope) {
+      var queue = getInput(scope, 'queue');
+      var capacity = getInput(scope, 'capacity');
+      var load = capacity > 0 ? (queue / capacity) * 100 : 0;
+      var label = load > 120 ? 'Перегрузка' : load > 90 ? 'Почти предел' : 'Норма';
+      setResult(scope, 'share', asPercent(load, 1));
+      setResult(scope, 'label', label);
+    }
+
+    function calcDailyOffspec(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'offspec') / Math.max(1, getInput(scope, 'total'))) * 100, 2));
+    }
+
+    function calcDailyRft(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'good') / Math.max(1, getInput(scope, 'total'))) * 100, 2));
+    }
+
+    function calcComplaintIncidentsDaily(scope) {
+      var count = getInput(scope, 'count');
+      setResult(scope, 'count', asNumber(count, 0));
+      setResult(scope, 'loss', asRub(count * getInput(scope, 'cost')));
+    }
+
+    function calcDelayedReleasesDaily(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'delayed') / Math.max(1, getInput(scope, 'total'))) * 100, 2));
+    }
+
+    function calcRawFailuresDaily(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'failed') / Math.max(1, getInput(scope, 'tested'))) * 100, 2));
+    }
+
+    function calcOffspecTrendWeekly(scope) {
+      setResult(scope, 'v', asNumber(getInput(scope, 'current') - getInput(scope, 'previous'), 1));
+    }
+
+    function calcYieldImpactWeekly(scope) {
+      var extraTons = ((getInput(scope, 'after') - getInput(scope, 'before')) / 100) * getInput(scope, 'volume');
+      setResult(scope, 'tons', asNumber(extraTons, 1));
+      setResult(scope, 'money', asRub(extraTons * getInput(scope, 'margin')));
+    }
+
+    function calcQcProductivityWeekly(scope) {
+      setResult(scope, 'v', asNumber(getInput(scope, 'samples') / Math.max(1, getInput(scope, 'analysts')), 1));
+    }
+
+    function calcRootCauseWeekly(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'closed') / Math.max(1, getInput(scope, 'opened'))) * 100, 1));
+    }
+
+    function calcCostSavingsWeekly(scope) {
+      var saving = getInput(scope, 'saving');
+      var cost = getInput(scope, 'cost');
+      setResult(scope, 'v', asPercent(((saving - cost) / Math.max(1, cost)) * 100, 1));
+    }
+
+    function calcFullLabRoiMonthly(scope) {
+      var value = getInput(scope, 'value');
+      var cost = getInput(scope, 'cost');
+      setResult(scope, 'v', asPercent(((value - cost) / Math.max(1, cost)) * 100, 1));
+    }
+
+    function calcScrapReductionMonthly(scope) {
+      setResult(scope, 'v', asRub((getInput(scope, 'before') - getInput(scope, 'after')) * getInput(scope, 'cost')));
+    }
+
+    function calcComplaintReductionMonthly(scope) {
+      setResult(scope, 'v', asRub((getInput(scope, 'before') - getInput(scope, 'after')) * getInput(scope, 'cost')));
+    }
+
+    function calcMethodImprovementMonthly(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'improved') / Math.max(1, getInput(scope, 'total'))) * 100, 1));
+    }
+
+    function calcAutomationRateMonthly(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'auto') / Math.max(1, getInput(scope, 'total'))) * 100, 1));
+    }
+
+    function calcInnovationQuarterly(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'done') / Math.max(1, getInput(scope, 'plan'))) * 100, 1));
+    }
+
+    function calcNewMethodsQuarterly(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'validated') / Math.max(1, getInput(scope, 'developed'))) * 100, 1));
+    }
+
+    function calcNewProductSupportQuarterly(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'supported') / Math.max(1, getInput(scope, 'total'))) * 100, 1));
+    }
+
+    function calcStrategicRoiQuarterly(scope) {
+      var effect = getInput(scope, 'effect');
+      var investment = getInput(scope, 'investment');
+      setResult(scope, 'v', asPercent(((effect - investment) / Math.max(1, investment)) * 100, 1));
+    }
+
+    function calcDigitalizationQuarterly(scope) {
+      setResult(scope, 'v', asPercent((getInput(scope, 'digital') / Math.max(1, getInput(scope, 'total'))) * 100, 1));
+    }
+
+    var calculators = {
+      offspec: calcOffSpec,
+      rft: calcRft,
+      raw: calcRaw,
+      yield: calcYield,
+      tat: calcTat,
+      complaints: calcComplaints,
+      downtime: calcDowntime,
+      release: calcRelease,
+      fullroi: calcFullRoi,
+      qcCycleRealtime: calcQcCycleRealtime,
+      offspecAlertsRealtime: calcOffspecAlertsRealtime,
+      batchReleaseStatusRealtime: calcBatchReleaseStatusRealtime,
+      criticalDeviationsRealtime: calcCriticalDeviationsRealtime,
+      sampleQueueRealtime: calcSampleQueueRealtime,
+      dailyOffspec: calcDailyOffspec,
+      dailyRft: calcDailyRft,
+      complaintIncidentsDaily: calcComplaintIncidentsDaily,
+      delayedReleasesDaily: calcDelayedReleasesDaily,
+      rawFailuresDaily: calcRawFailuresDaily,
+      offspecTrendWeekly: calcOffspecTrendWeekly,
+      yieldImpactWeekly: calcYieldImpactWeekly,
+      qcProductivityWeekly: calcQcProductivityWeekly,
+      rootCauseWeekly: calcRootCauseWeekly,
+      costSavingsWeekly: calcCostSavingsWeekly,
+      fullLabRoiMonthly: calcFullLabRoiMonthly,
+      scrapReductionMonthly: calcScrapReductionMonthly,
+      complaintReductionMonthly: calcComplaintReductionMonthly,
+      methodImprovementMonthly: calcMethodImprovementMonthly,
+      automationRateMonthly: calcAutomationRateMonthly,
+      innovationQuarterly: calcInnovationQuarterly,
+      newMethodsQuarterly: calcNewMethodsQuarterly,
+      newProductSupportQuarterly: calcNewProductSupportQuarterly,
+      strategicRoiQuarterly: calcStrategicRoiQuarterly,
+      digitalizationQuarterly: calcDigitalizationQuarterly
+    };
+
+    document.querySelectorAll('.calc').forEach(function(scope) {
+      var key = scope.getAttribute('data-kpi');
+      var run = calculators[key];
+      if (!run) return;
+      scope.querySelectorAll('input').forEach(function(input) {
+        input.addEventListener('input', function() { run(scope); });
+      });
+      run(scope);
+    });
+
+    // ── Фиксация периода (снапшот KPI) ──────────────────────────────
+    (function() {
+      var DEPT = 'laboratory';
+      var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+      var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+      function periodKey() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+      function labelBtn() { var d = new Date(); return '📋 Отчёт ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear(); }
+      function saveSnapshot() {
+        var snap = { period: periodKey(), dept: DEPT, savedAt: new Date().toISOString(), inputs: {}, results: {}, resultLabels: {} };
+        document.querySelectorAll('.calc').forEach(function(sc) {
+          var k = sc.getAttribute('data-kpi') || '_';
+          snap.inputs[k] = {};
+          sc.querySelectorAll('input[data-f]').forEach(function(el) { snap.inputs[k][el.getAttribute('data-f')] = el.value; });
+          snap.results[k] = {};
+          sc.querySelectorAll('strong[data-r]').forEach(function(el) {
+            var rKey = el.getAttribute('data-r'); snap.results[k][rKey] = el.textContent;
+            var sib = el.previousElementSibling; if (sib && sib.tagName === 'SPAN') snap.resultLabels[k + '.' + rKey] = sib.textContent.trim();
+          });
+        });
+        try {
+          var all = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
+          all[snap.period + '_' + DEPT] = snap;
+          localStorage.setItem(SNAP_KEY, JSON.stringify(all));
+          var btn = document.getElementById('snapBtn');
+          window.open('kpi-monthly-report.html?dept=' + DEPT + '&period=' + snap.period, '_blank');
+          if (btn) { btn.textContent = '✓ Отчёт открыт'; btn.style.cssText = 'background:#d4edda;color:#1f915e;border-color:#b8ddc4'; setTimeout(function() { btn.textContent = labelBtn(); btn.style.cssText = ''; }, 2000); }
+        } catch(e) { alert('Ошибка: ' + e.message); }
+      }
+      window.addEventListener('load', function() {
+        var btn = document.getElementById('snapBtn');
+        if (btn) { btn.textContent = labelBtn(); btn.addEventListener('click', saveSnapshot); }
+      });
+    })();
+  </script>
+</body>
+</html>

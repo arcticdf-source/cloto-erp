@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>План закупок Q2 2026 — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #eff4f2;
+      --surface: #ffffff;
+      --surface-soft: #f7fbf9;
+      --line: rgba(101, 127, 120, 0.3);
+      --line-strong: rgba(53, 116, 99, 0.45);
+      --text: #1a2f2a;
+      --muted: #667f78;
+      --teal: #1f9a86;
+      --teal-soft: rgba(31, 154, 134, 0.12);
+      --amber: #c69145;
+      --red: #cb6975;
+      --shadow: 0 14px 34px rgba(26, 47, 42, 0.12);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Manrope', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(31, 154, 134, 0.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(198, 145, 69, 0.12), transparent 22%),
+        linear-gradient(180deg, #f8fbfa, var(--bg));
+    }
+
+    .page {
+      width: min(1620px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 14px 0 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+    }
+
+    .link-btn,
+    .btn,
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      padding: 8px 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+    }
+
+    .btn { cursor: pointer; }
+
+    .btn:hover,
+    .link-btn:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #88f1df, #5cd8c5);
+      color: #0f3f37;
+      border-color: rgba(26, 127, 111, 0.3);
+    }
+
+    h1,
+    .value {
+      margin: 0;
+      font-family: 'Sora', sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(24px, 2.8vw, 34px);
+      line-height: 1.08;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0 14px 14px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: linear-gradient(180deg, #ffffff, #f8fbfa);
+      padding: 13px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .value { font-size: 27px; }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .settings {
+      margin: 0 14px 14px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 9px;
+      font: inherit;
+      font-size: 13px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 3px var(--teal-soft);
+    }
+
+    .table-wrap {
+      padding: 0 14px 14px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1560px;
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #edf5f2;
+      color: #3e5f58;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 9px 7px;
+      border-bottom: 1px solid var(--line);
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    tbody td,
+    tfoot td {
+      border-bottom: 1px solid rgba(101, 127, 120, 0.18);
+      border-right: 1px solid rgba(101, 127, 120, 0.15);
+      padding: 6px;
+      vertical-align: middle;
+      background: white;
+      font-size: 12px;
+    }
+
+    tbody tr:hover td { background: #f9fcfb; }
+
+    td.nr,
+    th.nr {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    td.center,
+    th.center { text-align: center; }
+
+    td input,
+    td select {
+      width: 100%;
+      border: 1px solid rgba(101, 127, 120, 0.35);
+      border-radius: 8px;
+      padding: 6px 7px;
+      font: inherit;
+      font-size: 12px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    td:nth-child(2) input {
+      max-width: 56px;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    td:nth-child(5) input,
+    td:nth-child(6) input,
+    td:nth-child(7) input,
+    td:nth-child(8) input {
+      max-width: 94px;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    td:nth-child(1) input,
+    td:nth-child(3) input,
+    td:nth-child(4) input,
+    td:nth-child(10) input {
+      min-width: 100%;
+    }
+
+    td input:focus,
+    td select:focus {
+      outline: none;
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 3px var(--teal-soft);
+    }
+
+    .readonly {
+      text-align: right;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .sum-cell { background: #f0faf6; color: #18463d; }
+
+    .warn {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .delete-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid rgba(203, 105, 117, 0.35);
+      background: #fff;
+      color: var(--red);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .delete-btn:hover {
+      background: rgba(203, 105, 117, 0.12);
+      border-color: rgba(203, 105, 117, 0.55);
+    }
+
+    tfoot td {
+      background: #ecf7f1;
+      font-weight: 800;
+      border-top: 2px solid #b8d7ca;
+    }
+
+    @media (max-width: 1180px) {
+      .topbar { grid-template-columns: 1fr; }
+      .controls { justify-content: flex-start; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .settings { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 740px) {
+      .page { width: calc(100% - 12px); }
+      .value { font-size: 23px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="card">
+      <div class="topbar">
+        <a class="link-btn" href="procurement-plans-hub.html">← К выбору квартала</a>
+        <div>
+          <h1>План закупок сырья · Q2 2026</h1>
+          <div class="subtitle">Источник автоподстановки: прайс сырья. Любую ячейку можно изменить вручную.</div>
+        </div>
+        <div class="controls">
+          <span class="pill">Q2 2026</span>
+          <button class="btn" id="add-row" type="button">+ Добавить строку</button>
+          <button class="btn btn-primary" id="save-btn" type="button">Сохранить</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="label">Итог тонн</div>
+          <div class="value" id="kpi-tons">0</div>
+          <div class="small">Суммарный объем закупки в тоннах.</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Итог штук</div>
+          <div class="value" id="kpi-pieces">0</div>
+          <div class="small">Суммарный объем закупки в штуках.</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Резерв фин. отдела</div>
+          <div class="value" id="kpi-reserve">0 ₽</div>
+          <div class="small">Итог к оплате с учетом НДС.</div>
+        </div>
+      </div>
+
+      <div class="settings">
+        <div class="field">
+          <label for="week-default">Неделя по умолчанию</label>
+          <input id="week-default" type="text" value="Неделя 01.06.2026 - 07.06.2026" />
+        </div>
+        <div class="field">
+          <label for="vat-rate">НДС, %</label>
+          <input id="vat-rate" type="number" min="0" max="100" step="1" value="20" />
+        </div>
+        <div class="field">
+          <label for="search-row">Поиск по поставщику/продукту</label>
+          <input id="search-row" type="search" placeholder="Например, Ока или сода" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <datalist id="material-options"></datalist>
+        <table>
+          <colgroup>
+            <col style="width:16%" />
+            <col style="width:5%" />
+            <col style="width:15%" />
+            <col style="width:15%" />
+            <col style="width:8%" />
+            <col style="width:8%" />
+            <col style="width:9%" />
+            <col style="width:9%" />
+            <col style="width:12%" />
+            <col style="width:12%" />
+            <col style="width:3%" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Неделя</th>
+              <th class="center">№ п/п</th>
+              <th>Поставщик</th>
+              <th>Продукт</th>
+              <th class="nr">Количество, тонн</th>
+              <th class="nr">Количество, штук</th>
+              <th class="nr">Цена, руб/тонна с доставкой</th>
+              <th class="nr">Цена, руб/штука с доставкой</th>
+              <th class="nr">Сумма к оплате (+ доставка), рублей с учетом НДС</th>
+              <th>Примечание</th>
+              <th class="center">Удал.</th>
+            </tr>
+          </thead>
+          <tbody id="plan-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4">ИТОГ</td>
+              <td class="readonly sum-cell" id="sum-tons">0</td>
+              <td class="readonly sum-cell" id="sum-pieces">0</td>
+              <td class="readonly">—</td>
+              <td class="readonly">—</td>
+              <td class="readonly sum-cell" id="sum-total">0 ₽</td>
+              <td class="readonly">—</td>
+              <td class="readonly">—</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var MATERIALS_KEY = 'cloto_raw_materials_v2';
+      var PLAN_KEY = 'cloto_procurement_plan_q2_v1';
+
+      var state = {
+        vatRate: 20,
+        defaultWeek: 'Неделя 01.06.2026 - 07.06.2026',
+        search: '',
+        rows: []
+      };
+
+      var materials = [];
+
+      var refs = {
+        weekDefault: document.getElementById('week-default'),
+        vatRate: document.getElementById('vat-rate'),
+        searchRow: document.getElementById('search-row'),
+        addRow: document.getElementById('add-row'),
+        saveBtn: document.getElementById('save-btn'),
+        planBody: document.getElementById('plan-body'),
+        materialOptions: document.getElementById('material-options'),
+        sumTons: document.getElementById('sum-tons'),
+        sumPieces: document.getElementById('sum-pieces'),
+        sumTotal: document.getElementById('sum-total'),
+        kpiTons: document.getElementById('kpi-tons'),
+        kpiPieces: document.getElementById('kpi-pieces'),
+        kpiReserve: document.getElementById('kpi-reserve')
+      };
+
+      init();
+
+      function init() {
+        materials = loadMaterials();
+        renderMaterialsOptions();
+        state = loadState();
+        bindControls();
+        render();
+      }
+
+      function loadMaterials() {
+        try {
+          var raw = localStorage.getItem(MATERIALS_KEY);
+          if (!raw) return [];
+          var parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) return [];
+          return parsed.map(function (item) {
+            return {
+              name: String(item && item.name || '').trim(),
+              supplier: String(item && item.sup || '').trim(),
+              unit: String(item && item.unit || '').trim().toLowerCase(),
+              priceCloto: toNumber(item && item.priceCloto, 0),
+              note: String(item && item.note || '').trim()
+            };
+          }).filter(function (item) { return item.name; });
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function loadState() {
+        try {
+          var raw = localStorage.getItem(PLAN_KEY);
+          if (!raw) return buildDefaultState();
+          var parsed = JSON.parse(raw);
+          if (!parsed || !Array.isArray(parsed.rows)) return buildDefaultState();
+          return {
+            vatRate: toNumber(parsed.vatRate, 20),
+            defaultWeek: String(parsed.defaultWeek || 'Неделя 01.06.2026 - 07.06.2026'),
+            search: String(parsed.search || ''),
+            rows: parsed.rows.map(normalizeRow)
+          };
+        } catch (error) {
+          return buildDefaultState();
+        }
+      }
+
+      function buildDefaultState() {
+        var rows = [];
+        for (var i = 0; i < 8; i += 1) {
+          rows.push(buildBlankRow(i + 1));
+        }
+        return {
+          vatRate: 20,
+          defaultWeek: 'Неделя 01.06.2026 - 07.06.2026',
+          search: '',
+          rows: rows
+        };
+      }
+
+      function normalizeRow(row) {
+        return {
+          week: String(row && row.week || ''),
+          index: toNumber(row && row.index, 1),
+          supplier: String(row && row.supplier || ''),
+          product: String(row && row.product || ''),
+          tons: toNumber(row && row.tons, 0),
+          pieces: toNumber(row && row.pieces, 0),
+          pricePerTon: toNumber(row && row.pricePerTon, 0),
+          pricePerPiece: toNumber(row && row.pricePerPiece, 0),
+          note: String(row && row.note || '')
+        };
+      }
+
+      function buildBlankRow(index) {
+        return {
+          week: state && state.defaultWeek ? state.defaultWeek : 'Неделя 01.06.2026 - 07.06.2026',
+          index: index,
+          supplier: '',
+          product: '',
+          tons: 0,
+          pieces: 0,
+          pricePerTon: 0,
+          pricePerPiece: 0,
+          note: ''
+        };
+      }
+
+      function bindControls() {
+        refs.weekDefault.addEventListener('input', function () {
+          state.defaultWeek = String(refs.weekDefault.value || '');
+          persist();
+        });
+
+        refs.vatRate.addEventListener('input', function () {
+          state.vatRate = clamp(toNumber(refs.vatRate.value, 20), 0, 100);
+          persist();
+          renderTotals();
+        });
+
+        refs.searchRow.addEventListener('input', function () {
+          state.search = String(refs.searchRow.value || '');
+          render();
+        });
+
+        refs.addRow.addEventListener('click', function () {
+          state.rows.push(buildBlankRow(state.rows.length + 1));
+          persist();
+          render();
+        });
+
+        refs.saveBtn.addEventListener('click', function () {
+          persist();
+          refs.saveBtn.textContent = 'Сохранено';
+          setTimeout(function () { refs.saveBtn.textContent = 'Сохранить'; }, 1200);
+        });
+      }
+
+      function renderMaterialsOptions() {
+        refs.materialOptions.innerHTML = materials.map(function (m) {
+          return '<option value="' + escapeHtmlAttr(m.name) + '"></option>';
+        }).join('');
+      }
+
+      function persist() {
+        localStorage.setItem(PLAN_KEY, JSON.stringify(state));
+      }
+
+      function render() {
+        refs.weekDefault.value = state.defaultWeek;
+        refs.vatRate.value = state.vatRate;
+        refs.searchRow.value = state.search;
+
+        var filtered = getFilteredRows();
+
+        refs.planBody.innerHTML = filtered.map(function (item) {
+          var row = item.row;
+          var originalIndex = item.index;
+          var rowTotal = computeRowTotal(row);
+
+          return '<tr data-index="' + originalIndex + '">'
+            + '<td><input data-field="week" value="' + escapeHtmlAttr(row.week) + '"></td>'
+            + '<td class="center"><input data-field="index" type="number" min="1" step="1" value="' + row.index + '"></td>'
+            + '<td><input data-field="supplier" value="' + escapeHtmlAttr(row.supplier) + '"></td>'
+            + '<td><input data-field="product" list="material-options" value="' + escapeHtmlAttr(row.product) + '"></td>'
+            + '<td><input class="nr" data-field="tons" type="number" min="0" step="0.01" value="' + row.tons + '"></td>'
+            + '<td><input class="nr" data-field="pieces" type="number" min="0" step="1" value="' + row.pieces + '"></td>'
+            + '<td><input class="nr" data-field="pricePerTon" type="number" min="0" step="0.01" value="' + row.pricePerTon + '"></td>'
+            + '<td><input class="nr" data-field="pricePerPiece" type="number" min="0" step="0.01" value="' + row.pricePerPiece + '"></td>'
+            + '<td class="readonly sum-cell" data-field="rowTotal">' + formatMoney(rowTotal) + '</td>'
+            + '<td><input data-field="note" value="' + escapeHtmlAttr(row.note) + '"></td>'
+            + '<td class="center"><button class="delete-btn" type="button" data-delete="' + originalIndex + '" title="Удалить строку">✕</button></td>'
+            + '</tr>';
+        }).join('');
+
+        if (!filtered.length) {
+          refs.planBody.innerHTML = '<tr><td colspan="11" class="readonly" style="text-align:left;padding:16px;">Ничего не найдено по фильтру.</td></tr>';
+        }
+
+        bindRowControls();
+        renderTotals();
+      }
+
+      function bindRowControls() {
+        refs.planBody.querySelectorAll('[data-delete]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            var index = toNumber(button.getAttribute('data-delete'), -1);
+            if (index < 0 || index >= state.rows.length) return;
+            state.rows.splice(index, 1);
+            resequenceIndexes();
+            persist();
+            render();
+          });
+        });
+
+        refs.planBody.querySelectorAll('input[data-field]').forEach(function (input) {
+          input.addEventListener('input', function () {
+            var tr = input.closest('tr');
+            var index = toNumber(tr && tr.getAttribute('data-index'), -1);
+            if (index < 0 || index >= state.rows.length) return;
+
+            var field = input.getAttribute('data-field');
+            var row = state.rows[index];
+            if (!row) return;
+
+            if (field === 'product') {
+              row.product = String(input.value || '').trim();
+              applyProductAutofill(row);
+            } else if (field === 'supplier' || field === 'week' || field === 'note') {
+              row[field] = String(input.value || '');
+            } else if (field === 'index') {
+              row.index = Math.max(1, Math.round(toNumber(input.value, row.index)));
+            } else {
+              row[field] = toNumber(input.value, 0);
+            }
+
+            persist();
+            updateRenderedRow(tr, row);
+            renderTotals();
+          });
+        });
+      }
+
+      function applyProductAutofill(row) {
+        var key = normalizeKey(row.product);
+        if (!key) return;
+
+        var material = materials.find(function (item) {
+          return normalizeKey(item.name) === key;
+        });
+
+        if (!material) {
+          material = materials.find(function (item) {
+            var nameKey = normalizeKey(item.name);
+            return nameKey && (nameKey.indexOf(key) !== -1 || key.indexOf(nameKey) !== -1);
+          });
+        }
+
+        if (!material) {
+          return;
+        }
+
+        if (!row.supplier) {
+          row.supplier = material.supplier;
+        }
+
+        if (!row.note && material.note) {
+          row.note = material.note;
+        }
+
+        var unit = material.unit;
+        if (unit.indexOf('шт') !== -1 || unit.indexOf('piece') !== -1) {
+          if (!row.pricePerPiece) row.pricePerPiece = material.priceCloto;
+        } else {
+          if (!row.pricePerTon) row.pricePerTon = material.priceCloto;
+        }
+      }
+
+      function updateRenderedRow(tr, row) {
+        if (!tr || !row) return;
+        var totalCell = tr.querySelector('[data-field="rowTotal"]');
+        if (totalCell) {
+          totalCell.textContent = formatMoney(computeRowTotal(row));
+        }
+      }
+
+      function getFilteredRows() {
+        var search = String(state.search || '').trim().toLowerCase();
+        var indexedRows = state.rows.map(function (row, index) {
+          return { row: row, index: index };
+        });
+
+        if (!search) return indexedRows;
+
+        return indexedRows.filter(function (item) {
+          var supplier = String(item.row.supplier || '').toLowerCase();
+          var product = String(item.row.product || '').toLowerCase();
+          return supplier.indexOf(search) !== -1 || product.indexOf(search) !== -1;
+        });
+      }
+
+      function renderTotals() {
+        var totals = state.rows.reduce(function (acc, row) {
+          var tons = Math.max(0, toNumber(row.tons, 0));
+          var pieces = Math.max(0, toNumber(row.pieces, 0));
+          acc.tons += tons;
+          acc.pieces += pieces;
+          acc.amount += computeRowTotal(row);
+          return acc;
+        }, { tons: 0, pieces: 0, amount: 0 });
+
+        refs.sumTons.textContent = formatNumber(totals.tons, 2);
+        refs.sumPieces.textContent = formatNumber(totals.pieces, 0);
+        refs.sumTotal.textContent = formatMoney(totals.amount);
+
+        refs.kpiTons.textContent = formatNumber(totals.tons, 2);
+        refs.kpiPieces.textContent = formatNumber(totals.pieces, 0);
+        refs.kpiReserve.textContent = formatMoney(totals.amount);
+      }
+
+      function computeRowTotal(row) {
+        var tons = Math.max(0, toNumber(row.tons, 0));
+        var pieces = Math.max(0, toNumber(row.pieces, 0));
+        var priceTon = Math.max(0, toNumber(row.pricePerTon, 0));
+        var pricePiece = Math.max(0, toNumber(row.pricePerPiece, 0));
+        var base = tons * priceTon + pieces * pricePiece;
+        var vat = clamp(toNumber(state.vatRate, 20), 0, 100) / 100;
+        return base * (1 + vat);
+      }
+
+      function resequenceIndexes() {
+        state.rows.forEach(function (row, index) {
+          row.index = index + 1;
+        });
+      }
+
+      function normalizeKey(value) {
+        return String(value || '').trim().toLowerCase();
+      }
+
+      function toNumber(value, fallback) {
+        var number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function formatNumber(value, digits) {
+        return new Intl.NumberFormat('ru-RU', {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits
+        }).format(value || 0);
+      }
+
+      function formatMoney(value) {
+        return new Intl.NumberFormat('ru-RU', {
+          style: 'currency',
+          currency: 'RUB',
+          maximumFractionDigits: 0
+        }).format(value || 0);
+      }
+
+      function escapeHtmlAttr(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+    })();
+  </script>
+</body>
+</html>

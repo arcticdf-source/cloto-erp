@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сводка CEO по KPI - Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #eef4fb;
+      --card: #ffffff;
+      --border: #d7e4f2;
+      --text: #1b2940;
+      --muted: #607996;
+      --radius: 16px;
+      --shadow: 0 10px 28px rgba(37, 99, 235, 0.08);
+      --blue: #2f74c8;
+      --good: #159a5c;
+      --warn: #c2871d;
+      --bad: #cb3e4b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 5% -10%, #d9e8ff 0%, transparent 40%),
+        radial-gradient(circle at 100% -10%, #dff7ee 0%, transparent 34%),
+        linear-gradient(180deg, #eef4fb 0%, #e7eff8 100%);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 24px 18px 60px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      font: 600 13px 'Inter', sans-serif;
+      color: var(--text);
+      background: #fff;
+      padding: 0 13px;
+      cursor: pointer;
+    }
+    .btn:hover { background: #f2f7ff; }
+    .btn-blue {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+    .btn-blue:hover { background: #275fa4; }
+
+    .filter {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .filter-main {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .filter-vs { color: var(--muted); font-size: 12px; }
+    .ml-auto { margin-left: auto; }
+    .fgroup {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .fgroup label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .fgroup select {
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font: 600 13px 'Inter', sans-serif;
+      background: #fff;
+      color: var(--text);
+      padding: 0 10px;
+      cursor: pointer;
+    }
+
+    .strip {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(6, 1fr);
+      margin-bottom: 14px;
+    }
+    @media (max-width: 1080px) { .strip { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 620px) { .strip { grid-template-columns: repeat(2, 1fr); } }
+
+    .pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 11px 10px;
+      text-align: center;
+      display: grid;
+      gap: 4px;
+    }
+    .pill .icon { font-size: 20px; }
+    .pill .name {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .pill .status {
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 2px 8px;
+      justify-self: center;
+    }
+    .status-ok { background: #dbf5e8; color: #0c7a46; }
+    .status-no { background: #edf3fb; color: #6a7f99; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 1120px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .chead {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .cname {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .clink {
+      margin-left: auto;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 3px 9px;
+      white-space: nowrap;
+    }
+    .clink:hover { color: var(--blue); border-color: var(--blue); }
+
+    .cbody { padding: 12px 14px; }
+    .krow {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      border-bottom: 1px solid #eef3fa;
+      padding: 6px 0;
+    }
+    .krow:last-child { border-bottom: none; }
+    .kn { font-size: 12px; color: var(--muted); }
+    .kv { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; }
+    .kd { margin-left: 6px; font-size: 11px; font-weight: 700; }
+    .up { color: var(--good); }
+    .dn { color: var(--bad); }
+
+    .nodata {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 8px 0;
+    }
+
+    .viz {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 920px) { .viz { grid-template-columns: 1fr; } }
+
+    .viz-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .viz-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .canvas { position: relative; height: 252px; }
+
+    .empty {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      padding: 44px 20px;
+    }
+    .empty h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      margin-bottom: 9px;
+    }
+    .empty p {
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 16px;
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    .elist { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; }
+
+    @media print {
+      body { background: #fff; }
+      .actions, .ml-auto { display: none !important; }
+      .card, .viz-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 class="title">Сводка CEO по KPI</h1>
+        <p class="subtitle">Общий управленческий обзор: данные собираются из сформированных отчетов всех отделов.</p>
+      </div>
+      <div class="actions">
+        <a class="btn" href="portal.html">Портал</a>
+        <a class="btn" href="kpi-monthly-report.html">Отчеты отделов</a>
+        <button class="btn btn-blue" id="exportPdfBtn" onclick="exportPDF()">📄 Экспорт PDF</button>
+      </div>
+    </div>
+
+    <div class="filter">
+      <span class="filter-main" id="periodName">-</span>
+      <span class="filter-vs" id="periodVs"></span>
+      <span class="ml-auto" style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="fgroup"><label>Период</label><select id="periodSel"></select></span>
+        <span class="fgroup"><label>Сравнить с</label><select id="compareSel"></select></span>
+      </span>
+    </div>
+
+    <div id="content"></div>
+  </div>
+
+  <script>
+    var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+    var MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+    var DEPTS = ['commercial','production','laboratory','warehouse','procurement','logistics'];
+    var CFG = {
+      commercial:  { name: 'Коммерческий отдел', icon: '💼', color: '#2563eb', link: 'commercial-kpi-finance.html' },
+      production:  { name: 'Производство',       icon: '🏭', color: '#b45309', link: 'production-kpi-finance.html' },
+      laboratory:  { name: 'Лаборатория',        icon: '🧪', color: '#7c3aed', link: 'laboratory-kpi-finance.html' },
+      warehouse:   { name: 'Склад',              icon: '📦', color: '#0891b2', link: 'warehouse-kpi-finance.html' },
+      procurement: { name: 'Отдел закупок',      icon: '🛒', color: '#15803d', link: 'procurement-kpi-finance.html' },
+      logistics:   { name: 'Логистика',          icon: '🚚', color: '#dc2626', link: 'logistics-kpi-finance.html' }
+    };
+
+    var snaps = {};
+    var barChart = null;
+    var radarChart = null;
+
+    function load() {
+      try { snaps = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}'); }
+      catch (e) { snaps = {}; }
+    }
+
+    function ruPeriod(p) {
+      if (!p) return '-';
+      var a = p.split('-');
+      return a.length === 2 ? MONTHS[parseInt(a[1], 10) - 1] + ' ' + a[0] : p;
+    }
+
+    function allPeriods() {
+      var m = {};
+      Object.keys(snaps).forEach(function(k){
+        var s = snaps[k];
+        if (s && s.period) m[s.period] = 1;
+      });
+      return Object.keys(m).sort().reverse();
+    }
+
+    function snapFor(dept, period) {
+      return snaps[period + '_' + dept] || null;
+    }
+
+    function parseNum(v) {
+      if (!v) return null;
+      var s = String(v).replace(/[₽\s\u00a0]/g, '').replace(',', '.').replace(/[^\d.\-]/g, '');
+      var n = parseFloat(s);
+      return isNaN(n) ? null : n;
+    }
+
+    function extractMetrics(snap, limit) {
+      if (!snap) return [];
+      var labels = snap.resultLabels || {};
+      var res = snap.results || {};
+      var out = [];
+      Object.keys(res).forEach(function(kpi){
+        Object.keys(res[kpi]).forEach(function(rk){
+          var val = (res[kpi][rk] || '').trim();
+          if (!val || val === '0' || val === '0 ₽' || val === '0,00') return;
+          var num = parseNum(val);
+          if (num === 0) return;
+          var label = (labels[kpi + '.' + rk] || rk).replace(/[,;]?\s*(₽|%|руб\.?|дней|день|раз|кг|т)\s*$/i, '').trim();
+          out.push({ kpi: kpi, key: rk, label: label, value: val, num: num });
+        });
+      });
+      return out.slice(0, limit || 999);
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function delta(curr, prev) {
+      var c = parseNum(curr), p = parseNum(prev);
+      if (c === null || p === null || p === 0) return '';
+      var pct = ((c - p) / Math.abs(p) * 100).toFixed(1);
+      return '<span class="kd ' + (c >= p ? 'up' : 'dn') + '">' + (c >= p ? '▲' : '▼') + Math.abs(pct) + '%</span>';
+    }
+
+    function renderSelectors() {
+      var pSel = document.getElementById('periodSel');
+      var cSel = document.getElementById('compareSel');
+      var periods = allPeriods();
+
+      pSel.innerHTML = periods.map(function(p){ return '<option value="' + esc(p) + '">' + esc(ruPeriod(p)) + '</option>'; }).join('');
+      cSel.innerHTML = '<option value="">Без сравнения</option>' + periods.map(function(p){ return '<option value="' + esc(p) + '">' + esc(ruPeriod(p)) + '</option>'; }).join('');
+
+      if (periods.length >= 2) cSel.value = periods[1];
+
+      pSel.onchange = render;
+      cSel.onchange = render;
+    }
+
+    function destroyCharts() {
+      if (barChart) { try { barChart.destroy(); } catch (e) {} barChart = null; }
+      if (radarChart) { try { radarChart.destroy(); } catch (e) {} radarChart = null; }
+    }
+
+    function renderEmpty() {
+      var html = '<div class="empty">'
+        + '<h2>Пока нет данных</h2>'
+        + '<p>Нажмите "Сформировать отчет" на KPI-странице отдела, после этого данные автоматически попадут в сводку CEO.</p>'
+        + '<div class="elist">';
+
+      DEPTS.forEach(function(d){
+        var c = CFG[d];
+        html += '<a class="btn" href="' + esc(c.link) + '">' + c.icon + ' ' + esc(c.name) + '</a>';
+      });
+
+      html += '</div></div>';
+      document.getElementById('content').innerHTML = html;
+      destroyCharts();
+    }
+
+    function render() {
+      load();
+      var periods = allPeriods();
+      if (!periods.length) {
+        document.getElementById('periodName').textContent = '-';
+        document.getElementById('periodVs').textContent = '';
+        renderEmpty();
+        return;
+      }
+
+      var pSel = document.getElementById('periodSel');
+      var cSel = document.getElementById('compareSel');
+      var period = pSel.value || periods[0];
+      var compare = cSel.value || '';
+
+      document.getElementById('periodName').textContent = ruPeriod(period);
+      document.getElementById('periodVs').textContent = compare ? ('Сравнение: ' + ruPeriod(compare)) : '';
+
+      var html = '';
+
+      html += '<div class="strip">';
+      DEPTS.forEach(function(d){
+        var c = CFG[d];
+        var s = snapFor(d, period);
+        var ok = s && extractMetrics(s, 1).length > 0;
+        html += '<div class="pill">'
+          + '<div class="icon">' + c.icon + '</div>'
+          + '<div class="name">' + esc(c.name) + '</div>'
+          + '<div class="status ' + (ok ? 'status-ok' : 'status-no') + '">' + (ok ? 'данные есть' : 'нет данных') + '</div>'
+          + '</div>';
+      });
+      html += '</div>';
+
+      html += '<div class="cards">';
+      DEPTS.forEach(function(d){
+        var c = CFG[d];
+        var s = snapFor(d, period);
+        var ps = compare ? snapFor(d, compare) : null;
+        var top = extractMetrics(s, 5);
+        var pmap = {};
+        extractMetrics(ps, 30).forEach(function(m){ pmap[m.kpi + '.' + m.key] = m; });
+
+        html += '<div class="card">'
+          + '<div class="chead">'
+          + '<span class="dot" style="background:' + c.color + '"></span>'
+          + '<span class="cname">' + c.icon + ' ' + esc(c.name) + '</span>'
+          + '<a class="clink" href="kpi-monthly-report.html?dept=' + d + '">Отчет</a>'
+          + '</div>'
+          + '<div class="cbody">';
+
+        if (!s || !top.length) {
+          html += '<div class="nodata">Отчет не сформирован.<br><a class="clink" style="margin-left:0" href="' + esc(c.link) + '">Заполнить KPI</a></div>';
+        } else {
+          top.forEach(function(m){
+            var pm = pmap[m.kpi + '.' + m.key];
+            html += '<div class="krow">'
+              + '<span class="kn">' + esc(m.label) + '</span>'
+              + '<span><span class="kv">' + esc(m.value) + '</span>' + (pm ? delta(m.value, pm.value) : '') + '</span>'
+              + '</div>';
+          });
+        }
+
+        html += '</div></div>';
+      });
+      html += '</div>';
+
+      var chartPeriods = allPeriods().slice().reverse().slice(-6);
+      if (chartPeriods.length >= 2) {
+        html += '<div class="viz">'
+          + '<div class="viz-card"><h3>Динамика KPI по отделам (последние периоды)</h3><div class="canvas"><canvas id="barChart"></canvas></div></div>'
+          + '<div class="viz-card"><h3>Полнота данных отделов</h3><div class="canvas"><canvas id="radarChart"></canvas></div></div>'
+          + '</div>';
+      }
+
+      document.getElementById('content').innerHTML = html;
+      destroyCharts();
+
+      if (chartPeriods.length >= 2) {
+        setTimeout(function(){
+          var barEl = document.getElementById('barChart');
+          if (barEl) {
+            var ds = DEPTS.map(function(d){
+              var c = CFG[d];
+              var vals = chartPeriods.map(function(p){
+                var top = extractMetrics(snapFor(d, p), 1);
+                return top.length ? top[0].num : null;
+              });
+              return {
+                label: c.name,
+                data: vals,
+                borderWidth: 1,
+                borderRadius: 6,
+                backgroundColor: c.color + 'aa',
+                borderColor: c.color
+              };
+            });
+
+            barChart = new Chart(barEl, {
+              type: 'bar',
+              data: { labels: chartPeriods.map(ruPeriod), datasets: ds },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 13, color: '#607996', font: { family: 'Inter', size: 11 } }
+                  }
+                },
+                scales: {
+                  x: {
+                    grid: { color: '#ebf2fb' },
+                    ticks: { color: '#607996', font: { family: 'Inter', size: 11 } }
+                  },
+                  y: {
+                    grid: { color: '#ebf2fb' },
+                    ticks: {
+                      color: '#607996',
+                      callback: function(v) {
+                        if (Math.abs(v) >= 1000000) return (v / 1000000).toFixed(1) + ' млн';
+                        if (Math.abs(v) >= 1000) return (v / 1000).toFixed(0) + ' тыс';
+                        return v;
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          var radarEl = document.getElementById('radarChart');
+          if (radarEl) {
+            var radarData = DEPTS.map(function(d){
+              return Math.min(100, extractMetrics(snapFor(d, period), 10).length * 10);
+            });
+
+            radarChart = new Chart(radarEl, {
+              type: 'radar',
+              data: {
+                labels: DEPTS.map(function(d){ return CFG[d].icon + ' ' + CFG[d].name; }),
+                datasets: [{
+                  label: 'Заполненность, %',
+                  data: radarData,
+                  backgroundColor: 'rgba(47, 116, 200, 0.17)',
+                  borderColor: '#2f74c8',
+                  pointBackgroundColor: '#2f74c8',
+                  pointRadius: 4,
+                  borderWidth: 2
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  r: {
+                    min: 0,
+                    max: 100,
+                    ticks: { stepSize: 25, color: '#7286a2', backdropColor: 'transparent' },
+                    grid: { color: '#e7eef8' },
+                    angleLines: { color: '#e7eef8' },
+                    pointLabels: { color: '#607996', font: { family: 'Inter', size: 11 } }
+                  }
+                }
+              }
+            });
+          }
+        }, 30);
+      }
+    }
+
+    load();
+    renderSelectors();
+    render();
+
+    window.addEventListener('storage', function(e){
+      if (e.key === SNAP_KEY) {
+        load();
+        renderSelectors();
+        render();
+      }
+    });
+  </script>
+
+  <!-- ═══ PDF EXPORT ═══ -->
+  <script>
+  function exportPDF() {
+    var btn = document.getElementById('exportPdfBtn');
+    var origText = btn.textContent;
+    btn.textContent = '⏳ Генерация...';
+    btn.disabled = true;
+
+    var period = (document.getElementById('periodName') || {}).textContent || 'KPI';
+    var filename = 'Клото_CEO_KPI_' + period.replace(/\s+/g,'_') + '_' + new Date().toLocaleDateString('ru').replace(/\./g,'-') + '.pdf';
+
+    // Если библиотеки не загружены — fallback на печать
+    if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+      window.print();
+      btn.textContent = origText;
+      btn.disabled = false;
+      return;
+    }
+
+    var target = document.querySelector('.wrap') || document.body;
+    html2canvas(target, {
+      scale: 1.5,
+      useCORS: true,
+      backgroundColor: '#eef4fb',
+      logging: false,
+      ignoreElements: function(el) {
+        // Скрыть кнопки действий в PDF
+        return el.classList && (el.classList.contains('actions') || el.id === 'exportPdfBtn');
+      }
+    }).then(function(canvas) {
+      var jsPDF = jspdf.jsPDF;
+      var imgData = canvas.toDataURL('image/jpeg', 0.92);
+      var pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+      var pdfW = pdf.internal.pageSize.getWidth();
+      var pdfH = pdf.internal.pageSize.getHeight();
+      var ratio = canvas.width / canvas.height;
+      var imgH = pdfW / ratio;
+
+      if (imgH <= pdfH) {
+        // Всё влезает на одну страницу
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, imgH);
+      } else {
+        // Разбиваем на страницы
+        var pageHeight = canvas.width * (pdfH / pdfW);
+        var y = 0;
+        while (y < canvas.height) {
+          var pageCanvas = document.createElement('canvas');
+          pageCanvas.width  = canvas.width;
+          pageCanvas.height = Math.min(pageHeight, canvas.height - y);
+          var ctx = pageCanvas.getContext('2d');
+          ctx.drawImage(canvas, 0, y, canvas.width, pageCanvas.height, 0, 0, canvas.width, pageCanvas.height);
+          var pageImg = pageCanvas.toDataURL('image/jpeg', 0.92);
+          var pageImgH = pdfW * (pageCanvas.height / canvas.width);
+          if (y > 0) pdf.addPage();
+          pdf.addImage(pageImg, 'JPEG', 0, 0, pdfW, pageImgH);
+          y += pageHeight;
+        }
+      }
+
+      pdf.save(filename);
+      btn.textContent = '✅ Сохранено!';
+      setTimeout(function() { btn.textContent = origText; btn.disabled = false; }, 2000);
+    }).catch(function(err) {
+      console.error('PDF error:', err);
+      window.print();
+      btn.textContent = origText;
+      btn.disabled = false;
+    });
+  }
+  </script>
+</body>
+</html>

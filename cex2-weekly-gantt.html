@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Цех №2 · Недельный и Месячный Гант — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255,255,255,0.9);
+      --surface2: rgba(255,255,255,0.97);
+      --border: rgba(136,158,186,0.26);
+      --text: #1e2c3c;
+      --muted: #5c7390;
+      --blue: #2f8fd9;
+      --cyan: #17a59b;
+      --gold: #cf9a2a;
+      --danger: #e06262;
+      --radius: 20px;
+      --shadow: 0 14px 30px rgba(36,66,100,0.14);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(126,191,255,0.14), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(93,229,207,0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .wrap {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero,
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+
+    .title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .title span { color: var(--blue); }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      transition: all 0.16s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-add { color: var(--cyan); border-color: rgba(23,165,155,0.3); background: rgba(23,165,155,0.08); }
+    .btn-del { color: var(--danger); border-color: rgba(224,98,98,0.3); background: rgba(224,98,98,0.08); }
+
+    .panel { padding: 18px; }
+
+    /* Reactor animation (from production plan) */
+    .reactor-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      margin: 0 0 14px;
+      padding: 8px 0 0;
+    }
+
+    #reactor-canvas {
+      width: 100%;
+      max-width: 640px;
+      height: auto;
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .section-copy {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 980px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .gantt-summary {
+      margin-bottom: 12px;
+      color: #355678;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    .gantt-board {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(95,122,152,0.34);
+      background: #5f6772;
+    }
+
+    .gantt-head,
+    .gantt-row {
+      display: grid;
+      grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+    }
+
+    .gantt-head {
+      background: rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .gantt-label-head,
+    .gantt-row-label {
+      padding: 14px 14px;
+      border-right: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .gantt-label-head {
+      font-size: 11px;
+      font-weight: 800;
+      color: #f4f8ff;
+      line-height: 1.4;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .gantt-label-head strong,
+    .gantt-row-label strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: #f4f8ff;
+    }
+
+    .gantt-row-label {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 86px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .cell-meta {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #dce7f7;
+      line-height: 1.45;
+    }
+
+    .row-del-btn {
+      width: 22px;
+      height: 22px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(224,98,98,0.08);
+      color: #ffc9c9;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .row-del-btn:hover {
+      background: rgba(224,98,98,0.22);
+      color: #fff2f2;
+    }
+
+    .gantt-track-head,
+    .gantt-track {
+      display: grid;
+      grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+      position: relative;
+    }
+
+    .gantt-track-head { min-height: 74px; }
+
+    .gantt-head-cell {
+      padding: 11px 8px;
+      border-left: 1px solid rgba(255,255,255,0.16);
+      display: grid;
+      gap: 5px;
+      align-content: center;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .gantt-head-cell strong {
+      font-size: 12px;
+      font-weight: 800;
+      color: #f5f8ff;
+    }
+
+    .gantt-head-cell span {
+      font-size: 10px;
+      color: #dbe8fc;
+      line-height: 1.3;
+    }
+
+    .gantt-row { border-bottom: 1px solid rgba(255,255,255,0.16); }
+    .gantt-row:last-child { border-bottom: none; }
+
+    .gantt-track {
+      min-height: 86px;
+      align-items: stretch;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .gantt-slot { border-left: 1px solid rgba(255,255,255,0.14); }
+    .gantt-slot.today { background: rgba(126,191,255,0.13); }
+
+    .gantt-track--editable .gantt-bar {
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      height: auto;
+      margin: 0;
+      cursor: grab;
+      user-select: none;
+      padding: 8px 16px;
+      min-width: 30px;
+      overflow: hidden;
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+      transition: box-shadow 0.15s;
+      z-index: 1;
+    }
+
+    .gantt-track--editable .gantt-bar.is-dragging {
+      cursor: grabbing;
+      z-index: 20;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.5);
+      opacity: 0.9;
+    }
+
+    .drag-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 10px;
+      cursor: ew-resize;
+      z-index: 3;
+      opacity: 0;
+      background: rgba(255,255,255,0.35);
+      transition: opacity 0.15s;
+    }
+
+    .drag-handle-l { left: 0; border-radius: 14px 0 0 14px; }
+    .drag-handle-r { right: 0; border-radius: 0 14px 14px 0; }
+    .gantt-bar:hover .drag-handle { opacity: 1; }
+
+    .gantt-bar strong {
+      font-size: 12px;
+      font-weight: 800;
+      color: #f9fcff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gantt-bar span {
+      margin-top: 4px;
+      display: block;
+      font-size: 11px;
+      line-height: 1.35;
+      color: #eff6ff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gantt-bar.is-new {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.34);
+    }
+
+    .gantt-bar.is-sent {
+      background: rgba(93,229,207,0.18);
+      border: 1px solid rgba(93,229,207,0.34);
+    }
+
+    .gantt-bar.is-accepted {
+      background: rgba(126,191,255,0.2);
+      border: 1px solid rgba(126,191,255,0.36);
+    }
+
+    .gantt-bar.is-produced {
+      background: rgba(245,201,95,0.2);
+      border: 1px solid rgba(245,201,95,0.34);
+    }
+
+    .gantt-bar.is-warehouse {
+      background: rgba(114,216,154,0.2);
+      border: 1px solid rgba(114,216,154,0.34);
+    }
+
+    .gantt-label-inner .edit-field {
+      display: block;
+      width: 100%;
+      margin-bottom: 4px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(170,205,255,0.56);
+      border-radius: 6px;
+      color: #f6fbff;
+      font-family: inherit;
+      font-size: 12px;
+      padding: 4px 7px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .gantt-label-inner .edit-field::placeholder { color: rgba(246,251,255,0.7); }
+
+    .gantt-label-inner .edit-select {
+      background: rgba(35,52,75,0.95);
+    }
+
+    .empty-state {
+      padding: 28px 18px;
+      text-align: center;
+      color: #ecf4ff;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      .hero { flex-direction: column; align-items: flex-start; }
+      .section-head { flex-direction: column; align-items: flex-start; }
+      .gantt-head,
+      .gantt-row { grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr); }
+      .actions { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="title">Цех №2 <span>ЛХЦ</span></div>
+        <div class="sub">Недельный и месячный производственный Гант. Двойной клик по строке для редактирования, перетаскивайте бар и его края для корректировки сроков.</div>
+      </div>
+      <a class="btn" href="production-plan.html">← Назад к плану производства</a>
+    </section>
+
+    <div class="reactor-wrap" id="reactor-wrap">
+      <canvas id="reactor-canvas" width="320" height="300"></canvas>
+    </div>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Недельный Гант</div>
+          <div class="section-copy">Диаграмма по дням текущей недели. Тяните бар и края в обе стороны, добавляйте и удаляйте продукцию.</div>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="shiftWeek(-1)">Пред. неделя</button>
+          <button class="btn" onclick="shiftWeek(1)">След. неделя</button>
+          <button class="btn btn-add" onclick="addPlanRow()">+ Добавить строчку</button>
+          <button class="btn btn-del" onclick="deleteLastRow()">- Удалить строчку</button>
+        </div>
+      </div>
+
+      <div class="gantt-summary" id="weekly-summary">График строится из задач цеха.</div>
+      <div class="gantt-board" id="weekly-gantt"></div>
+    </section>
+
+    <section class="panel" style="margin-top:14px;">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Месячный Гант</div>
+          <div class="section-copy">Диаграмма по неделям текущего месяца. Тяните бар и края, чтобы менять окно выполнения.</div>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="shiftMonth(-1)">Пред. месяц</button>
+          <button class="btn" onclick="shiftMonth(1)">След. месяц</button>
+          <button class="btn btn-add" onclick="addPlanRow()">+ Добавить строчку</button>
+          <button class="btn btn-del" onclick="deleteLastRow()">- Удалить строчку</button>
+        </div>
+      </div>
+
+      <div class="gantt-summary" id="monthly-summary">Помесячный график строится из задач цеха.</div>
+      <div class="gantt-board" id="monthly-gantt"></div>
+    </section>
+  </div>
+
+  <script>
+    if (window.location.hostname === '127.0.0.1') {
+      window.location.replace(window.location.protocol + '//' + 'localhost' + (window.location.port ? ':' + window.location.port : '') + window.location.pathname + window.location.search + window.location.hash);
+    }
+    window.__sharedStateConfig = {
+      keys: ['cloto_plan_rows_cex2_weekly']
+    };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
+    var PLAN_ROWS_KEY = 'cloto_plan_rows_cex2_weekly';
+    var DAY_MS = 24 * 60 * 60 * 1000;
+    var GANTT_COLS = 7;
+    var planState = [];
+    var dragState = null;
+    var monthSegsCache = [];
+    var currentWeekAnchor = cloneDate(new Date());
+    var currentMonthAnchor = cloneDate(new Date());
+
+    var DEFAULT_PLAN_ROWS = [
+      { line: 'Линия A', product: 'ПОЛИКАП жидкий',  batch: 'Партия 150425',  receiver: 'ТОО «ОМАС ИНТЕГРЕЙТЕД»', volume: '8,64 т / 288 канистр', stage: 'accepted',  durationDays: 3 },
+      { line: 'Линия B', product: 'Стабилайт II',    batch: 'Партия ST-2604', receiver: 'АКРОС',                   volume: '12 т / мешки',          stage: 'produced',  durationDays: 4 }
+    ];
+
+    function cloneDate(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function addDays(d, n) { return new Date(cloneDate(d).getTime() + n * DAY_MS); }
+    function startOfWeek(d) { var n = cloneDate(d); var day = n.getDay() || 7; n.setDate(n.getDate() - day + 1); return n; }
+    function startOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+    function endOfMonth(d) { return new Date(d.getFullYear(), d.getMonth() + 1, 0); }
+    function diffInDays(a, b) { return Math.round((cloneDate(b).getTime() - cloneDate(a).getTime()) / DAY_MS); }
+    function formatDayMonth(d) { return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0'); }
+    function formatWeekday(d) { return ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()]; }
+    function formatISO(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    function parseDateValue(v) {
+      var t = String(v || '').trim();
+      if (!t) return null;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(t)) { var p = t.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+      if (/^\d{4}-\d{2}-\d{2}T/.test(t)) return parseDateValue(t.slice(0,10));
+      if (/^\d{2}\.\d{2}\.\d{4}$/.test(t)) { var p2 = t.split('.'); return new Date(+p2[2], +p2[1]-1, +p2[0]); }
+      return null;
+    }
+
+    function escapeHtml(v) {
+      return String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function getStageLabel(s) {
+      if (s==='sent') return 'Отправлен в производство';
+      if (s==='accepted') return 'Заказ принят';
+      if (s==='produced') return 'Заказ произведен';
+      if (s==='warehouse') return 'На складе';
+      return 'Новая заявка';
+    }
+
+    function getStageClass(s) {
+      if (s==='sent') return 'is-sent';
+      if (s==='accepted') return 'is-accepted';
+      if (s==='produced') return 'is-produced';
+      if (s==='warehouse') return 'is-warehouse';
+      return 'is-new';
+    }
+
+    function savePlanState() { localStorage.setItem(PLAN_ROWS_KEY, JSON.stringify(planState)); }
+
+    function loadPlanState() {
+      try {
+        var raw = localStorage.getItem(PLAN_ROWS_KEY);
+        var saved = JSON.parse(raw || 'null');
+        if (raw !== null && Array.isArray(saved)) { planState = saved; return; }
+      } catch(e) {}
+      var weekStart = startOfWeek(cloneDate(new Date()));
+      planState = DEFAULT_PLAN_ROWS.map(function(row, i) {
+        return {
+          id: 'row-' + Date.now() + '-' + i,
+          product: row.product,
+          line: row.line,
+          batch: row.batch,
+          receiver: row.receiver,
+          volume: row.volume,
+          stage: row.stage,
+          startDate: formatISO(addDays(weekStart, i)),
+          durationDays: row.durationDays
+        };
+      });
+      savePlanState();
+    }
+
+    function getItemById(id) {
+      for (var i = 0; i < planState.length; i++) {
+        if (planState[i].id === id) return planState[i];
+      }
+      return null;
+    }
+
+    function getMonthSegments(date) {
+      var segs = [];
+      var monthStart = startOfMonth(date);
+      var monthEnd = endOfMonth(date);
+      var cursor = startOfWeek(monthStart);
+      var idx = 1;
+      while (diffInDays(cursor, monthEnd) >= 0) {
+        var sS = diffInDays(monthStart, cursor) > 0 ? cloneDate(cursor) : cloneDate(monthStart);
+        var sE = addDays(cursor, 6);
+        if (diffInDays(sE, monthEnd) < 0) sE = cloneDate(monthEnd);
+        segs.push({
+          label: 'Нед ' + idx,
+          sublabel: formatDayMonth(sS) + ' — ' + formatDayMonth(sE),
+          start: sS,
+          end: sE
+        });
+        cursor = addDays(cursor, 7);
+        idx++;
+      }
+      return segs;
+    }
+
+    function shiftWeek(delta) {
+      currentWeekAnchor = addDays(currentWeekAnchor, delta * 7);
+      renderWeeklyGantt();
+    }
+
+    function shiftMonth(delta) {
+      currentMonthAnchor = new Date(currentMonthAnchor.getFullYear(), currentMonthAnchor.getMonth() + delta, 1);
+      renderMonthlyGantt();
+    }
+
+    function renderWeeklyGantt() {
+      var container = document.getElementById('weekly-gantt');
+      var summaryEl = document.getElementById('weekly-summary');
+      var today = cloneDate(new Date());
+      var weekStart = startOfWeek(currentWeekAnchor);
+      var days = [];
+      for (var i = 0; i < 7; i++) days.push(addDays(weekStart, i));
+      var todayIdx = diffInDays(weekStart, today);
+
+      summaryEl.textContent = 'Текущая неделя: ' + formatDayMonth(weekStart) + ' — ' + formatDayMonth(addDays(weekStart,6)) + '. В графике ' + planState.length + ' задач.';
+
+      if (!planState.length) {
+        container.innerHTML = '<div class="empty-state">Нет задач. Нажмите «+ Добавить строчку».</div>';
+        return;
+      }
+
+      var headHtml = '<div class="gantt-head">' +
+        '<div class="gantt-label-head"><strong>Линия / заявка</strong><span>Этап производства и окно выполнения</span></div>' +
+        '<div class="gantt-track-head" style="--cols:7">' +
+        days.map(function(day) {
+          return '<div class="gantt-head-cell"><strong>' + escapeHtml(formatWeekday(day)) + '</strong><span>' + escapeHtml(formatDayMonth(day)) + '</span></div>';
+        }).join('') + '</div></div>';
+
+      var rowsHtml = planState.map(function(item) {
+        var sd = parseDateValue(item.startDate);
+        var off = sd ? diffInDays(weekStart, sd) : 0;
+        var pct = 100 / GANTT_COLS;
+        var lft = (off * pct).toFixed(3);
+        var wid = (Math.max(1, item.durationDays) * pct).toFixed(3);
+        return '<div class="gantt-row" data-row-id="' + escapeHtml(item.id) + '">' +
+          '<div class="gantt-row-label">' +
+            '<div class="gantt-label-inner" style="flex:1;min-width:0;" data-edit-id="' + escapeHtml(item.id) + '" title="Двойной клик — редактировать">' +
+              '<strong>' + escapeHtml(item.product) + '</strong>' +
+              '<div class="cell-meta">' + escapeHtml(item.line) + ' · ' + escapeHtml(item.receiver) + ' · ' + escapeHtml(getStageLabel(item.stage)) + '</div>' +
+            '</div>' +
+            '<button class="row-del-btn" title="Удалить строку" onclick="deletePlanRow(\'' + item.id + '\')" type="button">&#215;</button>' +
+          '</div>' +
+          '<div class="gantt-track gantt-track--editable" style="--cols:7" data-track-id="' + escapeHtml(item.id) + '">' +
+            days.map(function(_,di) { return '<div class="gantt-slot' + (di===todayIdx?' today':'') + '"></div>'; }).join('') +
+            '<div class="gantt-bar ' + getStageClass(item.stage) + '" data-bar-id="' + escapeHtml(item.id) + '" style="left:' + lft + '%;width:' + wid + '%">' +
+              '<div class="drag-handle drag-handle-l" data-resize="left" data-bar-id="' + escapeHtml(item.id) + '"></div>' +
+              '<strong>' + escapeHtml(item.batch) + '</strong>' +
+              '<span>' + escapeHtml(item.volume) + (item.startDate ? ' · ' + item.startDate : '') + '</span>' +
+              '<div class="drag-handle drag-handle-r" data-resize="right" data-bar-id="' + escapeHtml(item.id) + '"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      container.innerHTML = headHtml + rowsHtml;
+
+      container.querySelectorAll('.gantt-bar[data-bar-id]').forEach(function(bar) {
+        bar.addEventListener('mousedown', onBarMouseDown);
+      });
+      container.querySelectorAll('.drag-handle[data-resize]').forEach(function(h) {
+        h.addEventListener('mousedown', onHandleMouseDown);
+      });
+      container.querySelectorAll('.gantt-label-inner[data-edit-id]').forEach(function(el) {
+        el.addEventListener('dblclick', function() { startEditing(el.dataset.editId); });
+      });
+    }
+
+    function renderMonthlyGantt() {
+      var container = document.getElementById('monthly-gantt');
+      var summaryEl = document.getElementById('monthly-summary');
+      var today = cloneDate(new Date());
+      var segs = getMonthSegments(currentMonthAnchor);
+      monthSegsCache = segs;
+      var spanDays = segs.length * 7;
+      var monthViewStart = segs.length ? cloneDate(segs[0].start) : startOfMonth(currentMonthAnchor);
+      var monthViewEnd = addDays(monthViewStart, Math.max(0, spanDays - 1));
+      var curWeekIdx = segs.findIndex(function(s) {
+        return diffInDays(s.start, today) <= 0 && diffInDays(today, s.end) <= 0;
+      });
+
+      summaryEl.textContent = 'Текущий месяц: ' + currentMonthAnchor.toLocaleString('ru-RU', { month: 'long', year: 'numeric' }) + '. Период на шкале: ' + formatDayMonth(monthViewStart) + ' — ' + formatDayMonth(monthViewEnd) + '. В графике ' + planState.length + ' задач.';
+
+      if (!planState.length) {
+        container.innerHTML = '<div class="empty-state">Нет задач. Нажмите «+ Добавить строчку».</div>';
+        return;
+      }
+
+      var headHtml = '<div class="gantt-head">' +
+        '<div class="gantt-label-head"><strong>Линия / заявка</strong><span>Распределение по неделям месяца</span></div>' +
+        '<div class="gantt-track-head" style="--cols:' + segs.length + '">' +
+        segs.map(function(s) {
+          return '<div class="gantt-head-cell"><strong>' + escapeHtml(s.label) + '</strong><span>' + escapeHtml(s.sublabel) + '</span></div>';
+        }).join('') + '</div></div>';
+
+      var rowsHtml = planState.map(function(item) {
+        var sd = parseDateValue(item.startDate) || cloneDate(today);
+        var dur = Math.max(1, item.durationDays);
+        var ed = addDays(sd, dur - 1);
+        var visStart = diffInDays(monthViewStart, sd) >= 0 ? cloneDate(sd) : cloneDate(monthViewStart);
+        var visEnd = diffInDays(ed, monthViewEnd) >= 0 ? cloneDate(ed) : cloneDate(monthViewEnd);
+        var visibleDays = diffInDays(visStart, visEnd) + 1;
+        var off = diffInDays(monthViewStart, visStart);
+        var pct = 100 / spanDays;
+        var lft = (off * pct).toFixed(3);
+        var wid = (Math.max(0, visibleDays) * pct).toFixed(3);
+        var rangeText = formatDayMonth(sd) + ' — ' + formatDayMonth(ed);
+        var barHtml = '';
+        if (visibleDays > 0) {
+          barHtml = '<div class="gantt-bar ' + getStageClass(item.stage) + '" data-bar-id="month-' + escapeHtml(item.id) + '" style="left:' + lft + '%;width:' + wid + '%">' +
+              '<div class="drag-handle drag-handle-l" data-resize="left" data-bar-id="month-' + escapeHtml(item.id) + '"></div>' +
+              '<strong>' + escapeHtml(item.line) + ' · ' + escapeHtml(item.batch) + '</strong>' +
+              '<span>' + escapeHtml(item.volume) + ' · ' + escapeHtml(rangeText) + '</span>' +
+              '<div class="drag-handle drag-handle-r" data-resize="right" data-bar-id="month-' + escapeHtml(item.id) + '"></div>' +
+            '</div>';
+        }
+        return '<div class="gantt-row" data-row-id="' + escapeHtml(item.id) + '">' +
+          '<div class="gantt-row-label">' +
+            '<div class="gantt-label-inner" style="flex:1;min-width:0;" data-edit-id="' + escapeHtml(item.id) + '" title="Двойной клик — редактировать">' +
+              '<strong>' + escapeHtml(item.product) + '</strong>' +
+              '<div class="cell-meta">' + escapeHtml(item.line) + ' · ' + escapeHtml(item.receiver) + ' · ' + escapeHtml(getStageLabel(item.stage)) + '</div>' +
+            '</div>' +
+            '<button class="row-del-btn" title="Удалить строку" onclick="deletePlanRow(\'' + item.id + '\')" type="button">&#215;</button>' +
+          '</div>' +
+          '<div class="gantt-track gantt-track--editable" style="--cols:' + segs.length + '" data-track-id="month-' + escapeHtml(item.id) + '">' +
+            segs.map(function(_, di) { return '<div class="gantt-slot' + (di===curWeekIdx?' today':'') + '"></div>'; }).join('') +
+            barHtml +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      container.innerHTML = headHtml + rowsHtml;
+
+      container.querySelectorAll('.gantt-bar[data-bar-id^="month-"]').forEach(function(bar) {
+        bar.addEventListener('mousedown', onMonthBarMouseDown);
+      });
+      container.querySelectorAll('.drag-handle[data-bar-id^="month-"]').forEach(function(h) {
+        h.addEventListener('mousedown', onMonthHandleMouseDown);
+      });
+      container.querySelectorAll('.gantt-label-inner[data-edit-id]').forEach(function(el) {
+        el.addEventListener('dblclick', function() { startEditing(el.dataset.editId); });
+      });
+    }
+
+    function getColWidth(itemId) {
+      var el = document.querySelector('[data-track-id="' + itemId + '"]');
+      return el ? el.getBoundingClientRect().width / GANTT_COLS : 80;
+    }
+
+    function getMonthColWidth(itemId) {
+      var el = document.querySelector('[data-track-id="month-' + itemId + '"]');
+      return (el && monthSegsCache.length) ? el.getBoundingClientRect().width / monthSegsCache.length : 100;
+    }
+
+    function onBarMouseDown(e) {
+      if (e.target.classList.contains('drag-handle')) return;
+      e.preventDefault();
+      var itemId = e.currentTarget.dataset.barId;
+      var item = getItemById(itemId);
+      if (!item) return;
+      dragState = { type: 'move', itemId: itemId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getColWidth(itemId) };
+      e.currentTarget.classList.add('is-dragging');
+    }
+
+    function onHandleMouseDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var itemId = e.currentTarget.dataset.barId;
+      var dir = e.currentTarget.dataset.resize;
+      var item = getItemById(itemId);
+      if (!item) return;
+      dragState = { type: dir === 'left' ? 'resize-l' : 'resize-r', itemId: itemId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getColWidth(itemId) };
+    }
+
+    function onMonthBarMouseDown(e) {
+      if (e.target.classList.contains('drag-handle')) return;
+      e.preventDefault();
+      var itemId = e.currentTarget.dataset.barId.replace(/^month-/, '');
+      var item = getItemById(itemId);
+      if (!item) return;
+      dragState = { type: 'month-move', itemId: itemId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getMonthColWidth(itemId) };
+      e.currentTarget.classList.add('is-dragging');
+    }
+
+    function onMonthHandleMouseDown(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var itemId = e.currentTarget.dataset.barId.replace(/^month-/, '');
+      var dir = e.currentTarget.dataset.resize;
+      var item = getItemById(itemId);
+      if (!item) return;
+      dragState = { type: dir === 'left' ? 'month-resize-l' : 'month-resize-r', itemId: itemId, startX: e.clientX, origDate: item.startDate, origDur: item.durationDays, colWidth: getMonthColWidth(itemId) };
+    }
+
+    function onDocMouseMove(e) {
+      if (!dragState) return;
+      e.preventDefault();
+      var dx = e.clientX - dragState.startX;
+      var delta = dx / dragState.colWidth;
+      var item = getItemById(dragState.itemId);
+      if (!item) return;
+      var origDate = parseDateValue(dragState.origDate);
+      if (!origDate) return;
+      var isMonth = dragState.type.indexOf('month-') === 0;
+      var daysPerCol = isMonth ? 7 : 1;
+      var rd = Math.round(delta);
+
+      if (dragState.type === 'move' || dragState.type === 'month-move') {
+        item.startDate = formatISO(addDays(origDate, rd * daysPerCol));
+      } else if (dragState.type === 'resize-r' || dragState.type === 'month-resize-r') {
+        item.durationDays = Math.max(daysPerCol, Math.round((dragState.origDur + delta * daysPerCol) / daysPerCol) * daysPerCol);
+      } else if (dragState.type === 'resize-l' || dragState.type === 'month-resize-l') {
+        var newDur = Math.max(daysPerCol, Math.round((dragState.origDur - rd * daysPerCol) / daysPerCol) * daysPerCol);
+        item.durationDays = newDur;
+        item.startDate = formatISO(addDays(origDate, dragState.origDur - newDur));
+      }
+
+      if (isMonth) updateMonthBarVisual(dragState.itemId);
+      else updateBarVisual(dragState.itemId);
+      savePlanState();
+    }
+
+    function onDocMouseUp() {
+      if (!dragState) return;
+      var isMonth = dragState.type.indexOf('month-') === 0;
+      var bar = document.querySelector('.gantt-bar[data-bar-id="' + (isMonth ? 'month-' : '') + dragState.itemId + '"]');
+      if (bar) bar.classList.remove('is-dragging');
+      if (!isMonth) syncWeeklyItemFromBar(dragState.itemId);
+      savePlanState();
+      if (isMonth) renderMonthlyGantt(); else renderWeeklyGantt();
+      dragState = null;
+    }
+
+    function updateBarVisual(itemId) {
+      var item = getItemById(itemId);
+      if (!item) return;
+      var bar = document.querySelector('.gantt-bar[data-bar-id="' + itemId + '"]');
+      if (!bar) return;
+      var weekStart = startOfWeek(cloneDate(new Date()));
+      var sd = parseDateValue(item.startDate);
+      var off = sd ? diffInDays(weekStart, sd) : 0;
+      var pct = 100 / GANTT_COLS;
+      bar.style.left = (off * pct).toFixed(3) + '%';
+      bar.style.width = (Math.max(1, item.durationDays) * pct).toFixed(3) + '%';
+    }
+
+    function updateMonthBarVisual(itemId) {
+      var item = getItemById(itemId);
+      if (!item || !monthSegsCache.length) return;
+      var bar = document.querySelector('.gantt-bar[data-bar-id="month-' + itemId + '"]');
+      if (!bar) return;
+      var spanDays = monthSegsCache.length * 7;
+      var sd = parseDateValue(item.startDate);
+      var off = sd ? diffInDays(monthSegsCache[0].start, sd) : 0;
+      bar.style.left = ((off / spanDays) * 100).toFixed(3) + '%';
+      bar.style.width = ((Math.max(1, item.durationDays) / spanDays) * 100).toFixed(3) + '%';
+    }
+
+    function syncWeeklyItemFromBar(itemId) {
+      var item = getItemById(itemId);
+      if (!item) return;
+      var bar = document.querySelector('.gantt-bar[data-bar-id="' + itemId + '"]');
+      if (!bar) return;
+      var leftPct = parseFloat(bar.style.left) || 0;
+      var widthPct = parseFloat(bar.style.width) || 0;
+      var offsetDays = Math.round((leftPct / 100) * GANTT_COLS);
+      var duration = Math.max(1, Math.round((widthPct / 100) * GANTT_COLS));
+      var weekStart = startOfWeek(cloneDate(new Date()));
+      item.startDate = formatISO(addDays(weekStart, offsetDays));
+      item.durationDays = duration;
+    }
+
+    function startEditing(itemId) {
+      var item = getItemById(itemId);
+      if (!item) return;
+      var el = document.querySelector('[data-edit-id="' + itemId + '"]');
+      if (!el) return;
+
+      var stageOpts = ['sent','accepted','produced','warehouse'].map(function(s) {
+        return '<option value="' + s + '"' + (item.stage===s?' selected':'') + '>' + escapeHtml(getStageLabel(s)) + '</option>';
+      }).join('');
+
+      el.innerHTML =
+        '<input type="text" class="edit-field" data-field="product" value="' + escapeHtml(item.product) + '" placeholder="Продукт">' +
+        '<input type="text" class="edit-field" data-field="line" value="' + escapeHtml(item.line) + '" placeholder="Линия">' +
+        '<input type="text" class="edit-field" data-field="batch" value="' + escapeHtml(item.batch) + '" placeholder="Партия">' +
+        '<input type="text" class="edit-field" data-field="receiver" value="' + escapeHtml(item.receiver) + '" placeholder="Получатель">' +
+        '<input type="text" class="edit-field" data-field="volume" value="' + escapeHtml(item.volume) + '" placeholder="Объем">' +
+        '<select class="edit-field edit-select" data-field="stage">' + stageOpts + '</select>';
+
+      var fields = el.querySelectorAll('.edit-field');
+      var committed = false;
+
+      function doSave() {
+        if (committed) return;
+        committed = true;
+        fields.forEach(function(f) { var v = f.value.trim(); if (v) item[f.dataset.field] = v; });
+        savePlanState();
+        renderWeeklyGantt();
+        renderMonthlyGantt();
+      }
+
+      fields.forEach(function(f) {
+        f.addEventListener('blur', function() { setTimeout(function() { if (!el.querySelector(':focus')) doSave(); }, 160); });
+        f.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') f.blur();
+          if (e.key === 'Escape') { committed = true; renderWeeklyGantt(); renderMonthlyGantt(); }
+        });
+      });
+
+      fields[0].focus();
+      fields[0].select();
+    }
+
+    function addPlanRow() {
+      var weekStart = startOfWeek(currentWeekAnchor);
+      var newItem = {
+        id: 'row-' + Date.now(),
+        product: 'Новый продукт',
+        line: 'Линия A',
+        batch: 'Партия —',
+        receiver: 'Получатель',
+        volume: '0 т',
+        stage: 'sent',
+        startDate: formatISO(weekStart),
+        durationDays: 3
+      };
+      planState.push(newItem);
+      savePlanState();
+      renderWeeklyGantt();
+      renderMonthlyGantt();
+      setTimeout(function() { startEditing(newItem.id); }, 40);
+    }
+
+    function deletePlanRow(id) {
+      planState = planState.filter(function(it) { return it.id !== id; });
+      savePlanState();
+      renderWeeklyGantt();
+      renderMonthlyGantt();
+    }
+
+    function deleteLastRow() {
+      if (!planState.length) return;
+      planState.pop();
+      savePlanState();
+      renderWeeklyGantt();
+      renderMonthlyGantt();
+    }
+
+    document.addEventListener('mousemove', onDocMouseMove);
+    document.addEventListener('mouseup', onDocMouseUp);
+    window.addEventListener('pointerup', onDocMouseUp);
+    window.addEventListener('blur', onDocMouseUp);
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) onDocMouseUp();
+    });
+
+    loadPlanState();
+    renderWeeklyGantt();
+    renderMonthlyGantt();
+    window.addEventListener('storage', function(e) {
+      if (e.key === PLAN_ROWS_KEY) {
+        loadPlanState();
+        renderWeeklyGantt();
+        renderMonthlyGantt();
+      }
+    });
+
+    // Reactor animation
+    (function() {
+      var canvas = document.getElementById('reactor-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      var W = 640;
+      var H = 580;
+      canvas.width = W;
+      canvas.height = H;
+
+      var VW = 360;
+      var VH = 400;
+      var VX = (W - VW) / 2;
+      var VY = 80;
+      var CX = W / 2;
+      var LIQ_TOP = VY + 60;
+      var LIQ_BOT = VY + VH - 6;
+      var BLADE_R1 = 120;
+      var BLADE_R2 = 90;
+      var t = 0;
+
+      var particles = [];
+      for (var i = 0; i < 80; i++) {
+        particles.push({
+          baseX: VX + 20 + Math.random() * (VW - 40),
+          baseY: LIQ_TOP + 20 + Math.random() * (LIQ_BOT - LIQ_TOP - 40),
+          r: 2 + Math.random() * 3,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.3 + Math.random() * 0.7,
+          orbit: 15 + Math.random() * 40,
+          col: Math.random() > 0.5 ? 'rgba(93,229,207,' : 'rgba(126,191,255,'
+        });
+      }
+
+      var bubbles = [];
+      for (var j = 0; j < 18; j++) bubbles.push(newBubble(true));
+
+      function newBubble(randomStart) {
+        return {
+          x: VX + 30 + Math.random() * (VW - 60),
+          y: randomStart ? LIQ_TOP + Math.random() * (LIQ_BOT - LIQ_TOP) : LIQ_BOT - 5,
+          r: 3 + Math.random() * 7,
+          vy: 0.5 + Math.random() * 1.2,
+          phase: Math.random() * Math.PI * 2
+        };
+      }
+
+      function vesselPath() {
+        var r = 20;
+        ctx.moveTo(VX + r, VY);
+        ctx.lineTo(VX + VW - r, VY);
+        ctx.arcTo(VX + VW, VY, VX + VW, VY + r, r);
+        ctx.lineTo(VX + VW, VY + VH - r);
+        ctx.arcTo(VX + VW, VY + VH, VX + VW - r, VY + VH, r);
+        ctx.lineTo(VX + r, VY + VH);
+        ctx.arcTo(VX, VY + VH, VX, VY + VH - r, r);
+        ctx.lineTo(VX, VY + r);
+        ctx.arcTo(VX, VY, VX + r, VY, r);
+        ctx.closePath();
+      }
+
+      function drawLiquid() {
+        ctx.save();
+        ctx.beginPath();
+        vesselPath();
+        ctx.clip();
+
+        var g = ctx.createLinearGradient(CX, LIQ_TOP, CX, LIQ_BOT);
+        g.addColorStop(0, 'rgba(93,229,207,0.20)');
+        g.addColorStop(0.5, 'rgba(70,190,220,0.26)');
+        g.addColorStop(1, 'rgba(40,140,190,0.38)');
+        ctx.fillStyle = g;
+        ctx.fillRect(VX, LIQ_TOP, VW, LIQ_BOT - LIQ_TOP);
+
+        for (var s = 0; s < 4; s++) {
+          var sy = LIQ_TOP + 40 + s * 80;
+          ctx.beginPath();
+          for (var a = 0; a < Math.PI * 2; a += 0.04) {
+            var sr = 90 + 30 * Math.sin(s * 1.4);
+            var px = CX + sr * Math.cos(a + t * (0.5 + s * 0.25));
+            var py = sy + 24 * Math.sin(a * 2 + t * (0.35 + s * 0.15));
+            if (a < 0.04) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          ctx.strokeStyle = 'rgba(93,229,207,' + (0.08 + s * 0.03) + ')';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        particles.forEach(function(p) {
+          var px = p.baseX + p.orbit * Math.cos(p.phase + t * p.speed);
+          var py = p.baseY + p.orbit * 0.35 * Math.sin(p.phase * 2 + t * p.speed * 1.2);
+          ctx.beginPath();
+          ctx.arc(px, py, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.col + (0.2 + 0.18 * Math.sin(p.phase + t)) + ')';
+          ctx.fill();
+        });
+
+        ctx.beginPath();
+        for (var wx = VX + 4; wx <= VX + VW - 4; wx += 3) {
+          var wy = LIQ_TOP + 5 * Math.sin((wx - VX) * 0.025 + t * 1.8);
+          if (wx === VX + 4) ctx.moveTo(wx, wy); else ctx.lineTo(wx, wy);
+        }
+        ctx.strokeStyle = 'rgba(93,229,207,0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawBubbles() {
+        ctx.save();
+        ctx.beginPath();
+        vesselPath();
+        ctx.clip();
+        bubbles.forEach(function(b) {
+          b.y -= b.vy;
+          b.x += 0.5 * Math.sin(b.phase + t * 1.1);
+          if (b.y < LIQ_TOP + 5) Object.assign(b, newBubble(false));
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(210,245,255,0.5)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+
+      function drawVessel() {
+        ctx.save();
+        ctx.beginPath();
+        vesselPath();
+        ctx.fillStyle = 'rgba(126,191,255,0.03)';
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = 'rgba(126,191,255,0.38)';
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(VX - 10, VY - 12, VW + 20, 16);
+        ctx.fillStyle = 'rgba(126,191,255,0.10)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(126,191,255,0.42)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(VX + 5, VY + 30);
+        ctx.lineTo(VX + 5, VY + VH - 30);
+        ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(VX - 40, VY + 40);
+        ctx.lineTo(VX, VY + 40);
+        ctx.strokeStyle = 'rgba(126,191,255,0.45)';
+        ctx.lineWidth = 10;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(VX - 42, VY + 40, 7, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(126,191,255,0.25)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(126,191,255,0.55)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(VX + VW, VY + VH - 50);
+        ctx.lineTo(VX + VW + 40, VY + VH - 50);
+        ctx.strokeStyle = 'rgba(93,229,207,0.45)';
+        ctx.lineWidth = 10;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(VX + VW + 43, VY + VH - 50, 7, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(93,229,207,0.25)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(93,229,207,0.55)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawShaftAndImpellers() {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(CX, VY - 14);
+        ctx.lineTo(CX, VY + VH - 20);
+        ctx.strokeStyle = 'rgba(180,215,255,0.60)';
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        ctx.restore();
+
+        var mY = VY - 60;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(CX - 28, mY, 56, 38);
+        ctx.fillStyle = 'rgba(126,191,255,0.14)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(126,191,255,0.55)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(CX, mY + 19, 10, t * 3, t * 3 + Math.PI * 1.5);
+        ctx.strokeStyle = 'rgba(93,229,207,0.85)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        var dotA = t * 3 + Math.PI * 1.5;
+        ctx.beginPath();
+        ctx.arc(CX + 10 * Math.cos(dotA), mY + 19 + 10 * Math.sin(dotA), 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(93,229,207,1)';
+        ctx.fill();
+        ctx.restore();
+
+        var imp1Y = VY + VH - 80;
+        ctx.save();
+        ctx.beginPath();
+        vesselPath();
+        ctx.clip();
+        ctx.translate(CX, imp1Y);
+        ctx.rotate(t * 2.0);
+        for (var b = 0; b < 4; b++) {
+          ctx.save();
+          ctx.rotate(b * Math.PI / 2);
+          ctx.beginPath();
+          ctx.moveTo(8, -10);
+          ctx.lineTo(BLADE_R1, -14);
+          ctx.lineTo(BLADE_R1, 14);
+          ctx.lineTo(8, 10);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(126,191,255,0.25)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(126,191,255,0.60)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.restore();
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, 12, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(180,220,255,0.40)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(126,191,255,0.75)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        var imp2Y = VY + VH - 220;
+        ctx.save();
+        ctx.beginPath();
+        vesselPath();
+        ctx.clip();
+        ctx.translate(CX, imp2Y);
+        ctx.rotate(-t * 2.0 + Math.PI / 4);
+        for (var b2 = 0; b2 < 4; b2++) {
+          ctx.save();
+          ctx.rotate(b2 * Math.PI / 2);
+          ctx.beginPath();
+          ctx.moveTo(8, -8);
+          ctx.lineTo(BLADE_R2, -11);
+          ctx.lineTo(BLADE_R2, 11);
+          ctx.lineTo(8, 8);
+          ctx.closePath();
+          ctx.fillStyle = 'rgba(93,229,207,0.22)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(93,229,207,0.55)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.restore();
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, 10, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(93,229,207,0.30)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(93,229,207,0.70)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function frame() {
+        ctx.clearRect(0, 0, W, H);
+        drawLiquid();
+        drawBubbles();
+        drawVessel();
+        drawShaftAndImpellers();
+        t += 0.020;
+        requestAnimationFrame(frame);
+      }
+
+      frame();
+    })();
+  </script>
+</body>
+</html>

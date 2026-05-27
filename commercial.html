@@ -10,28 +10,29 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #080c14;
-      --bg2:      #0d1320;
-      --surface:  rgba(255,255,255,0.04);
-      --surface2: rgba(255,255,255,0.07);
-      --border:   rgba(255,255,255,0.08);
-      --border2:  rgba(255,255,255,0.14);
+      --bg:       #eef4fb;
+      --bg2:      #e3edf8;
+      --surface:  rgba(255,255,255,0.86);
+      --surface2: rgba(255,255,255,0.96);
+      --border:   rgba(136,158,186,0.25);
+      --border2:  rgba(94,143,199,0.38);
       --accent:   #7c5cfc;
       --accent2:  #b07dff;
-      --cyan:     #3de8c7;
-      --gold:     #f5c842;
-      --red:      #ff5e7d;
-      --green:    #48bb78;
-      --blue:     #63b3ed;
+      --cyan:     #24b7ad;
+      --gold:     #d9a83a;
+      --red:      #d96576;
+      --green:    #3ea66d;
+      --blue:     #3b91da;
       --orange:   #f6ad55;
-      --text:     #e8eaf0;
-      --muted:    #6b7491;
+      --text:     #1e2c3c;
+      --muted:    #6f839c;
+      --shadow-soft: 0 10px 24px rgba(36,66,100,0.12);
       --radius:   16px;
     }
 
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, var(--bg), var(--bg2));
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -42,27 +43,27 @@
     .bg-grid {
       position: fixed; inset: 0; z-index: 0;
       background-image:
-        linear-gradient(rgba(124,92,252,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(124,92,252,.04) 1px, transparent 1px);
+        linear-gradient(rgba(124,92,252,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,252,.06) 1px, transparent 1px);
       background-size: 48px 48px;
       pointer-events: none;
     }
     .bg-orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
     .bg-orb-1 {
       width: 700px; height: 700px;
-      background: radial-gradient(circle, rgba(245,200,66,.10) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(245,200,66,.16) 0%, transparent 70%);
       top: -250px; right: -100px;
       animation: o1 20s ease-in-out infinite;
     }
     .bg-orb-2 {
       width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(124,92,252,.14) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(124,92,252,.16) 0%, transparent 70%);
       bottom: -100px; left: -100px;
       animation: o2 16s ease-in-out infinite;
     }
     .bg-orb-3 {
       width: 350px; height: 350px;
-      background: radial-gradient(circle, rgba(61,232,199,.09) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(61,232,199,.12) 0%, transparent 70%);
       top: 45%; left: 40%;
       animation: o3 12s ease-in-out infinite;
     }
@@ -76,7 +77,7 @@
     /* ── Sidebar ── */
     .sidebar {
       width: 250px; min-height: 100vh;
-      background: rgba(13,19,32,0.9);
+      background: rgba(255,255,255,0.82);
       backdrop-filter: blur(24px);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
@@ -163,7 +164,7 @@
     .page-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 28px; font-weight: 700;
-      background: linear-gradient(135deg, #fff 30%, var(--gold));
+      background: linear-gradient(135deg, #27384c 20%, var(--blue));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .page-sub { color: var(--muted); font-size: 13.5px; margin-top: 3px; }
@@ -184,7 +185,7 @@
       cursor: pointer; transition: all .2s; color: var(--muted); font-size: 16px; position: relative;
     }
     .icon-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
-    .icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); border: 2px solid var(--bg); }
+    .icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); border: 2px solid #ffffff; }
 
     /* ── KPI ── */
     .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -194,7 +195,7 @@
       position: relative; overflow: hidden;
       transition: transform .2s, border-color .2s, box-shadow .2s; cursor: default;
     }
-    .kpi-card:hover { transform: translateY(-2px); border-color: var(--border2); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+    .kpi-card:hover { transform: translateY(-2px); border-color: var(--border2); box-shadow: var(--shadow-soft); }
     .kpi-card::after {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       border-radius: var(--radius) var(--radius) 0 0;
@@ -238,7 +239,7 @@
     }
     .mod-card:hover {
       background: var(--surface2); border-color: var(--border2);
-      transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,.5);
+      transform: translateY(-4px); box-shadow: 0 14px 30px rgba(36,66,100,.16);
     }
     .mod-card:hover .mod-arrow { opacity: 1; transform: translate(0,0); }
     .mod-card::before {
@@ -502,7 +503,7 @@
         <span class="nav-icon">🌾</span> Сырьё
         <span class="nav-badge nb-gold">9</span>
       </a>
-      <a class="nav-item" href="clients.html">
+      <a class="nav-item" href="companies.html">
         <span class="nav-icon">🏢</span> Клиенты
         <span class="nav-badge nb-cyan">22</span>
       </a>
@@ -554,7 +555,7 @@
           </div>
         </a>
 
-        <a class="mod-card" href="clients.html" style="border-color:rgba(61,232,199,.2);background:linear-gradient(135deg,rgba(61,232,199,.06),rgba(13,19,32,.9))">
+        <a class="mod-card" href="companies.html" style="border-color:rgba(36,183,173,.26);background:linear-gradient(135deg,rgba(36,183,173,.12),rgba(255,255,255,.92))">
           <div class="mod-icon mi-cyan" style="background:rgba(61,232,199,.15);border-color:rgba(61,232,199,.3)">🏢</div>
           <div>
             <div class="mod-name" style="color:var(--cyan)">Клиенты</div>
@@ -566,7 +567,7 @@
           </div>
         </a>
 
-        <a class="mod-card" href="orders.html" style="border-color:rgba(245,200,66,.2);background:linear-gradient(135deg,rgba(245,200,66,.06),rgba(13,19,32,.9))">
+        <a class="mod-card" href="orders.html" style="border-color:rgba(217,168,58,.26);background:linear-gradient(135deg,rgba(217,168,58,.12),rgba(255,255,255,.92))">
           <div class="mod-icon mi-gold" style="background:rgba(245,200,66,.15);border-color:rgba(245,200,66,.3)">📋</div>
           <div>
             <div class="mod-name" style="color:var(--gold)">Отгрузки</div>
@@ -578,7 +579,7 @@
           </div>
         </a>
 
-        <a class="mod-card" href="sales-orders.html" style="border-color:rgba(126,191,255,.2);background:linear-gradient(135deg,rgba(126,191,255,.08),rgba(13,19,32,.9))">
+        <a class="mod-card" href="sales-orders.html" style="border-color:rgba(59,145,218,.26);background:linear-gradient(135deg,rgba(59,145,218,.12),rgba(255,255,255,.92))">
           <div class="mod-icon mi-blue" style="background:rgba(126,191,255,.15);border-color:rgba(126,191,255,.3)">🧾</div>
           <div>
             <div class="mod-name" style="color:var(--blue)">Заказы</div>
@@ -590,7 +591,19 @@
           </div>
         </a>
 
-        <a class="mod-card" href="sample-requests.html" style="border-color:rgba(61,232,199,.2);background:linear-gradient(135deg,rgba(61,232,199,.06),rgba(13,19,32,.9))">
+        <a class="mod-card" href="commercial-kpi-finance.html" style="border-color:rgba(62,166,109,.26);background:linear-gradient(135deg,rgba(62,166,109,.12),rgba(255,255,255,.92))">
+          <div class="mod-icon mi-green" style="background:rgba(62,166,109,.15);border-color:rgba(62,166,109,.3)">📊</div>
+          <div>
+            <div class="mod-name" style="color:var(--green)">KPI коммерческого отдела</div>
+            <div class="mod-desc">Выручка, маржа, воронка, клиенты, CAC, LTV и финансовая дисциплина</div>
+          </div>
+          <div class="mod-footer">
+            <div class="mod-badge mb-green">25 KPI + автоподсчет</div>
+            <div class="mod-arrow">↗</div>
+          </div>
+        </a>
+
+        <a class="mod-card" href="sample-requests.html" style="border-color:rgba(36,183,173,.26);background:linear-gradient(135deg,rgba(36,183,173,.12),rgba(255,255,255,.92))">
           <div class="mod-icon mi-cyan" style="background:rgba(61,232,199,.15);border-color:rgba(61,232,199,.3)">📦</div>
           <div>
             <div class="mod-name" style="color:var(--cyan)">Образцы</div>
@@ -598,66 +611,6 @@
           </div>
           <div class="mod-footer">
             <div class="mod-badge mb-cyan">27 в работе</div>
-            <div class="mod-arrow">↗</div>
-          </div>
-        </a>
-
-        <a class="mod-card" href="sklad.html">
-          <div class="mod-icon mi-cyan">🏭</div>
-          <div>
-            <div class="mod-name">Склад</div>
-            <div class="mod-desc">Остатки, приход, расход, инвентаризация</div>
-          </div>
-          <div class="mod-footer">
-            <div class="mod-badge mb-cyan">Открыть →</div>
-            <div class="mod-arrow">↗</div>
-          </div>
-        </a>
-
-        <a class="mod-card" href="logistic.html">
-          <div class="mod-icon mi-blue">🚚</div>
-          <div>
-            <div class="mod-name">Логистика</div>
-            <div class="mod-desc">Расчёт доставки: авто, контейнер, Ж/Д вагон</div>
-          </div>
-          <div class="mod-footer">
-            <div class="mod-badge mb-blue">Открыть →</div>
-            <div class="mod-arrow">↗</div>
-          </div>
-        </a>
-
-        <a class="mod-card" href="zakupki.html">
-          <div class="mod-icon mi-red">🛒</div>
-          <div>
-            <div class="mod-name">Закупки</div>
-            <div class="mod-desc">Заявки, заказы поставщикам, приёмка</div>
-          </div>
-          <div class="mod-footer">
-            <div class="mod-badge mb-red" id="purchases-module-badge">0 заказов</div>
-            <div class="mod-arrow">↗</div>
-          </div>
-        </a>
-
-        <a class="mod-card" href="syryo.html">
-          <div class="mod-icon mi-orange">🌾</div>
-          <div>
-            <div class="mod-name">Сырьё</div>
-            <div class="mod-desc">Запасы, нормы расхода, критичные остатки</div>
-          </div>
-          <div class="mod-footer">
-            <div class="mod-badge mb-orange">9 критичных</div>
-            <div class="mod-arrow">↗</div>
-          </div>
-        </a>
-
-        <a class="mod-card" href="suppliers.html">
-          <div class="mod-icon mi-purple">🤝</div>
-          <div>
-            <div class="mod-name">Поставщики</div>
-            <div class="mod-desc">Контрагенты, договоры, рейтинг, условия</div>
-          </div>
-          <div class="mod-footer">
-            <div class="mod-badge mb-purple">38 активных</div>
             <div class="mod-arrow">↗</div>
           </div>
         </a>
@@ -674,12 +627,40 @@
           </div>
         </a>
 
+        <a class="mod-card" href="supply-plan-hub.html" style="border-color:rgba(124,92,252,.26);background:linear-gradient(135deg,rgba(124,92,252,.12),rgba(255,255,255,.92))">
+          <div class="mod-icon mi-purple" style="background:rgba(124,92,252,.15);border-color:rgba(124,92,252,.3)">📈</div>
+          <div>
+            <div class="mod-name" style="color:var(--accent2)">План поставок</div>
+            <div class="mod-desc">Годовые, квартальные и операционные планы поставок с переходом в детальные разделы.</div>
+          </div>
+          <div class="mod-footer">
+            <div class="mod-badge mb-purple">Планирование</div>
+            <div class="mod-arrow">↗</div>
+          </div>
+        </a>
+
+        <a class="mod-card" href="sales-report.html" style="border-color:rgba(59,145,218,.26);background:linear-gradient(135deg,rgba(59,145,218,.12),rgba(255,255,255,.92))">
+          <div class="mod-icon mi-blue" style="background:rgba(126,191,255,.15);border-color:rgba(126,191,255,.3)">📊</div>
+          <div>
+            <div class="mod-name" style="color:var(--blue)">Отчет о продажах</div>
+            <div class="mod-desc">Сводка продаж, динамика выручки, структура клиентов и анализ коммерческой эффективности.</div>
+          </div>
+          <div class="mod-footer">
+            <div class="mod-badge mb-blue">Аналитика продаж</div>
+            <div class="mod-arrow">↗</div>
+          </div>
+        </a>
+
       </div>
     </div>
 
   </main>
 </div>
 
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_purchase_orders_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
 <script>
   (function() {
     var PURCHASE_ORDERS_KEY = 'cloto_purchase_orders_v1';

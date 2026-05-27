@@ -10,27 +10,27 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #080c14;
-      --bg2: #0d1320;
-      --surface: rgba(255,255,255,0.04);
-      --surface2: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.08);
-      --border2: rgba(255,255,255,0.14);
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255,255,255,0.86);
+      --surface2: rgba(255,255,255,0.97);
+      --border: rgba(136,158,186,0.25);
+      --border2: rgba(94,143,199,0.38);
       --accent: #7c5cfc;
       --accent2: #b07dff;
-      --cyan: #3de8c7;
-      --gold: #f5c842;
-      --red: #ff5e7d;
-      --green: #48bb78;
-      --blue: #63b3ed;
+      --cyan: #24b7ad;
+      --gold: #d9a83a;
+      --red: #d96576;
+      --green: #3ea66d;
+      --blue: #3b91da;
       --orange: #f6ad55;
-      --text: #e8eaf0;
-      --muted: #6b7491;
+      --text: #1e2c3c;
+      --muted: #6f839c;
       --radius: 16px;
     }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, #eef4fb, #e3edf8);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -61,7 +61,7 @@
     .layout { display: flex; min-height: 100vh; position: relative; z-index: 1; }
     .sidebar {
       width: 250px; min-height: 100vh;
-      background: rgba(13,19,32,0.9); backdrop-filter: blur(24px);
+      background: rgba(255,255,255,0.84); backdrop-filter: blur(24px);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
       padding: 28px 0;
@@ -162,6 +162,17 @@
       background: var(--surface); border: 1px solid var(--border); color: var(--muted);
     }
     .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+    .btn-recipe {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: 1px solid rgba(124,92,252,.35);
+      box-shadow: 0 10px 24px rgba(124,92,252,.24);
+    }
+    .btn-recipe:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(124,92,252,.32);
+      border-color: rgba(176,125,255,.5);
+    }
     .toast {
       position: fixed; bottom: 28px; right: 28px; z-index: 999;
       background: rgba(72,187,120,.15); border: 1px solid rgba(72,187,120,.35);
@@ -207,7 +218,7 @@
       outline: none; border-color: rgba(245,200,66,.5);
       box-shadow: 0 0 0 3px rgba(245,200,66,.1);
     }
-    .field-input option { background: #0d1320; color: var(--text); }
+    .field-input option { background: var(--surface2); color: var(--text); }
     .field-input::placeholder, .field-textarea::placeholder { color: var(--muted); }
     .field-input[readonly] {
       background: rgba(61,232,199,.04); border-color: rgba(61,232,199,.18);
@@ -324,6 +335,8 @@
       padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--border);
     }
     .document-name { font-size: 13px; font-weight: 600; }
+    a.document-name.document-open { color: var(--cyan); text-decoration: none; cursor: pointer; }
+    a.document-name.document-open:hover { text-decoration: underline; }
     .document-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
     .document-remove {
       border: 1px solid rgba(255,94,125,.24);
@@ -410,9 +423,13 @@
           <section class="card" id="overview">
             <div class="card-title"><span class="card-title-icon">◈</span>Обзор продукта</div>
             <div class="field-grid fg-4">
-              <div class="field">
+              <div class="field" style="grid-column:1/-1">
                 <label class="field-label">Продукт</label>
                 <input class="field-input" id="product-name" type="text" placeholder="Название продукта">
+              </div>
+              <div class="field">
+                <label class="field-label">SKU</label>
+                <input class="field-input" id="product-sku" type="text" readonly>
               </div>
               <div class="field">
                 <label class="field-label">Клиент</label>
@@ -423,13 +440,8 @@
                 <input class="field-input price-field" id="product-exw-price" type="number" min="0" step="0.01" placeholder="₽/т">
               </div>
               <div class="field">
-                <label class="field-label">Статус продукта</label>
-                <select class="field-input" id="product-status">
-                  <option value="В работе">В работе</option>
-                  <option value="Активный">Активный</option>
-                  <option value="Тест">Тест</option>
-                  <option value="Новый">Новый</option>
-                </select>
+                <label class="field-label">Маржа, %</label>
+                <input class="field-input" id="product-margin" type="number" min="0" max="100" step="0.1" placeholder="0" readonly>
               </div>
             </div>
             <div class="price-source"><span class="price-dot"></span><span>Цена и профиль продукта редактируются прямо в карточке клиента и синхронизированы с этой страницей.</span></div>
@@ -441,7 +453,8 @@
               <div class="field">
                 <div class="label-row">
                   <label class="field-label" for="product-recipe">Рецептура продукта</label>
-                  <span class="field-side-note">Основной техблок</span>
+                  <button class="btn btn-recipe" type="button" id="show-recipe-btn" style="padding:6px 12px;font-size:11px">Показать рецептуру</button>
+                  <button class="btn btn-ghost" type="button" id="sync-recipe-btn" style="padding:6px 12px;font-size:11px">Синхронизировать</button>
                 </div>
                 <textarea class="field-textarea" id="product-recipe" placeholder="Опишите рецептуру, состав, рабочие диапазоны, требования клиента"></textarea>
               </div>
@@ -463,6 +476,18 @@
                 <select class="field-input" id="product-pack-type">
                   <option value="bags">Мешки</option>
                   <option value="drums">Бочки</option>
+                  <option value="ibc">IBC</option>
+                  <option value="canisters">Канистры</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="product-pack-material">Материал упаковки</label>
+                <select class="field-input" id="product-pack-material">
+                  <option value="">—</option>
+                  <option value="paper">Бум</option>
+                  <option value="pp">П/П</option>
+                  <option value="metal">Металл</option>
+                  <option value="pe">П/Эт</option>
                 </select>
               </div>
               <div class="field">
@@ -538,9 +563,9 @@
               <div class="document-dropzone-title">Материалы по продукту</div>
               <div class="document-dropzone-subtitle">Можно прикрепить техфайлы, коммерческие заметки или внутренние документы именно по этому продукту клиента.</div>
               <div class="document-dropzone-actions">
-                <label class="btn btn-upload" for="product-documents-input">Загрузить файлы</label>
-                <input id="product-documents-input" type="file" multiple hidden>
-                <span class="field-hint">Поддерживаются любые файлы. Сохраняются локально в браузере.</span>
+                <button class="btn btn-upload" type="button" id="upload-documents-button">Загрузить файлы</button>
+                <input id="product-documents-input" type="file" multiple style="display:none">
+              <span class="field-hint">Сохраняются на сервере. При первом запуске можно загрузить файлы повторно.</span>
               </div>
             </div>
             <div class="document-list" id="document-list" style="margin-top:16px"></div>
@@ -553,8 +578,14 @@
   <div class="toast" id="save-toast">Сохранено</div>
 
   <script>
+    window.__sharedStateConfig = { keys: ['cloto_client_cards_v2', 'cloto_client_product_docs_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
     const CLIENT_STORAGE_KEY = 'cloto_client_cards_v2';
     const PRODUCT_DOCS_KEY = 'cloto_client_product_docs_v1';
+    const FILES_API_BASE = '/api/client-files';
+    let serverApiAvailable = null;
 
     function getStore() {
       try { return JSON.parse(localStorage.getItem(CLIENT_STORAGE_KEY) || '{}'); } catch (error) { return {}; }
@@ -578,6 +609,34 @@
       if (!parts.length) return 'PR';
       return parts.slice(0, 2).map(function(part) { return part.charAt(0).toUpperCase(); }).join('');
     }
+    function hashKey(value) {
+      const text = String(value || '');
+      let hash = 0;
+      for (let i = 0; i < text.length; i += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash).toString(36).toUpperCase();
+    }
+    function sanitizeSkuToken(value, fallback) {
+      const cleaned = String(value || '').toUpperCase().replace(/[^A-Z0-9]+/g, '');
+      if (cleaned) return cleaned.slice(0, 8);
+      return String(fallback || '').toUpperCase().replace(/[^A-Z0-9]+/g, '').slice(0, 8) || 'ITEM';
+    }
+    function buildLegacyClientProductSku(companyName, productIdValue) {
+      return 'CPL-' + sanitizeSkuToken(hashKey(companyName), 'CL') + '-' + sanitizeSkuToken(productIdValue, 'ITEM');
+    }
+    function buildClientProductSku(companyName, productIdValue) {
+      return 'CPL-' + sanitizeSkuToken(hashKey(companyName), 'CL') + '-' + sanitizeSkuToken(hashKey(productIdValue), 'ITEM');
+    }
+    function resolveClientProductSku(productValue) {
+      const currentSku = String(productValue && productValue.sku || '').trim();
+      const legacySku = buildLegacyClientProductSku(company, productValue && productValue.id);
+      if (!currentSku || currentSku === legacySku) {
+        return buildClientProductSku(company, productValue && productValue.id);
+      }
+      return currentSku;
+    }
     const params = new URLSearchParams(window.location.search);
     const company = params.get('company') || '';
     const productId = params.get('product') || '';
@@ -592,6 +651,30 @@
       const nextStore = readDocsStore();
       nextStore[docsKey] = productDocuments;
       saveDocsStore(nextStore);
+    }
+    function getProductApiFolder() { return 'product-docs-' + productId; }
+    function getProductApiQuery() {
+      return 'company=' + encodeURIComponent(company) + '&folder=' + encodeURIComponent(getProductApiFolder());
+    }
+    async function detectServerApi() {
+      if (serverApiAvailable !== null) return serverApiAvailable;
+      try {
+        const r = await fetch('/api/health', { headers: { Accept: 'application/json' } });
+        if (!r.ok) { serverApiAvailable = false; return false; }
+        const j = await r.json();
+        serverApiAvailable = !!(j && j.uploads);
+      } catch (e) { serverApiAvailable = false; }
+      return serverApiAvailable;
+    }
+    async function listServerFiles() {
+      const r = await fetch(FILES_API_BASE + '?' + getProductApiQuery(), { headers: { Accept: 'application/json' } });
+      if (!r.ok) throw new Error('list failed');
+      const j = await r.json();
+      return Array.isArray(j.files) ? j.files : [];
+    }
+    async function deleteServerFile(fileId) {
+      const r = await fetch(FILES_API_BASE + '/' + encodeURIComponent(fileId) + '?' + getProductApiQuery(), { method: 'DELETE' });
+      if (!r.ok) throw new Error('delete failed');
     }
     function formatNumber(value) {
       return value ? value.toLocaleString('ru-RU') : '0';
@@ -629,29 +712,49 @@
       clearTimeout(showToast.timer);
       showToast.timer = setTimeout(function() { toast.classList.remove('show'); }, 1500);
     }
-    function renderDocuments() {
+    function renderDocumentsFromList(files, serverMode) {
       const root = document.getElementById('document-list');
-      if (!productDocuments.length) {
-        root.innerHTML = '';
-        return;
-      }
-      root.innerHTML = productDocuments.map(function(item, index) {
-        return '<div class="document-item"><div><div class="document-name">' + escapeHtml(item.name) + '</div><div class="document-meta">' + escapeHtml(item.type || 'Файл') + ' • ' + escapeHtml(item.savedAt || '') + '</div></div><button class="document-remove" type="button" data-remove-doc="' + index + '">Удалить</button></div>';
+      if (!files.length) { root.innerHTML = ''; return; }
+      root.innerHTML = files.map(function(item, index) {
+        const href = serverMode ? (item.downloadUrl || '#') : (item.dataUrl || item.content || '#');
+        const nameHtml = href !== '#'
+          ? '<a class="document-name document-open" href="' + escapeHtml(href) + '" download="' + escapeHtml(item.name) + '" target="_blank">' + escapeHtml(item.name) + '</a>'
+            : '<div class="document-name">' + escapeHtml(item.name) + ' <span style="font-size:10px;color:#f56565;font-weight:500">— загрузите файл повторно</span></div>';
+        const removeAttr = serverMode ? ('data-remove-doc-id="' + escapeHtml(item.id || '') + '"') : ('data-remove-doc="' + index + '"');
+        return '<div class="document-item"><div>' + nameHtml + '<div class="document-meta">' + escapeHtml(item.type || 'Файл') + ' • ' + escapeHtml(item.savedAt || '') + '</div></div><button class="document-remove" type="button" ' + removeAttr + '>Удалить</button></div>';
       }).join('');
+    }
+    async function renderDocuments() {
+      try {
+        if (await detectServerApi()) {
+          const files = await listServerFiles();
+          // If server folder is empty but we have localStorage entries, show them as legacy
+          if (!files.length && productDocuments.length) {
+            renderDocumentsFromList(productDocuments, false);
+            return;
+          }
+          renderDocumentsFromList(files, true);
+          return;
+        }
+      } catch (e) {}
+      renderDocumentsFromList(productDocuments, false);
     }
     function persistProduct(showNotification) {
       if (!client || !product) return;
       product.name = document.getElementById('product-name').value;
+      product.sku = document.getElementById('product-sku').value || resolveClientProductSku(product);
       product.recipe = document.getElementById('product-recipe').value;
       product.notes = document.getElementById('product-notes').value;
       product.exwPrice = document.getElementById('product-exw-price').value;
-      product.status = document.getElementById('product-status').value;
+      product.margin = document.getElementById('product-margin').value;
       product.packType = document.getElementById('product-pack-type').value;
+      product.packMaterial = document.getElementById('product-pack-material').value;
       product.unitWeightKg = document.getElementById('product-unit-weight').value;
       product.palletUnits = document.getElementById('product-pallet-units').value;
       product.truckUnits = document.getElementById('product-truck-units').value;
       product.containerUnits = document.getElementById('product-container-units').value;
       saveStore(store);
+      console.log('[persistProduct]', product.name, 'showNotification=', showNotification);
       document.title = (product.name || 'Продукт клиента') + ' — ' + company;
       document.getElementById('product-title').textContent = product.name || 'Продукт клиента';
       document.getElementById('sidebar-product-name').textContent = product.name || 'Продукт';
@@ -669,7 +772,7 @@
         document.getElementById('badge-company').textContent = 'Нет данных';
         document.getElementById('sidebar-product-name').textContent = 'Не найден';
         document.getElementById('sidebar-company-name').textContent = 'Карточка клиента';
-        ['product-name','client-name','product-exw-price','product-status','product-recipe','product-notes','product-pack-type','product-unit-weight','product-pallet-units','product-truck-units','product-container-units','save-product-button'].forEach(function(id) {
+        ['product-name','product-sku','client-name','product-exw-price','product-margin','product-recipe','product-notes','product-pack-type','product-pack-material','product-unit-weight','product-pallet-units','product-truck-units','product-container-units','save-product-button'].forEach(function(id) {
           const node = document.getElementById(id);
           if (node) node.disabled = true;
         });
@@ -684,52 +787,185 @@
       document.getElementById('sidebar-company-name').textContent = company;
       document.getElementById('sidebar-avatar').textContent = getAvatarLetters(product.name);
       document.getElementById('product-name').value = product.name || '';
+      product.sku = resolveClientProductSku(product);
+      document.getElementById('product-sku').value = product.sku;
       document.getElementById('client-name').value = company;
       document.getElementById('product-exw-price').value = product.exwPrice || '';
-      document.getElementById('product-status').value = product.status || 'В работе';
+      document.getElementById('product-margin').value = product.margin || '';
       document.getElementById('product-recipe').value = product.recipe || '';
       document.getElementById('product-notes').value = product.notes || '';
       document.getElementById('product-pack-type').value = product.packType || 'bags';
+      document.getElementById('product-pack-material').value = product.packMaterial || '';
       document.getElementById('product-unit-weight').value = product.unitWeightKg || '25';
       document.getElementById('product-pallet-units').value = product.palletUnits || '40';
       document.getElementById('product-truck-units').value = product.truckUnits || '800';
-      document.getElementById('product-container-units').value = product.containerUnits || '700';
+      document.getElementById('product-container-units').value = product.containerUnits || '1000';
       recalcLogistics();
       renderDocuments();
     }
 
-    document.getElementById('save-product-button').addEventListener('click', function() { persistProduct(true); });
+    function extractProductIdFromName(productName) {
+      const match = productName.match(/\(([^)]+)\)/);
+      if (!match) return null;
+      const bracketed = match[1].trim().toLowerCase();
+      return 'custom-' + bracketed + '-1776680455716';
+    }
+    
+    function openRecipeCalculation() {
+      var targetUrl = 'sebescost.html?company=' + encodeURIComponent(company) + '&product=' + encodeURIComponent(productId);
+      window.location.href = targetUrl;
+    }
+    
+    function syncCostData() {
+      try {
+        const productName = document.getElementById('product-name').value || '';
+        const productId = extractProductIdFromName(productName);
+        if (!productId) return;
+        const stateKey = 'cloto_cost_calc_custom_' + productId;
+        const rawState = localStorage.getItem(stateKey);
+        if (!rawState) {
+          showToast('Данные расчета не найдены');
+          return;
+        }
+        const state = JSON.parse(rawState);
+        const salePrice = Number(state.salePriceKg || 0);
+        const pricePerTon = salePrice * 1000;
+        document.getElementById('product-exw-price').value = salePrice || '';
+        const rawSum = (state.rawRows || []).reduce(function(sum, row) {
+          return sum + (Number(row.qty || 0) * Number(row.price || 0) / 1000);
+        }, 0);
+        const packSum = (state.packRows || []).reduce(function(sum, row) {
+          return sum + (Number(row.qty || 0) * Number(row.price || 0));
+        }, 0);
+        const prodSum = (state.prodRows || []).reduce(function(sum, row) {
+          return sum + (Number(row.qty || 0) * Number(row.price || 0));
+        }, 0);
+        const indSum = (state.indRows || []).reduce(function(sum, row) {
+          return sum + Number(row.sum || 0);
+        }, 0);
+        const total = rawSum + packSum + prodSum + indSum;
+        const margin = pricePerTon > 0 ? (pricePerTon - total) / pricePerTon * 100 : null;
+        if (margin !== null) {
+          document.getElementById('product-margin').value = margin.toFixed(1);
+        }
+        persistProduct(true);
+        showToast('Данные синхронизированы: цена ' + salePrice + '₽/кг, маржа ' + (margin ? margin.toFixed(1) : 'N/A') + '%');
+      } catch (error) {
+        showToast('Ошибка синхронизации: ' + error.message);
+      }
+    }
+
+    // Debounce helper for input fields
+    function createDebouncedSave() {
+      let timeoutId = null;
+      return function() {
+        console.log('[debouncedSave] called, resetting timeout');
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(function() {
+          console.log('[debouncedSave] timeout fired, calling persistProduct');
+          persistProduct(false);
+        }, 500);
+      };
+    }
+    const debouncedSave = createDebouncedSave();
+
+    // Debounce helper for Save button to prevent multiple rapid clicks
+    function createDebouncedSaveButton() {
+      let timeoutId = null;
+      let isInProgress = false;
+      return function() {
+        if (isInProgress) return; // Prevent concurrent saves
+        if (timeoutId) clearTimeout(timeoutId);
+        isInProgress = true;
+        persistProduct(true);
+        timeoutId = setTimeout(function() {
+          isInProgress = false;
+        }, 800);
+      };
+    }
+    const debouncedSaveButton = createDebouncedSaveButton();
+
+    document.getElementById('show-recipe-btn').addEventListener('click', function() { openRecipeCalculation(); });
+    document.getElementById('sync-recipe-btn').addEventListener('click', function() { syncCostData(); });
+    document.getElementById('save-product-button').addEventListener('click', function() { debouncedSaveButton(); });
+    document.getElementById('upload-documents-button').addEventListener('click', function() {
+      document.getElementById('product-documents-input').click();
+    });
     ['product-name','product-exw-price','product-recipe','product-notes','product-unit-weight','product-pallet-units','product-truck-units','product-container-units'].forEach(function(id) {
       const node = document.getElementById(id);
       node.addEventListener('input', function() {
+        console.log('[input event] on', id, 'value=', node.value);
         recalcLogistics();
-        persistProduct(false);
+        debouncedSave();
       });
     });
-    document.getElementById('product-status').addEventListener('change', function() { persistProduct(false); });
     document.getElementById('product-pack-type').addEventListener('change', function() {
       recalcLogistics();
       persistProduct(false);
     });
 
-    document.getElementById('product-documents-input').addEventListener('change', function(event) {
+    async function handleUploadedFiles(fileList) {
+      if (!fileList || !fileList.length) return;
+      let serverUploadFailed = false;
+      try {
+        if (await detectServerApi()) {
+          const formData = new FormData();
+          formData.append('company', company);
+          formData.append('folder', getProductApiFolder());
+          Array.from(fileList).forEach(function(file) { formData.append('files', file); });
+          const r = await fetch(FILES_API_BASE, { method: 'POST', body: formData });
+          if (!r.ok) throw new Error('Ошибка загрузки на сервер');
+          await renderDocuments();
+          showToast('Файлы добавлены');
+          return;
+        }
+      } catch (e) {
+        serverUploadFailed = true;
+      }
+      // fallback: localStorage + dataUrl
+      const results = [];
+      let pending = Array.from(fileList).length;
+      if (!pending) return;
+      Array.from(fileList).forEach(function(file) {
+        const reader = new FileReader();
+        reader.onload = function() {
+          results.push({ name: file.name, type: file.type || 'Файл', size: file.size || 0, savedAt: new Date().toLocaleString('ru-RU'), dataUrl: reader.result });
+          pending -= 1;
+          if (pending === 0) {
+            productDocuments = productDocuments.concat(results);
+            saveDocuments();
+            renderDocuments();
+            showToast(serverUploadFailed ? 'Сервер недоступен, файл сохранен локально' : 'Файлы добавлены');
+          }
+        };
+        reader.onerror = function() {
+          pending -= 1;
+          if (pending === 0) {
+            renderDocuments();
+            showToast('Ошибка чтения файла');
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    document.getElementById('product-documents-input').addEventListener('change', async function(event) {
       const files = Array.from(event.target.files || []);
-      if (!files.length) return;
-      productDocuments = productDocuments.concat(files.map(function(file) {
-        return { name: file.name, type: file.type || 'Файл', size: file.size || 0, savedAt: new Date().toLocaleString('ru-RU') };
-      }));
-      saveDocuments();
-      renderDocuments();
-      showToast('Файлы добавлены');
       event.target.value = '';
+      await handleUploadedFiles(files);
     });
-    document.getElementById('document-list').addEventListener('click', function(event) {
+    document.getElementById('document-list').addEventListener('click', async function(event) {
+      const fileId = event.target.getAttribute('data-remove-doc-id');
       const index = event.target.getAttribute('data-remove-doc');
-      if (index === null) return;
-      productDocuments.splice(Number(index), 1);
-      saveDocuments();
-      renderDocuments();
-      showToast('Файл удален');
+      if (fileId !== null) {
+        try { await deleteServerFile(fileId); await renderDocuments(); showToast('Файл удален'); } catch (e) { showToast('Ошибка удаления'); }
+        return;
+      }
+      if (index !== null) {
+        productDocuments.splice(Number(index), 1);
+        saveDocuments();
+        renderDocuments();
+        showToast('Файл удален');
+      }
     });
 
     const dropzone = document.getElementById('document-dropzone');
@@ -745,15 +981,9 @@
         dropzone.classList.remove('is-dragover');
       });
     });
-    dropzone.addEventListener('drop', function(event) {
-      const files = Array.from(event.dataTransfer && event.dataTransfer.files || []);
-      if (!files.length) return;
-      productDocuments = productDocuments.concat(files.map(function(file) {
-        return { name: file.name, type: file.type || 'Файл', size: file.size || 0, savedAt: new Date().toLocaleString('ru-RU') };
-      }));
-      saveDocuments();
-      renderDocuments();
-      showToast('Файлы добавлены');
+    dropzone.addEventListener('drop', async function(event) {
+      const files = event.dataTransfer && event.dataTransfer.files;
+      await handleUploadedFiles(files);
     });
 
     initPage();

@@ -10,25 +10,25 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #080c14;
-      --surface: rgba(255,255,255,.04);
-      --surface2: rgba(255,255,255,.07);
-      --border: rgba(255,255,255,.08);
-      --border2: rgba(255,255,255,.14);
-      --text: #e8eaf0;
-      --muted: #7f89a8;
+      --bg: #eef4fb;
+      --surface: rgba(255,255,255,.86);
+      --surface2: rgba(255,255,255,.97);
+      --border: rgba(136,158,186,.25);
+      --border2: rgba(94,143,199,.38);
+      --text: #1e2c3c;
+      --muted: #6f839c;
       --purple: #b07dff;
-      --cyan: #3de8c7;
-      --gold: #f5c842;
-      --blue: #63b3ed;
-      --green: #48bb78;
-      --red: #ff5e7d;
+      --cyan: #24b7ad;
+      --gold: #d9a83a;
+      --blue: #3b91da;
+      --green: #3ea66d;
+      --red: #d96576;
       --orange: #f6ad55;
       --radius: 18px;
     }
 
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, #eef4fb, #e3edf8);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -98,14 +98,14 @@
       gap: 18px;
     }
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.8));
       border: 1px solid var(--border);
       border-radius: 24px;
       overflow: hidden;
     }
     .hero-main {
       padding: 24px;
-      background: linear-gradient(135deg, rgba(176,125,255,.12), rgba(8,12,20,.92));
+      background: linear-gradient(135deg, rgba(176,125,255,.12), rgba(255,255,255,.92));
       border: 1px solid rgba(176,125,255,.16);
     }
     .hero-top {
@@ -152,7 +152,7 @@
       font-weight: 600;
       border: 1px solid rgba(255,255,255,.1);
       background: rgba(255,255,255,.05);
-      color: #eef0f8;
+      color: var(--text);
     }
     .tag-cyan { color: var(--cyan); border-color: rgba(61,232,199,.2); background: rgba(61,232,199,.08); }
     .tag-gold { color: var(--gold); border-color: rgba(245,200,66,.2); background: rgba(245,200,66,.08); }
@@ -216,8 +216,8 @@
     .summary-card {
       padding: 16px;
       border-radius: 16px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--border);
     }
     .summary-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
     .summary-value { margin-top: 7px; font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; }
@@ -256,7 +256,7 @@
       padding: 14px;
       border-radius: 16px;
       border: 1px solid rgba(61,232,199,.12);
-      background: linear-gradient(135deg, rgba(61,232,199,.08), rgba(13,19,32,.88));
+      background: linear-gradient(135deg, rgba(61,232,199,.08), rgba(255,255,255,.92));
     }
     .contact-name {
       font-size: 16px;
@@ -306,7 +306,7 @@
     th {
       position: sticky;
       top: 0;
-      background: #0f1522;
+      background: #f2f7fd;
       color: var(--muted);
       font-size: 11px;
       letter-spacing: .08em;
@@ -352,8 +352,8 @@
       overflow: auto;
       border-radius: 22px;
       border: 1px solid var(--border2);
-      background: #0d1320;
-      box-shadow: 0 24px 60px rgba(0,0,0,.45);
+      background: #ffffff;
+      box-shadow: 0 18px 36px rgba(36,66,100,.16);
     }
     .modal-header, .modal-footer {
       display: flex;
@@ -415,7 +415,7 @@
       z-index: 12;
       padding: 12px 14px;
       border-radius: 12px;
-      background: rgba(13,19,32,.96);
+      background: rgba(255,255,255,.96);
       color: var(--text);
       border: 1px solid rgba(61,232,199,.22);
       opacity: 0;
@@ -485,6 +485,10 @@
         <div class="section-head">
           <div>
             <div class="section-title">Контакты работников поставщика</div>
+          <script>
+            window.__sharedStateConfig = { keys: ['cloto_raw_materials_v2', 'cloto_supplier_contacts_v1', 'cloto_quote_requests_v1', 'cloto_purchase_orders_v1'] };
+          </script>
+          <script src="shared-state-sync.js"></script>
             <div class="section-sub">Телефоны, email, роли и заметки</div>
           </div>
         </div>
@@ -806,7 +810,7 @@
         }
       } catch (error) {}
 
-      return fetch('syryo.html')
+      return fetch(window.location.origin + '/syryo.html')
         .then(function(response) { return response.text(); })
         .then(function(html) {
           var match = html.match(/var\s+DEFAULT_DATA\s*=\s*\[([\s\S]*?)\];/);

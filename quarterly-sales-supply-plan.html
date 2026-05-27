@@ -1,0 +1,3678 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Квартальный план продаж и поставок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eff4f2;
+      --surface: #ffffff;
+      --surface-soft: #f6faf8;
+      --line: rgba(101, 127, 120, 0.28);
+      --line-strong: rgba(53, 116, 99, 0.45);
+      --text: #1a2f2a;
+      --muted: #667f78;
+      --teal: #1f9a86;
+      --teal-soft: rgba(31, 154, 134, 0.14);
+      --amber: #c69145;
+      --green: #2f9b62;
+      --red: #cb6975;
+      --shadow: 0 14px 34px rgba(26, 47, 42, 0.12);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Manrope', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(31, 154, 134, 0.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(198, 145, 69, 0.12), transparent 22%),
+        linear-gradient(180deg, #f8fbfa, var(--bg));
+    }
+
+    .page {
+      width: calc(100% - 16px);
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 12px 0 20px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+    }
+
+    .link-btn,
+    .btn,
+    .pill,
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      padding: 9px 13px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .btn {
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+    }
+
+    .btn:hover,
+    .link-btn:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #88f1df, #5cd8c5);
+      color: #0f3f37;
+      border-color: rgba(26, 127, 111, 0.3);
+    }
+
+    h1,
+    h2,
+    .value {
+      margin: 0;
+      font-family: 'Sora', sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(24px, 2.8vw, 36px);
+      line-height: 1.08;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 0 14px 14px;
+    }
+
+    .kpi {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #f8fbfa);
+      display: grid;
+      gap: 5px;
+    }
+
+    .label {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .value {
+      font-size: 27px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .settings {
+      margin: 0 14px 14px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 4px;
+    }
+
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 9px;
+      font: inherit;
+      font-size: 13px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 3px var(--teal-soft);
+    }
+
+    .table-wrap {
+      padding: 0 10px 10px;
+      overflow-x: hidden;
+    }
+
+    .table-search {
+      padding: 0 14px 10px;
+    }
+
+    .table-search .search-input {
+      width: min(560px, 100%);
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      min-width: 0;
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: white;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #edf5f2;
+      color: #3e5f58;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 8px 5px;
+      border-bottom: 1px solid var(--line);
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    thead tr.table-actions th {
+      background: #e7f1ed;
+      padding: 8px;
+      text-transform: none;
+      letter-spacing: normal;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .th-action {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .th-search {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-input {
+      width: min(460px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 13px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 3px var(--teal-soft);
+    }
+
+    tbody td,
+    tfoot td {
+      border-bottom: 1px solid rgba(101, 127, 120, 0.18);
+      border-right: 1px solid rgba(101, 127, 120, 0.15);
+      padding: 4px 5px;
+      vertical-align: middle;
+      background: white;
+      font-size: 11px;
+    }
+
+    tbody tr:hover td {
+      background: #f9fcfb;
+    }
+
+    tbody tr.client-row td {
+      background: var(--client-row-bg, #ffffff);
+    }
+
+    tbody tr.client-row:hover td {
+      background: var(--client-row-bg, #ffffff);
+    }
+
+    tbody td:first-child,
+    thead th:first-child,
+    tfoot td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: #edf5f2;
+      border-right: 1px solid var(--line);
+      min-width: 58px;
+      width: 58px;
+    }
+
+    tbody td:nth-child(2),
+    thead th:nth-child(2),
+    tfoot td:nth-child(2) {
+      position: sticky;
+      left: 58px;
+      z-index: 1;
+      background: #f4faf7;
+      border-right: 1px solid var(--line);
+      min-width: 100px;
+    }
+
+    tbody tr.client-row td:nth-child(2) {
+      background: var(--client-sticky-bg, #f4faf7);
+      border-left: 3px solid var(--client-accent, #8ec8bb);
+    }
+
+    .delete-cell {
+      text-align: center;
+      padding: 4px 3px;
+    }
+
+    .delete-row-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid rgba(203, 105, 117, 0.35);
+      background: #fff;
+      color: var(--red);
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .delete-row-btn:hover {
+      background: rgba(203, 105, 117, 0.12);
+      border-color: rgba(203, 105, 117, 0.55);
+    }
+
+    .raw-check-btn {
+      border: 1px solid rgba(31, 154, 134, 0.45);
+      background: rgba(31, 154, 134, 0.12);
+      color: #0f5d50;
+      border-radius: 8px;
+      padding: 3px 4px;
+      font: inherit;
+      font-size: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: normal;
+      line-height: 1.15;
+    }
+
+    .raw-check-btn:hover {
+      background: rgba(31, 154, 134, 0.2);
+      border-color: rgba(31, 154, 134, 0.6);
+    }
+
+    tbody td input,
+    tbody td select {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid rgba(101, 127, 120, 0.35);
+      border-radius: 7px;
+      padding: 4px 5px;
+      font: inherit;
+      font-size: 11px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    tbody td input[data-field="pricePerTon"],
+    tbody td input[data-field="marginPct"] {
+      min-width: 0;
+      padding: 4px;
+    }
+
+    td:nth-child(2) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    td:nth-child(3) {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+    }
+
+    .readonly {
+      text-align: right;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .plan-progress-cell {
+      text-align: left;
+      white-space: normal;
+    }
+
+    .plan-progress-cell.behind {
+      background: rgba(203, 105, 117, 0.12) !important;
+    }
+
+    .plan-progress-cell.ahead,
+    .plan-progress-cell.on-track {
+      background: rgba(31, 154, 134, 0.12) !important;
+    }
+
+    .plan-progress-cell.neutral {
+      background: rgba(101, 127, 120, 0.08) !important;
+    }
+
+    .plan-progress {
+      display: grid;
+      gap: 3px;
+      justify-items: start;
+      line-height: 1.2;
+    }
+
+    .plan-progress.muted {
+      color: var(--muted);
+    }
+
+    .plan-progress-main {
+      font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .plan-progress-sub {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .plan-progress-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .plan-progress-pill.behind {
+      background: rgba(203, 105, 117, 0.14);
+      color: #a53c4c;
+    }
+
+    .plan-progress-pill.ahead,
+    .plan-progress-pill.on-track {
+      background: rgba(31, 154, 134, 0.14);
+      color: #0f705f;
+    }
+
+    .plan-progress-pill.neutral {
+      background: rgba(101, 127, 120, 0.12);
+      color: #4b635d;
+    }
+
+    .ton-cell,
+    .prob-cell,
+    .money-cell,
+    .margin-cell {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .highlight {
+      background: #f0faf6;
+      font-weight: 800;
+      color: #18463d;
+    }
+
+    .warn {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    tfoot td {
+      background: #ecf7f1;
+      font-weight: 800;
+      border-top: 2px solid #b8d7ca;
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 10px;
+      padding: 0 14px 14px;
+    }
+
+    .resource,
+    .summary {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface-soft);
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .row strong {
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .raw-check-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(20, 43, 37, 0.42);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .raw-check-overlay.open {
+      display: flex;
+    }
+
+    .raw-check-modal {
+      width: min(980px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .raw-check-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .raw-check-title {
+      margin: 0;
+      font-size: 18px;
+      font-family: 'Sora', sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    .raw-check-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .raw-close-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .raw-close-btn:hover {
+      color: var(--text);
+      border-color: var(--line-strong);
+    }
+
+    .raw-check-table {
+      width: 100%;
+      table-layout: auto;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      font-size: 12px;
+    }
+
+    .raw-check-table th,
+    .raw-check-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(101, 127, 120, 0.18);
+      border-right: 1px solid rgba(101, 127, 120, 0.12);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .raw-check-table th {
+      background: #edf5f2;
+      color: #385952;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .raw-check-table td:last-child,
+    .raw-check-table th:last-child {
+      border-right: 0;
+    }
+
+    .raw-check-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .raw-check-table th:first-child,
+    .raw-check-table td:first-child {
+      width: 32%;
+      min-width: 220px;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .raw-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .raw-status.ok {
+      color: #11663f;
+      background: rgba(47, 155, 98, 0.16);
+      border: 1px solid rgba(47, 155, 98, 0.34);
+    }
+
+    .raw-status.bad {
+      color: #9f2032;
+      background: rgba(203, 105, 117, 0.18);
+      border: 1px solid rgba(203, 105, 117, 0.35);
+    }
+
+    .raw-check-empty {
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      background: #f9fcfb;
+    }
+
+    @media (max-width: 1180px) {
+      .topbar { grid-template-columns: 1fr; }
+      .controls { justify-content: flex-start; }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .settings { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
+      .bottom { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 740px) {
+      .page { width: calc(100% - 14px); }
+      .grid-4,
+      .settings { grid-template-columns: 1fr; }
+      .value { font-size: 24px; }
+    }
+
+    /* ── Execution Plan Drawer ───────────────────────────── */
+    .ep-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(15, 35, 30, 0.38);
+      backdrop-filter: blur(2px);
+      display: none;
+    }
+    .ep-overlay.open { display: block; }
+
+    .ep-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      z-index: 401;
+      background: #f6faf8;
+      border-left: 0;
+      box-shadow: 0 12px 40px rgba(15,35,30,0.18);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(-102%);
+      transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    .ep-drawer.open { transform: translateY(0); }
+
+    .ep-drawer-header {
+      background: linear-gradient(135deg, #1a3830, #1f5c4c);
+      color: #d2f0e8;
+      padding: 18px 20px 14px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ep-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .ep-client-name {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin: 0;
+      line-height: 1.15;
+    }
+    .ep-quarter-badge {
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 3px 10px;
+      color: #c0efe3;
+      white-space: nowrap;
+    }
+    .ep-close-btn {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #c8e8e0;
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ep-close-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+
+    .ep-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .ep-kpi {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .ep-kpi-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(180,240,220,0.85);
+      margin-bottom: 4px;
+    }
+    .ep-kpi-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ep-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .ep-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .ep-span-2 {
+      grid-column: 1 / -1;
+    }
+
+    .ep-col-1 {
+      grid-column: 1;
+    }
+
+    .ep-col-2 {
+      grid-column: 2;
+    }
+    .ep-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 18px;
+      background: #edf5f2;
+      border-bottom: 1px solid var(--line);
+    }
+    .ep-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #2d5248;
+      margin: 0;
+    }
+    .ep-section-body { padding: 0; }
+
+    .ep-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .ep-table th {
+      background: #f4faf7;
+      color: #3e5f58;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+    .ep-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(101,127,120,0.15);
+      vertical-align: top;
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .ep-table tr:last-child td { border-bottom: 0; }
+    .ep-table tr:hover td { background: #f9fcfb; }
+
+    .ep-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .ep-btn:hover { border-color: var(--line-strong); background: #f4faf7; }
+    .ep-btn-primary {
+      background: linear-gradient(135deg, #88f1df, #5cd8c5);
+      color: #0f3f37;
+      border-color: rgba(26,127,111,0.3);
+    }
+    .ep-btn-primary:hover { opacity: 0.88; }
+    .ep-btn-danger {
+      border-color: rgba(203,105,117,0.35);
+      color: var(--red);
+    }
+    .ep-btn-danger:hover { background: rgba(203,105,117,0.1); }
+    .ep-btn-sm {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+
+    .ep-tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .ep-tag-planned  { background: rgba(101,127,120,0.14); color: #3e5f58; border: 1px solid rgba(101,127,120,0.3); }
+    .ep-tag-progress { background: rgba(31,154,134,0.15); color: #0f5c4e; border: 1px solid rgba(31,154,134,0.35); }
+    .ep-tag-done     { background: rgba(47,155,98,0.15); color: #0f5e38; border: 1px solid rgba(47,155,98,0.35); }
+    .ep-tag-blocked  { background: rgba(203,105,117,0.15); color: #9f2032; border: 1px solid rgba(203,105,117,0.35); }
+    .ep-tag-low      { background: rgba(101,127,120,0.12); color: #4b6860; border: 1px solid rgba(101,127,120,0.28); }
+    .ep-tag-medium   { background: rgba(198,145,69,0.15); color: #7a5000; border: 1px solid rgba(198,145,69,0.4); }
+    .ep-tag-high     { background: rgba(203,105,117,0.15); color: #9f2032; border: 1px solid rgba(203,105,117,0.35); }
+
+    .ep-list {
+      padding: 12px 14px 0;
+      display: grid;
+      gap: 8px;
+    }
+    .ep-list-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+    }
+    .ep-list-item-main {
+      min-width: 0;
+      flex: 1;
+    }
+    .ep-list-item-title {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .ep-list-item-meta {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.55;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+    }
+    .ep-list-item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .ep-task-form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .ep-inline-form {
+      padding: 14px 14px 16px;
+      background: #f8fcfa;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+    .ep-inline-form-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .ep-field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .ep-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .ep-field input,
+    .ep-field select,
+    .ep-field textarea {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font: inherit;
+      font-size: 13px;
+      background: #fff;
+      color: var(--text);
+    }
+    .ep-field input:focus,
+    .ep-field select:focus,
+    .ep-field textarea:focus {
+      outline: none;
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 2px var(--teal-soft);
+    }
+    .ep-field textarea { resize: vertical; min-height: 46px; }
+    .ep-form-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .ep-readiness {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .ep-readiness-bar-wrap {
+      background: rgba(101,127,120,0.14);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .ep-readiness-bar {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .ep-readiness-bar.green { background: linear-gradient(90deg,#2f9b62,#4dd68a); }
+    .ep-readiness-bar.yellow { background: linear-gradient(90deg,#c69145,#f0b85a); }
+    .ep-readiness-bar.red { background: linear-gradient(90deg,#cb6975,#e8808a); }
+    .ep-readiness-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .ep-readiness-pct {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .ep-readiness-pct.green { color: #1f7044; }
+    .ep-readiness-pct.yellow { color: #8a5c00; }
+    .ep-readiness-pct.red { color: #9f2032; }
+    .ep-readiness-status {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+    .ep-readiness-status.green { background: rgba(47,155,98,0.15); color: #0f5e38; border: 1px solid rgba(47,155,98,0.35); }
+    .ep-readiness-status.yellow { background: rgba(198,145,69,0.15); color: #7a5000; border: 1px solid rgba(198,145,69,0.4); }
+    .ep-readiness-status.red { background: rgba(203,105,117,0.15); color: #9f2032; border: 1px solid rgba(203,105,117,0.35); }
+
+    .ep-suggested {
+      padding: 14px;
+      background: linear-gradient(135deg,rgba(31,154,134,0.06),rgba(47,155,98,0.04));
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+    .ep-suggested-range {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1f5c4c;
+      letter-spacing: -0.02em;
+    }
+    .ep-suggested-hint {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .ep-empty-hint {
+      padding: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── Action Plan Drawer ───────────────────────────── */
+    .action-plan-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(15, 35, 30, 0.38);
+      backdrop-filter: blur(2px);
+      display: none;
+    }
+    .action-plan-overlay.open { display: block; }
+
+    .action-plan-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      z-index: 401;
+      background: #f6faf8;
+      box-shadow: 0 12px 40px rgba(15,35,30,0.18);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(-102%);
+      transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    .action-plan-drawer.open { transform: translateY(0); }
+
+    .action-plan-header {
+      background: linear-gradient(135deg, #1a5847, #1f7c64);
+      color: #c8efe3;
+      padding: 18px 20px 14px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .action-plan-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .action-plan-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin: 0;
+      line-height: 1.15;
+      flex: 1;
+    }
+    .action-plan-close-btn {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #c8efe3;
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .action-plan-close-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+
+    .action-plan-targets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .action-plan-target-item {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .action-plan-target-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: rgba(180,240,220,0.85);
+      margin-bottom: 3px;
+    }
+    .action-plan-target-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .action-plan-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .action-plan-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .action-plan-section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-plan-step {
+      padding: 10px;
+      margin-bottom: 8px;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+    }
+    .action-plan-step-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--teal);
+    }
+    .action-plan-step input,
+    .action-plan-step textarea {
+      font-family: inherit;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 12px;
+      background: #fff;
+      color: var(--text);
+    }
+    .action-plan-step input:focus,
+    .action-plan-step textarea:focus {
+      outline: none;
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 2px var(--teal-soft);
+    }
+    .action-plan-step textarea { resize: vertical; min-height: 50px; }
+
+    .action-plan-add-btn,
+    .action-plan-save-btn {
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .action-plan-add-btn:hover,
+    .action-plan-save-btn:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-1px);
+    }
+    .action-plan-save-btn {
+      background: linear-gradient(135deg, #88f1df, #5cd8c5);
+      color: #0f3f37;
+      border-color: rgba(26, 127, 111, 0.3);
+      align-self: flex-end;
+    }
+
+    @media (max-width: 920px) {
+      .ep-task-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="card">
+      <div class="topbar">
+        <a class="link-btn" href="supply-plan-hub.html">← К выбору плана</a>
+        <div>
+          <h1>Квартальный план продаж / поставок</h1>
+          <div class="subtitle">Модель: Forecast = Σ (тонны × вероятность). В таблице учитываются клиент, продукт, квартальные объемы, цена, маржа и ресурсная нагрузка.</div>
+        </div>
+        <div class="controls">
+          <span class="pill" id="quarter-label">Q2 2026</span>
+          <button class="btn" id="add-row" type="button">+ Добавить строку</button>
+          <button class="btn" id="save-template" type="button">Сохранить</button>
+          <button class="btn btn-primary" id="reset-data" type="button">Сброс mock</button>
+        </div>
+      </div>
+
+      <div class="grid-4">
+        <div class="kpi">
+          <div class="label">План тонн (квартал)</div>
+          <div class="value" id="kpi-planned-tons">0</div>
+          <div class="small">Сумма M1+M2+M3 по всем строкам.</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Forecast тонн</div>
+          <div class="value" id="kpi-forecast-tons">0</div>
+          <div class="small">Σ(тонны × вероятность).</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Forecast выручки</div>
+          <div class="value" id="kpi-forecast-revenue">0</div>
+          <div class="small">Forecast тонн × цена по клиенту.</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Forecast маржи</div>
+          <div class="value" id="kpi-forecast-margin">0</div>
+          <div class="small">Пока на основе ручной margin % (источник можно подключить позже).</div>
+        </div>
+      </div>
+
+      <div class="settings">
+        <div class="field">
+          <label for="year">Год</label>
+          <input id="year" type="number" min="2024" max="2035" step="1" value="2026">
+        </div>
+        <div class="field">
+          <label for="quarter">Квартал</label>
+          <select id="quarter">
+            <option value="1">Q1</option>
+            <option value="2" selected>Q2</option>
+            <option value="3">Q3</option>
+            <option value="4">Q4</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tons-per-fte">Норма: тонн на 1 FTE за квартал</label>
+          <input id="tons-per-fte" type="number" min="1" step="1" value="120">
+        </div>
+        <div class="field">
+          <label for="workcap-rate">Оборотный капитал, % от выручки</label>
+          <input id="workcap-rate" type="number" min="0" max="100" step="0.1" value="35">
+        </div>
+        <div class="field">
+          <label for="raw-buffer">Буфер сырья, %</label>
+          <input id="raw-buffer" type="number" min="0" max="100" step="0.1" value="8">
+        </div>
+        <div class="field">
+          <label for="opex-per-ton">Операц. расходы на 1 т, ₽</label>
+          <input id="opex-per-ton" type="number" min="0" step="100" value="12000">
+        </div>
+      </div>
+
+      <div class="table-search">
+        <input class="search-input" id="plan-search-top" type="search" placeholder="Поиск по клиенту или продукту...">
+      </div>
+
+      <div class="table-wrap">
+        <datalist id="client-options"></datalist>
+        <datalist id="product-options"></datalist>
+        <table>
+          <colgroup>
+            <col style="width:3%">
+            <col style="width:9%">
+            <col style="width:20%">
+            <col style="width:4%">
+            <col style="width:4%">
+            <col style="width:4%">
+            <col style="width:5%">
+            <col style="width:5%">
+            <col style="width:5%">
+            <col style="width:9%">
+            <col style="width:6%">
+            <col style="width:8%">
+            <col style="width:5%">
+            <col style="width:8%">
+            <col style="width:5%">
+          </colgroup>
+          <thead>
+            <tr class="table-actions">
+              <th></th>
+              <th>
+                <div class="th-action">
+                  <button class="btn" id="add-client" type="button">+ Добавить клиента</button>
+                </div>
+              </th>
+              <th>
+                <div class="th-action">
+                  <button class="btn" id="add-product" type="button">+ Добавить продукт</button>
+                </div>
+              </th>
+              <th colspan="12">
+                <div class="th-search" style="display:flex;align-items:center;justify-content:flex-end">
+                  <button class="btn" id="total-raw-btn" type="button" style="font-size:11px;padding:4px 10px;white-space:nowrap;flex-shrink:0">Потребность в сырье</button>
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>Клиент</th>
+              <th>Продукт</th>
+              <th id="month-1-header">M1, т</th>
+              <th id="month-2-header">M2, т</th>
+              <th id="month-3-header">M3, т</th>
+              <th>План, т</th>
+              <th>Вероятность, %</th>
+              <th>Прогноз, т</th>
+              <th>План / Факт</th>
+              <th>Цена, ₽/т</th>
+              <th>Forecast выручки, ₽</th>
+              <th>Маржа, %</th>
+              <th>Forecast маржи, ₽</th>
+              <th>Проверка сырья</th>
+            </tr>
+          </thead>
+          <tbody id="plan-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">ИТОГО</td>
+              <td class="readonly ton-cell" id="sum-m1">0</td>
+              <td class="readonly ton-cell" id="sum-m2">0</td>
+              <td class="readonly ton-cell" id="sum-m3">0</td>
+              <td class="readonly ton-cell" id="sum-plan">0</td>
+              <td class="readonly prob-cell">—</td>
+              <td class="readonly ton-cell highlight" id="sum-forecast">0</td>
+              <td class="readonly">—</td>
+              <td class="readonly money-cell">—</td>
+              <td class="readonly money-cell highlight" id="sum-revenue">0</td>
+              <td class="readonly margin-cell">—</td>
+              <td class="readonly money-cell highlight" id="sum-margin">0</td>
+              <td class="readonly ton-cell highlight" id="sum-raw">0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="bottom">
+        <div class="resource">
+          <div class="label">Ресурсный расчет (из плана поставок)</div>
+          <div class="row"><span>Люди (FTE)</span><strong id="resource-fte">0</strong></div>
+          <div class="row"><span>Фонд ОПЕКС, ₽</span><strong id="resource-opex">0</strong></div>
+          <div class="row"><span>Нужный оборотный капитал, ₽</span><strong id="resource-workcap">0</strong></div>
+          <div class="row"><span>Сырье с буфером, т</span><strong id="resource-raw-buffer">0</strong></div>
+          <div class="small">Формулы: FTE = Forecast тонн / норма на FTE; ОПЕКС = Forecast тонн × ОПЕКС/т; Оборотка = Forecast выручки × %; Сырье с буфером = сырье forecast × (1 + буфер).</div>
+        </div>
+
+        <div class="summary">
+          <div class="label">Сводка по автоматизации</div>
+          <div class="row"><span>Ручной ввод</span><strong>клиент, продукт, M1-M3, вероятность, цена, маржа</strong></div>
+          <div class="row"><span>Авторасчет</span><strong>план, forecast, выручка, маржа, ресурсы</strong></div>
+          <div class="row"><span>Проверка качества</span><strong id="quality-check">OK</strong></div>
+          <div class="small">Если вероятность > 100% или меньше 0%, строка подсвечивается предупреждением.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="ep-overlay" id="ep-overlay"></div>
+  <div class="ep-drawer" id="ep-drawer" role="complementary" aria-label="План исполнения по клиенту">
+    <div class="ep-drawer-header" id="ep-drawer-header">
+      <div class="ep-header-top">
+        <h2 class="ep-client-name" id="ep-client-name">Клиент</h2>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="ep-quarter-badge" id="ep-quarter-badge">Q2 2026</span>
+          <button class="ep-close-btn" id="ep-close-btn" type="button" aria-label="Закрыть">×</button>
+        </div>
+      </div>
+      <div class="ep-kpi-row" id="ep-kpi-row"></div>
+    </div>
+    <div class="ep-body" id="ep-body"></div>
+  </div>
+
+  <div class="raw-check-overlay" id="raw-check-overlay" aria-hidden="true">
+    <div class="raw-check-modal" role="dialog" aria-modal="true" aria-labelledby="raw-check-title">
+      <div class="raw-check-head">
+        <div>
+          <h3 class="raw-check-title" id="raw-check-title">Проверка сырья</h3>
+          <p class="raw-check-subtitle" id="raw-check-subtitle"></p>
+        </div>
+        <button class="raw-close-btn" id="raw-check-close" type="button" aria-label="Закрыть">×</button>
+      </div>
+
+      <div class="raw-check-empty" id="raw-check-empty" style="display:none"></div>
+
+      <table class="raw-check-table" id="raw-check-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Сырье</th>
+            <th>По рецепту, кг/т</th>
+            <th>Нужно, кг</th>
+            <th>На складе, кг</th>
+            <th>Дефицит/запас, кг</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+        <tbody id="raw-check-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Action Plan Drawer -->
+  <div class="action-plan-overlay" id="action-plan-overlay"></div>
+  <div class="action-plan-drawer" id="action-plan-drawer" role="complementary" aria-label="План действий">
+    <div class="action-plan-header" id="action-plan-header">
+      <div class="action-plan-header-top">
+        <h2 class="action-plan-title" id="action-plan-title">План действий</h2>
+        <button class="action-plan-close-btn" id="action-plan-close-btn" type="button" aria-label="Закрыть">×</button>
+      </div>
+      <div class="action-plan-targets" id="action-plan-targets"></div>
+    </div>
+    <div class="action-plan-body" id="action-plan-body"></div>
+  </div>
+
+  <script>
+    window.__sharedStateConfig = {
+      keys: [
+        'cloto_quarterly_supply_plan_v2_q2',
+        'cloto_quarterly_supply_plan_v2_q3',
+        'cloto_quarterly_supply_plan_v2_q4',
+        'cloto_quarterly_supply_plan_v1',
+        'cloto_sales_orders_new',
+        'cloto_client_cards_v2'
+      ],
+      prefixes: ['cloto_cost_calc_custom_custom-', 'cloto_sklad_', 'cloto_product_']
+    };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
+    (function () {
+      var STORAGE_KEY_BASE = 'cloto_quarterly_supply_plan_v2';
+      var ORDERS_STORAGE_KEY = 'cloto_sales_orders_new';
+      var CLIENT_STORAGE_KEY = 'cloto_client_cards_v2';
+      var COMPANIES_LIST_KEY = 'cloto_companies_list_v1';
+      var COST_STATE_PREFIX = 'cloto_cost_calc_custom_custom-';
+      var SKLAD_STATE_PREFIX = 'cloto_sklad_';
+      var MAX_PLAN_ROWS = 2;
+
+      var defaults = {
+        year: 2026,
+        quarter: 2,
+        tonsPerFte: 120,
+        workcapRate: 35,
+        rawBuffer: 8,
+        opexPerTon: 12000,
+        excludedClientProductKeys: [],
+        rows: [
+          { client: 'Halliburton', product: 'OPTITROL X19', m1: 40, m2: 70, m3: 90, probability: 50, pricePerTon: 168000, marginPct: 18, rawCoef: 1.07 },
+          { client: 'Schlumberger', product: 'STABILIGHT 44', m1: 35, m2: 45, m3: 55, probability: 60, pricePerTon: 214000, marginPct: 16, rawCoef: 1.04 },
+          { client: 'Weatherford', product: 'SEBESCost A', m1: 20, m2: 30, m3: 30, probability: 25, pricePerTon: 191000, marginPct: 15, rawCoef: 1.08 },
+          { client: 'Газпромнефть Снабжение', product: 'MAKSFLEX P', m1: 90, m2: 110, m3: 120, probability: 75, pricePerTon: 175000, marginPct: 19, rawCoef: 1.06 },
+          { client: 'NOV', product: 'SYRYO Mix', m1: 30, m2: 40, m3: 70, probability: 90, pricePerTon: 163000, marginPct: 14, rawCoef: 1.09 }
+        ]
+      };
+
+      var activeQuarter = getQuarterFromUrl();
+      var storageKey = getQuarterStorageKey(activeQuarter);
+      var state = loadState(storageKey, activeQuarter);
+      applyClientProductSync(false);
+      clampPlanRows();
+      state.searchQuery = '';
+      state.selectedRowIndex = null;
+
+      var refs = {
+        year: document.getElementById('year'),
+        quarter: document.getElementById('quarter'),
+        tonsPerFte: document.getElementById('tons-per-fte'),
+        workcapRate: document.getElementById('workcap-rate'),
+        rawBuffer: document.getElementById('raw-buffer'),
+        opexPerTon: document.getElementById('opex-per-ton'),
+        quarterLabel: document.getElementById('quarter-label'),
+        month1Header: document.getElementById('month-1-header'),
+        month2Header: document.getElementById('month-2-header'),
+        month3Header: document.getElementById('month-3-header'),
+        planBody: document.getElementById('plan-body'),
+        clientOptions: document.getElementById('client-options'),
+        productOptions: document.getElementById('product-options'),
+        addClient: document.getElementById('add-client'),
+        addProduct: document.getElementById('add-product'),
+        planSearchTop: document.getElementById('plan-search-top'),
+        addRow: document.getElementById('add-row'),
+        saveTemplate: document.getElementById('save-template'),
+        resetData: document.getElementById('reset-data'),
+        kpiPlannedTons: document.getElementById('kpi-planned-tons'),
+        kpiForecastTons: document.getElementById('kpi-forecast-tons'),
+        kpiForecastRevenue: document.getElementById('kpi-forecast-revenue'),
+        kpiForecastMargin: document.getElementById('kpi-forecast-margin'),
+        sumM1: document.getElementById('sum-m1'),
+        sumM2: document.getElementById('sum-m2'),
+        sumM3: document.getElementById('sum-m3'),
+        sumPlan: document.getElementById('sum-plan'),
+        sumForecast: document.getElementById('sum-forecast'),
+        sumRevenue: document.getElementById('sum-revenue'),
+        sumMargin: document.getElementById('sum-margin'),
+        sumRaw: document.getElementById('sum-raw'),
+        resourceFte: document.getElementById('resource-fte'),
+        resourceOpex: document.getElementById('resource-opex'),
+        resourceWorkcap: document.getElementById('resource-workcap'),
+        resourceRawBuffer: document.getElementById('resource-raw-buffer'),
+        qualityCheck: document.getElementById('quality-check'),
+        rawCheckOverlay: document.getElementById('raw-check-overlay'),
+        rawCheckClose: document.getElementById('raw-check-close'),
+        rawCheckTitle: document.getElementById('raw-check-title'),
+        rawCheckSubtitle: document.getElementById('raw-check-subtitle'),
+        rawCheckEmpty: document.getElementById('raw-check-empty'),
+        rawCheckTable: document.getElementById('raw-check-table'),
+        rawCheckBody: document.getElementById('raw-check-body'),
+        totalRawBtn: document.getElementById('total-raw-btn'),
+        epOverlay: document.getElementById('ep-overlay'),
+        epDrawer: document.getElementById('ep-drawer'),
+        epCloseBtn: document.getElementById('ep-close-btn'),
+        epClientName: document.getElementById('ep-client-name'),
+        epQuarterBadge: document.getElementById('ep-quarter-badge'),
+        epKpiRow: document.getElementById('ep-kpi-row'),
+        epBody: document.getElementById('ep-body'),
+        actionPlanOverlay: document.getElementById('action-plan-overlay'),
+        actionPlanDrawer: document.getElementById('action-plan-drawer'),
+        actionPlanCloseBtn: document.getElementById('action-plan-close-btn'),
+        actionPlanTitle: document.getElementById('action-plan-title'),
+        actionPlanTargets: document.getElementById('action-plan-targets'),
+        actionPlanBody: document.getElementById('action-plan-body')
+      };
+
+      bindStaticControls();
+      render();
+
+      // Debounce for applyClientProductSync to prevent creating duplicates on every keystroke
+      var syncTimeoutId = null;
+      function debouncedClientProductSync() {
+        if (syncTimeoutId) clearTimeout(syncTimeoutId);
+        syncTimeoutId = setTimeout(function() {
+          applyClientProductSync(true);
+        }, 1500); // Wait 1.5 seconds after last change
+      }
+
+      window.addEventListener('storage', function (event) {
+        if (!event.key || event.key === CLIENT_STORAGE_KEY) {
+          debouncedClientProductSync();
+        }
+      });
+      window.addEventListener('focus', function () {
+        applyClientProductSync(true);
+      });
+      window.addEventListener('pageshow', function () {
+        applyClientProductSync(true);
+      });
+
+      function bindStaticControls() {
+        [refs.year, refs.quarter, refs.tonsPerFte, refs.workcapRate, refs.rawBuffer, refs.opexPerTon].forEach(function (field) {
+          field.addEventListener('input', function () {
+            var requestedQuarter = toNumber(refs.quarter.value, state.quarter);
+            if (requestedQuarter !== state.quarter) {
+              navigateToQuarter(requestedQuarter);
+              return;
+            }
+            state.year = toNumber(refs.year.value, defaults.year);
+            state.tonsPerFte = toNumber(refs.tonsPerFte.value, defaults.tonsPerFte);
+            state.workcapRate = toNumber(refs.workcapRate.value, defaults.workcapRate);
+            state.rawBuffer = toNumber(refs.rawBuffer.value, defaults.rawBuffer);
+            state.opexPerTon = toNumber(refs.opexPerTon.value, defaults.opexPerTon);
+            persist();
+            render();
+          });
+        });
+
+        refs.addRow.addEventListener('click', function () {
+          state.rows.push(createBlankRow('Новый клиент'));
+          persist();
+          render();
+        });
+
+        refs.addClient.addEventListener('click', function () {
+          state.rows.push(createBlankRow('Новый клиент'));
+          state.selectedRowIndex = state.rows.length - 1;
+          persist();
+          render();
+        });
+
+        refs.addProduct.addEventListener('click', function () {
+          if (!state.rows.length) {
+            state.rows.push(createBlankRow('Новый клиент'));
+            state.selectedRowIndex = 0;
+            persist();
+            render();
+            return;
+          }
+
+          var selectedIndex = Number.isInteger(state.selectedRowIndex) ? state.selectedRowIndex : state.rows.length - 1;
+          var baseRow = state.rows[selectedIndex] || state.rows[state.rows.length - 1];
+          var clientName = String(baseRow.client || '').trim() || 'Новый клиент';
+
+          var insertAfterIndex = selectedIndex;
+          for (var i = selectedIndex; i < state.rows.length; i += 1) {
+            if (String(state.rows[i].client || '').trim() === clientName) {
+              insertAfterIndex = i;
+            }
+          }
+
+          var newProductRow = createBlankRow(clientName);
+          newProductRow.pricePerTon = baseRow.pricePerTon;
+          newProductRow.marginPct = baseRow.marginPct;
+          newProductRow.rawCoef = baseRow.rawCoef;
+          newProductRow.probability = baseRow.probability;
+
+          state.rows.splice(insertAfterIndex + 1, 0, newProductRow);
+          state.selectedRowIndex = insertAfterIndex + 1;
+          persist();
+          render();
+        });
+
+        refs.planSearchTop.addEventListener('input', function () {
+          state.searchQuery = String(refs.planSearchTop.value || '');
+          render();
+        });
+
+        refs.saveTemplate.addEventListener('click', function () {
+          persist();
+          refs.saveTemplate.textContent = 'Сохранено';
+          setTimeout(function () { refs.saveTemplate.textContent = 'Сохранить'; }, 1200);
+        });
+
+        refs.resetData.addEventListener('click', function () {
+          state = buildQuarterDefaults(activeQuarter);
+          state.year = toNumber(refs.year.value, defaults.year);
+          persist();
+          render();
+        });
+
+        refs.totalRawBtn.addEventListener('click', openTotalRawModal);
+        refs.epCloseBtn.addEventListener('click', closeExecPlan);
+        refs.epOverlay.addEventListener('click', closeExecPlan);
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && refs.epDrawer.classList.contains('open')) closeExecPlan();
+        });
+        refs.actionPlanCloseBtn.addEventListener('click', closeActionPlan);
+        refs.actionPlanOverlay.addEventListener('click', function (event) {
+          if (event.target === refs.actionPlanOverlay) closeActionPlan();
+        });
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && refs.actionPlanDrawer.classList.contains('open')) closeActionPlan();
+        });
+        refs.rawCheckClose.addEventListener('click', closeRawCheckModal);
+        refs.rawCheckOverlay.addEventListener('click', function (event) {
+          if (event.target === refs.rawCheckOverlay) closeRawCheckModal();
+        });
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape' && refs.rawCheckOverlay.classList.contains('open')) {
+            closeRawCheckModal();
+          }
+        });
+      }
+
+      function loadState(storageKeyToLoad, fallbackQuarter) {
+        try {
+          var raw = localStorage.getItem(storageKeyToLoad);
+          if (!raw) {
+            var legacyRaw = localStorage.getItem('cloto_quarterly_supply_plan_v1');
+            if (legacyRaw && fallbackQuarter === 2) raw = legacyRaw;
+          }
+          if (!raw) return buildQuarterDefaults(fallbackQuarter);
+          var parsed = JSON.parse(raw);
+          if (!parsed || !Array.isArray(parsed.rows)) return buildQuarterDefaults(fallbackQuarter);
+          return {
+            year: toNumber(parsed.year, defaults.year),
+            quarter: fallbackQuarter,
+            tonsPerFte: toNumber(parsed.tonsPerFte, defaults.tonsPerFte),
+            workcapRate: toNumber(parsed.workcapRate, defaults.workcapRate),
+            rawBuffer: toNumber(parsed.rawBuffer, defaults.rawBuffer),
+            opexPerTon: toNumber(parsed.opexPerTon, defaults.opexPerTon),
+            excludedClientProductKeys: Array.isArray(parsed.excludedClientProductKeys)
+              ? parsed.excludedClientProductKeys.map(function (key) { return String(key); })
+              : [],
+            rows: parsed.rows.map(normalizeRow).slice(0, MAX_PLAN_ROWS)
+          };
+        } catch (error) {
+          return buildQuarterDefaults(fallbackQuarter);
+        }
+      }
+
+      function buildQuarterDefaults(quarter) {
+        var cloned = JSON.parse(JSON.stringify(defaults));
+        cloned.quarter = quarter;
+        cloned.rows = (Array.isArray(cloned.rows) ? cloned.rows : []).slice(0, MAX_PLAN_ROWS);
+        return cloned;
+      }
+
+      function clampPlanRows() {
+        if (!Array.isArray(state.rows)) {
+          state.rows = [];
+          return false;
+        }
+        if (state.rows.length <= MAX_PLAN_ROWS) return false;
+        state.rows = state.rows.slice(0, MAX_PLAN_ROWS);
+        if (Number.isInteger(state.selectedRowIndex) && state.selectedRowIndex >= state.rows.length) {
+          state.selectedRowIndex = state.rows.length ? state.rows.length - 1 : null;
+        }
+        return true;
+      }
+
+      function getQuarterFromUrl() {
+        try {
+          var value = Number(new URLSearchParams(window.location.search).get('quarter'));
+          if (value >= 1 && value <= 4) return value;
+        } catch (error) {}
+        return 2;
+      }
+
+      function getQuarterStorageKey(quarter) {
+        return STORAGE_KEY_BASE + '_q' + String(quarter);
+      }
+
+      function navigateToQuarter(quarter) {
+        var q = Math.max(1, Math.min(4, Number(quarter) || 2));
+        window.location.href = window.location.pathname + '?quarter=' + String(q);
+      }
+
+      function readClientStore() {
+        try {
+          var raw = localStorage.getItem(CLIENT_STORAGE_KEY);
+          if (!raw) return {};
+          var parsed = JSON.parse(raw);
+          return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function normalizeKey(value) {
+        return String(value || '').trim().toLowerCase();
+      }
+
+      function parseLooseNumber(value) {
+        if (value === null || value === undefined) return NaN;
+        if (typeof value === 'number') return Number.isFinite(value) ? value : NaN;
+        var text = String(value).trim();
+        if (!text) return NaN;
+        text = text
+          .replace(/\s+/g, '')
+          .replace(/₽/g, '')
+          .replace(/%/g, '')
+          .replace(/,/g, '.');
+        var number = Number(text);
+        return Number.isFinite(number) ? number : NaN;
+      }
+
+      function toNumberOrZero(value) {
+        var number = parseLooseNumber(value);
+        return Number.isFinite(number) ? number : 0;
+      }
+
+      function findProductDefaultsForRow(row, store) {
+        var targetClient = normalizeMatchValue(row && row.client);
+        var targetProduct = normalizeProductMatchValue(row && row.product);
+        if (!targetClient || !targetProduct) return null;
+
+        var best = null;
+        var bestScore = 0;
+        var bestQuality = -1;
+
+        Object.keys(store || {}).forEach(function (companyName) {
+          if (normalizeMatchValue(companyName) !== targetClient) return;
+
+          var card = store[companyName] || {};
+          var products = Array.isArray(card.products) ? card.products : [];
+          products.forEach(function (product) {
+            var productName = String(product && product.name || '').trim();
+            if (!productName) return;
+
+            var candidate = normalizeProductMatchValue(productName);
+            if (!candidate || !productNamesMatch(targetProduct, candidate)) return;
+
+            var score = scoreNormalizedProductMatch(targetProduct, candidate);
+            var candidatePrice = toNumberOrZero(product && product.exwPrice);
+            var candidateMarginRaw = parseLooseNumber(product && product.margin);
+            var candidateMargin = Number.isFinite(candidateMarginRaw) ? candidateMarginRaw : 0;
+            var quality = (candidatePrice > 0 ? 1 : 0) + (Number.isFinite(candidateMarginRaw) ? 1 : 0);
+
+            if (score < bestScore) return;
+            if (score === bestScore && quality <= bestQuality) return;
+
+            best = {
+              client: companyName,
+              product: productName,
+              pricePerTon: candidatePrice,
+              marginPct: candidateMargin
+            };
+            bestScore = score;
+            bestQuality = quality;
+          });
+        });
+
+        return best;
+      }
+
+      function scoreNormalizedProductMatch(left, right) {
+        if (!left || !right) return 0;
+        var score = 0;
+        if (left === right) score += 100;
+        if (left.indexOf(right) !== -1 || right.indexOf(left) !== -1) score += 50;
+
+        var leftTokens = tokenize(left);
+        var rightTokens = tokenize(right);
+        var overlap = countOverlap(leftTokens, rightTokens);
+        score += overlap * 12;
+
+        return score;
+      }
+
+      function getRowKey(row) {
+        return normalizeKey(row && row.client) + '::' + normalizeKey(row && row.product);
+      }
+
+      function isClientProductRow(row) {
+        var key = getRowKey(row);
+        if (!key || key === '::') return false;
+        var store = readClientStore();
+        var found = false;
+        Object.keys(store).forEach(function (companyName) {
+          if (found) return;
+          var card = store[companyName] || {};
+          var products = Array.isArray(card.products) ? card.products : [];
+          products.forEach(function (product) {
+            if (found) return;
+            var productName = String(product && product.name || '').trim();
+            if (!productName) return;
+            var productKey = normalizeKey(companyName) + '::' + normalizeKey(productName);
+            if (productKey === key) found = true;
+          });
+        });
+        return found;
+      }
+
+      function applyClientProductSync(shouldRender) {
+        var byKey = {};
+        var productDefaultsByKey = {};
+        var stateIndexByKey = {};
+
+        clampPlanRows();
+
+        state.rows.forEach(function (row, index) {
+          var key = normalizeKey(row.client) + '::' + normalizeKey(row.product);
+          if (!stateIndexByKey[key]) stateIndexByKey[key] = [];
+          stateIndexByKey[key].push(index);
+        });
+
+        var store = readClientStore();
+        var added = 0;
+        var updated = 0;
+        var excludedMap = {};
+        (Array.isArray(state.excludedClientProductKeys) ? state.excludedClientProductKeys : []).forEach(function (key) {
+          excludedMap[String(key)] = true;
+        });
+
+        state.rows.forEach(function (row) {
+          var defaults = findProductDefaultsForRow(row, store);
+          if (!defaults) return;
+
+          if (row.pricePerTon !== defaults.pricePerTon || row.marginPct !== defaults.marginPct) {
+            row.pricePerTon = defaults.pricePerTon;
+            row.marginPct = defaults.marginPct;
+            updated += 1;
+          }
+        });
+
+
+        Object.keys(store).forEach(function (companyName) {
+          var card = store[companyName] || {};
+          var products = Array.isArray(card.products) ? card.products : [];
+          products.forEach(function (product) {
+
+            var productName = String(product && product.name || '').trim();
+            if (!productName) return;
+            // Skip placeholder names like "Новый продукт"
+            var placeholders = ['новый продукт', 'new product', 'new item'];
+            if (placeholders.indexOf(normalizeKey(productName)) !== -1) return;
+            var key = normalizeKey(companyName) + '::' + normalizeKey(productName);
+
+            if (excludedMap[key]) return;
+            byKey[key] = true;
+            productDefaultsByKey[key] = {
+
+              client: companyName,
+              product: productName,
+              pricePerTon: toNumberOrZero(product && product.exwPrice),
+              marginPct: toNumberOrZero(product && product.margin)
+            };
+
+          });
+        });
+
+        Object.keys(productDefaultsByKey).forEach(function (key) {
+
+          var defaults = productDefaultsByKey[key];
+          var matchedIndexes = stateIndexByKey[key] || [];
+
+          if (!matchedIndexes.length) {
+            // Deduplication: check if row with similar client::product already exists
+            // This prevents creating duplicates when product name changes during editing
+            var existingRowForProduct = false;
+            state.rows.forEach(function(row) {
+              if (normalizeMatchValue(row.client) === normalizeMatchValue(defaults.client)) {
+
+                // Check if any existing row for this client is a partial/intermediate match
+                var existingProdKey = normalizeProductMatchValue(row.product);
+                var newProdKey = normalizeProductMatchValue(defaults.product);
+
+                if (productNamesMatch(existingProdKey, newProdKey)) {
+                  existingRowForProduct = true;
+                }
+              }
+            });
+
+            
+            if (existingRowForProduct) {
+              updated += 1;
+              return;
+            }
+            
+            state.rows.push(normalizeRow({
+              client: defaults.client,
+              product: defaults.product,
+              m1: 0,
+              m2: 0,
+              m3: 0,
+              probability: 30,
+              pricePerTon: defaults.pricePerTon,
+              marginPct: defaults.marginPct,
+              rawCoef: 1
+            }));
+            added += 1;
+            return;
+          }
+
+          matchedIndexes.forEach(function (rowIndex) {
+            var row = state.rows[rowIndex];
+            if (!row) return;
+            var nextPrice = defaults.pricePerTon;
+            var nextMargin = defaults.marginPct;
+            if (row.pricePerTon !== nextPrice || row.marginPct !== nextMargin) {
+              row.pricePerTon = nextPrice;
+              row.marginPct = nextMargin;
+              updated += 1;
+            }
+          });
+        });
+
+        if (clampPlanRows()) {
+          updated += 1;
+        }
+
+        if (!added && !updated) return;
+        persist();
+        if (shouldRender) render();
+      }
+
+      function normalizeRow(row) {
+        return {
+          client: String(row.client || ''),
+          product: String(row.product || ''),
+          m1: toNumber(row.m1, 0),
+          m2: toNumber(row.m2, 0),
+          m3: toNumber(row.m3, 0),
+          probability: toNumber(row.probability, 0),
+          pricePerTon: toNumber(row.pricePerTon, 0),
+          marginPct: toNumber(row.marginPct, 0),
+          rawCoef: toNumber(row.rawCoef, 1)
+        };
+      }
+
+      function persist() {
+        localStorage.setItem(storageKey, JSON.stringify(state));
+      }
+
+      function render() {
+        refs.year.value = state.year;
+        refs.quarter.value = String(state.quarter);
+        refs.tonsPerFte.value = state.tonsPerFte;
+        refs.workcapRate.value = state.workcapRate;
+        refs.rawBuffer.value = state.rawBuffer;
+        refs.opexPerTon.value = state.opexPerTon;
+        refs.planSearchTop.value = state.searchQuery || '';
+
+        var monthLabels = getQuarterMonths(state.quarter).map(function (month) {
+          return month + ' ' + state.year;
+        });
+
+        refs.quarterLabel.textContent = 'Q' + state.quarter + ' ' + state.year;
+        refs.month1Header.textContent = monthLabels[0] + ', т';
+        refs.month2Header.textContent = monthLabels[1] + ', т';
+        refs.month3Header.textContent = monthLabels[2] + ', т';
+
+        var store = readClientStore();
+        var syncedFinancials = false;
+        state.rows.forEach(function (row) {
+          var defaults = findProductDefaultsForRow(row, store);
+          if (!defaults) return;
+
+          if (row.pricePerTon !== defaults.pricePerTon || row.marginPct !== defaults.marginPct) {
+            row.pricePerTon = defaults.pricePerTon;
+            row.marginPct = defaults.marginPct;
+            syncedFinancials = true;
+          }
+        });
+        if (syncedFinancials) persist();
+
+        renderLookupOptions();
+
+        var filteredRows = getFilteredRows();
+
+        refs.planBody.innerHTML = filteredRows.map(function (item) {
+          var row = item.row;
+          var index = item.index;
+          var computed = rowComputed(row);
+          var orderProgress = getQuarterOrderProgress(row);
+          var badProbability = row.probability < 0 || row.probability > 100;
+          var palette = getClientPalette(row.client);
+          return '<tr class="client-row" data-index="' + index + '" style="--client-row-bg:' + palette.row + ';--client-sticky-bg:' + palette.sticky + ';--client-accent:' + palette.accent + ';">'
+            + '<td class="delete-cell" style="vertical-align:middle">'
+            + '<button class="delete-row-btn" type="button" data-delete-index="' + index + '" title="Удалить строку" aria-label="Удалить строку">🗑</button></td>'
+            + '<td><input data-field="client" list="client-options" value="' + escapeHtmlAttr(row.client) + '"></td>'
+            + '<td><input data-field="product" list="product-options" value="' + escapeHtmlAttr(row.product) + '"></td>'
+            + '<td><input data-field="m1" type="number" min="0" step="0.1" value="' + row.m1 + '"></td>'
+            + '<td><input data-field="m2" type="number" min="0" step="0.1" value="' + row.m2 + '"></td>'
+            + '<td><input data-field="m3" type="number" min="0" step="0.1" value="' + row.m3 + '"></td>'
+            + '<td class="readonly ton-cell">' + formatTon(computed.planTons) + '</td>'
+            + '<td><input class="' + (badProbability ? 'warn' : '') + '" data-field="probability" type="number" min="0" max="100" step="1" value="' + row.probability + '"></td>'
+            + '<td class="readonly ton-cell highlight">' + formatTon(computed.forecastTons) + '</td>'
+            + '<td class="plan-progress-cell ' + orderProgress.tone + '">' + renderPlanProgress(orderProgress) + '</td>'
+            + '<td><input data-field="pricePerTon" type="number" min="0" step="100" value="' + row.pricePerTon + '"></td>'
+            + '<td class="readonly money-cell">' + formatMoney(computed.forecastRevenue) + '</td>'
+            + '<td><input data-field="marginPct" type="number" min="-100" max="100" step="0.1" value="' + row.marginPct + '"></td>'
+            + '<td class="readonly money-cell">' + formatMoney(computed.forecastMargin) + '</td>'
+            + '<td class="center"><button class="action-plan-row-btn" type="button" data-action-plan-index="' + index + '" title="План действий">📋</button> <button class="raw-check-btn" type="button" data-check-raw-index="' + index + '">Сырье</button></td>'
+            + '</tr>';
+        }).join('');
+
+        if (!filteredRows.length) {
+          refs.planBody.innerHTML = '<tr><td colspan="15" class="readonly" style="text-align:left;padding:16px;">По запросу ничего не найдено. Уточните клиент или продукт.</td></tr>';
+        }
+
+        bindRowControls();
+        renderTotalsAndResources();
+      }
+
+      function bindRowControls() {
+        refs.planBody.querySelectorAll('[data-delete-index]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            var index = toNumber(button.dataset.deleteIndex, -1);
+            if (index < 0 || index >= state.rows.length) return;
+            var removedRow = state.rows[index];
+            if (isClientProductRow(removedRow)) {
+              if (!Array.isArray(state.excludedClientProductKeys)) state.excludedClientProductKeys = [];
+              var removedKey = getRowKey(removedRow);
+              if (removedKey && state.excludedClientProductKeys.indexOf(removedKey) === -1) {
+                state.excludedClientProductKeys.push(removedKey);
+              }
+            }
+            state.rows.splice(index, 1);
+            state.selectedRowIndex = null;
+            persist();
+            render();
+          });
+        });
+
+        refs.planBody.querySelectorAll('input').forEach(function (input) {
+          input.addEventListener('focus', function () {
+            var row = input.closest('tr');
+            var index = toNumber(row.dataset.index, 0);
+            state.selectedRowIndex = index;
+          });
+
+          input.addEventListener('input', function () {
+            var row = input.closest('tr');
+            var index = toNumber(row.dataset.index, 0);
+            var field = input.dataset.field;
+            var current = state.rows[index];
+            if (!current) return;
+
+            if (field === 'client' || field === 'product') {
+              current[field] = String(input.value || '').trim();
+              persist();
+              // Don't call render() for client/product fields - it resets the input cursor
+              // But if client changed, update product options for this row
+              if (field === 'client') {
+                updateProductOptionsForRow(row, current);
+              }
+              return;
+            } else {
+              current[field] = toNumber(input.value, 0);
+            }
+
+            persist();
+            updateRenderedRowComputed(row, current);
+            renderTotalsAndResources();
+          });
+
+          // Also update product options when focusing on product field
+          if (input.dataset.field === 'product') {
+            input.addEventListener('focus', function () {
+              var row = input.closest('tr');
+              var current = state.rows[toNumber(row.dataset.index, 0)];
+              if (current) updateProductOptionsForRow(row, current);
+            });
+          }
+        });
+
+        refs.planBody.querySelectorAll('[data-check-raw-index]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            var index = toNumber(button.getAttribute('data-check-raw-index'), -1);
+            if (index < 0 || index >= state.rows.length) return;
+            openRawCheckModal(state.rows[index]);
+          });
+        });
+
+        refs.planBody.querySelectorAll('[data-action-plan-index]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            var index = toNumber(button.getAttribute('data-action-plan-index'), -1);
+            if (index < 0 || index >= state.rows.length) return;
+            openActionPlan(index);
+          });
+        });
+
+      }
+
+      function renderLookupOptions() {
+        var clientsMap = {};
+        var productsMap = {};
+
+        state.rows.forEach(function (row) {
+          var clientName = String(row.client || '').trim();
+          var productName = String(row.product || '').trim();
+          if (clientName && !hasCorruptedChars(clientName)) {
+            clientsMap[clientName.toLowerCase()] = clientName;
+          }
+          if (productName && !hasCorruptedChars(productName)) {
+            productsMap[productName.toLowerCase()] = productName;
+          }
+        });
+
+        // Read from companies list (primary source, always valid)
+        try {
+          var companiesList = JSON.parse(localStorage.getItem(COMPANIES_LIST_KEY) || '[]');
+          if (Array.isArray(companiesList)) {
+            companiesList.forEach(function (companyName) {
+              var safeCompany = String(companyName || '').trim();
+              if (safeCompany && !hasCorruptedChars(safeCompany)) {
+                clientsMap[safeCompany.toLowerCase()] = safeCompany;
+              }
+            });
+          }
+        } catch (error) {
+          // Ignore parse errors
+        }
+
+        // Read from client cards (secondary source, may have corrupted data)
+        var store = readClientStore();
+        Object.keys(store).forEach(function (companyName) {
+          var safeCompany = String(companyName || '').trim();
+          // Skip entries with corrupted characters (multiple ? or mixed ?)
+          if (safeCompany && !hasCorruptedChars(safeCompany)) {
+            clientsMap[safeCompany.toLowerCase()] = safeCompany;
+          }
+          var card = store[companyName] || {};
+          var products = Array.isArray(card.products) ? card.products : [];
+          products.forEach(function (product) {
+            var productName = String(product && product.name || '').trim();
+            if (productName && !hasCorruptedChars(productName)) {
+              productsMap[productName.toLowerCase()] = productName;
+            }
+          });
+        });
+
+        var clientList = Object.keys(clientsMap).map(function (key) { return clientsMap[key]; }).sort(function (a, b) {
+          return a.localeCompare(b, 'ru', { sensitivity: 'base' });
+        });
+        var productList = Object.keys(productsMap).map(function (key) { return productsMap[key]; }).sort(function (a, b) {
+          return a.localeCompare(b, 'ru', { sensitivity: 'base' });
+        });
+
+        refs.clientOptions.innerHTML = clientList.map(function (name) {
+          return '<option value="' + escapeHtmlAttr(name) + '"></option>';
+        }).join('');
+
+        refs.productOptions.innerHTML = productList.map(function (name) {
+          return '<option value="' + escapeHtmlAttr(name) + '"></option>';
+        }).join('');
+      }
+
+      function hasCorruptedChars(str) {
+        // Check if string contains corrupted Cyrillic characters (?)
+        // or excessive consecutive ?
+        return str.indexOf('?') !== -1;
+      }
+
+      function getProductsForClient(clientName) {
+        var cleanName = String(clientName || '').trim();
+        if (!cleanName) return [];
+
+        var store = readClientStore();
+        var card = store[cleanName];
+        if (!card) return [];
+
+        var products = Array.isArray(card.products) ? card.products : [];
+        var result = [];
+        products.forEach(function (product) {
+          var productName = String(product && product.name || '').trim();
+          if (productName && !hasCorruptedChars(productName)) {
+            result.push(productName);
+          }
+        });
+        return result;
+      }
+
+      function updateProductOptionsForRow(rowElement, rowData) {
+        if (!rowElement || !rowData) return;
+        var clientName = String(rowData.client || '').trim();
+        
+        // Get products specific to this client
+        var clientProducts = getProductsForClient(clientName);
+        
+        // Also include already-used products in the table (for consistency)
+        var allProductsMap = {};
+        clientProducts.forEach(function (p) {
+          allProductsMap[p.toLowerCase()] = p;
+        });
+
+        // Add any product from current rows that matches this client
+        state.rows.forEach(function (row) {
+          if (normalizeKey(row.client) === normalizeKey(clientName)) {
+            var productName = String(row.product || '').trim();
+            if (productName && !hasCorruptedChars(productName)) {
+              allProductsMap[productName.toLowerCase()] = productName;
+            }
+          }
+        });
+
+        // Sort the list
+        var productList = Object.keys(allProductsMap)
+          .map(function (key) { return allProductsMap[key]; })
+          .sort(function (a, b) {
+            return a.localeCompare(b, 'ru', { sensitivity: 'base' });
+          });
+
+        // Update the datalist
+        refs.productOptions.innerHTML = productList.map(function (name) {
+          return '<option value="' + escapeHtmlAttr(name) + '"></option>';
+        }).join('');
+      }
+
+      function updateRenderedRowComputed(rowElement, row) {
+        if (!rowElement || !row) return;
+        var computed = rowComputed(row);
+        var cells = rowElement.children;
+        if (!cells || cells.length < 15) return;
+
+        cells[6].textContent = formatTon(computed.planTons);
+        cells[8].textContent = formatTon(computed.forecastTons);
+        var progress = getQuarterOrderProgress(row);
+        cells[9].className = 'plan-progress-cell ' + progress.tone;
+        cells[9].innerHTML = renderPlanProgress(progress);
+        cells[11].textContent = formatMoney(computed.forecastRevenue);
+        cells[13].textContent = formatMoney(computed.forecastMargin);
+
+        var probabilityInput = rowElement.querySelector('input[data-field="probability"]');
+        if (probabilityInput) {
+          var badProbability = row.probability < 0 || row.probability > 100;
+          probabilityInput.classList.toggle('warn', badProbability);
+        }
+      }
+
+      function getFilteredRows() {
+        var search = String(state.searchQuery || '').trim().toLowerCase();
+        if (!search) {
+          return state.rows.map(function (row, index) {
+            return { row: row, index: index };
+          });
+        }
+
+        return state.rows.map(function (row, index) {
+          return { row: row, index: index };
+        }).filter(function (item) {
+          var client = String(item.row.client || '').toLowerCase();
+          var product = String(item.row.product || '').toLowerCase();
+          return client.indexOf(search) !== -1 || product.indexOf(search) !== -1;
+        });
+      }
+
+      function createBlankRow(clientName) {
+        return {
+          client: clientName || 'Новый клиент',
+          product: 'Новый продукт',
+          m1: 0,
+          m2: 0,
+          m3: 0,
+          probability: 30,
+          pricePerTon: 0,
+          marginPct: 0,
+          rawCoef: 1
+        };
+      }
+
+      function getClientPalette(client) {
+        var key = String(client || '').trim().toLowerCase();
+        if (!key) {
+          return {
+            row: '#ffffff',
+            sticky: '#f4faf7',
+            accent: '#9acdbf'
+          };
+        }
+
+        var hue = hashString(key) % 360;
+        return {
+          row: 'hsl(' + hue + ' 70% 96%)',
+          sticky: 'hsl(' + hue + ' 72% 92%)',
+          accent: 'hsl(' + hue + ' 55% 58%)'
+        };
+      }
+
+      function hashString(value) {
+        var hash = 0;
+        for (var i = 0; i < value.length; i += 1) {
+          hash = ((hash << 5) - hash) + value.charCodeAt(i);
+          hash |= 0;
+        }
+        return Math.abs(hash);
+      }
+
+      function rowComputed(row) {
+        var planTons = Math.max(0, row.m1) + Math.max(0, row.m2) + Math.max(0, row.m3);
+        var probability = clamp(row.probability, 0, 100) / 100;
+        var forecastTons = planTons * probability;
+        var forecastRevenue = forecastTons * Math.max(0, row.pricePerTon);
+        var forecastMargin = forecastRevenue * (row.marginPct / 100);
+        var forecastRawTons = forecastTons * Math.max(0, row.rawCoef);
+
+        return {
+          planTons: planTons,
+          forecastTons: forecastTons,
+          forecastRevenue: forecastRevenue,
+          forecastMargin: forecastMargin,
+          forecastRawTons: forecastRawTons
+        };
+      }
+
+      function readQuarterOrders() {
+        try {
+          var parsed = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function getQuarterOrderProgress(row) {
+        var computed = rowComputed(row);
+        var planTons = Math.max(0, computed.forecastTons || computed.planTons);
+        var orderedTons = getOrderedTonsForRow(row);
+        var fulfillmentPct = planTons > 0 ? (orderedTons / planTons) * 100 : 0;
+        var tone = 'neutral';
+
+        if (planTons <= 0 && orderedTons > 0) {
+          tone = 'ahead';
+        } else if (planTons > 0 && orderedTons > planTons) {
+          tone = 'ahead';
+        } else if (planTons > 0 && orderedTons < planTons) {
+          tone = 'behind';
+        } else if (planTons > 0) {
+          tone = 'on-track';
+        }
+
+        return {
+          orderedTons: orderedTons,
+          planTons: planTons,
+          fulfillmentPct: fulfillmentPct,
+          tone: tone
+        };
+      }
+
+      function renderPlanProgress(progress) {
+        if (!progress) {
+          return '<div class="plan-progress muted">—</div>';
+        }
+
+        if (progress.planTons <= 0 && progress.orderedTons <= 0) {
+          return '<div class="plan-progress muted"><div class="plan-progress-main">—</div><div class="plan-progress-sub">Нет плана</div></div>';
+        }
+
+        return '<div class="plan-progress">'
+          + '<div class="plan-progress-main">' + formatTon(progress.orderedTons) + ' / ' + formatTon(progress.planTons) + '</div>'
+          + '<div class="plan-progress-sub">' + formatPercent(progress.fulfillmentPct) + ' выполнения</div>'
+          + '</div>';
+      }
+
+      function getOrderedTonsForRow(row) {
+        var orders = readQuarterOrders();
+        var plannedProductsByClient = getPlannedProductsByClient();
+        var targetClient = normalizeMatchValue(row && row.client);
+        var targetProduct = normalizeProductMatchValue(row && row.product);
+        var total = 0;
+
+        orders.forEach(function (order) {
+          var clientName = normalizeMatchValue(order && order.buyer && order.buyer.name);
+          if (!clientName || clientName !== targetClient) return;
+
+          var lines = Array.isArray(order && order.lines) ? order.lines : [];
+          lines.forEach(function (line) {
+            var tons = toNumber(line && line.tons, 0);
+            if (tons <= 0) return;
+
+            var relevantDate = String(line && line.deliveryDate || order && order.date || '').trim();
+            if (!isDateInQuarter(relevantDate, state.year, state.quarter)) return;
+
+            var productName = String(line && line.productName || '').trim();
+            if (!productName) {
+              var inferredProduct = inferProductFromPlan(clientName, plannedProductsByClient);
+              if (inferredProduct) productName = inferredProduct;
+            }
+            if (!productName) return;
+
+            if (productNamesMatch(targetProduct, normalizeProductMatchValue(productName))) {
+              total += tons;
+            }
+          });
+        });
+
+        return total;
+      }
+
+      function getPlannedProductsByClient() {
+        var map = {};
+        state.rows.forEach(function (row) {
+          var computed = rowComputed(row);
+          var clientKey = normalizeMatchValue(row && row.client);
+          var productName = String(row && row.product || '').trim();
+          if (!clientKey || !productName || computed.planTons <= 0) return;
+          if (!map[clientKey]) map[clientKey] = [];
+          if (map[clientKey].indexOf(productName) === -1) map[clientKey].push(productName);
+        });
+        return map;
+      }
+
+      function inferProductFromPlan(clientKey, plannedProductsByClient) {
+        var candidates = plannedProductsByClient[clientKey] || [];
+        return candidates.length === 1 ? candidates[0] : '';
+      }
+
+      function isDateInQuarter(dateValue, year, quarter) {
+        var match = String(dateValue || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!match) return false;
+        var dateYear = Number(match[1]);
+        var month = Number(match[2]);
+        if (dateYear !== Number(year)) return false;
+        var quarterFromDate = Math.floor((month - 1) / 3) + 1;
+        return quarterFromDate === Number(quarter);
+      }
+
+      function normalizeMatchValue(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/ё/g, 'е')
+          .replace(/[^a-zа-я0-9]+/gi, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function normalizeProductMatchValue(value) {
+        return normalizeMatchValue(String(value || '').replace(/\([^)]*\)/g, ' '));
+      }
+
+      function productNamesMatch(left, right) {
+        if (!left || !right) return false;
+        if (left === right) return true;
+        if (left.indexOf(right) !== -1 || right.indexOf(left) !== -1) return true;
+        var leftTokens = left.split(' ').filter(Boolean);
+        var rightTokens = right.split(' ').filter(Boolean);
+        if (!leftTokens.length || !rightTokens.length) return false;
+        var matches = 0;
+        leftTokens.forEach(function (token) {
+          if (rightTokens.indexOf(token) !== -1) matches += 1;
+        });
+        return matches > 0 && matches >= Math.min(leftTokens.length, rightTokens.length);
+      }
+
+      function formatPercent(value) {
+        return formatNumber(value, 1) + '%';
+      }
+
+      
+
+      function renderTotalsAndResources() {
+        var totals = state.rows.reduce(function (acc, row) {
+          var c = rowComputed(row);
+          acc.m1 += Math.max(0, row.m1);
+          acc.m2 += Math.max(0, row.m2);
+          acc.m3 += Math.max(0, row.m3);
+          acc.plan += c.planTons;
+          acc.forecast += c.forecastTons;
+          acc.revenue += c.forecastRevenue;
+          acc.margin += c.forecastMargin;
+          acc.raw += c.forecastRawTons;
+          if (row.probability < 0 || row.probability > 100) acc.issues += 1;
+          return acc;
+        }, { m1: 0, m2: 0, m3: 0, plan: 0, forecast: 0, revenue: 0, margin: 0, raw: 0, issues: 0 });
+
+        refs.kpiPlannedTons.textContent = formatTon(totals.plan);
+        refs.kpiForecastTons.textContent = formatTon(totals.forecast);
+        refs.kpiForecastRevenue.textContent = formatMoney(totals.revenue);
+        refs.kpiForecastMargin.textContent = formatMoney(totals.margin);
+
+        refs.sumM1.textContent = formatTon(totals.m1);
+        refs.sumM2.textContent = formatTon(totals.m2);
+        refs.sumM3.textContent = formatTon(totals.m3);
+        refs.sumPlan.textContent = formatTon(totals.plan);
+        refs.sumForecast.textContent = formatTon(totals.forecast);
+        refs.sumRevenue.textContent = formatMoney(totals.revenue);
+        refs.sumMargin.textContent = formatMoney(totals.margin);
+        refs.sumRaw.textContent = formatTon(totals.raw);
+
+        var fte = totals.forecast / Math.max(1, state.tonsPerFte);
+        var opex = totals.forecast * Math.max(0, state.opexPerTon);
+        var workcap = totals.revenue * (Math.max(0, state.workcapRate) / 100);
+        var rawWithBuffer = totals.raw * (1 + Math.max(0, state.rawBuffer) / 100);
+
+        refs.resourceFte.textContent = formatNumber(fte, 1);
+        refs.resourceOpex.textContent = formatMoney(opex);
+        refs.resourceWorkcap.textContent = formatMoney(workcap);
+        refs.resourceRawBuffer.textContent = formatTon(rawWithBuffer);
+
+        refs.qualityCheck.textContent = totals.issues ? ('Проверьте строки: ' + totals.issues) : 'OK';
+        refs.qualityCheck.className = totals.issues ? 'warn' : '';
+      }
+
+      function openRawCheckModal(row) {
+        if (!row) return;
+
+        var computed = rowComputed(row);
+        var productTons = Math.max(0, computed.forecastRawTons);
+        var recipeData = getRecipeDataForRow(row);
+
+        refs.rawCheckTitle.textContent = 'Проверка сырья: ' + (row.product || 'Без названия');
+        refs.rawCheckSubtitle.textContent =
+          'План к выпуску: ' + formatTon(productTons) + ' т. Источник рецептуры: ' + (recipeData.sourceLabel || 'не найден');
+
+        if (!recipeData.rows.length) {
+          refs.rawCheckTable.style.display = 'none';
+          refs.rawCheckBody.innerHTML = '';
+          refs.rawCheckEmpty.style.display = 'block';
+          refs.rawCheckEmpty.textContent =
+            'Рецептура для этого продукта не найдена в карточке/калькуляции. ' +
+            'Откройте карточку продукта и сохраните рецепт через кнопку "Показать рецептуру", затем повторите проверку.';
+          refs.rawCheckOverlay.classList.add('open');
+          return;
+        }
+
+        var stockRows = getLatestSkladRawRows();
+        var html = recipeData.rows.map(function (item) {
+          var needKg = Math.max(0, item.kgPerTon) * productTons;
+          var stockMatch = findBestStockMatch(item.name, stockRows);
+          var stockKg = stockMatch ? Math.max(0, stockMatch.kg) : 0;
+          var balanceKg = stockKg - needKg;
+          var enough = balanceKg >= 0;
+          var balanceLabel = (enough ? '+' : '') + formatNumber(balanceKg, 1);
+          var stockLabel = stockMatch
+            ? (formatNumber(stockKg, 1) + ' (' + stockMatch.originalUnit + ')')
+            : '0 (не найдено)';
+          return '<tr>'
+            + '<td>' + escapeHtml(item.name) + '</td>'
+            + '<td>' + formatNumber(item.kgPerTon, 1) + '</td>'
+            + '<td>' + formatNumber(needKg, 1) + '</td>'
+            + '<td>' + escapeHtml(stockLabel) + '</td>'
+            + '<td>' + balanceLabel + '</td>'
+            + '<td><span class="raw-status ' + (enough ? 'ok' : 'bad') + '">' + (enough ? 'достаточно' : 'нужно заказать') + '</span></td>'
+            + '</tr>';
+        }).join('');
+
+        refs.rawCheckBody.innerHTML = html;
+        refs.rawCheckEmpty.style.display = 'none';
+        refs.rawCheckTable.style.display = '';
+        refs.rawCheckOverlay.classList.add('open');
+      }
+
+      function closeRawCheckModal() {
+        refs.rawCheckOverlay.classList.remove('open');
+      }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  EXECUTION PLAN
+        // ═══════════════════════════════════════════════════════════════
+
+        var EP_STORAGE_KEY = 'cloto_exec_plans_v1';
+        var epCurrentClient = null; // client name currently open in drawer
+        
+        var ACTION_PLAN_STORAGE_KEY = 'cloto_quarterly_action_plans_v1';
+        var actionPlanCurrentRowIndex = null; // row index for action plan drawer
+
+        function epStorageKey() { return EP_STORAGE_KEY; }
+
+        function loadAllExecPlans() {
+          try { return JSON.parse(localStorage.getItem(epStorageKey()) || '{}'); }
+          catch(e) { return {}; }
+        }
+
+        function saveAllExecPlans(all) {
+          localStorage.setItem(epStorageKey(), JSON.stringify(all));
+        }
+
+        function epPlanKey(clientName, year, quarter) {
+          var cn = String(clientName || '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-zа-яёА-ЯЁ0-9_]/gu, '');
+          return cn + '_' + year + '_q' + quarter;
+        }
+
+        function hasExecPlan(clientName) {
+          if (!clientName) return false;
+          var all = loadAllExecPlans();
+          var key = epPlanKey(clientName, state.year, activeQuarter);
+          var plan = all[key];
+          if (!plan) return false;
+          return (plan.tasks && plan.tasks.length > 0) || (plan.risks && plan.risks.length > 0);
+        }
+
+        function loadOrCreateExecPlan(clientName) {
+          var all = loadAllExecPlans();
+          var key = epPlanKey(clientName, state.year, activeQuarter);
+          if (!all[key]) {
+            all[key] = { tasks: [], risks: [] };
+            saveAllExecPlans(all);
+          }
+          return all[key];
+        }
+
+        function persistExecPlan(clientName, plan) {
+          var all = loadAllExecPlans();
+          var key = epPlanKey(clientName, state.year, activeQuarter);
+          all[key] = plan;
+          saveAllExecPlans(all);
+        }
+
+        /* ── Action Plan Storage ── */
+        function actionPlanStorageKey(rowIndex) {
+          if (rowIndex < 0 || rowIndex >= state.rows.length) return null;
+          var row = state.rows[rowIndex];
+          var client = String(row.client || '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-zа-яёА-ЯЁ0-9_]/gu, '');
+          var product = String(row.product || '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-zа-яёА-ЯЁ0-9_]/gu, '');
+          return 'ap_' + client + '_' + product + '_q' + activeQuarter + '_' + (state.year || new Date().getFullYear());
+        }
+
+        function loadAllActionPlans() {
+          try { return JSON.parse(localStorage.getItem(ACTION_PLAN_STORAGE_KEY) || '{}'); }
+          catch(e) { return {}; }
+        }
+
+        function saveAllActionPlans(all) {
+          localStorage.setItem(ACTION_PLAN_STORAGE_KEY, JSON.stringify(all));
+        }
+
+        function loadActionPlan(rowIndex) {
+          var key = actionPlanStorageKey(rowIndex);
+          if (!key) return { steps: [] };
+          var all = loadAllActionPlans();
+          return all[key] || { steps: [] };
+        }
+
+        function saveActionPlan(rowIndex, plan) {
+          var key = actionPlanStorageKey(rowIndex);
+          if (!key) return;
+          var all = loadAllActionPlans();
+          all[key] = plan;
+          saveAllActionPlans(all);
+        }
+
+        /* ── Client rows summary ── */
+        function getClientSummary(clientName) {
+          var rows = state.rows.filter(function(r) {
+            return String(r.client || '').trim().toLowerCase() === String(clientName || '').trim().toLowerCase();
+          });
+          var planTons = 0, forecastTons = 0, forecastRevenue = 0, forecastMargin = 0;
+          rows.forEach(function(r) {
+            var c = rowComputed(r);
+            planTons += c.planTons;
+            forecastTons += c.forecastTons;
+            forecastRevenue += c.forecastRevenue;
+            forecastMargin += c.forecastMargin;
+          });
+          return {
+            rows: rows,
+            planTons: planTons,
+            forecastTons: forecastTons,
+            forecastRevenue: forecastRevenue,
+            forecastMargin: forecastMargin
+          };
+        }
+
+        /* ── Readiness ── */
+        function calcReadiness(plan) {
+          var tasks = plan.tasks || [];
+          var risks = plan.risks || [];
+          if (!tasks.length && !risks.length) return 100;
+
+          var total = tasks.length;
+          var done = tasks.filter(function(t) { return isTaskDone(t); }).length;
+
+          var base = total > 0 ? Math.round((done / total) * 100) : 100;
+          var penalty = risks.length * 12;
+          var score = Math.max(0, Math.min(100, base - penalty));
+          return score;
+        }
+
+        function readinessColor(score) {
+          if (score >= 80) return 'green';
+          if (score >= 50) return 'yellow';
+          return 'red';
+        }
+
+        function readinessLabel(score) {
+          if (score >= 80) return 'Готов к реализации';
+          if (score >= 50) return 'Требует внимания';
+          return 'Высокий риск срыва';
+        }
+
+        function suggestedProbability(score) {
+          if (score >= 80) return '80–95%';
+          if (score >= 50) return '50–75%';
+          return '10–45%';
+        }
+
+        function suggestedProbabilityMid(score) {
+          if (score >= 80) return 87;
+          if (score >= 50) return 62;
+          return 27;
+        }
+
+        function isTaskDone(task) {
+          return !!(task && (task.done === true || task.status === 'Выполнено'));
+        }
+
+        function normalizeTask(task) {
+          return {
+            title: task && task.title ? String(task.title) : '',
+            deadline: task && task.deadline ? String(task.deadline) : '',
+            owner: task && task.owner ? String(task.owner) : '',
+            controller: task && task.controller ? String(task.controller) : '',
+            done: isTaskDone(task)
+          };
+        }
+
+        function normalizeRisk(risk) {
+          return {
+            title: risk && risk.title ? String(risk.title) : ''
+          };
+        }
+
+        /* ── Open / Close ── */
+        function openExecPlan(clientName) {
+          epCurrentClient = String(clientName || '').trim();
+          renderExecPlanDrawer();
+          refs.epDrawer.classList.add('open');
+          refs.epOverlay.classList.add('open');
+        }
+
+        function closeExecPlan() {
+          refs.epDrawer.classList.remove('open');
+          refs.epOverlay.classList.remove('open');
+          epCurrentClient = null;
+        }
+
+        /* ── Action Plan Open / Close ── */
+        function openActionPlan(rowIndex) {
+          if (rowIndex < 0 || rowIndex >= state.rows.length) return;
+          actionPlanCurrentRowIndex = rowIndex;
+          renderActionPlanDrawer();
+          refs.actionPlanDrawer.classList.add('open');
+          refs.actionPlanOverlay.classList.add('open');
+        }
+
+        function closeActionPlan() {
+          refs.actionPlanDrawer.classList.remove('open');
+          refs.actionPlanOverlay.classList.remove('open');
+          actionPlanCurrentRowIndex = null;
+        }
+
+        /* ── Action Plan Render ── */
+        function renderActionPlanDrawer() {
+          if (actionPlanCurrentRowIndex === null || actionPlanCurrentRowIndex < 0 || actionPlanCurrentRowIndex >= state.rows.length) {
+            closeActionPlan();
+            return;
+          }
+          var row = state.rows[actionPlanCurrentRowIndex];
+          var computed = rowComputed(row);
+          var plan = loadActionPlan(actionPlanCurrentRowIndex);
+
+          // Header - targets
+          refs.actionPlanTitle.textContent = (row.product || 'Продукт') + ' для ' + (row.client || 'Клиента');
+          refs.actionPlanTargets.innerHTML =
+            '<div class="action-plan-target-item">' +
+              '<div class="action-plan-target-label">М1</div>' +
+              '<div class="action-plan-target-val">' + formatTon(row.m1) + '</div>' +
+            '</div>' +
+            '<div class="action-plan-target-item">' +
+              '<div class="action-plan-target-label">М2</div>' +
+              '<div class="action-plan-target-val">' + formatTon(row.m2) + '</div>' +
+            '</div>' +
+            '<div class="action-plan-target-item">' +
+              '<div class="action-plan-target-label">Прогноз</div>' +
+              '<div class="action-plan-target-val">' + formatTon(computed.forecastTons) + '</div>' +
+            '</div>';
+
+          // Body - steps form
+          refs.actionPlanBody.innerHTML = '';
+          var section = document.createElement('div');
+          section.className = 'action-plan-section';
+
+          var title = document.createElement('h3');
+          title.className = 'action-plan-section-title';
+          title.textContent = '📋 Конкретные шаги для достижения плана';
+          section.appendChild(title);
+
+          // Render steps
+          var stepsContainer = document.createElement('div');
+          if (!plan.steps || plan.steps.length === 0) {
+            var emptyNote = document.createElement('div');
+            emptyNote.style.cssText = 'color: #667f78; font-size: 12px; text-align: center; padding: 20px;';
+            emptyNote.textContent = 'Нет шагов. Добавьте первый шаг действий.';
+            stepsContainer.appendChild(emptyNote);
+          } else {
+            plan.steps.forEach(function(step, idx) {
+              var stepEl = renderActionStep(step, idx);
+              stepsContainer.appendChild(stepEl);
+            });
+          }
+          section.appendChild(stepsContainer);
+
+          // Add step button
+          var addBtn = document.createElement('button');
+          addBtn.className = 'action-plan-add-btn';
+          addBtn.textContent = '+ Добавить шаг';
+          addBtn.addEventListener('click', function() {
+            if (!plan.steps) plan.steps = [];
+            plan.steps.push({ description: '', deadline: '', owner: '', status: 'Новый' });
+            saveActionPlan(actionPlanCurrentRowIndex, plan);
+            renderActionPlanDrawer();
+          });
+          section.appendChild(addBtn);
+
+          // Save button
+          var saveBtn = document.createElement('button');
+          saveBtn.className = 'action-plan-save-btn';
+          saveBtn.textContent = '💾 Сохранить план';
+          saveBtn.addEventListener('click', function() {
+            // Read step values from inputs
+            var inputs = section.querySelectorAll('input, textarea');
+            var stepIdx = 0;
+            for (var i = 0; i < inputs.length; i += 4) {
+              if (stepIdx < plan.steps.length) {
+                plan.steps[stepIdx].description = inputs[i] ? inputs[i].value : '';
+                plan.steps[stepIdx].deadline = inputs[i+1] ? inputs[i+1].value : '';
+                plan.steps[stepIdx].owner = inputs[i+2] ? inputs[i+2].value : '';
+                plan.steps[stepIdx].status = inputs[i+3] ? inputs[i+3].value : 'Новый';
+              }
+              stepIdx++;
+            }
+            saveActionPlan(actionPlanCurrentRowIndex, plan);
+            closeActionPlan();
+            render();
+          });
+          section.appendChild(saveBtn);
+
+          refs.actionPlanBody.appendChild(section);
+        }
+
+        function renderActionStep(step, idx) {
+          var el = document.createElement('div');
+          el.className = 'action-plan-step';
+          el.innerHTML =
+            '<div class="action-plan-step-num">Шаг ' + (idx + 1) + '</div>' +
+            '<textarea placeholder="Описание действия">' + escapeHtml(step.description || '') + '</textarea>' +
+            '<input type="date" placeholder="Дедлайн" value="' + escapeHtmlAttr(step.deadline || '') + '">' +
+            '<input type="text" placeholder="Ответственный" value="' + escapeHtmlAttr(step.owner || '') + '">' +
+            '<select>' +
+              '<option value="Новый" ' + (step.status === 'Новый' ? 'selected' : '') + '>Новый</option>' +
+              '<option value="В процессе" ' + (step.status === 'В процессе' ? 'selected' : '') + '>В процессе</option>' +
+              '<option value="Выполнено" ' + (step.status === 'Выполнено' ? 'selected' : '') + '>Выполнено</option>' +
+            '</select>';
+          return el;
+        }
+
+        /* ── Main render ── */
+        function renderExecPlanDrawer() {
+          var client = epCurrentClient;
+          var plan = loadOrCreateExecPlan(client);
+          var summary = getClientSummary(client);
+          var score = calcReadiness(plan);
+          var color = readinessColor(score);
+
+          // Header
+          refs.epClientName.textContent = client ? (client + ' · План исполнения') : '—';
+          refs.epQuarterBadge.textContent = 'Q' + activeQuarter + ' ' + (state.year || new Date().getFullYear());
+          refs.epKpiRow.innerHTML =
+            epKpi('Продуктов', summary.rows.length) +
+            epKpi('План, т', formatTon(summary.planTons)) +
+            epKpi('Прогноз, т', formatTon(summary.forecastTons)) +
+            epKpi('Выручка', formatMoneyShort(summary.forecastRevenue));
+
+          // Body
+          refs.epBody.innerHTML = '';
+          refs.epBody.appendChild(renderEPProductsSection(summary));
+          refs.epBody.appendChild(renderEPTasksSection(plan, client));
+          refs.epBody.appendChild(renderEPRisksSection(plan, client));
+          refs.epBody.appendChild(renderEPReadinessSection(plan, score, color));
+        }
+
+        function epKpi(label, val) {
+          return '<div class="ep-kpi"><div class="ep-kpi-label">' + escapeHtml(label) +
+            '</div><div class="ep-kpi-val">' + escapeHtml(String(val)) + '</div></div>';
+        }
+
+        function formatMoneyShort(v) {
+          if (Math.abs(v) >= 1e9) return formatNumber(v / 1e9, 1) + ' млрд ₽';
+          if (Math.abs(v) >= 1e6) return formatNumber(v / 1e6, 1) + ' млн ₽';
+          return formatMoney(v);
+        }
+
+        /* ── Products section ── */
+        function renderEPProductsSection(summary) {
+          var el = document.createElement('div');
+          el.className = 'ep-section';
+          el.classList.add('ep-span-2');
+          var rows = summary.rows;
+          var rowsHtml = rows.length ? rows.map(function(r) {
+            var c = rowComputed(r);
+            return '<tr>'
+              + '<td style="font-weight:700">' + escapeHtml(r.product || '—') + '</td>'
+              + '<td class="ep-num">' + formatTon(c.planTons) + '</td>'
+              + '<td class="ep-num">' + formatTon(c.forecastTons) + '</td>'
+              + '<td class="ep-num">' + formatNumber(r.pricePerTon || 0, 0) + '</td>'
+              + '<td class="ep-num">' + formatMoneyShort(c.forecastRevenue) + '</td>'
+              + '<td class="ep-num">' + (r.marginPct != null ? r.marginPct + '%' : '—') + '</td>'
+              + '</tr>';
+          }).join('') : '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:12px">Нет продуктов в текущем плане</td></tr>';
+
+          el.innerHTML = '<div class="ep-section-head"><span class="ep-section-title">Продукты в плане</span></div>'
+            + '<div class="ep-section-body" style="overflow:auto">'
+            + '<style>.ep-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}</style>'
+            + '<table class="ep-table"><thead><tr>'
+            + '<th>Продукт</th><th style="text-align:right">План,т</th><th style="text-align:right">Прогноз,т</th>'
+            + '<th style="text-align:right">Цена,₽/т</th><th style="text-align:right">Выручка</th><th style="text-align:right">Маржа</th>'
+            + '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+          return el;
+        }
+
+        function renderEPTasksSection(plan, clientName) {
+          var el = document.createElement('div');
+          el.className = 'ep-section';
+          el.id = 'ep-tasks-section';
+          rebuildTasksSection(el, plan, clientName);
+          return el;
+        }
+
+        function rebuildTasksSection(el, plan, clientName) {
+          var tasks = (plan.tasks || []).map(normalizeTask);
+          var listHtml = tasks.length ? tasks.map(function(t, i) {
+            return '<div class="ep-list-item">'
+              + '<div class="ep-list-item-main">'
+              + '<div class="ep-list-item-title">' + (t.done ? '✓ ' : '') + escapeHtml(t.title) + '</div>'
+              + '<div class="ep-list-item-meta"><span>' + (t.done ? 'Статус: выполнено' : 'Статус: в работе') + '</span></div>'
+              + '</div>'
+              + '<div class="ep-list-item-actions">'
+              + '<button class="ep-btn ep-btn-sm ep-task-toggle-btn" data-task-index="' + i + '" title="' + (t.done ? 'Снять отметку' : 'Отметить выполненной') + '">' + (t.done ? '↺' : '✓') + '</button>'
+              + '<button class="ep-btn ep-btn-sm ep-btn-danger ep-task-del-btn" data-task-index="' + i + '" title="Удалить шаг">✕</button>'
+              + '</div>'
+              + '</div>';
+          }).join('') : '<div class="ep-empty-hint">Пока нет задач. Добавьте первую ниже.</div>';
+
+          el.innerHTML = '<div class="ep-section-head">'
+            + '<span class="ep-section-title">Задачи (' + tasks.length + ')</span>'
+            + '</div>'
+            + '<div class="ep-list">' + listHtml + '</div>'
+            + '<div class="ep-inline-form" id="ep-task-form">'
+            + '<div class="ep-field"><label>Новая задача</label>'
+            + '<textarea id="ep-task-title" placeholder="Что нужно сделать" maxlength="280"></textarea></div>'
+            + '<div class="ep-form-actions">'
+            + '<button class="ep-btn ep-btn-primary" id="ep-task-save-btn" type="button">Добавить задачу</button>'
+            + '</div></div>';
+
+          el.querySelectorAll('.ep-task-del-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var idx = parseInt(btn.getAttribute('data-task-index'), 10);
+              plan.tasks.splice(idx, 1);
+              persistExecPlan(clientName, plan);
+              rebuildTasksSection(el, plan, clientName);
+              renderExecPlanReadinessOnly(plan);
+            });
+          });
+
+          el.querySelectorAll('.ep-task-toggle-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var idx = parseInt(btn.getAttribute('data-task-index'), 10);
+              var task = plan.tasks[idx];
+              if (!task) return;
+              task.done = !isTaskDone(task);
+              task.status = task.done ? 'Выполнено' : 'Запланировано';
+              persistExecPlan(clientName, plan);
+              rebuildTasksSection(el, plan, clientName);
+              renderExecPlanReadinessOnly(plan);
+            });
+          });
+
+          var form = el.querySelector('#ep-task-form');
+          var saveBtn = el.querySelector('#ep-task-save-btn');
+          if (saveBtn && form) {
+            saveBtn.addEventListener('click', function() {
+              var title = (form.querySelector('#ep-task-title').value || '').trim();
+              if (!title) { form.querySelector('#ep-task-title').focus(); return; }
+              plan.tasks.push({
+                title: title,
+                done: false,
+                status: 'Запланировано'
+              });
+              persistExecPlan(clientName, plan);
+              rebuildTasksSection(el, plan, clientName);
+              renderExecPlanReadinessOnly(plan);
+              form.querySelector('#ep-task-title').value = '';
+            });
+          }
+        }
+
+        /* ── Risks section ── */
+        function renderEPRisksSection(plan, clientName) {
+          var el = document.createElement('div');
+          el.className = 'ep-section';
+          el.id = 'ep-risks-section';
+          rebuildRisksSection(el, plan, clientName);
+          return el;
+        }
+
+        function rebuildRisksSection(el, plan, clientName) {
+          var risks = (plan.risks || []).map(normalizeRisk);
+          var listHtml = risks.length ? risks.map(function(r, i) {
+            return '<div class="ep-list-item">'
+              + '<div class="ep-list-item-main">'
+              + '<div class="ep-list-item-title">' + escapeHtml(r.title) + '</div>'
+              + '</div>'
+              + '<div class="ep-list-item-actions">'
+              + '<button class="ep-btn ep-btn-sm ep-btn-danger ep-risk-del-btn" data-risk-index="' + i + '" title="Удалить риск">✕</button>'
+              + '</div>'
+              + '</div>';
+          }).join('') : '<div class="ep-empty-hint">Пока нет рисков. Добавьте первый ниже.</div>';
+
+          el.innerHTML = '<div class="ep-section-head"><span class="ep-section-title">Риски (' + risks.length + ')</span></div>'
+            + '<div class="ep-list">' + listHtml + '</div>'
+            + '<div class="ep-inline-form" id="ep-risk-form">'
+            + '<div class="ep-field"><label>Новый риск</label>'
+            + '<textarea id="ep-risk-title" placeholder="Опишите риск" maxlength="240"></textarea></div>'
+            + '<div class="ep-form-actions">'
+            + '<button class="ep-btn ep-btn-primary" id="ep-risk-save-btn" type="button">Добавить риск</button>'
+            + '</div></div>';
+
+          el.querySelectorAll('.ep-risk-del-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var idx = parseInt(btn.getAttribute('data-risk-index'), 10);
+              plan.risks.splice(idx, 1);
+              persistExecPlan(clientName, plan);
+              rebuildRisksSection(el, plan, clientName);
+              renderExecPlanReadinessOnly(plan);
+            });
+          });
+
+          var form = el.querySelector('#ep-risk-form');
+          var saveBtn = el.querySelector('#ep-risk-save-btn');
+          if (saveBtn && form) {
+            saveBtn.addEventListener('click', function() {
+              var title = (form.querySelector('#ep-risk-title').value || '').trim();
+              if (!title) { form.querySelector('#ep-risk-title').focus(); return; }
+              plan.risks.push({ title: title });
+              persistExecPlan(clientName, plan);
+              rebuildRisksSection(el, plan, clientName);
+              renderExecPlanReadinessOnly(plan);
+              form.querySelector('#ep-risk-title').value = '';
+            });
+          }
+        }
+
+        /* ── Readiness section ── */
+        function renderEPReadinessSection(plan, score, color) {
+          var el = document.createElement('div');
+          el.className = 'ep-section';
+          el.classList.add('ep-span-2');
+          el.id = 'ep-readiness-section';
+          buildReadinessSection(el, plan, score, color);
+          return el;
+        }
+
+        function buildReadinessSection(el, plan, score, color) {
+          var prob = suggestedProbability(score);
+          var tasks = (plan.tasks || []).map(normalizeTask);
+          var doneTasks = tasks.filter(function(t) { return t.done; }).length;
+          var risks = plan.risks || [];
+          el.innerHTML = '<div class="ep-section-head"><span class="ep-section-title">Готовность к реализации</span></div>'
+            + '<div class="ep-readiness">'
+            + '<div class="ep-readiness-row">'
+            + '<div class="ep-readiness-pct ' + color + '">' + score + '%</div>'
+            + '<span class="ep-readiness-status ' + color + '">' + readinessLabel(score) + '</span>'
+            + '</div>'
+            + '<div class="ep-readiness-bar-wrap"><div class="ep-readiness-bar ' + color + '" style="width:' + score + '%"></div></div>'
+            + '<div style="font-size:11px;color:var(--muted);line-height:1.5">'
+            + 'Выполнено задач: <strong>' + doneTasks + ' / ' + tasks.length + '</strong> · '
+            + 'Рисков: <strong>' + risks.length + '</strong>'
+            + '</div>'
+            + '</div>'
+            + '<div class="ep-suggested">'
+            + '<div class="ep-suggested-range">' + prob + '</div>'
+            + '<div class="ep-suggested-hint">На основе readiness score. Вероятность не меняется автоматически.</div>'
+            + '<button class="ep-btn ep-btn-primary" id="ep-apply-prob-btn" type="button" style="margin-top:6px">Применить вероятность к продуктам клиента</button>'
+            + '</div>';
+
+          el.querySelector('#ep-apply-prob-btn').addEventListener('click', function() {
+            var mid = suggestedProbabilityMid(score);
+            var clientLower = String(epCurrentClient || '').trim().toLowerCase();
+            var changed = false;
+            state.rows.forEach(function(r) {
+              if (String(r.client || '').trim().toLowerCase() === clientLower) {
+                r.probability = mid;
+                changed = true;
+              }
+            });
+            if (changed) { persist(); render(); }
+            var btn = el.querySelector('#ep-apply-prob-btn');
+            if (btn) { btn.textContent = '✓ Применено (' + mid + '%)'; btn.disabled = true; }
+          });
+        }
+
+        function renderExecPlanReadinessOnly(plan) {
+          var score = calcReadiness(plan);
+          var color = readinessColor(score);
+          var el = document.getElementById('ep-readiness-section');
+          if (el) buildReadinessSection(el, plan, score, color);
+          // update header KPIs (forecast/plan reflect current rows, not plan changes)
+          var summary = getClientSummary(epCurrentClient);
+          refs.epKpiRow.innerHTML =
+            epKpi('Продуктов', summary.rows.length) +
+            epKpi('План, т', formatTon(summary.planTons)) +
+            epKpi('Прогноз, т', formatTon(summary.forecastTons)) +
+            epKpi('Выручка', formatMoneyShort(summary.forecastRevenue));
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  END EXECUTION PLAN
+        // ═══════════════════════════════════════════════════════════════
+
+      function openTotalRawModal() {
+        var rows = state.rows || [];
+        var aggregated = {}; // normalized name -> { name, totalNeedKg }
+        var productLabels = [];
+
+        rows.forEach(function (row) {
+          if (!row.product) return;
+          var computed = rowComputed(row);
+          var forecastTons = Math.max(0, computed.forecastTons);
+          if (forecastTons === 0) return;
+          var recipeData = getRecipeDataForRow(row);
+          if (!recipeData.rows.length) return;
+          var label = (row.client ? row.client + ' / ' : '') + row.product;
+          if (productLabels.indexOf(label) === -1) productLabels.push(label);
+          recipeData.rows.forEach(function (item) {
+            var needKg = Math.max(0, item.kgPerTon) * forecastTons;
+            var norm = String(item.name).toLowerCase().trim();
+            if (!aggregated[norm]) {
+              aggregated[norm] = { name: item.name, totalNeedKg: 0 };
+            }
+            aggregated[norm].totalNeedKg += needKg;
+          });
+        });
+
+        refs.rawCheckTitle.textContent = 'Потребность в сырье: весь план';
+        refs.rawCheckSubtitle.textContent = productLabels.length
+          ? 'Продукты: ' + productLabels.join(', ')
+          : 'Нет продуктов с заданной рецептурой и ненулевым прогнозом.';
+
+        var keys = Object.keys(aggregated);
+        if (!keys.length) {
+          refs.rawCheckTable.style.display = 'none';
+          refs.rawCheckBody.innerHTML = '';
+          refs.rawCheckEmpty.style.display = 'block';
+          refs.rawCheckEmpty.textContent =
+            'Нет данных: убедитесь, что у продуктов указаны рецептуры в карточках, ' +
+            'вероятность > 0% и прогнозные тоннажи заданы.';
+          refs.rawCheckOverlay.classList.add('open');
+          return;
+        }
+
+        var stockRows = getLatestSkladRawRows();
+        var html = keys.map(function (norm) {
+          var item = aggregated[norm];
+          var needKg = item.totalNeedKg;
+          var stockMatch = findBestStockMatch(item.name, stockRows);
+          var stockKg = stockMatch ? Math.max(0, stockMatch.kg) : 0;
+          var balanceKg = stockKg - needKg;
+          var enough = balanceKg >= 0;
+          var balanceLabel = (enough ? '+' : '') + formatNumber(balanceKg, 1);
+          var stockLabel = stockMatch
+            ? (formatNumber(stockKg, 1) + ' (' + stockMatch.originalUnit + ')')
+            : '0 (не найдено)';
+          return '<tr>'
+            + '<td>' + escapeHtml(item.name) + '</td>'
+            + '<td>—</td>'
+            + '<td>' + formatNumber(needKg, 1) + '</td>'
+            + '<td>' + escapeHtml(stockLabel) + '</td>'
+            + '<td>' + balanceLabel + '</td>'
+            + '<td><span class="raw-status ' + (enough ? 'ok' : 'bad') + '">' + (enough ? 'достаточно' : 'нужно заказать') + '</span></td>'
+            + '</tr>';
+        }).join('');
+
+        refs.rawCheckBody.innerHTML = html;
+        refs.rawCheckEmpty.style.display = 'none';
+        refs.rawCheckTable.style.display = '';
+        refs.rawCheckOverlay.classList.add('open');
+      }
+
+      function getRecipeDataForRow(row) {
+        var result = { rows: [], sourceLabel: '' };
+        if (!row) return result;
+
+        var clientName = String(row.client || '').trim();
+        var productName = String(row.product || '').trim();
+        var productRecord = findProductRecord(clientName, productName);
+
+        if (productRecord && productRecord.product) {
+          var recipeRows = [];
+          var product = productRecord.product;
+          var bindingRows = Array.isArray(product.recipeBinding && product.recipeBinding.rows)
+            ? product.recipeBinding.rows
+            : [];
+
+          if (bindingRows.length) {
+            recipeRows = bindingRows
+              .map(function (item) {
+                return {
+                  name: String(item && item.name || '').trim(),
+                  kgPerTon: toNumber(item && item.qty, 0)
+                };
+              })
+              .filter(function (item) {
+                return item.name && item.kgPerTon > 0;
+              });
+          }
+
+          if (!recipeRows.length) {
+            recipeRows = parseRecipeTextRows(product && product.recipe);
+          }
+
+          if (!recipeRows.length && product && product.costSourceId) {
+            recipeRows = getRecipeRowsFromCostSource(product.costSourceId);
+          }
+
+          if (recipeRows.length) {
+            result.rows = mergeRecipeRows(recipeRows);
+            result.sourceLabel = 'карточка продукта: ' + productRecord.companyName + ' / ' + (product.name || productName || 'продукт');
+            return result;
+          }
+        }
+
+        var fallbackRows = getRecipeRowsFromCostByProductName(productName);
+        if (fallbackRows.length) {
+          result.rows = fallbackRows;
+          result.sourceLabel = 'калькуляция себестоимости (fallback)';
+        }
+        return result;
+      }
+
+      function findProductRecord(clientName, productName) {
+        var store = readClientStore();
+        var targetClient = normalizeMatchValue(clientName);
+        var targetProduct = normalizeProductMatchValue(productName);
+        var found = null;
+
+        Object.keys(store).forEach(function (companyName) {
+          if (found) return;
+          var companyKey = normalizeMatchValue(companyName);
+          if (targetClient && companyKey !== targetClient) return;
+
+          var card = store[companyName] || {};
+          var products = Array.isArray(card.products) ? card.products : [];
+          products.forEach(function (product) {
+            if (found) return;
+            var candidateName = String(product && product.name || '').trim();
+            var candidateKey = normalizeProductMatchValue(candidateName);
+            if (!candidateName || !candidateKey) return;
+            if (productNamesMatch(targetProduct, candidateKey)) {
+              found = { companyName: companyName, product: product };
+            }
+          });
+        });
+
+        if (found) return found;
+
+        Object.keys(store).forEach(function (companyName) {
+          if (found) return;
+          var card = store[companyName] || {};
+          var products = Array.isArray(card.products) ? card.products : [];
+          products.forEach(function (product) {
+            if (found) return;
+            var candidateName = String(product && product.name || '').trim();
+            var candidateKey = normalizeProductMatchValue(candidateName);
+            if (!candidateName || !candidateKey) return;
+            if (productNamesMatch(targetProduct, candidateKey)) {
+              found = { companyName: companyName, product: product };
+            }
+          });
+        });
+
+        return found;
+      }
+
+      function parseRecipeTextRows(recipeText) {
+        var lines = String(recipeText || '').split(/\r?\n/);
+        var rows = [];
+
+        lines.forEach(function (line) {
+          var text = String(line || '').trim();
+          if (!text) return;
+
+          var match = text.match(/^\s*(?:\d+[\.)]\s*)?(.+?)\s*(?:[·|\-–—])\s*([\d\s.,]+)\s*кг(?:\s*\/\s*т)?\b/i);
+          if (!match) {
+            match = text.match(/^\s*(?:\d+[\.)]\s*)?(.+?)\s+([\d\s.,]+)\s*кг(?:\s*\/\s*т)?\b/i);
+          }
+          if (!match) return;
+
+          var rawName = String(match[1] || '').trim();
+          var qty = parseLooseNumber(match[2]);
+          if (!rawName || !Number.isFinite(qty) || qty <= 0) return;
+
+          rows.push({ name: rawName, kgPerTon: qty });
+        });
+
+        return rows;
+      }
+
+      function getRecipeRowsFromCostSource(sourceId) {
+        var cleanId = String(sourceId || '').trim();
+        if (!cleanId) return [];
+
+        try {
+          var raw = localStorage.getItem('cloto_cost_calc_custom_' + cleanId);
+          if (!raw) return [];
+          var stateFromCost = JSON.parse(raw);
+          var rawRows = Array.isArray(stateFromCost.rawRows) ? stateFromCost.rawRows : [];
+          return rawRows
+            .map(function (item) {
+              return {
+                name: String(item && item.name || '').trim(),
+                kgPerTon: toNumber(item && item.qty, 0)
+              };
+            })
+            .filter(function (item) {
+              return item.name && item.kgPerTon > 0;
+            });
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function getRecipeRowsFromCostByProductName(productName) {
+        var searchTokens = getProductSearchTokens(productName);
+        if (!searchTokens.length) return [];
+
+        var bestKey = null;
+        var bestScore = -1;
+        Object.keys(localStorage).forEach(function (key) {
+          if (key.indexOf(COST_STATE_PREFIX) !== 0) return;
+          var score = scoreKeyByTokens(key, searchTokens);
+          if (score > bestScore) {
+            bestScore = score;
+            bestKey = key;
+          }
+        });
+
+        if (!bestKey || bestScore <= 0) return [];
+
+        try {
+          var raw = localStorage.getItem(bestKey);
+          var stateFromCost = raw ? JSON.parse(raw) : {};
+          var rawRows = Array.isArray(stateFromCost.rawRows) ? stateFromCost.rawRows : [];
+          return rawRows
+            .map(function (r) {
+              return {
+                name: String(r && r.name || '').trim(),
+                kgPerTon: toNumber(r && r.qty, 0)
+              };
+            })
+            .filter(function (r) { return r.name && r.kgPerTon > 0; });
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function mergeRecipeRows(rows) {
+        var byName = {};
+
+        rows.forEach(function (row) {
+          var name = String(row && row.name || '').trim();
+          var qty = toNumber(row && row.kgPerTon, 0);
+          if (!name || qty <= 0) return;
+
+          var key = normalizeText(name);
+          if (!key) return;
+
+          if (!byName[key]) {
+            byName[key] = { name: name, kgPerTon: qty };
+            return;
+          }
+
+          byName[key].kgPerTon += qty;
+        });
+
+        return Object.keys(byName).map(function (key) {
+          return byName[key];
+        });
+      }
+
+      function getLatestSkladRawRows() {
+        var key = null;
+        Object.keys(localStorage).forEach(function (candidate) {
+          if (candidate.indexOf(SKLAD_STATE_PREFIX) !== 0) return;
+          if (!key || candidate > key) key = candidate;
+        });
+        if (!key) return [];
+
+        try {
+          var parsed = JSON.parse(localStorage.getItem(key) || '{}');
+          var rows = Array.isArray(parsed.rows) ? parsed.rows : [];
+          return rows
+            .filter(function (r) { return String(r.cat || '') === 'syryo'; })
+            .map(function (r) {
+              var closeValue = toNumber(r.open, 0) + toNumber(r.inc, 0) - toNumber(r.cons, 0) - toNumber(r.ship, 0);
+              var unit = String(r.unit || '').trim().toLowerCase();
+              return {
+                name: String(r.name || '').trim(),
+                unit: unit,
+                kg: toKilograms(closeValue, unit),
+                originalUnit: unit || 'ед.'
+              };
+            })
+            .filter(function (r) { return r.name; });
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function findBestStockMatch(ingredientName, stockRows) {
+        if (!ingredientName || !stockRows.length) return null;
+        var needle = normalizeText(ingredientName);
+        var needleTokens = tokenize(needle);
+        var best = null;
+        var bestScore = 0;
+
+        stockRows.forEach(function (row) {
+          var hay = normalizeText(row.name);
+          var score = 0;
+          if (hay === needle) score += 100;
+          if (hay.indexOf(needle) !== -1 || needle.indexOf(hay) !== -1) score += 50;
+          var hayTokens = tokenize(hay);
+          var overlap = countOverlap(needleTokens, hayTokens);
+          score += overlap * 8;
+          if (score > bestScore) {
+            bestScore = score;
+            best = row;
+          }
+        });
+
+        return bestScore >= 8 ? best : null;
+      }
+
+      function getProductSearchTokens(productName) {
+        var source = String(productName || '').trim();
+        if (!source) return [];
+        var tokens = [];
+        tokens.push(normalizeKey(source));
+        var m = source.match(/\(([^)]+)\)/);
+        if (m && m[1]) tokens.push(normalizeKey(m[1]));
+        source.split(/[\s\-_/]+/).forEach(function (part) {
+          var p = normalizeKey(part);
+          if (p && p.length >= 3) tokens.push(p);
+        });
+
+        var map = {};
+        return tokens.filter(function (t) {
+          if (!t || map[t]) return false;
+          map[t] = true;
+          return true;
+        });
+      }
+
+      function scoreKeyByTokens(key, tokens) {
+        var normalizedKey = normalizeKey(key);
+        return tokens.reduce(function (sum, token) {
+          if (!token) return sum;
+          if (normalizedKey === token) return sum + 100;
+          if (normalizedKey.indexOf(token) !== -1) return sum + 30;
+          return sum;
+        }, 0);
+      }
+
+      function toKilograms(value, unit) {
+        var amount = toNumber(value, 0);
+        var u = String(unit || '').toLowerCase();
+        if (u.indexOf('т') !== -1) return amount * 1000;
+        if (u.indexOf('кг') !== -1) return amount;
+        return amount;
+      }
+
+      function normalizeText(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/ё/g, 'е')
+          .replace(/[^a-zа-я0-9]+/gi, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function tokenize(value) {
+        return normalizeText(value)
+          .split(' ')
+          .filter(function (part) { return part && part.length >= 3; });
+      }
+
+      function countOverlap(arrA, arrB) {
+        var setB = {};
+        arrB.forEach(function (item) { setB[item] = true; });
+        var count = 0;
+        arrA.forEach(function (item) {
+          if (setB[item]) count += 1;
+        });
+        return count;
+      }
+
+      function getQuarterMonths(quarter) {
+        var map = {
+          1: ['Янв', 'Фев', 'Мар'],
+          2: ['Апр', 'Май', 'Июн'],
+          3: ['Июл', 'Авг', 'Сен'],
+          4: ['Окт', 'Ноя', 'Дек']
+        };
+        return map[quarter] || map[2];
+      }
+
+      function toNumber(value, fallback) {
+        var number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function formatNumber(value, digits) {
+        return new Intl.NumberFormat('ru-RU', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+      }
+
+      function formatTon(value) {
+        return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 }).format(value);
+      }
+
+      function formatMoney(value) {
+        return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(value);
+      }
+
+      function escapeHtmlAttr(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+    })();
+  </script>
+</body>
+</html>

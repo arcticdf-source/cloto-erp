@@ -6,21 +6,22 @@
   <title>Новые заказы — Клото</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="crm-module-sidebar.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #09111b;
-      --bg2: #122033;
-      --surface: rgba(255, 255, 255, 0.05);
-      --surface2: rgba(255, 255, 255, 0.08);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #edf3fa;
-      --muted: #8e9caf;
-      --gold: #f5c95f;
-      --cyan: #5de5cf;
-      --green: #72d89a;
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255, 255, 255, 0.86);
+      --surface2: rgba(255, 255, 255, 0.97);
+      --border: rgba(136,158,186,0.25);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --gold: #d9a83a;
+      --cyan: #24b7ad;
+      --green: #3ea66d;
       --radius: 20px;
-      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+      --shadow: 0 14px 30px rgba(36,66,100,0.14);
     }
     body {
       min-height: 100vh;
@@ -62,7 +63,7 @@
       padding: 24px;
       margin-bottom: 14px;
       background:
-        linear-gradient(135deg, rgba(93, 229, 207, 0.16), rgba(9, 17, 27, 0.34)),
+        linear-gradient(135deg, rgba(93, 229, 207, 0.16), rgba(255, 255, 255, 0.92)),
         var(--surface);
     }
     .eyebrow, .chip {
@@ -183,25 +184,27 @@
       margin-top: 14px;
       border-radius: 18px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(5, 13, 24, 0.5);
+      border: 1px solid rgba(126, 154, 184, 0.3);
+      background: #ffffff;
     }
     table { width: 100%; border-collapse: collapse; min-width: 860px; }
-    thead { background: rgba(255, 255, 255, 0.05); }
+    thead {
+      background: linear-gradient(180deg, #f5f9ff, #edf4fc);
+    }
     th, td {
       padding: 14px 12px;
       text-align: left;
       vertical-align: top;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(126, 154, 184, 0.26);
     }
-    th { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
-    td { font-size: 13px; color: var(--text); }
-    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
-    tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+    th { color: #4f6782; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    td { font-size: 13px; color: #1a2b3e; }
+    tbody tr:nth-child(even) { background: rgba(238, 246, 255, 0.92); }
+    tbody tr:hover { background: rgba(219, 236, 255, 0.95); }
     .clickable-row { cursor: pointer; }
     .order-main { display: grid; gap: 4px; }
     .order-main strong { font-size: 14px; font-weight: 800; }
-    .cell-meta { color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .cell-meta { color: #607792; font-size: 11px; line-height: 1.55; }
     .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
     .modal-backdrop {
       position: fixed;
@@ -228,10 +231,11 @@
       font-size: 28px;
       font-weight: 800;
       line-height: 1;
+      color: #e8f3ff;
     }
     .modal-copy {
       margin-top: 10px;
-      color: var(--muted);
+      color: #8eb8d8;
       font-size: 13px;
       line-height: 1.65;
     }
@@ -245,9 +249,9 @@
       min-height: 40px;
       padding: 9px 14px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.07);
+      color: #c8e0f5;
       font-size: 12px;
       font-weight: 800;
       cursor: pointer;
@@ -255,8 +259,8 @@
     }
     .option-btn.active {
       color: var(--cyan);
-      background: rgba(93, 229, 207, 0.12);
-      border-color: rgba(93, 229, 207, 0.24);
+      background: rgba(93, 229, 207, 0.18);
+      border-color: rgba(93, 229, 207, 0.40);
     }
     .ship-form {
       display: grid;
@@ -268,7 +272,7 @@
       gap: 6px;
     }
     .ship-field label {
-      color: var(--muted);
+      color: #7eb8d8;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
@@ -279,13 +283,13 @@
       min-height: 42px;
       padding: 10px 12px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.07);
+      color: #e8f3ff;
       font: inherit;
       outline: none;
     }
-    .ship-input::placeholder { color: rgba(142, 156, 175, 0.82); }
+    .ship-input::placeholder { color: rgba(160, 190, 215, 0.6); }
     .ship-field.hidden { display: none; }
     .modal-actions {
       display: flex;
@@ -293,6 +297,23 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-top: 18px;
+    }
+    .modal-actions .btn {
+      color: #c8dff5;
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.07);
+    }
+    .modal-actions .btn:hover {
+      background: rgba(255,255,255,0.14);
+      color: #e8f3ff;
+    }
+    .modal-actions .btn.ship {
+      color: var(--cyan);
+      background: rgba(93,229,207,0.18);
+      border-color: rgba(93,229,207,0.38);
+    }
+    .modal-actions .btn.ship:hover {
+      background: rgba(93,229,207,0.28);
     }
     .empty-state { padding: 28px 18px; color: var(--muted); font-size: 13px; line-height: 1.7; text-align: center; }
     @media (max-width: 1180px) {
@@ -420,6 +441,10 @@
     </section>
   </div>
 
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_sales_orders_new', 'cloto_production_orders', 'cloto_sales_orders_shipped', 'cloto_orders_added'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script>
     var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
     var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
@@ -736,5 +761,6 @@
       window.addEventListener('storage', renderNewOrders);
     })();
   </script>
+  <script src="crm-module-sidebar.js"></script>
 </body>
 </html>

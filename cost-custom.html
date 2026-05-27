@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Клото — Калькуляция продукта</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#eef4fb; --bg2:#e3edf8; --surface:rgba(255,255,255,0.86); --surface2:rgba(255,255,255,0.97);
+      --border:rgba(136,158,186,0.25); --border2:rgba(94,143,199,0.38); --accent:#7c5cfc; --accent2:#b07dff;
+      --cyan:#24b7ad; --gold:#d9a83a; --red:#d96576; --green:#3ea66d; --blue:#3b91da; --orange:#f6ad55; --pink:#ed64a6;
+      --text:#1e2c3c; --muted:#6f839c; --radius:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: linear-gradient(180deg, var(--bg), var(--bg2)); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    .bg-grid { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(61,232,199,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(61,232,199,.03) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; }
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .bg-orb-1 { width: 580px; height: 580px; background: radial-gradient(circle, rgba(61,232,199,.12) 0%, transparent 70%); top: -180px; right: -120px; }
+    .bg-orb-2 { width: 520px; height: 520px; background: radial-gradient(circle, rgba(124,92,252,.14) 0%, transparent 70%); bottom: -120px; left: -60px; }
+    .layout { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+    .sidebar { width: 250px; min-height: 100vh; background: rgba(255,255,255,0.84); backdrop-filter: blur(24px); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 28px 0; position: sticky; top: 0; height: 100vh; flex-shrink: 0; overflow-y: auto; }
+    .logo { display: flex; align-items: center; gap: 12px; padding: 0 22px 28px; border-bottom: 1px solid var(--border); }
+    .logo-back { width: 32px; height: 32px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 14px; cursor: pointer; transition: all .2s; text-decoration: none; flex-shrink: 0; }
+    .logo-back:hover { background: rgba(61,232,199,.15); color: var(--cyan); border-color: rgba(61,232,199,.3); }
+    .logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--cyan), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .logo-sub { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-top: 1px; }
+    .nav { padding: 16px 10px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .nav-label { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 10px 12px 5px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 13px; border-radius: 10px; color: var(--muted); font-size: 13.5px; font-weight: 500; text-decoration: none; }
+    .nav-item.active { background: rgba(61,232,199,.12); color: var(--cyan); border: 1px solid rgba(61,232,199,.2); }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; flex-shrink: 0; }
+    .sidebar-user { margin: 0 10px 4px; padding: 13px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--cyan)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: #fff; flex-shrink: 0; }
+    .user-name { font-size: 12.5px; font-weight: 600; }
+    .user-role { font-size: 11px; color: var(--muted); }
+    .main { flex: 1; padding: 32px 36px; overflow-y: auto; display: flex; flex-direction: column; gap: 22px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .page-title { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; background: linear-gradient(135deg, #2a3d54 30%, var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; border: 1px solid transparent; cursor: pointer; transition: all .2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--cyan), #32c9ae); color: #06261f; box-shadow: 0 8px 24px rgba(61,232,199,.2); }
+    .btn-ghost { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .btn:hover { transform: translateY(-1px); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; }
+    .field-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .field input { width: 100%; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); border-radius: 10px; padding: 11px 12px; font: inherit; outline: none; }
+    .field input:focus { border-color: rgba(61,232,199,.45); box-shadow: 0 0 0 3px rgba(61,232,199,.1); }
+    .tbl-wrap { overflow: auto; }
+    .tbl { width: 100%; border-collapse: collapse; min-width: 880px; }
+    .tbl th, .tbl td { padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .tbl th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); text-align: left; }
+    .tbl .r { text-align: right; }
+    .tbl input { width: 100%; border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); border-radius: 8px; padding: 9px 10px; font: inherit; }
+    .t-name, .t-unit { text-align: left; }
+    .t-num { text-align: right; }
+    .t-num-syryo { border-color: rgba(61,232,199,.4); background: rgba(61,232,199,.08); }
+    .pct, .sumcell { font-variant-numeric: tabular-nums; text-align: right; }
+    .del-btn { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; }
+    .del-btn:hover { color: var(--red); border-color: rgba(255,94,125,.35); }
+    .add-row { margin-top: 14px; border: 1px dashed var(--border2); background: transparent; color: var(--cyan); padding: 12px 14px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 700; }
+    .add-row:hover { background: rgba(61,232,199,.06); }
+    .direct-strip, .fin-grid { display: grid; gap: 12px; }
+    .direct-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .ds-item, .fin-item { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .ds-label, .fin-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .ds-value, .fin-value { margin-top: 8px; font-size: 24px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+    .fin-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .fin-item.hi { grid-column: span 1; }
+    .fin-sub { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .fin-price-input { width: 100%; border: 1px solid rgba(245,200,66,.22); background: rgba(255,255,255,.03); color: var(--gold); border-radius: 10px; padding: 11px 12px; font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; outline: none; }
+    .fin-price-input:focus { border-color: rgba(245,200,66,.55); box-shadow: 0 0 0 3px rgba(245,200,66,.1); }
+    .mg-header { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; color: var(--muted); font-size: 12px; }
+    .mg-track { margin-top: 10px; height: 12px; background: rgba(255,255,255,.05); border-radius: 999px; overflow: hidden; }
+    .mg-fill { height: 100%; background: linear-gradient(90deg, var(--green), #68d391); width: 0%; }
+    .ind-row { display: grid; grid-template-columns: 1fr 180px 32px; gap: 10px; margin-top: 10px; }
+    .ind-name, .ind-num { border: 1px solid var(--border); background: rgba(255,255,255,.03); color: var(--text); border-radius: 10px; padding: 11px 12px; font: inherit; }
+    .sect-tot { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 30; background: rgba(255,255,255,.96); border: 1px solid rgba(61,232,199,.35); border-radius: 10px; padding: 10px 14px; font-size: 12px; opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .empty-state { padding: 24px; text-align: center; color: var(--muted); }
+    @media(max-width:1100px){ .field-grid, .direct-strip, .fin-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media(max-width:900px){ .sidebar { display:none; } .main { padding:20px; } .topbar { flex-direction: column; align-items: stretch; } }
+    @media(max-width:640px){ .field-grid, .direct-strip, .fin-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <a class="logo-back" href="sebescost.html">←</a>
+      <div>
+        <div class="logo-text">Калькуляция продукта</div>
+        <div class="logo-sub">Себестоимость · Клото</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Калькуляция</div>
+      <a class="nav-item active" href="#"><span class="nav-icon">🧮</span> 1 тонна</a>
+      <div class="nav-label">Навигация</div>
+      <a class="nav-item" href="sebescost.html"><span class="nav-icon">📚</span> Все калькуляции</a>
+      <a class="nav-item" href="syryo.html"><span class="nav-icon">🪨</span> Справочник сырья</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="avatar">КЛ</div>
+      <div><div class="user-name">Команда Клото</div><div class="user-role">Общий доступ</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="product-page-title">🧮 Калькуляция продукта</div>
+        <div class="page-sub" id="product-page-subtitle">Универсальная карточка расчета для новых продуктов</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" type="button" onclick="resetCalc()">↺ Сбросить</button>
+        <button class="btn btn-primary" type="button" onclick="saveCalc()">💾 Сохранить</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">Паспорт калькуляции</div>
+      <div class="field-grid">
+        <div class="field"><label for="meta-name">Продукт</label><input id="meta-name" type="text" placeholder="Название продукта" /></div>
+        <div class="field"><label for="meta-sku">SKU</label><input id="meta-sku" type="text" placeholder="Код продукта" /></div>
+        <div class="field"><label for="meta-subtitle">Описание</label><input id="meta-subtitle" type="text" placeholder="Калькуляция 1 тонны производства" /></div>
+        <div class="field"><label for="meta-price">Цена продажи, ₽/кг</label><input id="meta-price" type="number" min="0" step="0.01" placeholder="0" /></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🪨 Состав сырья · 1 тонна (1 000 кг)</div>
+        <button class="btn btn-ghost" type="button" onclick="addRaw()">＋ Добавить</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th style="width:32px"></th><th>Компонент</th><th class="r" style="width:70px">% состав</th><th class="r" style="width:120px">Расход, кг/т</th><th class="r" style="width:120px">Цена, ₽/т</th><th class="r" style="width:120px">Итого сырьё, ₽</th></tr></thead>
+          <tbody id="raw-tbody"></tbody>
+          <tfoot><tr><td colspan="2">Итого сырьё</td><td class="r" id="tf-raw-pct">—</td><td class="r" id="tf-raw-qty">—</td><td></td><td class="r" id="tf-raw-sum">0</td></tr></tfoot>
+        </table>
+      </div>
+      <button class="add-row" type="button" onclick="addRaw()">＋ Добавить компонент</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📦 Упаковка · 1 тонна</div>
+        <button class="btn btn-ghost" type="button" onclick="addPack()">＋ Добавить</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th style="width:32px"></th><th>Наименование</th><th style="width:70px">Ед.</th><th class="r" style="width:120px">Кол-во / т</th><th class="r" style="width:120px">Цена, ₽</th><th class="r" style="width:120px">Итого упаковка, ₽</th></tr></thead>
+          <tbody id="pack-tbody"></tbody>
+          <tfoot><tr><td colspan="4">Итого упаковка</td><td></td><td class="r" id="tf-pack-sum">0</td></tr></tfoot>
+        </table>
+      </div>
+      <button class="add-row" type="button" onclick="addPack()">＋ Добавить позицию</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⚡ Производственные затраты · 1 тонна</div>
+        <button class="btn btn-ghost" type="button" onclick="addProd()">＋ Добавить</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th style="width:32px"></th><th>Статья затрат</th><th style="width:72px">Ед.</th><th class="r" style="width:120px">Кол-во / т</th><th class="r" style="width:120px">Ставка, ₽</th><th class="r" style="width:120px">Итого, ₽</th></tr></thead>
+          <tbody id="prod-tbody"></tbody>
+          <tfoot><tr><td colspan="4">Итого производственные</td><td></td><td class="r" id="tf-prod-sum">0</td></tr></tfoot>
+        </table>
+      </div>
+      <button class="add-row" type="button" onclick="addProd()">＋ Добавить статью</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px;">📐 Прямые расходы = сырьё + упаковка + производственные</div>
+      <div class="direct-strip">
+        <div class="ds-item"><div class="ds-label">Сырьё</div><div class="ds-value" id="ds-raw">0 ₽</div></div>
+        <div class="ds-item"><div class="ds-label">Упаковка</div><div class="ds-value" id="ds-pack">0 ₽</div></div>
+        <div class="ds-item"><div class="ds-label">Производственные</div><div class="ds-value" id="ds-prod">0 ₽</div></div>
+        <div class="ds-item"><div class="ds-label">Итого прямые</div><div class="ds-value" id="ds-total">0 ₽</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 Косвенные расходы · 1 тонна</div>
+        <button class="btn btn-ghost" type="button" onclick="addIndirect()">＋ Добавить статью</button>
+      </div>
+      <div id="ind-rows"><div class="empty-state">Нет статей. Нажмите «＋ Добавить статью».</div></div>
+      <div class="sect-tot"><span>Итого косвенные</span><span id="tl-indirect">0 ₽</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:20px;">📊 Итоговая себестоимость и маржа · 1 тонна</div>
+      <div class="fin-grid">
+        <div class="fin-item"><div class="fin-label">Прямые расходы</div><div class="fin-value" id="fin-direct" style="color:var(--cyan)">0</div><div class="fin-sub">₽ / тонна</div></div>
+        <div class="fin-item"><div class="fin-label">Косвенные расходы</div><div class="fin-value" id="fin-indirect" style="color:var(--cyan)">0</div><div class="fin-sub">₽ / тонна</div></div>
+        <div class="fin-item"><div class="fin-label">Себестоимость</div><div class="fin-value" id="fin-total" style="color:var(--cyan)">0</div><div class="fin-sub" id="fin-total-sub">₽ / тонна = 0.00 ₽/кг</div></div>
+        <div class="fin-item"><div class="fin-label">Себестоимость / кг</div><div class="fin-value" id="fin-per-kg" style="color:var(--blue)">0.00</div><div class="fin-sub">₽ / кг</div></div>
+        <div class="fin-item"><div class="fin-label">Цена продажи</div><input class="fin-price-input" id="fin-price" type="number" min="0" step="0.01" value="0" oninput="onSalePriceInput(this.value)" /><div class="fin-sub" id="fin-price-sub">₽ / кг (вводится вручную)</div></div>
+        <div class="fin-item"><div class="fin-label">Маржа</div><div class="fin-value" id="fin-margin" style="color:var(--green)">—</div><div class="fin-sub" id="fin-margin-sub">%</div></div>
+      </div>
+      <div class="mg-header"><span>0%</span><span id="mg-label">Маржа: вычисляется...</span><span>100%</span></div>
+      <div class="mg-track"><div class="mg-fill" id="mg-fill"></div></div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">✓ Данные сохранены</div>
+<datalist id="syryo-dl"></datalist>
+
+<script>
+  window.__sharedStateConfig = { keys: ['cloto_cost_catalog_v1', 'cloto_raw_materials_v2'], prefixes: ['cloto_cost_calc_custom_'] };
+</script>
+<script src="shared-state-sync.js"></script>
+<script>
+var COST_CATALOG_KEY = 'cloto_cost_catalog_v1';
+var COST_STATE_PREFIX = 'cloto_cost_calc_custom_';
+var SK_SYRYO = 'cloto_raw_materials_v2';
+
+function getProductIdFromLocation(){
+  var params = new URLSearchParams(window.location.search);
+  var queryId = params.get('id') || '';
+  var hashId = '';
+  if(window.location.hash.indexOf('#id=') === 0){
+    hashId = window.location.hash.slice(4);
+  }
+  return decodeURIComponent(queryId || hashId || '').trim();
+}
+
+var productId = getProductIdFromLocation();
+var productMeta = null;
+var rawRows = [], packRows = [], prodRows = [], indRows = [];
+var syryoData = [];
+
+function esc(s){ return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function fmt(n){ return Math.round(n || 0).toLocaleString('ru'); }
+function fmtD(n,d){ return (+(n || 0)).toFixed(d || 2); }
+function setEl(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+function stateKey(){ return COST_STATE_PREFIX + productId; }
+function normalizeSalePrice(value){ var parsed = parseFloat(value); return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0; }
+function syncSalePriceFields(){
+  var value = normalizeSalePrice(document.getElementById('meta-price').value || 0);
+  var metaInput = document.getElementById('meta-price');
+  var finInput = document.getElementById('fin-price');
+  if(metaInput && document.activeElement !== metaInput) metaInput.value = value ? value.toFixed(2) : '';
+  if(finInput && document.activeElement !== finInput) finInput.value = value.toFixed(2);
+}
+function onSalePriceInput(value){
+  document.getElementById('meta-price').value = normalizeSalePrice(value);
+  persistMeta();
+}
+
+function readCatalog(){
+  try {
+    var raw = localStorage.getItem(COST_CATALOG_KEY);
+    var parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) { return []; }
+}
+
+function writeCatalog(items){
+  localStorage.setItem(COST_CATALOG_KEY, JSON.stringify(items));
+}
+
+function findProductMeta(){
+  return readCatalog().find(function(item){ return item.id === productId; }) || null;
+}
+
+function syncMetaToForm(){
+  if(!productMeta) return;
+  document.getElementById('meta-name').value = productMeta.name || '';
+  document.getElementById('meta-sku').value = productMeta.sku || '';
+  document.getElementById('meta-subtitle').value = productMeta.subtitle || '';
+  document.getElementById('meta-price').value = Number(productMeta.salePriceKg || 0) || '';
+  document.title = (productMeta.name || 'Калькуляция продукта') + ' — Себестоимость';
+  document.getElementById('product-page-title').textContent = (productMeta.icon || '🧮') + ' Себестоимость · ' + (productMeta.name || 'Новый продукт');
+  document.getElementById('product-page-subtitle').textContent = (productMeta.subtitle || 'Калькуляция 1 тонны производства') + ' · SKU: ' + (productMeta.sku || '—');
+  syncSalePriceFields();
+}
+
+function persistMeta(){
+  var catalog = readCatalog();
+  var index = catalog.findIndex(function(item){ return item.id === productId; });
+  if(index === -1) return;
+  productMeta = Object.assign({}, catalog[index], {
+    name: (document.getElementById('meta-name').value || '').trim() || 'Новый продукт',
+    sku: (document.getElementById('meta-sku').value || '').trim() || '—',
+    subtitle: (document.getElementById('meta-subtitle').value || '').trim() || 'Калькуляция 1 тонны производства',
+    salePriceKg: Number(document.getElementById('meta-price').value || 0) || 0
+  });
+  catalog[index] = productMeta;
+  writeCatalog(catalog);
+  syncMetaToForm();
+  recalcAll();
+}
+
+function renderRaw(){
+  document.getElementById('raw-tbody').innerHTML = rawRows.map(function(r,i){
+    var pct = fmtD((+r.qty||0)/10, 1);
+    var sum = (+r.qty||0)*(+r.price||0)/1000;
+    var priceCls = r._fromSyryo ? 't-num t-num-syryo' : 't-num';
+    var priceTitle = r._fromSyryo ? ' title="Из справочника сырья: ' + esc(r.name) + '"' : '';
+    return '<tr>'+
+      '<td><button class="del-btn" type="button" onclick="delRaw(' + i + ')">×</button></td>'+
+      '<td><input class="t-name" list="syryo-dl" value="' + esc(r.name) + '" oninput="rawRows[' + i + '].name=this.value;chkSyryo(' + i + ')" /></td>'+
+      '<td class="pct" id="rp' + i + '">' + pct + '%</td>'+
+      '<td class="r"><input class="t-num" type="number" value="' + (+r.qty||'') + '" oninput="rawRows[' + i + '].qty=+this.value;updRaw()" /></td>'+
+      '<td class="r"><input class="' + priceCls + '"' + priceTitle + ' type="number" value="' + (+r.price||'') + '" oninput="rawRows[' + i + '].price=+this.value;rawRows[' + i + ']._fromSyryo=false;this.className=\'t-num\';updRaw()" /></td>'+
+      '<td class="sumcell" id="rs' + i + '">' + fmt(sum) + '</td>'+
+    '</tr>';
+  }).join('');
+  updRaw();
+}
+
+function updRaw(){
+  var rawSum = 0;
+  rawRows.forEach(function(r,i){
+    var pct = fmtD((+r.qty||0)/10, 1);
+    var sum = (+r.qty||0)*(+r.price||0)/1000;
+    rawSum += sum;
+    var ep = document.getElementById('rp' + i); if(ep) ep.textContent = pct + '%';
+    var es = document.getElementById('rs' + i); if(es) es.textContent = fmt(sum);
+  });
+  var totalQty = rawRows.reduce(function(sum, row){ return sum + (+row.qty || 0); }, 0);
+  setEl('tf-raw-pct', fmtD(totalQty/10,1) + '%');
+  setEl('tf-raw-qty', fmt(totalQty) + ' кг');
+  setEl('tf-raw-sum', fmt(rawSum));
+  recalcAll();
+}
+
+function addRaw(){ rawRows.push({name:'', qty:0, price:0}); renderRaw(); }
+function delRaw(i){ rawRows.splice(i,1); renderRaw(); }
+
+function renderPack(){
+  document.getElementById('pack-tbody').innerHTML = packRows.map(function(r,i){
+    var sum = (+r.qty||0)*(+r.price||0);
+    return '<tr>'+
+      '<td><button class="del-btn" type="button" onclick="delPack(' + i + ')">×</button></td>'+
+      '<td><input class="t-name" value="' + esc(r.name) + '" oninput="packRows[' + i + '].name=this.value" /></td>'+
+      '<td><input class="t-unit" value="' + esc(r.unit || '') + '" oninput="packRows[' + i + '].unit=this.value" /></td>'+
+      '<td class="r"><input class="t-num" type="number" value="' + (+r.qty||'') + '" oninput="packRows[' + i + '].qty=+this.value;updPack()" /></td>'+
+      '<td class="r"><input class="t-num" type="number" value="' + (+r.price||'') + '" oninput="packRows[' + i + '].price=+this.value;updPack()" /></td>'+
+      '<td class="sumcell" id="pks' + i + '">' + fmt(sum) + '</td>'+
+    '</tr>';
+  }).join('');
+  updPack();
+}
+
+function updPack(){
+  var packSum = 0;
+  packRows.forEach(function(r,i){
+    var sum = (+r.qty||0)*(+r.price||0);
+    packSum += sum;
+    var e = document.getElementById('pks' + i); if(e) e.textContent = fmt(sum);
+  });
+  setEl('tf-pack-sum', fmt(packSum));
+  recalcAll();
+}
+
+function addPack(){ packRows.push({name:'', unit:'шт', qty:0, price:0}); renderPack(); }
+function delPack(i){ packRows.splice(i,1); renderPack(); }
+
+function renderProd(){
+  document.getElementById('prod-tbody').innerHTML = prodRows.map(function(r,i){
+    var sum = (+r.qty||0)*(+r.price||0);
+    return '<tr>'+
+      '<td><button class="del-btn" type="button" onclick="delProd(' + i + ')">×</button></td>'+
+      '<td><input class="t-name" value="' + esc(r.name) + '" oninput="prodRows[' + i + '].name=this.value" /></td>'+
+      '<td><input class="t-unit" value="' + esc(r.unit || '') + '" oninput="prodRows[' + i + '].unit=this.value" /></td>'+
+      '<td class="r"><input class="t-num" type="number" value="' + (+r.qty||'') + '" oninput="prodRows[' + i + '].qty=+this.value;updProd()" /></td>'+
+      '<td class="r"><input class="t-num" type="number" value="' + (+r.price||'') + '" oninput="prodRows[' + i + '].price=+this.value;updProd()" /></td>'+
+      '<td class="sumcell" id="prs' + i + '">' + fmt(sum) + '</td>'+
+    '</tr>';
+  }).join('');
+  updProd();
+}
+
+function updProd(){
+  var prodSum = 0;
+  prodRows.forEach(function(r,i){
+    var sum = (+r.qty||0)*(+r.price||0);
+    prodSum += sum;
+    var e = document.getElementById('prs' + i); if(e) e.textContent = fmt(sum);
+  });
+  setEl('tf-prod-sum', fmt(prodSum));
+  recalcAll();
+}
+
+function addProd(){ prodRows.push({name:'', unit:'', qty:0, price:0}); renderProd(); }
+function delProd(i){ prodRows.splice(i,1); renderProd(); }
+
+function renderIndirect(){
+  var cont = document.getElementById('ind-rows');
+  if(!indRows.length){
+    cont.innerHTML = '<div class="empty-state">Нет статей. Нажмите «＋ Добавить статью».</div>';
+    updIndirect();
+    return;
+  }
+  cont.innerHTML = indRows.map(function(r,i){
+    return '<div class="ind-row">' +
+      '<input class="ind-name" value="' + esc(r.name) + '" placeholder="Статья затрат..." oninput="indRows[' + i + '].name=this.value" />' +
+      '<input class="ind-num" type="number" value="' + (+r.sum||'') + '" placeholder="0" oninput="indRows[' + i + '].sum=+this.value;updIndirect()" />' +
+      '<button class="del-btn" type="button" onclick="delIndirect(' + i + ')">×</button>' +
+    '</div>';
+  }).join('');
+  updIndirect();
+}
+
+function updIndirect(){
+  var total = indRows.reduce(function(sum,row){ return sum + (+row.sum||0); }, 0);
+  setEl('tl-indirect', fmt(total) + ' ₽');
+  recalcAll();
+}
+
+function addIndirect(){ indRows.push({name:'', sum:0}); renderIndirect(); }
+function delIndirect(i){ indRows.splice(i,1); renderIndirect(); }
+
+function recalcAll(){
+  var rawSum = rawRows.reduce(function(sum,row){ return sum + (Number(row.qty || 0) * Number(row.price || 0) / 1000); }, 0);
+  var packSum = packRows.reduce(function(sum,row){ return sum + (Number(row.qty || 0) * Number(row.price || 0)); }, 0);
+  var prodSum = prodRows.reduce(function(sum,row){ return sum + (Number(row.qty || 0) * Number(row.price || 0)); }, 0);
+  var indSum = indRows.reduce(function(sum,row){ return sum + Number(row.sum || 0); }, 0);
+  var direct = rawSum + packSum + prodSum;
+  var total = direct + indSum;
+  var perKg = total / 1000;
+  var saleKg = normalizeSalePrice(document.getElementById('meta-price').value || 0);
+  var saleT = saleKg * 1000;
+  var mg = saleT > 0 ? (saleT - total) / saleT * 100 : null;
+
+  setEl('ds-raw', fmt(rawSum) + ' ₽');
+  setEl('ds-pack', fmt(packSum) + ' ₽');
+  setEl('ds-prod', fmt(prodSum) + ' ₽');
+  setEl('ds-total', fmt(direct) + ' ₽');
+
+  setEl('fin-direct', fmt(direct));
+  setEl('fin-indirect', fmt(indSum));
+  setEl('fin-total', fmt(total));
+  setEl('fin-total-sub', '₽ / тонна = ' + fmtD(perKg) + ' ₽/кг');
+  setEl('fin-per-kg', fmtD(perKg));
+  syncSalePriceFields();
+  setEl('fin-price-sub', '₽ / кг (вводится вручную) = ' + fmt(saleT) + ' ₽/т');
+  if(mg !== null){
+    var marginEl = document.getElementById('fin-margin');
+    marginEl.style.color = mg >= 0 ? 'var(--green)' : 'var(--red)';
+    marginEl.textContent = fmtD(mg,1) + '%';
+    setEl('fin-margin-sub', mg >= 0 ? '% валовой маржи' : '% убыток');
+    var fill = document.getElementById('mg-fill');
+    fill.style.width = Math.max(0, Math.min(100, mg)) + '%';
+    fill.style.background = mg >= 0 ? 'linear-gradient(90deg,var(--green),#68d391)' : 'linear-gradient(90deg,var(--red),#fc8181)';
+    setEl('mg-label', 'Маржа: ' + fmtD(mg,1) + '%');
+  } else {
+    setEl('fin-margin', '—');
+    setEl('fin-margin-sub', '%');
+    setEl('mg-label', 'Маржа не определена (нет цены продажи)');
+    document.getElementById('mg-fill').style.width = '0%';
+  }
+}
+
+function loadSyryoData(){
+  try {
+    var raw = localStorage.getItem(SK_SYRYO);
+    var parsed = raw ? JSON.parse(raw) : [];
+    syryoData = Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    syryoData = [];
+  }
+  renderSyryoDatalist();
+}
+
+function renderSyryoDatalist(){
+  var dl = document.getElementById('syryo-dl');
+  dl.innerHTML = syryoData.map(function(r){ return '<option value="' + esc(r.name) + '">'; }).join('');
+}
+
+function chkSyryo(i){
+  var name = (rawRows[i].name || '').trim().toLowerCase();
+  if(!name) return;
+  var entry = syryoData.find(function(item){ return String(item.name || '').trim().toLowerCase() === name; });
+  if(!entry || !entry.priceCloto) return;
+  rawRows[i].price = entry.priceCloto;
+  rawRows[i]._fromSyryo = true;
+  renderRaw();
+}
+
+function collectInputNames(){
+  document.querySelectorAll('#raw-tbody tr').forEach(function(tr,i){ var inp = tr.querySelector('.t-name'); if(inp && rawRows[i]) rawRows[i].name = inp.value; });
+  document.querySelectorAll('#pack-tbody tr').forEach(function(tr,i){ var inputs = tr.querySelectorAll('.t-name,.t-unit'); if(packRows[i]){ if(inputs[0]) packRows[i].name = inputs[0].value; if(inputs[1]) packRows[i].unit = inputs[1].value; } });
+  document.querySelectorAll('#prod-tbody tr').forEach(function(tr,i){ var inputs = tr.querySelectorAll('.t-name,.t-unit'); if(prodRows[i]){ if(inputs[0]) prodRows[i].name = inputs[0].value; if(inputs[1]) prodRows[i].unit = inputs[1].value; } });
+  document.querySelectorAll('#ind-rows .ind-name').forEach(function(inp,i){ if(indRows[i]) indRows[i].name = inp.value; });
+}
+
+function saveCalc(){
+  collectInputNames();
+  persistMeta();
+  localStorage.setItem(stateKey(), JSON.stringify({
+    rawRows: rawRows,
+    packRows: packRows,
+    prodRows: prodRows,
+    indRows: indRows,
+    salePriceKg: Number(document.getElementById('meta-price').value || 0) || 0
+  }));
+  var t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+
+function resetCalc(){
+  localStorage.removeItem(stateKey());
+  rawRows = [];
+  packRows = [];
+  prodRows = [];
+  indRows = [];
+  renderRaw();
+  renderPack();
+  renderProd();
+  renderIndirect();
+  recalcAll();
+}
+
+function loadCalc(){
+  try {
+    var raw = localStorage.getItem(stateKey());
+    if(raw){
+      var data = JSON.parse(raw);
+      rawRows = Array.isArray(data.rawRows) ? data.rawRows : [];
+      packRows = Array.isArray(data.packRows) ? data.packRows : [];
+      prodRows = Array.isArray(data.prodRows) ? data.prodRows : [];
+      indRows = Array.isArray(data.indRows) ? data.indRows : [];
+      if(data.salePriceKg != null) document.getElementById('meta-price').value = Number(data.salePriceKg || 0) || '';
+      syncSalePriceFields();
+      return;
+    }
+  } catch (error) {}
+  rawRows = [];
+  packRows = [];
+  prodRows = [];
+  indRows = [];
+  syncSalePriceFields();
+}
+
+function initPage(){
+  productMeta = findProductMeta();
+  if(!productMeta){
+    document.getElementById('product-page-title').textContent = 'Продукт не найден';
+    document.getElementById('product-page-subtitle').textContent = 'Вернитесь в список калькуляций и создайте продукт заново.';
+    document.querySelectorAll('input,button').forEach(function(node){ if(node.id !== 'toast') node.disabled = true; });
+    return;
+  }
+  syncMetaToForm();
+  loadSyryoData();
+  loadCalc();
+  renderRaw();
+  renderPack();
+  renderProd();
+  renderIndirect();
+  recalcAll();
+}
+
+  ['meta-name','meta-sku','meta-subtitle','meta-price'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){
+      persistMeta();
+    });
+  });
+
+  window.addEventListener('storage', function(event){
+    if(!event.key || event.key === COST_CATALOG_KEY || event.key === stateKey() || event.key === SK_SYRYO){
+      initPage();
+    }
+  });
+
+  initPage();
+</script>
+</body>
+</html>

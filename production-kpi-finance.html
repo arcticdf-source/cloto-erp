@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Показатели производства</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #eff5fb;
+      --bg2: #e2edf8;
+      --card: #ffffff;
+      --card-soft: #f7fbff;
+      --border: #d3e0ee;
+      --text: #1d2d40;
+      --muted: #627a95;
+      --blue: #2f74c8;
+      --green: #1f915e;
+      --gold: #c78521;
+      --red: #cb3e4b;
+      --shadow: 0 12px 26px rgba(40, 74, 110, 0.12);
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(47, 116, 200, 0.1), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(31, 145, 94, 0.1), transparent 34%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 1450px; margin: 0 auto; padding: 28px 20px 46px; }
+    .top { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap; }
+    .title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.03em; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 1060px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1.35fr .85fr;
+      gap: 14px;
+    }
+
+    .summary, .focus {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f4faff);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .summary h2, .focus h2 { font-family: 'Space Grotesk', sans-serif; font-size: 21px; margin-bottom: 10px; }
+    .summary table, .focus table, .interp, .matrix table { width: 100%; border-collapse: collapse; }
+    .summary th, .summary td, .focus th, .focus td, .interp th, .interp td, .matrix th, .matrix td {
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      padding: 8px;
+      font-size: 12px;
+      vertical-align: top;
+    }
+    .summary th, .focus th, .interp th, .matrix th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi, .matrix {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .kpi h3, .matrix h3 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; line-height: 1.1; }
+    .desc { font-size: 13px; line-height: 1.65; color: var(--muted); }
+    .formula {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-soft);
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #19426c;
+      font-weight: 600;
+    }
+    .example {
+      border-left: 4px solid #63b3ed;
+      border-radius: 10px;
+      background: #f7fbff;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .calc {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+    .calc h4 { font-size: 13px; color: var(--blue); }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .field { display: grid; gap: 5px; min-width: 0; }
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+    .field input {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+    .result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .result-box span { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; word-break: break-word; }
+    .result-box strong { display: block; margin-top: 5px; font-family: 'Space Grotesk', sans-serif; font-size: 21px; word-break: break-word; overflow-wrap: break-word; }
+    .full { grid-column: 1 / -1; }
+
+    .addon-section {
+      margin-top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .addon-head {
+      display: grid;
+      gap: 6px;
+    }
+
+    .addon-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .addon-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 980px;
+    }
+
+    .addon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .mini-kpi h3 { font-size: 18px; }
+    .mini-kpi .formula, .mini-kpi .example, .mini-kpi .desc { font-size: 12px; }
+    .mini-kpi .result-box strong { font-size: 18px; }
+
+    @media (max-width: 1100px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .fields, .result { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .fields, .result { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 class="title">Показатели и метрики производства</h1>
+        <p class="sub">Производство на химическом заводе нужно оценивать не по объему выпуска сам по себе, а по стабильности, эффективности, прибыльности, качеству, безопасности и предсказуемости. Поэтому этот экран показывает выпуск, загрузку мощностей, OEE, выход полезного продукта, потери, простои, ремонтопригодность, энергозатраты, себестоимость, выполнение графика и безопасность.</p>
+      </div>
+      <a class="btn" href="production-dashboard.html">← Назад в производство</a>
+      <button class="btn" id="snapBtn" type="button" title="Сформировать отчёт за текущий месяц">📋 Сформировать отчёт</button>
+    </div>
+
+    <section class="hero">
+      <div class="summary">
+        <h2>7 блоков показателей производства</h2>
+        <table>
+          <thead><tr><th>Блок</th><th>Что контролирует</th><th>Ключевые показатели</th></tr></thead>
+          <tbody>
+            <tr><td>Выпуск</td><td>Объем и пропускная способность</td><td>Объем производства, выполнение плана, длительность цикла</td></tr>
+            <tr><td>Эффективность</td><td>Использование оборудования и мощности</td><td>Загрузка мощностей, OEE, производительность труда</td></tr>
+            <tr><td>Качество</td><td>Стабильность процесса и потери</td><td>Выход полезного продукта, доля потерь, с первого раза без переработки</td></tr>
+            <tr><td>Надежность</td><td>Сбои и ремонт</td><td>Простои, среднее время между отказами, среднее время ремонта</td></tr>
+            <tr><td>Себестоимость</td><td>Экономика производства</td><td>Энергия на тонну, себестоимость на тонну</td></tr>
+            <tr><td>Планирование</td><td>Предсказуемость выпуска</td><td>Соблюдение графика, длительность цикла партии</td></tr>
+            <tr><td>Безопасность</td><td>Риск аварий и травм</td><td>TRIR, LTIFR, потенциально опасные события</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="focus">
+        <h2>Топ-10 для химического завода</h2>
+        <table>
+          <thead><tr><th>Показатель</th><th>Почему важен</th></tr></thead>
+          <tbody>
+            <tr><td>OEE</td><td>Показывает общую эффективность оборудования</td></tr>
+            <tr><td>Выход полезного продукта</td><td>Прямо влияет на маржу</td></tr>
+            <tr><td>Доля потерь</td><td>Показывает потери сырья и продукта</td></tr>
+            <tr><td>Простои</td><td>Главный индикатор надежности</td></tr>
+            <tr><td>С первого раза без переработки</td><td>Показывает стабильность процесса</td></tr>
+            <tr><td>Себестоимость на тонну</td><td>Ключевой KPI директора</td></tr>
+            <tr><td>Загрузка мощностей</td><td>Показывает использование завода</td></tr>
+            <tr><td>Энергия на тонну</td><td>Критична для химической себестоимости</td></tr>
+            <tr><td>Соблюдение графика</td><td>Определяет предсказуемость выпуска</td></tr>
+            <tr><td>Безопасность</td><td>Определяет риск для людей и бизнеса</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="kpi">
+        <h3>1. Объем производства</h3>
+        <p class="desc">Что показывает: сколько готовой продукции реально произведено. Это базовый KPI загрузки завода, но его нужно смотреть вместе с качеством, выходом годного, себестоимостью и простоями.</p>
+        <div class="formula">Формула: Объем производства = сумма всей готовой продукции</div>
+        <div class="example">Пример: продукт A = 1 200 т, B = 800 т, C = 500 т. Итого 2 500 т.</div>
+        <table class="interp"><thead><tr><th>Важно</th><th>Комментарий</th></tr></thead><tbody><tr><td>Высокий выпуск</td><td>Не означает эффективность, если растут потери и выпуск вне спецификации</td></tr><tr><td>Низкий выпуск</td><td>Проверьте загрузку, простои и план</td></tr></tbody></table>
+        <div class="calc" data-kpi="volume">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Продукт A, т</label><input type="number" min="0" step="0.1" data-f="a" value="1200"></div>
+            <div class="field"><label>Продукт B, т</label><input type="number" min="0" step="0.1" data-f="b" value="800"></div>
+            <div class="field"><label>Продукт C, т</label><input type="number" min="0" step="0.1" data-f="c" value="500"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Объем производства, т</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>2. Загрузка мощностей</h3>
+        <p class="desc">Что показывает: насколько завод использует свою мощность. Слишком низкое значение означает недозагрузку, слишком высокое может быть признаком перегрузки.</p>
+        <div class="formula">Формула: Загрузка мощностей = Фактический выпуск / Максимальная мощность × 100</div>
+        <div class="example">Пример: максимальная мощность 5 000 т, фактический выпуск 4 200 т. Загрузка = 84%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 60%</td><td>Недозагрузка</td></tr><tr><td>70-85%</td><td>Нормально</td></tr><tr><td>&gt; 90%</td><td>Риск перегрузки</td></tr></tbody></table>
+        <div class="calc" data-kpi="capacity">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Максимальная мощность, т</label><input type="number" min="0" step="0.1" data-f="max" value="5000"></div>
+            <div class="field"><label>Фактический выпуск, т</label><input type="number" min="0" step="0.1" data-f="actual" value="4200"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Загрузка мощностей, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>3. OEE</h3>
+        <p class="desc">Что показывает: общую эффективность оборудования через доступность, скорость и качество. Это один из главных KPI современного производства.</p>
+        <div class="formula">Формула: OEE = Доступность × Производительность × Качество</div>
+        <div class="example">Пример: доступность 90%, производительность 92%, качество 96%. OEE = 79,5%.</div>
+        <table class="interp"><thead><tr><th>OEE</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt; 85%</td><td>Мировой уровень</td></tr><tr><td>70-85%</td><td>Хорошо</td></tr><tr><td>&lt; 70%</td><td>Проблема</td></tr></tbody></table>
+        <div class="calc" data-kpi="oee">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Доступность, %</label><input type="number" min="0" max="100" step="0.1" data-f="availability" value="90"></div>
+            <div class="field"><label>Производительность, %</label><input type="number" min="0" max="100" step="0.1" data-f="performance" value="92"></div>
+            <div class="field"><label>Качество, %</label><input type="number" min="0" max="100" step="0.1" data-f="quality" value="96"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>OEE, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>4. Выход полезного продукта</h3>
+        <p class="desc">Что показывает: сколько полезного продукта получилось из сырья. Для химического завода это критически важный KPI, потому что 1% улучшения может давать крупный финансовый эффект.</p>
+        <div class="formula">Формула: Выход полезного продукта = Готовый продукт / Вход сырья × 100</div>
+        <div class="example">Пример: сырье 100 т, готовый продукт 93 т. Выход полезного продукта = 93%.</div>
+        <table class="interp"><thead><tr><th>Потенциал прибыли</th><th>Смысл</th></tr></thead><tbody><tr><td>Рост с 91% до 94%</td><td>На 50 000 т и марже 150 ₽/т создает крупную дополнительную прибыль</td></tr></tbody></table>
+        <div class="calc" data-kpi="yield">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Вход сырья, т</label><input type="number" min="0" step="0.1" data-f="raw" value="100"></div>
+            <div class="field"><label>Готовый продукт, т</label><input type="number" min="0" step="0.1" data-f="finished" value="93"></div>
+            <div class="field"><label>Было, %</label><input type="number" min="0" max="100" step="0.1" data-f="old" value="91"></div>
+            <div class="field"><label>Стало, %</label><input type="number" min="0" max="100" step="0.1" data-f="new" value="94"></div>
+            <div class="field"><label>Производство, т</label><input type="number" min="0" step="0.1" data-f="prod" value="50000"></div>
+            <div class="field"><label>Маржа, ₽/т</label><input type="number" min="0" step="0.1" data-f="margin" value="150"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Выход полезного продукта, %</span><strong data-r="v">0%</strong></div>
+            <div class="result-box"><span>Дополнительная прибыль, ₽</span><strong data-r="profit">0</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>5. Доля потерь</h3>
+        <p class="desc">Что показывает: сколько продукта потеряно в виде отходов или невозвратного брака. Это прямой индикатор утечки маржи.</p>
+        <div class="formula">Формула: Доля потерь = Потери / Общий выпуск × 100</div>
+        <div class="example">Пример: произведено 4 000 т, потери 120 т. Доля потерь = 3%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 1%</td><td>Отлично</td></tr><tr><td>1-3%</td><td>Нормально</td></tr><tr><td>&gt; 3%</td><td>Плохо</td></tr></tbody></table>
+        <div class="calc" data-kpi="scrap">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Общий выпуск, т</label><input type="number" min="0" step="0.1" data-f="total" value="4000"></div>
+            <div class="field"><label>Потери, т</label><input type="number" min="0" step="0.1" data-f="scrap" value="120"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Доля потерь, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>6. С первого раза без переработки</h3>
+        <p class="desc">Что показывает: сколько партий прошло без переработки. Чем выше показатель, тем стабильнее процесс и меньше лишних затрат сырья, энергии и времени.</p>
+        <div class="formula">Формула: С первого раза без переработки = Хорошие партии / Все партии × 100</div>
+        <div class="example">Пример: 286 хороших партий из 300. Показатель = 95,3%.</div>
+        <table class="interp"><thead><tr><th>Почему важно</th><th>Смысл</th></tr></thead><tbody><tr><td>Переработка</td><td>Тратит сырье, энергию, время и мощность реакторов</td></tr></tbody></table>
+        <div class="calc" data-kpi="rft">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Все партии</label><input type="number" min="0" step="1" data-f="total" value="300"></div>
+            <div class="field"><label>Хорошие партии</label><input type="number" min="0" step="1" data-f="good" value="286"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>С первого раза без переработки, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>7. Простои</h3>
+        <p class="desc">Что показывает: долю недоступного времени оборудования. Важно разделять плановые и внеплановые простои, потому что аварийные остановки опаснее для маржи и надежности.</p>
+        <div class="formula">Формула: Простои = Часы простоя / Доступные часы × 100</div>
+        <div class="example">Пример: 18 часов простоя при 720 доступных часах дают 2,5%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 2%</td><td>Отлично</td></tr><tr><td>2-5%</td><td>Нормально</td></tr><tr><td>&gt; 5%</td><td>Опасно</td></tr></tbody></table>
+        <div class="calc" data-kpi="downtime">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Доступные часы</label><input type="number" min="0" step="0.1" data-f="available" value="720"></div>
+            <div class="field"><label>Плановые простои, ч</label><input type="number" min="0" step="0.1" data-f="planned" value="10"></div>
+            <div class="field"><label>Внеплановые простои, ч</label><input type="number" min="0" step="0.1" data-f="unplanned" value="8"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Общий простой, %</span><strong data-r="v">0%</strong></div>
+            <div class="result-box"><span>Внеплановый простой, %</span><strong data-r="unplanned">0%</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>8. Среднее время между отказами</h3>
+        <p class="desc">Что показывает: как часто ломается оборудование. Чем выше показатель, тем лучше надежность производственной системы.</p>
+        <div class="formula">Формула: Среднее время между отказами = Время работы / Количество отказов</div>
+        <div class="example">Пример: 1 200 часов работы и 4 отказа дают 300 часов между отказами.</div>
+        <table class="interp"><thead><tr><th>Динамика</th><th>Вывод</th></tr></thead><tbody><tr><td>Растет</td><td>Надежность усиливается</td></tr><tr><td>Падает</td><td>Растет риск сбоев</td></tr></tbody></table>
+        <div class="calc" data-kpi="mtbf">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Время работы, ч</label><input type="number" min="0" step="0.1" data-f="operating" value="1200"></div>
+            <div class="field"><label>Количество отказов</label><input type="number" min="1" step="1" data-f="failures" value="4"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Среднее время между отказами, ч</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>9. Среднее время ремонта</h3>
+        <p class="desc">Что показывает: сколько времени занимает ремонт после отказа. Чем ниже показатель, тем быстрее производство возвращается в работу.</p>
+        <div class="formula">Формула: Среднее время ремонта = Время ремонта / Количество отказов</div>
+        <div class="example">Пример: 20 часов ремонта и 4 отказа дают 5 часов на ремонт.</div>
+        <table class="interp"><thead><tr><th>Динамика</th><th>Вывод</th></tr></thead><tbody><tr><td>Снижается</td><td>Сильная эксплуатационная готовность</td></tr><tr><td>Растет</td><td>Восстановление затягивается</td></tr></tbody></table>
+        <div class="calc" data-kpi="mttr">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Время ремонта, ч</label><input type="number" min="0" step="0.1" data-f="repair" value="20"></div>
+            <div class="field"><label>Количество отказов</label><input type="number" min="1" step="1" data-f="failures" value="4"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Среднее время ремонта, ч</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>10. Энергия на тонну</h3>
+        <p class="desc">Что показывает: сколько энергии тратится на выпуск одной тонны продукции. Для химии это один из ключевых драйверов себестоимости.</p>
+        <div class="formula">Формула: Энергия на тонну = Общая энергия / Объем производства</div>
+        <div class="example">Пример: 900 000 кВт·ч на 3 000 т дают 300 кВт·ч/т.</div>
+        <table class="interp"><thead><tr><th>Важно</th><th>Комментарий</th></tr></thead><tbody><tr><td>Снижение</td><td>Улучшает себестоимость без роста цен</td></tr><tr><td>Рост</td><td>Ищите проблему в режиме, сырье и оборудовании</td></tr></tbody></table>
+        <div class="calc" data-kpi="energy">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Общая энергия, кВт·ч</label><input type="number" min="0" step="1" data-f="energy" value="900000"></div>
+            <div class="field"><label>Объем производства, т</label><input type="number" min="0" step="0.1" data-f="production" value="3000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Энергия на тонну, кВт·ч/т</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>11. Длительность цикла партии</h3>
+        <p class="desc">Что показывает: сколько времени занимает производство партии. Снижение цикла увеличивает пропускную способность, уменьшает незавершенное производство и повышает загрузку мощности.</p>
+        <div class="formula">Формула: Длительность цикла = Конец партии - Старт партии</div>
+        <div class="example">Пример: старт в 08:00, конец в 18:00. Цикл = 10 часов.</div>
+        <table class="interp"><thead><tr><th>Динамика</th><th>Вывод</th></tr></thead><tbody><tr><td>Снижается</td><td>Растет пропускная способность</td></tr><tr><td>Растет</td><td>Увеличивается незавершенное производство и снижается предсказуемость</td></tr></tbody></table>
+        <div class="calc" data-kpi="cycle">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Старт партии</label><input type="datetime-local" data-f="start" value="2026-05-10T08:00"></div>
+            <div class="field"><label>Конец партии</label><input type="datetime-local" data-f="end" value="2026-05-10T18:00"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Длительность цикла, ч</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>12. Соблюдение графика</h3>
+        <p class="desc">Что показывает: насколько производство выполняет план. Это KPI дисциплины планирования и предсказуемости поставок для продаж.</p>
+        <div class="formula">Формула: Соблюдение графика = Выполненный план / План производства × 100</div>
+        <div class="example">Пример: план 5 000 т, факт 4 700 т. Соблюдение = 94%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt; 95%</td><td>Отлично</td></tr><tr><td>85-95%</td><td>Нормально</td></tr><tr><td>&lt; 85%</td><td>Проблемы</td></tr></tbody></table>
+        <div class="calc" data-kpi="schedule">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>План производства, т</label><input type="number" min="0" step="0.1" data-f="planned" value="5000"></div>
+            <div class="field"><label>Выполнено, т</label><input type="number" min="0" step="0.1" data-f="completed" value="4700"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Соблюдение графика, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>13. Себестоимость на тонну</h3>
+        <p class="desc">Что показывает: сколько стоит произвести одну тонну продукции. Главная задача производства — снижать этот KPI без потери качества и надежности.</p>
+        <div class="formula">Формула: Себестоимость на тонну = Общая производственная себестоимость / Объем производства</div>
+        <div class="example">Пример: себестоимость 160 000 000 ₽, выпуск 4 000 т. Себестоимость на тонну = 40 000 ₽/т.</div>
+        <table class="interp"><thead><tr><th>Цель</th><th>Комментарий</th></tr></thead><tbody><tr><td>Снижение</td><td>Нельзя достигать ценой роста потерь, аварий и выпуска вне спецификации</td></tr></tbody></table>
+        <div class="calc" data-kpi="costton">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Общая себестоимость, ₽</label><input type="number" min="0" step="1" data-f="cost" value="160000000"></div>
+            <div class="field"><label>Объем производства, т</label><input type="number" min="0" step="0.1" data-f="production" value="4000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Себестоимость на тонну, ₽/т</span><strong data-r="v">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>14. Производительность труда</h3>
+        <p class="desc">Что показывает: сколько тонн выпуска приходится на одного производственного сотрудника. Это KPI организационной и операционной эффективности.</p>
+        <div class="formula">Формула: Производительность труда = Объем производства / Сотрудники производства</div>
+        <div class="example">Пример: 6 000 т и 60 сотрудников дают 100 т на человека.</div>
+        <table class="interp"><thead><tr><th>Важно</th><th>Комментарий</th></tr></thead><tbody><tr><td>Нужно связывать</td><td>Оценивайте вместе с безопасностью, качеством и автоматизацией</td></tr></tbody></table>
+        <div class="calc" data-kpi="labor">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Объем производства, т</label><input type="number" min="0" step="0.1" data-f="production" value="6000"></div>
+            <div class="field"><label>Сотрудников производства</label><input type="number" min="1" step="1" data-f="people" value="60"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Тонн на сотрудника</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>15. Показатели безопасности</h3>
+        <p class="desc">Что показывает: уровень производственного риска через частоту инцидентов, частоту травм с потерей времени и количество потенциально опасных событий.</p>
+        <div class="formula">Формулы: ЧРНС = Инциденты × 200 000 / Часы работы; ЧТПВ = Травмы с потерей времени × 1 000 000 / Часы работы</div>
+        <div class="example">Пример: 3 инцидента, 1 травма с потерей времени, 250 000 часов работы и 12 потенциально опасных событий дают количественную картину риска.</div>
+        <table class="interp"><thead><tr><th>Почему важно</th><th>Смысл</th></tr></thead><tbody><tr><td>Потенциально опасные события</td><td>Позволяют увидеть риск до аварии и травмы</td></tr></tbody></table>
+        <div class="calc" data-kpi="safety">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Часы работы</label><input type="number" min="1" step="1" data-f="hours" value="250000"></div>
+            <div class="field"><label>Учитываемые инциденты</label><input type="number" min="0" step="1" data-f="incidents" value="3"></div>
+            <div class="field"><label>Травмы с потерей времени</label><input type="number" min="0" step="1" data-f="lost" value="1"></div>
+            <div class="field"><label>Потенциально опасные события</label><input type="number" min="0" step="1" data-f="nearmiss" value="12"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>ЧРНС (частота инцидентов)</span><strong data-r="trir">0</strong></div>
+            <div class="result-box"><span>ЧТПВ (травмы с потерей времени)</span><strong data-r="ltifr">0</strong></div>
+            <div class="result-box"><span>Потенциально опасные события</span><strong data-r="near">0</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi full">
+        <h3>Ключевые показатели директора по производству</h3>
+        <p class="desc">Для директора по производству важны не отдельные локальные цифры, а общий баланс эффективности, себестоимости, выхода годного, надежности, безопасности и выполнения плана.</p>
+        <div class="formula">Рекомендуемый набор для ежемесячного обзора: OEE, себестоимость на тонну, выход полезного продукта, простои, пропускная способность, безопасность и влияние на EBITDA.</div>
+        <div class="calc" data-kpi="director">
+          <h4>Быстрый индекс производственной устойчивости (0-100)</h4>
+          <div class="fields">
+            <div class="field"><label>OEE, %</label><input type="number" min="0" max="100" step="0.1" data-f="oee" value="79.5"></div>
+            <div class="field"><label>Выход полезного продукта, %</label><input type="number" min="0" max="100" step="0.1" data-f="yield" value="93"></div>
+            <div class="field"><label>Простои, %</label><input type="number" min="0" max="100" step="0.1" data-f="downtime" value="2.5"></div>
+            <div class="field"><label>Соблюдение графика, %</label><input type="number" min="0" max="100" step="0.1" data-f="schedule" value="94"></div>
+            <div class="field"><label>Себестоимость к бюджету, %</label><input type="number" min="0" step="0.1" data-f="cost" value="98"></div>
+            <div class="field"><label>ЧРНС</label><input type="number" min="0" step="0.1" data-f="trir" value="2.4"></div>
+            <div class="field"><label>EBITDA-эффект, млн ₽</label><input type="number" min="-999" step="0.1" data-f="ebitda" value="18"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Индекс производственной устойчивости</span><strong data-r="score">0</strong></div>
+            <div class="result-box"><span>Статус</span><strong data-r="label">-</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="matrix full">
+        <h3>Связь KPI производства с другими функциями</h3>
+        <p class="desc">Показатели производства нельзя смотреть отдельно. Полноценная аналитика завода появляется только тогда, когда производственные метрики связываются с лабораторией, закупками и продажами.</p>
+        <table>
+          <thead><tr><th>Производство</th><th>Лаборатория</th><th>Закупки</th><th>Продажи</th></tr></thead>
+          <tbody>
+            <tr><td>Выход полезного продукта</td><td>Выпуск вне спецификации и скорость контроля качества</td><td>Качество сырья</td><td>Рекламации клиентов</td></tr>
+            <tr><td>Простои</td><td>Скорость выдачи заключений</td><td>Своевременность поставщиков</td><td>Выполнение отгрузок</td></tr>
+            <tr><td>Себестоимость на тонну</td><td>Рецептура и переработка</td><td>Стоимость сырья и логистика</td><td>Маржа по клиентам и заказам</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="addon-section">
+      <div class="addon-head">
+        <div class="addon-title">Дополнительные формы расчета</div>
+        <div class="addon-copy">Здесь собраны KPI, которых не было в базовом наборе: оперативные, недельные, месячные и квартальные формы.</div>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Оперативные KPI</div>
+        <div class="addon-copy">Контроль смены и состояния оборудования в коротком цикле.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Пропускная способность</h3>
+          <p class="desc">Производительность в час работы.</p>
+          <div class="formula">Формула: Выпуск / Часы работы</div>
+          <div class="example">Пример: 2 400 тонн за 24 часа дают пропускную способность 100 т/ч.</div>
+          <div class="calc" data-kpi="productionRate">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Выпуск, т</label><input type="number" min="0" step="0.1" data-f="volume" value="2400"></div>
+              <div class="field"><label>Часы работы</label><input type="number" min="1" step="0.1" data-f="hours" value="24"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Пропускная способность, т/ч</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Оповещения о безопасности</h3>
+          <p class="desc">Оценка риска через поток предупреждений.</p>
+          <div class="formula">Формула: Оповещения / 1 000 часов</div>
+          <div class="example">Пример: 18 предупреждений (4 критических) за 240 часов работы дают 75 оповещений на 1 000 часов и 22% критических.</div>
+          <div class="calc" data-kpi="safetyAlerts">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Предупреждения</label><input type="number" min="0" step="1" data-f="alerts" value="18"></div>
+              <div class="field"><label>Критические предупреждения</label><input type="number" min="0" step="1" data-f="critical" value="4"></div>
+              <div class="field"><label>Часы работы</label><input type="number" min="1" step="1" data-f="hours" value="240"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Оповещения / 1 000 ч</span><strong data-r="rate">0</strong></div>
+              <div class="result-box"><span>Критические, %</span><strong data-r="criticalShare">0%</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Статус реакторов</h3>
+          <p class="desc">Доля доступных реакторов.</p>
+          <div class="formula">Формула: Онлайн / Всего × 100</div>
+          <div class="example">Пример: 10 онлайн из 12 реакторов при 2 на обслуживании дают готовность 83,3%.</div>
+          <div class="calc" data-kpi="reactorStatus">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Всего реакторов</label><input type="number" min="1" step="1" data-f="total" value="12"></div>
+              <div class="field"><label>Онлайн</label><input type="number" min="0" step="1" data-f="online" value="10"></div>
+              <div class="field"><label>На обслуживании</label><input type="number" min="0" step="1" data-f="maintenance" value="2"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Готовность, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Недельные KPI</div>
+        <div class="addon-copy">Сравнение трендов, причин отклонений и смен между собой.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Тренды OEE</h3>
+          <p class="desc">Изменение OEE за неделю.</p>
+          <div class="formula">Формула: Текущий OEE - Предыдущий OEE</div>
+          <div class="example">Пример: OEE вырос с 77,2% до 79,5%, что показывает улучшение на 2,3 п.п. за неделю.</div>
+          <div class="calc" data-kpi="oeeTrends">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Текущий OEE, %</label><input type="number" min="0" max="100" step="0.1" data-f="current" value="79.5"></div>
+              <div class="field"><label>Предыдущий OEE, %</label><input type="number" min="0" max="100" step="0.1" data-f="previous" value="77.2"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Δ OEE, п.п.</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Анализ простоев</h3>
+          <p class="desc">Доля внеплановых потерь времени.</p>
+          <div class="formula">Формула: Внеплановый простой / Общий простой × 100</div>
+          <div class="example">Пример: 10 часов плановых + 8 часов внеплановых = 18 часов всего, из них внеплановый составляет 44,4%.</div>
+          <div class="calc" data-kpi="downtimeAnalysis">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Плановый простой, ч</label><input type="number" min="0" step="0.1" data-f="planned" value="10"></div>
+              <div class="field"><label>Внеплановый простой, ч</label><input type="number" min="0" step="0.1" data-f="unplanned" value="8"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Всего простоя, ч</span><strong data-r="total">0</strong></div>
+              <div class="result-box"><span>Внеплановый, %</span><strong data-r="share">0%</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Тренды выхода годного</h3>
+          <p class="desc">Сдвиг выхода годного между неделями.</p>
+          <div class="formula">Формула: Текущий выход - Предыдущий выход</div>
+          <div class="example">Пример: Выход полезного продукта улучшился с 91,5% до 93%, прирост составляет 1,5 п.п. за неделю.</div>
+          <div class="calc" data-kpi="yieldTrends">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Текущий выход, %</label><input type="number" min="0" max="100" step="0.1" data-f="current" value="93"></div>
+              <div class="field"><label>Предыдущий выход, %</label><input type="number" min="0" max="100" step="0.1" data-f="previous" value="91.5"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Δ Выход, п.п.</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Проблемы с обслуживанием</h3>
+          <p class="desc">Нагрузка по открытым ремонтным задачам.</p>
+          <div class="formula">Формула: Открытые + Критические - Закрытые</div>
+          <div class="example">Пример: 14 открытых + 3 критических - 9 закрытых = 8 задач в бэклоге (остаются на следующую неделю).</div>
+          <div class="calc" data-kpi="maintenanceIssues">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Открытые</label><input type="number" min="0" step="1" data-f="open" value="14"></div>
+              <div class="field"><label>Критические</label><input type="number" min="0" step="1" data-f="critical" value="3"></div>
+              <div class="field"><label>Закрытые за неделю</label><input type="number" min="0" step="1" data-f="closed" value="9"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Бэклог</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Сравнение смен</h3>
+          <p class="desc">Сравнение производительности смен.</p>
+          <div class="formula">Формула: Сравнение по объему выпуска</div>
+          <div class="example">Пример: Смена A выпустила 820 т, B - 760 т, C - 790 т. Лучшая смена А с разбросом 60 т.</div>
+          <div class="calc" data-kpi="shiftComparison">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Смена A, т</label><input type="number" min="0" step="0.1" data-f="a" value="820"></div>
+              <div class="field"><label>Смена B, т</label><input type="number" min="0" step="0.1" data-f="b" value="760"></div>
+              <div class="field"><label>Смена C, т</label><input type="number" min="0" step="0.1" data-f="c" value="790"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Лучшая смена</span><strong data-r="best">-</strong></div>
+              <div class="result-box"><span>Разброс, т</span><strong data-r="spread">0</strong></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Месячные KPI</div>
+        <div class="addon-copy">Финансовый эффект, расходы на обслуживание и связь с результатом.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Влияние на EBITDA</h3>
+          <p class="desc">Финансовый эффект от улучшения производства.</p>
+          <div class="formula">Формула: Доп. выпуск × маржа + экономия</div>
+          <div class="example">Пример: 120 т доп. выпуска × 6 500 ₽/т маржи + 480 000 ₽ экономии = 1 260 000 ₽ влияния на EBITDA.</div>
+          <div class="calc" data-kpi="ebitdaImpact">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Доп. выпуск, т</label><input type="number" min="0" step="0.1" data-f="volume" value="120"></div>
+              <div class="field"><label>Маржа, ₽/т</label><input type="number" min="0" step="1" data-f="margin" value="6500"></div>
+              <div class="field"><label>Экономия, ₽</label><input type="number" min="0" step="1" data-f="savings" value="480000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Влияние на EBITDA, ₽</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Стоимость обслуживания</h3>
+          <p class="desc">Расходы на ремонт и сервис на тонну.</p>
+          <div class="formula">Формула: Затраты на обслуживание / Объем производства</div>
+          <div class="example">Пример: 1 200 000 ₽ затрат на обслуживание / 4 000 т выпуска = 300 ₽/т себестоимости обслуживания.</div>
+          <div class="calc" data-kpi="maintenanceCost">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Затраты на обслуживание, ₽</label><input type="number" min="0" step="1" data-f="cost" value="1200000"></div>
+              <div class="field"><label>Выпуск, т</label><input type="number" min="0" step="0.1" data-f="volume" value="4000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>₽/т</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="section-title">Квартальные KPI</div>
+        <div class="addon-copy">Стратегические метрики для CAPEX, надежности, оптимизации и узких мест.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>Эффективность CAPEX</h3>
+          <p class="desc">Сколько экономии дает инвестиция.</p>
+          <div class="formula">Формула: Экономия / CAPEX × 100</div>
+          <div class="example">Пример: CAPEX 5 млн ₽ с годовой экономией 1,4 млн ₽ дает эффективность 28% (окупаемость ~3,6 года).</div>
+          <div class="calc" data-kpi="capexEfficiency">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>CAPEX, ₽</label><input type="number" min="0" step="1" data-f="capex" value="5000000"></div>
+              <div class="field"><label>Годовая экономия, ₽</label><input type="number" min="0" step="1" data-f="savings" value="1400000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Эффективность, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Улучшение надежности</h3>
+          <p class="desc">Рост надежности по MTBF.</p>
+          <div class="formula">Формула: (После - До) / До × 100</div>
+          <div class="example">Пример: MTBF вырос с 280 часов до 360 часов, что показывает улучшение надежности на 28,6%.</div>
+          <div class="calc" data-kpi="reliabilityImprovement">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>MTBF до, ч</label><input type="number" min="0" step="0.1" data-f="before" value="280"></div>
+              <div class="field"><label>MTBF после, ч</label><input type="number" min="0" step="0.1" data-f="after" value="360"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Рост надежности, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Оптимизация процесса</h3>
+          <p class="desc">Индекс улучшения процесса по скорости и качеству.</p>
+          <div class="formula">Формула: среднее улучшение пропускной способности и выхода годного</div>
+          <div class="example">Пример: Пропускная способность выросла на 12%, выход полезного продукта на 3 п.п. (от 91 до 94%) дает индекс оптимизации 7,5%.</div>
+          <div class="calc" data-kpi="processOptimization">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Пропускная способность до, т/ч</label><input type="number" min="0" step="0.1" data-f="throughputBefore" value="100"></div>
+              <div class="field"><label>Пропускная способность после, т/ч</label><input type="number" min="0" step="0.1" data-f="throughputAfter" value="112"></div>
+              <div class="field"><label>Выход полезного продукта до, %</label><input type="number" min="0" max="100" step="0.1" data-f="yieldBefore" value="91"></div>
+              <div class="field"><label>Выход полезного продукта после, %</label><input type="number" min="0" max="100" step="0.1" data-f="yieldAfter" value="94"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Индекс оптимизации, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Устранение узких мест</h3>
+          <p class="desc">Дополнительная мощность после снятия узкого места.</p>
+          <div class="formula">Формула: Потенциал - Текущая мощность</div>
+          <div class="example">Пример: Потенциал завода 9 200 т/мес при текущей мощности 8 000 т/мес дает 1 200 т дополнительной мощности.</div>
+          <div class="calc" data-kpi="debottlenecking">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Текущая мощность, т/мес</label><input type="number" min="0" step="1" data-f="current" value="8000"></div>
+              <div class="field"><label>Потенциал, т/мес</label><input type="number" min="0" step="1" data-f="potential" value="9200"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доп. мощность, т</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>Оптимизация энергии</h3>
+          <p class="desc">Снижение энергопотребления на выпуск.</p>
+          <div class="formula">Формула: (До - После) / До × 100</div>
+          <div class="example">Пример: Энергопотребление снизилось с 320 до 295 кВт·ч/т, что дает экономию 7,8% на выпуск.</div>
+          <div class="calc" data-kpi="energyOptimization">
+            <h4>Расчет</h4>
+            <div class="fields">
+              <div class="field"><label>Энергия до, кВт·ч/т</label><input type="number" min="0" step="0.1" data-f="before" value="320"></div>
+              <div class="field"><label>Энергия после, кВт·ч/т</label><input type="number" min="0" step="0.1" data-f="after" value="295"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Экономия энергии, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function n(value) {
+      var x = Number(value);
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function pct(v, d) { return n(v).toFixed(d) + '%'; }
+    function num(v, d) { return n(v).toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    function rub(v) { return n(v).toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }); }
+
+    function input(scope, name) {
+      var el = scope.querySelector('[data-f="' + name + '"]');
+      return el ? n(el.value) : 0;
+    }
+
+    function out(scope, name, value) {
+      var el = scope.querySelector('[data-r="' + name + '"]');
+      if (el) el.textContent = value;
+    }
+
+    function ratio(numVal, denVal) { return denVal > 0 ? (numVal / denVal) : 0; }
+
+    function dateHours(scope, startName, endName) {
+      var startEl = scope.querySelector('[data-f="' + startName + '"]');
+      var endEl = scope.querySelector('[data-f="' + endName + '"]');
+      var start = startEl && startEl.value ? new Date(startEl.value) : null;
+      var end = endEl && endEl.value ? new Date(endEl.value) : null;
+      if (!start || !end || isNaN(start) || isNaN(end)) return 0;
+      return (end - start) / 3600000;
+    }
+
+    var calculators = {
+      volume: function(scope) {
+        out(scope, 'v', num(input(scope, 'a') + input(scope, 'b') + input(scope, 'c'), 1));
+      },
+      scrap: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'scrap'), input(scope, 'total')) * 100, 2));
+      },
+      rft: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'good'), input(scope, 'total')) * 100, 2));
+      },
+      cycle: function(scope) {
+        out(scope, 'v', num(dateHours(scope, 'start', 'end'), 1));
+      },
+      schedule: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'completed'), input(scope, 'planned')) * 100, 2));
+      },
+      utility: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'cost'), input(scope, 'production')), 0) + ' ₽/т');
+      },
+      productionRate: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'volume'), input(scope, 'hours')), 1));
+      },
+      safetyAlerts: function(scope) {
+        var hours = input(scope, 'hours');
+        var alerts = input(scope, 'alerts');
+        var critical = input(scope, 'critical');
+        out(scope, 'rate', num(ratio(alerts * 1000, hours), 1));
+        out(scope, 'criticalShare', pct(ratio(critical, alerts) * 100, 1));
+      },
+      reactorStatus: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'online'), input(scope, 'total')) * 100, 1));
+      },
+      oeeTrends: function(scope) {
+        out(scope, 'v', num(input(scope, 'current') - input(scope, 'previous'), 1));
+      },
+      downtimeAnalysis: function(scope) {
+        var planned = input(scope, 'planned');
+        var unplanned = input(scope, 'unplanned');
+        var total = planned + unplanned;
+        out(scope, 'total', num(total, 1));
+        out(scope, 'share', pct(ratio(unplanned, total) * 100, 1));
+      },
+      yieldTrends: function(scope) {
+        out(scope, 'v', num(input(scope, 'current') - input(scope, 'previous'), 1));
+      },
+      maintenanceIssues: function(scope) {
+        out(scope, 'v', num(input(scope, 'open') + input(scope, 'critical') - input(scope, 'closed'), 0));
+      },
+      shiftComparison: function(scope) {
+        var a = input(scope, 'a');
+        var b = input(scope, 'b');
+        var c = input(scope, 'c');
+        var best = Math.max(a, b, c);
+        var spread = best - Math.min(a, b, c);
+        var label = 'A';
+        if (best === b) label = 'B';
+        if (best === c) label = 'C';
+        out(scope, 'best', 'Смена ' + label);
+        out(scope, 'spread', num(spread, 1));
+      },
+      ebitdaImpact: function(scope) {
+        out(scope, 'v', rub(input(scope, 'volume') * input(scope, 'margin') + input(scope, 'savings')));
+      },
+      maintenanceCost: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'cost'), input(scope, 'volume')), 0));
+      },
+      capexEfficiency: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'savings'), input(scope, 'capex')) * 100, 1));
+      },
+      reliabilityImprovement: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'after') - input(scope, 'before'), input(scope, 'before')) * 100, 1));
+      },
+      processOptimization: function(scope) {
+        var throughputImprovement = ratio(input(scope, 'throughputAfter') - input(scope, 'throughputBefore'), input(scope, 'throughputBefore')) * 100;
+        var yieldImprovement = input(scope, 'yieldAfter') - input(scope, 'yieldBefore');
+        out(scope, 'v', pct((throughputImprovement + yieldImprovement) / 2, 1));
+      },
+      debottlenecking: function(scope) {
+        out(scope, 'v', num(input(scope, 'potential') - input(scope, 'current'), 0));
+      },
+      energyOptimization: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'before') - input(scope, 'after'), input(scope, 'before')) * 100, 1));
+      },
+      capacity: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'actual'), input(scope, 'max')) * 100, 2));
+      },
+      oee: function(scope) {
+        out(scope, 'v', pct(input(scope, 'availability') * input(scope, 'performance') * input(scope, 'quality') / 10000, 2));
+      },
+      yield: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'finished'), input(scope, 'raw')) * 100, 2));
+        out(scope, 'profit', num((input(scope, 'new') - input(scope, 'old')) / 100 * input(scope, 'prod') * input(scope, 'margin'), 0));
+      },
+      downtime: function(scope) {
+        var total = input(scope, 'planned') + input(scope, 'unplanned');
+        out(scope, 'v', pct(ratio(total, input(scope, 'available')) * 100, 2));
+        out(scope, 'unplanned', pct(ratio(input(scope, 'unplanned'), input(scope, 'available')) * 100, 2));
+      },
+      mtbf: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'operating'), input(scope, 'failures')), 1));
+      },
+      mttr: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'repair'), input(scope, 'failures')), 1));
+      },
+      energy: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'energy'), input(scope, 'production')), 0));
+      },
+      costton: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'cost'), input(scope, 'production')), 0));
+      },
+      labor: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'production'), input(scope, 'people')), 1));
+      },
+      safety: function(scope) {
+        var hours = input(scope, 'hours');
+        out(scope, 'trir', num(ratio(input(scope, 'incidents') * 200000, hours), 2));
+        out(scope, 'ltifr', num(ratio(input(scope, 'lost') * 1000000, hours), 2));
+        out(scope, 'near', num(input(scope, 'nearmiss'), 0));
+      },
+      director: function(scope) {
+        var oeeVal = input(scope, 'oee');
+        var yieldVal = input(scope, 'yield');
+        var downtimeVal = input(scope, 'downtime');
+        var scheduleVal = input(scope, 'schedule');
+        var costVal = input(scope, 'cost');
+        var trirVal = input(scope, 'trir');
+        var ebitdaVal = input(scope, 'ebitda');
+        var oeeScore = Math.min(100, (oeeVal / 85) * 100);
+        var yieldScore = Math.min(100, (yieldVal / 95) * 100);
+        var downtimeScore = Math.max(0, ((5 - downtimeVal) / 5) * 100);
+        var scheduleScore = Math.min(100, (scheduleVal / 95) * 100);
+        var costScore = Math.max(0, Math.min(100, (105 - costVal) * 5));
+        var safetyScore = Math.max(0, 100 - trirVal * 20);
+        var ebitdaScore = ebitdaVal > 0 ? Math.min(100, ebitdaVal * 2) : 0;
+        var score = Math.round((oeeScore + yieldScore + downtimeScore + scheduleScore + costScore + safetyScore + ebitdaScore) / 7);
+        var label = score >= 80 ? 'Отлично' : score >= 60 ? 'Хорошо' : score >= 40 ? 'Требует внимания' : 'Критично';
+        out(scope, 'score', score);
+        out(scope, 'label', label);
+      }
+    };
+
+    document.querySelectorAll('.calc').forEach(function(scope) {
+      var key = scope.dataset.kpi;
+      var run = function() {
+        if (calculators[key]) calculators[key](scope);
+      };
+      scope.querySelectorAll('input').forEach(function(field) {
+        field.addEventListener('input', run);
+        field.addEventListener('change', run);
+      });
+      run();
+    });
+
+    // ── Фиксация периода (снапшот KPI) ──────────────────────────────
+    (function() {
+      var DEPT = 'production';
+      var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+      var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+      function periodKey() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+      function labelBtn() { var d = new Date(); return '📋 Отчёт ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear(); }
+      function saveSnapshot() {
+        var snap = { period: periodKey(), dept: DEPT, savedAt: new Date().toISOString(), inputs: {}, results: {}, resultLabels: {} };
+        document.querySelectorAll('.calc').forEach(function(sc) {
+          var k = sc.getAttribute('data-kpi') || '_';
+          snap.inputs[k] = {};
+          sc.querySelectorAll('input[data-f]').forEach(function(el) { snap.inputs[k][el.getAttribute('data-f')] = el.value; });
+          snap.results[k] = {};
+          sc.querySelectorAll('strong[data-r]').forEach(function(el) {
+            var rKey = el.getAttribute('data-r'); snap.results[k][rKey] = el.textContent;
+            var sib = el.previousElementSibling; if (sib && sib.tagName === 'SPAN') snap.resultLabels[k + '.' + rKey] = sib.textContent.trim();
+          });
+        });
+        try {
+          var all = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
+          all[snap.period + '_' + DEPT] = snap;
+          localStorage.setItem(SNAP_KEY, JSON.stringify(all));
+          var btn = document.getElementById('snapBtn');
+          window.open('kpi-monthly-report.html?dept=' + DEPT + '&period=' + snap.period, '_blank');
+          if (btn) { btn.textContent = '✓ Отчёт открыт'; btn.style.cssText = 'background:#d4edda;color:#1f915e;border-color:#b8ddc4'; setTimeout(function() { btn.textContent = labelBtn(); btn.style.cssText = ''; }, 2000); }
+        } catch(e) { alert('Ошибка: ' + e.message); }
+      }
+      window.addEventListener('load', function() {
+        var btn = document.getElementById('snapBtn');
+        if (btn) { btn.textContent = labelBtn(); btn.addEventListener('click', saveSnapshot); }
+      });
+    })();
+  </script>
+</body>
+</html>

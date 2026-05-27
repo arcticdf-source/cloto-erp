@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>План поставок 2026 — Клото</title>
+  <link rel="stylesheet" href="crm-module-sidebar.css" />
+  <style>
+    body { margin: 0; font-family: Manrope, sans-serif; background: #eef4fb; color: #1f2d3d; }
+    .shell { padding: 30px; }
+    .card { background: #fff; border: 1px solid rgba(140, 160, 183, 0.28); border-radius: 18px; padding: 24px; max-width: 860px; }
+    h1 { margin: 0 0 10px; font-size: 34px; }
+    .sub { margin: 0 0 20px; color: #6f8299; }
+    .year { font-size: 22px; font-weight: 800; margin-bottom: 14px; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(140, 160, 183, 0.34);
+      background: #f8fbff; color: #27476b; text-decoration: none; font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="card">
+      <h1>План поставок</h1>
+      <p class="sub">Выберите период для работы с данными.</p>
+      <div class="year">2026 год</div>
+      <div class="buttons">
+        <a class="btn" href="quarterly-sales-supply-plan.html?quarter=2">Q2 (2 квартал)</a>
+        <a class="btn" href="quarterly-sales-supply-plan.html?quarter=3">Q3 (3 квартал)</a>
+        <a class="btn" href="quarterly-sales-supply-plan.html?quarter=4">Q4 (4 квартал)</a>
+        <a class="btn" href="supply-plan-annual.html">Годовой план</a>
+      </div>
+    </section>
+  </main>
+  <script src="crm-module-sidebar.js"></script>
+</body>
+</html>

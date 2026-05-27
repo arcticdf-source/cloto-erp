@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Заказы от клиентов — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255,255,255,.92);
+      --surface2: rgba(255,255,255,.97);
+      --border: rgba(136,158,186,.25);
+      --text: #1e2c3c;
+      --muted: #5f7691;
+      --gold: #d9a83a;
+      --blue: #3b91da;
+      --green: #3ea66d;
+      --radius: 18px;
+      --shadow: 0 14px 30px rgba(36,66,100,.14);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(245,201,95,.10), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(93,229,207,.10), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(126,191,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126,191,255,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 18px 14px 36px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .btn-new {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 34px;
+      padding: 6px 13px;
+      border-radius: 9px;
+      border: 1px solid rgba(217,168,58,.38);
+      background: linear-gradient(135deg, rgba(217,168,58,.20), rgba(217,168,58,.10));
+      color: #3f3320;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .16s ease, border-color .16s ease, transform .16s ease;
+      white-space: nowrap;
+    }
+
+    .btn-new:hover {
+      background: linear-gradient(135deg, rgba(217,168,58,.30), rgba(217,168,58,.18));
+      border-color: rgba(217,168,58,.55);
+      transform: translateY(-1px);
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 34px;
+      padding: 6px 11px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .16s ease, color .16s ease;
+    }
+
+    .btn-back:hover { background: var(--surface2); color: var(--text); }
+
+    .page-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(22px, 3vw, 34px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+
+    .page-title span { color: var(--gold); }
+
+    .page-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .table-card {
+      margin-top: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(247,251,255,.90));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .table-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 99px;
+      background: rgba(217,168,58,.16);
+      border: 1px solid rgba(217,168,58,.28);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .table-wrap { overflow-x: hidden; }
+
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; }
+
+    thead th {
+      padding: 8px 8px;
+      background: rgba(238,244,251,.65);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      text-align: left;
+      white-space: normal;
+      line-height: 1.25;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(136,158,186,.12);
+      transition: background .12s ease;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(126,191,255,.06); }
+
+    tbody td { padding: 8px 8px; vertical-align: middle; line-height: 1.35; }
+
+    .td-num  { font-weight: 700; }
+    .td-client { font-weight: 600; white-space: normal; overflow-wrap: anywhere; }
+    .td-amount { font-weight: 700; white-space: nowrap; }
+    .td-muted { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .td-center { text-align: center; color: var(--muted); font-size: 12px; }
+    .td-right { text-align: right; white-space: nowrap; }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: normal;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .status-new {
+      background: rgba(62,166,109,.13);
+      border: 1px solid rgba(62,166,109,.26);
+      color: #2a7a50;
+    }
+
+    .status-draft {
+      background: rgba(95,118,145,.10);
+      border: 1px solid rgba(95,118,145,.22);
+      color: var(--muted);
+    }
+
+    .status-sent {
+      background: rgba(122, 93, 255, .12);
+      border: 1px solid rgba(122, 93, 255, .30);
+      color: #5e46c7;
+    }
+
+    .status-accepted {
+      background: rgba(59, 145, 218, .12);
+      border: 1px solid rgba(59, 145, 218, .30);
+      color: #1e5f8a;
+    }
+
+    .status-produced {
+      background: rgba(217, 168, 58, .14);
+      border: 1px solid rgba(217, 168, 58, .34);
+      color: #8a6210;
+    }
+
+    .status-warehouse {
+      background: rgba(36, 183, 173, .13);
+      border: 1px solid rgba(36, 183, 173, .30);
+      color: #146e69;
+    }
+
+    .prod-date-sub {
+      font-size: 10.5px;
+      color: #1e5f8a;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .btn-open {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 7px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.6);
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .14s ease, border-color .14s ease;
+    }
+
+    .btn-open:hover {
+      background: rgba(59,145,218,.10);
+      border-color: rgba(59,145,218,.3);
+    }
+
+    .btn-production {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 7px;
+      border-radius: 8px;
+      border: 1px solid rgba(62,166,109,.32);
+      background: rgba(62,166,109,.12);
+      color: #237a4a;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: normal;
+      transition: background .14s ease, border-color .14s ease, transform .14s ease;
+    }
+
+    .btn-production:hover {
+      background: rgba(62,166,109,.22);
+      border-color: rgba(62,166,109,.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-delete-order {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid rgba(217,101,118,.36);
+      background: rgba(217,101,118,.12);
+      color: #a33a4d;
+      font-size: 15px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background .14s ease, border-color .14s ease, transform .14s ease;
+    }
+
+    .btn-delete-order:hover {
+      background: rgba(217,101,118,.2);
+      border-color: rgba(217,101,118,.56);
+      transform: translateY(-1px);
+    }
+
+    .empty-state { padding: 52px 24px; text-align: center; }
+    .empty-state-icon { font-size: 34px; margin-bottom: 12px; opacity: .45; }
+    .empty-state-title { font-size: 15px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+    .empty-state-sub { font-size: 12px; color: var(--muted); line-height: 1.6; max-width: 320px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="wrap">
+    <div class="top-bar">
+      <a class="btn-new" href="sales-order-builder.html">+ Создать заказ (SO)</a>
+      <a class="btn-back" href="sales-orders.html">← К дашборду</a>
+    </div>
+
+    <div class="page-title">Заказы от клиентов <span>(SO)</span></div>
+    <div class="page-sub">Список сохранённых заказов. Нажмите «+ Создать заказ (SO)» для нового.</div>
+
+    <div class="table-card">
+      <div class="table-card-head">
+        <div class="table-card-title">Новые заказы</div>
+        <div class="badge" id="orders-count">0</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <colgroup>
+            <col style="width:11%" />
+            <col style="width:8%" />
+            <col style="width:14%" />
+            <col style="width:5%" />
+            <col style="width:7%" />
+            <col style="width:10%" />
+            <col style="width:10%" />
+            <col style="width:11%" />
+            <col style="width:7%" />
+            <col style="width:13%" />
+            <col style="width:4%" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>№ заказа</th>
+              <th>Дата</th>
+              <th>Клиент</th>
+              <th style="text-align:center">Строк</th>
+              <th>Тоннаж</th>
+              <th>Сумма без НДС</th>
+              <th>Сумма с НДС</th>
+              <th>Статус</th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_sales_orders_new'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
+    var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
+
+    function readOrders() {
+      try {
+        var parsed = JSON.parse(localStorage.getItem(NEW_ORDERS_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function formatRub(value) {
+      return Number(value || 0).toLocaleString('ru-RU', { maximumFractionDigits: 0 }) + ' ₽';
+    }
+
+    function formatTons(value) {
+      return Number(value || 0).toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' т';
+    }
+
+    function formatDate(value) {
+      if (!value) return '—';
+      if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+        var p = value.slice(0, 10).split('-');
+        return p[2] + '.' + p[1] + '.' + p[0];
+      }
+      return value;
+    }
+
+    function saveOrders(orders) {
+      try {
+        localStorage.setItem(NEW_ORDERS_KEY, JSON.stringify(orders));
+      } catch (error) {}
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function totalTons(lines) {
+      if (!Array.isArray(lines)) return 0;
+      return lines.reduce(function(sum, l) { return sum + Number(l && l.tons || 0); }, 0);
+    }
+
+    function render() {
+      var orders = readOrders();
+      document.getElementById('orders-count').textContent = String(orders.length);
+      var body = document.getElementById('orders-body');
+
+      if (!orders.length) {
+        body.innerHTML = '<tr><td colspan="11"><div class="empty-state">' +
+          '<div class="empty-state-icon">📋</div>' +
+          '<div class="empty-state-title">Заказов пока нет</div>' +
+          '<div class="empty-state-sub">Создайте первый заказ, нажав «+ Создать заказ (SO)» вверху страницы.</div>' +
+          '</div></td></tr>';
+        return;
+      }
+
+      body.innerHTML = orders.map(function(order) {
+        var stage = String(order.productionStage || '');
+        var status, pillClass;
+        if (stage === 'warehouse') {
+          status = 'Заказ отправлен на склад';
+          pillClass = 'status-warehouse';
+        } else if (stage === 'produced') {
+          status = 'Заказ произведен';
+          pillClass = 'status-produced';
+        } else if (stage === 'accepted') {
+          status = 'Заказ принят производством';
+          pillClass = 'status-accepted';
+        } else if (stage === 'sent') {
+          status = 'Отправлен на производство';
+          pillClass = 'status-sent';
+        } else if (order.status === 'new') {
+          status = 'Новый';
+          pillClass = 'status-new';
+        } else {
+          status = order.status || 'Черновик';
+          pillClass = 'status-draft';
+        }
+        var prodDateHtml = '';
+        if (stage === 'accepted' && order.productionDate) {
+          var dp = order.productionDate.split('-');
+          var prodDateStr = dp.length === 3 ? dp[2] + '.' + dp[1] + '.' + dp[0] : order.productionDate;
+          prodDateHtml = '<div class="prod-date-sub">Срок производства: ' + escapeHtml(prodDateStr) + '</div>';
+        }
+        var tons = totalTons(order.lines);
+        var linesCount = Array.isArray(order.lines) ? order.lines.length : 0;
+        var clientName = (order.buyer && order.buyer.name) ? order.buyer.name : '—';
+        var totals = order.totals || {};
+        var withoutVat = totals.withoutVat != null ? Number(totals.withoutVat) :
+          (Array.isArray(order.lines) ? order.lines.reduce(function(s, l) { return s + Number(l && l.amountWithoutVat || 0); }, 0) : 0);
+        var withVat = totals.withVat != null ? Number(totals.withVat) :
+          (Array.isArray(order.lines) ? order.lines.reduce(function(s, l) { return s + Number(l && l.amountWithVat || 0); }, 0) : 0);
+        var openHref = 'sales-order-builder.html?order=' + encodeURIComponent(order.number || '');
+
+        return '<tr>' +
+          '<td class="td-num">' + escapeHtml(order.number || '—') + '</td>' +
+          '<td class="td-muted">' + formatDate(order.date) + '</td>' +
+          '<td class="td-client">' + escapeHtml(clientName) + '</td>' +
+          '<td class="td-center">' + linesCount + '</td>' +
+          '<td class="td-muted">' + formatTons(tons) + '</td>' +
+          '<td class="td-amount">' + formatRub(withoutVat) + '</td>' +
+          '<td class="td-amount">' + formatRub(withVat) + '</td>' +
+          '<td><span class="status-pill ' + pillClass + '">' + escapeHtml(status) + '</span>' + prodDateHtml + '</td>' +
+          '<td class="td-right"><a class="btn-open" href="' + escapeHtml(openHref) + '">Открыть →</a></td>' +
+          '<td class="td-right"><button class="btn-production" type="button" data-order="' + escapeHtml(order.number || '') + '">⚙ В производство</button></td>' +
+          '<td class="td-right"><button class="btn-delete-order" type="button" data-delete-order="' + escapeHtml(order.number || '') + '" title="Удалить заказ" aria-label="Удалить заказ">🗑</button></td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    function openProductionOrder(orderNumber) {
+      window.location.href = 'production-order-form.html?order=' + encodeURIComponent(orderNumber);
+    }
+
+    function deleteOrder(orderNumber) {
+      if (!orderNumber) return;
+      if (!confirm('Удалить этот заказ?')) return;
+      var orders = readOrders();
+      var next = orders.filter(function(order) {
+        return String(order && order.number || '') !== String(orderNumber);
+      });
+      saveOrders(next);
+      render();
+    }
+
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('button[data-order]');
+      if (btn) openProductionOrder(btn.getAttribute('data-order'));
+
+      var deleteBtn = e.target.closest('button[data-delete-order]');
+      if (deleteBtn) deleteOrder(deleteBtn.getAttribute('data-delete-order'));
+    });
+
+    render();
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === NEW_ORDERS_KEY) render();
+    });
+  </script>
+</body>
+</html>

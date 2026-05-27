@@ -15,3 +15,20 @@ deploy/.env.external.local
 parse_xlsx_temp.txt
 sales_parsed.txt
 
+# Credentials & keys — never commit
+cloto.config.txt
+пароли/
+.deploy-key/
+*.zip
+*.tgz
+
+# Large data files
+*.xlsx
+*.csv
+shipments-workbook-data.js
+orders_data.js
+od.js
+
+# OS
+desktop.ini
+

@@ -10,27 +10,27 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #080c14;
-      --bg2:       #0d1320;
-      --surface:   rgba(255,255,255,0.04);
-      --surface2:  rgba(255,255,255,0.07);
-      --border:    rgba(255,255,255,0.08);
-      --border2:   rgba(255,255,255,0.14);
+      --bg:        #eef4fb;
+      --bg2:       #e2edf8;
+      --surface:   rgba(255,255,255,0.86);
+      --surface2:  rgba(255,255,255,0.97);
+      --border:    rgba(136,158,186,0.25);
+      --border2:   rgba(94,143,199,0.38);
       --accent:    #7c5cfc;
       --accent2:   #b07dff;
-      --cyan:      #3de8c7;
-      --gold:      #f5c842;
-      --red:       #ff5e7d;
-      --text:      #e8eaf0;
-      --muted:     #6b7491;
+      --cyan:      #24b7ad;
+      --gold:      #d9a83a;
+      --red:       #d96576;
+      --text:      #1e2c3c;
+      --muted:     #6f839c;
       --radius:    16px;
-      --glow:      0 0 40px rgba(124,92,252,0.25);
+      --glow:      0 0 24px rgba(59,145,218,0.18);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, var(--bg), var(--bg2));
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -82,7 +82,7 @@
     /* ── Sidebar ── */
     .sidebar {
       width: 240px; min-height: 100vh;
-      background: rgba(13,19,32,0.85);
+      background: rgba(255,255,255,0.84);
       backdrop-filter: blur(24px);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
@@ -110,7 +110,7 @@
     .logo-text {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700; font-size: 20px;
-      background: linear-gradient(135deg, #fff 40%, var(--accent2));
+      background: linear-gradient(135deg, #2a3d54 30%, var(--blue, #3b91da));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
@@ -189,7 +189,7 @@
     .welcome-block h1 {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 26px; font-weight: 700;
-      background: linear-gradient(135deg, #fff 40%, var(--accent2));
+      background: linear-gradient(135deg, #2a3d54 30%, var(--blue, #3b91da));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
@@ -225,7 +225,7 @@
     .icon-btn .dot {
       position: absolute; top: 8px; right: 8px;
       width: 7px; height: 7px; border-radius: 50%; background: var(--red);
-      border: 2px solid var(--bg);
+      border: 2px solid #ffffff;
     }
 
     /* ── KPI Cards ── */
@@ -243,7 +243,7 @@
     .kpi-card:hover {
       transform: translateY(-2px);
       border-color: var(--border2);
-      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+      box-shadow: 0 10px 26px rgba(36,66,100,.14);
     }
     .kpi-card::after {
       content: '';
@@ -600,18 +600,52 @@
   <!-- ═══ MAIN ═══ -->
   <main class="main">
 
+    <!-- ═══ LIVE KPI ROW ═══ -->
+    <div class="fade-up du-1" id="live-kpi-block" style="display:none">
+      <div class="section-header" style="margin-bottom:14px">
+        <span class="section-title">📊 Live KPI — <span id="lkpi-period">...</span></span>
+        <a class="section-link" href="kpi-ceo-dashboard.html" style="font-size:12.5px;color:var(--accent);display:flex;align-items:center;gap:4px;opacity:.8;text-decoration:none">Полная сводка CEO →</a>
+      </div>
+      <div class="kpi-row" id="live-kpi-row">
+        <div class="kpi-card c-purple">
+          <div class="kpi-label">ВЫРУЧКА YTD</div>
+          <div class="kpi-value" id="lkpi-revenue">—</div>
+          <div class="kpi-delta" id="lkpi-revenue-sub" style="color:var(--muted);font-size:11px"></div>
+          <div class="kpi-icon">💰</div>
+        </div>
+        <div class="kpi-card c-cyan">
+          <div class="kpi-label">ОТГРУЖЕНО YTD, т</div>
+          <div class="kpi-value" id="lkpi-tons">—</div>
+          <div class="kpi-delta" id="lkpi-tons-sub" style="color:var(--muted);font-size:11px"></div>
+          <div class="kpi-icon">🚚</div>
+        </div>
+        <div class="kpi-card c-gold">
+          <div class="kpi-label">АКТИВНЫХ ЗАКАЗОВ</div>
+          <div class="kpi-value" id="lkpi-active">—</div>
+          <div class="kpi-delta" id="lkpi-active-sub" style="color:var(--muted);font-size:11px"></div>
+          <div class="kpi-icon">📋</div>
+        </div>
+        <div class="kpi-card c-red">
+          <div class="kpi-label">ТОП КЛИЕНТ (ОБЪЁМ)</div>
+          <div class="kpi-value" style="font-size:18px;line-height:1.2" id="lkpi-topclient">—</div>
+          <div class="kpi-delta" id="lkpi-topclient-sub" style="color:var(--muted);font-size:11px"></div>
+          <div class="kpi-icon">🏆</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modules Grid -->
     <div class="fade-up du-1">
       <div class="section-header">
         <span class="section-title">Модули</span>
       </div>
-      <div class="modules-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 960px;">
+      <div class="modules-grid">
 
         <a class="module-card" href="commercial.html" style="text-decoration:none;color:inherit">
           <div class="module-arrow">↗</div>
           <div class="module-icon-wrap mi-gold">💼</div>
           <div>
-            <div class="module-name">Коммерческий отдел</div>
+            <div class="module-name">Отдел продаж</div>
             <div class="module-desc">Продажи, клиенты, сделки, воронка</div>
           </div>
           <div class="module-count mc-gold">Открыть →</div>
@@ -637,12 +671,107 @@
           <div class="module-count mc-blue">Открыть →</div>
         </a>
 
+        <a class="module-card" href="warehouse-dashboard.html" style="text-decoration:none;color:inherit">
+          <div class="module-arrow">↗</div>
+          <div class="module-icon-wrap mi-cyan">🏬</div>
+          <div>
+            <div class="module-name">Склад</div>
+            <div class="module-desc">Остатки, приход, расход, инвентаризация</div>
+          </div>
+          <div class="module-count mc-cyan">Открыть →</div>
+        </a>
+
+        <a class="module-card" href="procurement-department.html" style="text-decoration:none;color:inherit">
+          <div class="module-arrow">↗</div>
+          <div class="module-icon-wrap mi-red">🛒</div>
+          <div>
+            <div class="module-name">Отдел закупок</div>
+            <div class="module-desc">Закупки, сырьё и поставщики в отдельном модуле</div>
+          </div>
+          <div class="module-count mc-red">Открыть →</div>
+        </a>
+
+        <a class="module-card" href="logistics-dashboard.html" style="text-decoration:none;color:inherit">
+          <div class="module-arrow">↗</div>
+          <div class="module-icon-wrap mi-blue">🚚</div>
+          <div>
+            <div class="module-name">Отдел логистики</div>
+            <div class="module-desc">Расчёт доставки: авто, контейнер, Ж/Д вагон</div>
+          </div>
+          <div class="module-count mc-blue">Открыть →</div>
+        </a>
+
       </div>
 
     </div>
 
   </main>
 </div>
+
+<!-- Live KPI data source -->
+<script src="cloto-data.js"></script>
+<script>
+(function() {
+  // OD columns: 0=month,1=notes,2=orderNum,3=client,4=product,
+  //   5=qtyKg,6=qtyUnits,7=dest,8=status,9=date,10=truck,
+  //   11=driver,12=container,13=acts,14=pricePerTon,15=total,16=type
+  try {
+    if (typeof OD === 'undefined' || !OD.length) return;
+
+    var SHIPPED = ['отгружен','отгружено','отгружена'];
+    var ACTIVE  = ['готов','в работе',''];
+
+    var revenueYTD = 0, tonsYTD = 0, activeCount = 0, shippedRows = 0;
+    var clientRev = {}, months = {};
+
+    for (var i = 0; i < OD.length; i++) {
+      var r      = OD[i];
+      var status = (r[8] || '').toLowerCase().trim();
+      var total  = Number(r[15]) || 0;
+      var kg     = Number(r[5])  || 0;
+      var client = r[3] || '';
+      var month  = r[0] || '';
+
+      if (!client || client === 'т' || /^\d/.test(client)) continue;
+
+      if (SHIPPED.indexOf(status) >= 0) {
+        revenueYTD += total; tonsYTD += kg; shippedRows++;
+        months[month] = (months[month] || 0) + 1;
+        if (total > 0) clientRev[client] = (clientRev[client] || 0) + total;
+      }
+      if (ACTIVE.indexOf(status) >= 0 && total > 0) activeCount++;
+    }
+
+    var topClient = '—', topRev = 0;
+    Object.keys(clientRev).forEach(function(c) {
+      if (clientRev[c] > topRev) { topRev = clientRev[c]; topClient = c; }
+    });
+
+    var monthList  = Object.keys(months);
+    var periodLabel = monthList.length ? 'Янв – ' + monthList[monthList.length-1] + ' 2026' : '2026';
+
+    function fmtMln(v) {
+      if (v >= 1e9) return (v/1e9).toFixed(1) + ' млрд ₽';
+      if (v >= 1e6) return (v/1e6).toFixed(1) + ' млн ₽';
+      return v.toLocaleString('ru') + ' ₽';
+    }
+
+    document.getElementById('lkpi-period').textContent      = periodLabel;
+    document.getElementById('lkpi-revenue').textContent     = fmtMln(revenueYTD);
+    document.getElementById('lkpi-revenue-sub').textContent = shippedRows + ' отгрузок';
+    document.getElementById('lkpi-tons').textContent        = (tonsYTD/1000).toFixed(1);
+    document.getElementById('lkpi-tons-sub').textContent    = monthList.length + ' мес. данных';
+    document.getElementById('lkpi-active').textContent      = activeCount;
+    document.getElementById('lkpi-active-sub').textContent  = 'в очереди / готовы';
+    document.getElementById('lkpi-topclient').textContent   = topClient;
+    document.getElementById('lkpi-topclient-sub').textContent = fmtMln(topRev);
+
+    document.getElementById('live-kpi-block').style.display = '';
+  } catch(e) {
+    console.warn('Live KPI error:', e);
+  }
+})();
+</script>
 
 </body>
 </html>

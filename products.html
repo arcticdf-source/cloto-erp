@@ -10,28 +10,28 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #080c14;
-      --bg2:      #0d1320;
-      --surface:  rgba(255,255,255,0.04);
-      --surface2: rgba(255,255,255,0.07);
-      --border:   rgba(255,255,255,0.08);
-      --border2:  rgba(255,255,255,0.14);
+      --bg:       #eef4fb;
+      --bg2:      #e3edf8;
+      --surface:  rgba(255,255,255,0.86);
+      --surface2: rgba(255,255,255,0.97);
+      --border:   rgba(136,158,186,0.25);
+      --border2:  rgba(94,143,199,0.38);
       --accent:   #7c5cfc;
       --accent2:  #b07dff;
-      --cyan:     #3de8c7;
-      --gold:     #f5c842;
-      --red:      #ff5e7d;
-      --green:    #48bb78;
-      --blue:     #63b3ed;
+      --cyan:     #24b7ad;
+      --gold:     #d9a83a;
+      --red:      #d96576;
+      --green:    #3ea66d;
+      --blue:     #3b91da;
       --orange:   #f6ad55;
-      --text:     #e8eaf0;
-      --muted:    #6b7491;
+      --text:     #1e2c3c;
+      --muted:    #6f839c;
       --radius:   16px;
     }
 
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, var(--bg), var(--bg2));
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -67,7 +67,7 @@
     /* ── Sidebar ── */
     .sidebar {
       width: 250px; min-height: 100vh;
-      background: rgba(13,19,32,0.9); backdrop-filter: blur(24px);
+      background: rgba(255,255,255,0.84); backdrop-filter: blur(24px);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
       padding: 28px 0;
@@ -145,7 +145,7 @@
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .page-title {
       font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700;
-      background: linear-gradient(135deg, #fff 30%, var(--gold));
+      background: linear-gradient(135deg, #2a3d54 30%, var(--blue));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .page-sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
@@ -176,57 +176,65 @@
     }
     .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
 
-    /* ── KPI strip ── */
-    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .kpi-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 18px 20px;
-      position: relative; overflow: hidden; transition: transform .2s, box-shadow .2s;
+    /* ── Product Columns ── */
+    .products-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
     }
-    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
-    .kpi-card::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      border-radius: var(--radius) var(--radius) 0 0;
+    .products-panel {
+      background: rgba(255,255,255,.38);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      backdrop-filter: blur(10px);
     }
-    .kc-gold::after  { background: linear-gradient(90deg, var(--gold), #f6ad55); }
-    .kc-green::after { background: linear-gradient(90deg, var(--green), #38a169); }
-    .kc-cyan::after  { background: linear-gradient(90deg, var(--cyan), #38b2ac); }
-    .kc-red::after   { background: linear-gradient(90deg, var(--red), #fc8181); }
-    .kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; letter-spacing: .04em; }
-    .kpi-value { font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 700; margin: 5px 0 3px; line-height: 1; }
-    .kc-gold  .kpi-value { color: var(--gold); }
-    .kc-green .kpi-value { color: var(--green); }
-    .kc-cyan  .kpi-value { color: var(--cyan); }
-    .kc-red   .kpi-value { color: var(--red); }
-    .kpi-sub  { font-size: 11.5px; color: var(--muted); }
-    .kpi-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 30px; opacity: .1; }
-
-    /* ── Filters ── */
-    .filter-bar {
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    .products-panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
     }
-    .filter-tag {
-      padding: 6px 14px; border-radius: 20px;
-      font-size: 12.5px; font-weight: 500; cursor: pointer;
-      border: 1px solid var(--border); background: var(--surface);
-      color: var(--muted); transition: all .2s;
+    .products-panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
     }
-    .filter-tag:hover { border-color: var(--border2); color: var(--text); }
-    .filter-tag.active { background: rgba(245,200,66,.12); border-color: rgba(245,200,66,.35); color: var(--gold); }
-
-    /* ── Product List ── */
-    .products-list { display: flex; flex-direction: column; gap: 6px; }
+    .products-panel-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .products-panel-count {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--blue);
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(59,145,218,.08);
+      border: 1px solid rgba(59,145,218,.18);
+    }
+    .products-list { display: flex; flex-direction: column; gap: 10px; min-height: 120px; }
 
     .product-row {
       display: flex; align-items: center; gap: 14px;
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 12px; padding: 14px 18px;
-      text-decoration: none; color: var(--text);
-      transition: all .2s; cursor: pointer;
+      transition: all .2s;
     }
     .product-row:hover {
       background: var(--surface2); border-color: rgba(245,200,66,.3);
       transform: translateX(3px);
+    }
+    .product-row-main {
+      display: flex; align-items: center; gap: 14px;
+      min-width: 0; flex: 1;
+      text-decoration: none; color: var(--text);
     }
     .product-row:hover .pr-arrow { opacity: 1; color: var(--gold); }
     .pr-icon { font-size: 22px; flex-shrink: 0; }
@@ -234,10 +242,52 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 15px; font-weight: 600;
     }
+    .pr-text {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .pr-meta {
+      font-size: 11.5px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .pr-arrow {
       margin-left: auto; font-size: 16px;
       opacity: 0; transition: opacity .2s;
       color: var(--muted);
+    }
+    .product-delete-btn {
+      width: 34px; height: 34px; border-radius: 10px;
+      border: 1px solid rgba(217,101,118,.35);
+      background: rgba(217,101,118,.12);
+      color: var(--red);
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .product-delete-btn:hover {
+      background: rgba(217,101,118,.22);
+      border-color: rgba(217,101,118,.55);
+      transform: translateY(-1px);
+    }
+    .products-empty {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 88px;
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px dashed var(--border2);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
     }
 
     /* scrollbar */
@@ -250,7 +300,7 @@
     .fade-up { animation: fadeUp .4s ease both; }
     .du-1{animation-delay:.04s} .du-2{animation-delay:.10s} .du-3{animation-delay:.16s} .du-4{animation-delay:.22s}
 
-    @media(max-width:900px)  { .sidebar{display:none} .main{padding:20px} .kpi-row{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:900px)  { .sidebar{display:none} .main{padding:20px} .products-columns{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
@@ -316,7 +366,7 @@
     <div class="topbar fade-up du-1">
       <div>
         <div class="page-title">📦 Продукты</div>
-        <div class="page-sub">Каталог номенклатуры · 1 позиция</div>
+        <div class="page-sub" id="products-page-sub">Каталог номенклатуры · 0 позиций</div>
       </div>
       <div class="topbar-right">
         <div class="search-box">
@@ -324,60 +374,21 @@
           <input type="text" placeholder="Найти продукт..." id="search-input" oninput="filterProducts()" />
         </div>
         <button class="btn btn-ghost">📤 Экспорт</button>
-        <button class="btn btn-primary" onclick="openDetail('stabilight')">➕ Новый</button>
+        <button class="btn btn-primary" onclick="openNewProductCard()">➕ Новый</button>
       </div>
     </div>
 
-    <!-- KPI -->
-    <div class="kpi-row fade-up du-2">
-      <div class="kpi-card kc-gold">
-        <div class="kpi-label">Всего продуктов</div>
-        <div class="kpi-value">1</div>
-        <div class="kpi-sub">В каталоге</div>
-        <div class="kpi-icon">📦</div>
-      </div>
-      <div class="kpi-card kc-green">
-        <div class="kpi-label">Активных</div>
-        <div class="kpi-value">1</div>
-        <div class="kpi-sub">В производстве</div>
-        <div class="kpi-icon">✅</div>
-      </div>
-      <div class="kpi-card kc-cyan">
-        <div class="kpi-label">Категорий</div>
-        <div class="kpi-value">1</div>
-        <div class="kpi-sub">Стабилизаторы</div>
-        <div class="kpi-icon">🗂️</div>
-      </div>
-      <div class="kpi-card kc-red">
-        <div class="kpi-label">Требуют обновления</div>
-        <div class="kpi-value">0</div>
-        <div class="kpi-sub">Цен или состава</div>
-        <div class="kpi-icon">⚠️</div>
-      </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="filter-bar fade-up du-3">
-      <span style="font-size:12px;color:var(--muted);margin-right:4px">Фильтр:</span>
-      <div class="filter-tag active" onclick="setFilter(this,'all')">Все</div>
-      <div class="filter-tag" onclick="setFilter(this,'stabilizer')">Стабилизаторы</div>
-      <div class="filter-tag" onclick="setFilter(this,'pigment')">Пигменты</div>
-      <div class="filter-tag" onclick="setFilter(this,'additive')">Добавки</div>
-      <div style="margin-left:auto;display:flex;gap:8px">
-        <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px">⊞ Сетка</button>
-        <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px">☰ Список</button>
-      </div>
-    </div>
-
-    <!-- Products List -->
-    <div class="products-list fade-up du-4" id="products-grid">
-
-      <a class="product-row" href="stabilight.html" data-cat="stabilizer">
-        <span class="pr-icon">🧪</span>
-        <span class="pr-name">Стабилайт II</span>
-        <span class="pr-arrow">→</span>
-      </a>
-
+    <div class="products-columns fade-up du-2">
+      <section class="products-panel">
+        <div class="products-panel-head">
+          <div>
+            <div class="products-panel-title">Продукты</div>
+            <div class="products-panel-sub">Каталог Клото, пользовательские и private label продукты</div>
+          </div>
+          <div class="products-panel-count" id="all-products-count">0</div>
+        </div>
+        <div class="products-list" id="all-products-grid"></div>
+      </section>
     </div>
 
   </main>
@@ -385,4 +396,334 @@
 
 
 </body>
+<script>
+  const BUILTIN_PRODUCTS = [
+    { id: 'stabilight', key: 'cloto_product_stabilight', name: 'Стабилайт II', sku: 'STB-002', icon: '🧪', cat: 'stabilizer' },
+    { id: 'uschr', key: 'cloto_product_uschr', name: 'УЩР (собственный)', sku: 'UShR-001', icon: '🪨', cat: 'stabilizer' },
+    { id: 'optitrol', key: 'cloto_product_optitrol', name: 'Оптитрол жидкий', sku: 'OPT-LIQ-001', icon: '🛢️', cat: 'additive' },
+    { id: 'blacktrol', key: 'cloto_product_blacktrol', name: 'Блэктрол', sku: 'BLK-001', icon: '🖤', cat: 'pigment' },
+    { id: 'maksflex', key: 'cloto_product_maksflex', name: 'Макс-Флекс', sku: 'MF-001', icon: '🟢', cat: 'additive' }
+  ];
+  const DELETED_PRODUCTS_KEY = 'cloto_products_deleted_v1';
+  const CLIENT_STORAGE_KEY = 'cloto_client_cards_v2';
+  const KNOWN_KEYS = BUILTIN_PRODUCTS.map(function(product) { return product.key; });
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function readStoredProductData(storageKey) {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (error) {
+      return null;
+    }
+  }
+  function sanitizeSkuToken(value, fallback) {
+    const cleaned = String(value || '').toUpperCase().replace(/[^A-Z0-9]+/g, '');
+    if (cleaned) return cleaned.slice(0, 8);
+    return String(fallback || '').toUpperCase().replace(/[^A-Z0-9]+/g, '').slice(0, 8) || 'ITEM';
+  }
+  function hashKey(value) {
+    const text = String(value || '');
+    let hash = 0;
+    for (let i = 0; i < text.length; i += 1) {
+      hash = ((hash << 5) - hash) + text.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash).toString(36).toUpperCase();
+  }
+  function buildLegacyClientProductSku(companyName, productIdValue) {
+    return 'CPL-' + sanitizeSkuToken(hashKey(companyName), 'CL') + '-' + sanitizeSkuToken(productIdValue, 'ITEM');
+  }
+  function buildClientProductSku(companyName, productIdValue) {
+    return 'CPL-' + sanitizeSkuToken(hashKey(companyName), 'CL') + '-' + sanitizeSkuToken(hashKey(productIdValue), 'ITEM');
+  }
+  function buildCatalogProductSku(productIdValue) {
+    return 'PRD-' + sanitizeSkuToken(productIdValue, 'ITEM');
+  }
+
+  function normalizeProductName(value) {
+    return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+  }
+
+  function getCatalogProductAliases(product) {
+    const aliases = [product && product.name, product && product.sku];
+    const byId = {
+      stabilight: ['Stabilight II'],
+      uschr: ['УЩР', 'USCHR'],
+      optitrol: ['Оптитрол', 'Optitrol', 'Оптитрол Ж', 'Optitrol liquid'],
+      blacktrol: ['Blacktrol', 'Блэктрол'],
+      maksflex: ['Maksflex', 'Макс-Флекс']
+    };
+    (byId[String(product && product.id || '')] || []).forEach(function(alias) {
+      aliases.push(alias);
+    });
+    return aliases.map(normalizeProductName).filter(Boolean);
+  }
+
+  function readClientStore() {
+    try {
+      const raw = localStorage.getItem(CLIENT_STORAGE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function readDeletedProductIds() {
+    try {
+      const raw = localStorage.getItem(DELETED_PRODUCTS_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.map(function(id) { return String(id); }) : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeDeletedProductIds(ids) {
+    localStorage.setItem(DELETED_PRODUCTS_KEY, JSON.stringify(ids));
+  }
+
+  function collectProducts() {
+    const deletedIds = readDeletedProductIds();
+    const products = BUILTIN_PRODUCTS.map(function(product) {
+      const savedData = readStoredProductData(product.key) || {};
+      return {
+        id: product.id,
+        storageKey: product.key,
+        isCustom: false,
+        sourceType: 'catalog-builtin',
+        name: String(savedData.name || product.name).trim() || product.name,
+        sku: String(savedData.sku || product.sku).trim() || product.sku,
+        icon: product.icon,
+        cat: product.cat,
+        meta: String(savedData.sku || product.sku).trim() || product.sku,
+        href: 'product-page.html?product=' + encodeURIComponent(product.id)
+      };
+    }).filter(function(product) {
+      return deletedIds.indexOf(product.id) === -1;
+    });
+
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const key = localStorage.key(i);
+      if (!key || key.indexOf('cloto_product_') !== 0) continue;
+      if (KNOWN_KEYS.indexOf(key) !== -1) continue;
+      const customData = readStoredProductData(key) || {};
+      const customName = String(customData.name || '').trim();
+      if (!customName) continue;
+      const customId = key.replace(/^cloto_product_/, '');
+      if (deletedIds.indexOf(customId) !== -1) continue;
+      products.push({
+        id: customId,
+        storageKey: key,
+        isCustom: false,
+        sourceType: 'catalog-custom',
+        name: customName,
+        sku: String(customData.sku || buildCatalogProductSku(customId)).trim(),
+        icon: '🧩',
+        cat: 'additive',
+        meta: String(customData.sku || buildCatalogProductSku(customId)).trim() + ' · Пользовательский продукт каталога',
+        href: 'product-page.html?product=' + encodeURIComponent(customId)
+      });
+    }
+
+    const catalogNameLookup = products.reduce(function(map, product) {
+      getCatalogProductAliases(product).forEach(function(alias) {
+        map[alias] = true;
+      });
+      return map;
+    }, {});
+
+    const clientStore = readClientStore();
+    Object.keys(clientStore).forEach(function(companyName) {
+      const companyCard = clientStore[companyName];
+      const companyProducts = Array.isArray(companyCard && companyCard.products) ? companyCard.products : [];
+      companyProducts.forEach(function(product, index) {
+        const productId = String(product && product.id || '').trim();
+        const productName = String(product && product.name || '').trim();
+        const productSkuValue = String(product && product.sku || '').trim();
+        const resolvedName = productName || productSkuValue;
+        if (!productId || !resolvedName) return;
+        if (catalogNameLookup[normalizeProductName(resolvedName)]) return;
+        const deletedId = companyName + '::' + productId;
+        if (deletedIds.indexOf(deletedId) !== -1) return;
+        products.push({
+          id: deletedId,
+          storageKey: CLIENT_STORAGE_KEY,
+          linkedProductId: productId,
+          linkedCompany: companyName,
+          linkedIndex: index,
+          isCustom: true,
+          sourceType: 'client-private-label',
+          name: resolvedName,
+          sku: String((function() {
+            const currentSku = String(product.sku || '').trim();
+            const legacySku = buildLegacyClientProductSku(companyName, productId);
+            if (!currentSku || currentSku === legacySku) return buildClientProductSku(companyName, productId);
+            return currentSku;
+          })()).trim(),
+          icon: '🏷️',
+          cat: 'additive',
+          meta: String((function() {
+            const currentSku = String(product.sku || '').trim();
+            const legacySku = buildLegacyClientProductSku(companyName, productId);
+            if (!currentSku || currentSku === legacySku) return buildClientProductSku(companyName, productId);
+            return currentSku;
+          })()).trim() + ' · ' + companyName,
+          href: 'client-product.html?company=' + encodeURIComponent(companyName) + '&product=' + encodeURIComponent(productId)
+        });
+      });
+    });
+
+    return products;
+  }
+
+  function updateStats(products) {
+    document.getElementById('products-page-sub').textContent = 'Каталог номенклатуры · ' + products.length + ' позиций';
+    document.getElementById('all-products-count').textContent = String(products.length);
+  }
+
+  function deleteProduct(product) {
+    const isClientProduct = product && product.sourceType === 'client-private-label';
+    const isCustomCatalog = product && product.sourceType === 'catalog-custom';
+    const message = isClientProduct
+      ? 'Скрыть продукт из списка «Все продукты»?'
+      : (isCustomCatalog ? 'Удалить пользовательский продукт из каталога?' : 'Удалить продукт из каталога?');
+    if (!window.confirm(message)) return;
+
+    const deletedIds = readDeletedProductIds();
+
+    if (isClientProduct) {
+      if (deletedIds.indexOf(product.id) === -1) {
+        deletedIds.push(product.id);
+        writeDeletedProductIds(deletedIds);
+      }
+    } else {
+      if (deletedIds.indexOf(product.id) === -1) {
+        deletedIds.push(product.id);
+        writeDeletedProductIds(deletedIds);
+      }
+      if (product.storageKey) {
+        localStorage.removeItem(product.storageKey);
+      }
+    }
+
+    renderProducts();
+  }
+
+  function renderProductList(root, products, emptyText) {
+    if (!products.length) {
+      root.innerHTML = '<div class="products-empty"><span class="pr-icon">📭</span><span>' + escapeHtml(emptyText) + '</span></div>';
+      return;
+    }
+
+    root.innerHTML = products.map(function(product) {
+      return '<div class="product-row" data-cat="' + product.cat + '">' +
+        '<a class="product-row-main" href="' + product.href + '">' +
+          '<span class="pr-icon">' + product.icon + '</span>' +
+          '<span class="pr-text">' +
+            '<span class="pr-name">' + escapeHtml(product.name) + '</span>' +
+            (product.meta ? '<span class="pr-meta">' + escapeHtml(product.meta) + '</span>' : '') +
+          '</span>' +
+          '<span class="pr-arrow">→</span>' +
+        '</a>' +
+        '<button class="product-delete-btn" type="button" title="Удалить продукт" data-product-id="' + escapeHtml(product.id) + '" data-storage-key="' + escapeHtml(product.storageKey || '') + '" data-is-custom="' + (product.isCustom ? '1' : '0') + '" data-source-type="' + escapeHtml(product.sourceType || '') + '" data-linked-company="' + escapeHtml(product.linkedCompany || '') + '" data-linked-product-id="' + escapeHtml(product.linkedProductId || '') + '">🗑</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderProducts() {
+    const query = String(document.getElementById('search-input').value || '').trim().toLowerCase();
+    const allProducts = collectProducts();
+    const filtered = allProducts.filter(function(product) {
+      if (!query) return true;
+      const haystack = [product.name, product.meta || ''].join(' ').toLowerCase();
+      return haystack.indexOf(query) !== -1;
+    });
+
+    renderProductList(document.getElementById('all-products-grid'), filtered, query ? 'По запросу ничего не найдено среди продуктов' : 'Продукты пока не добавлены');
+
+    updateStats(allProducts);
+  }
+
+  function filterProducts() {
+    renderProducts();
+  }
+
+  function openNewProductCard() {
+    const newId = 'new_' + Date.now();
+    const storageKey = 'cloto_product_' + newId;
+    const draft = {
+      name: 'Новый продукт',
+      sku: buildCatalogProductSku(newId),
+      pack: 'bags',
+      weight: '',
+      pallet: '',
+      truckUnits: '',
+      contUnits: '',
+      price: '',
+      priceDate: new Date().toLocaleDateString('ru-RU')
+    };
+    localStorage.setItem(storageKey, JSON.stringify(draft));
+    renderProducts();
+    window.location.href = 'product-page.html?product=' + encodeURIComponent(newId);
+  }
+
+  function initDeleteActions() {
+    const root = document.querySelector('.products-columns');
+    root.addEventListener('click', function(event) {
+      const deleteButton = event.target.closest('.product-delete-btn');
+      if (!deleteButton) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const productId = deleteButton.getAttribute('data-product-id') || '';
+      const storageKey = deleteButton.getAttribute('data-storage-key') || '';
+      const isCustom = deleteButton.getAttribute('data-is-custom') === '1';
+      const sourceType = deleteButton.getAttribute('data-source-type') || '';
+      const linkedCompany = deleteButton.getAttribute('data-linked-company') || '';
+      const linkedProductId = deleteButton.getAttribute('data-linked-product-id') || '';
+      if (!productId) return;
+      deleteProduct({
+        id: productId,
+        storageKey: storageKey,
+        isCustom: isCustom,
+        sourceType: sourceType,
+        linkedCompany: linkedCompany,
+        linkedProductId: linkedProductId
+      });
+    });
+  }
+
+  window.filterProducts = filterProducts;
+  window.openNewProductCard = openNewProductCard;
+
+  window.addEventListener('storage', function(event) {
+    if (!event.key || event.key === CLIENT_STORAGE_KEY || event.key === DELETED_PRODUCTS_KEY || event.key.indexOf('cloto_product_') === 0) {
+      renderProducts();
+    }
+  });
+
+  window.addEventListener('focus', function() {
+    renderProducts();
+  });
+
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) renderProducts();
+  });
+
+  initDeleteActions();
+  renderProducts();
+</script>
 </html>

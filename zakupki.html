@@ -10,23 +10,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #080c14;
-      --surface: rgba(255,255,255,.04);
-      --surface2: rgba(255,255,255,.07);
-      --border: rgba(255,255,255,.08);
-      --border2: rgba(255,255,255,.14);
-      --text: #e8eaf0;
-      --muted: #7f89a8;
-      --red: #ff5e7d;
-      --gold: #f5c842;
-      --blue: #63b3ed;
-      --cyan: #3de8c7;
-      --green: #48bb78;
+      --bg: #eef4fb;
+      --surface: rgba(255,255,255,.86);
+      --surface2: rgba(255,255,255,.97);
+      --border: rgba(136,158,186,.25);
+      --border2: rgba(94,143,199,.38);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --red: #d96576;
+      --gold: #d9a83a;
+      --blue: #3b91da;
+      --cyan: #24b7ad;
+      --green: #3ea66d;
       --radius: 18px;
     }
 
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, #eef4fb, #e3edf8);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -69,7 +69,7 @@
     .sidebar {
       width: 250px;
       min-height: 100vh;
-      background: rgba(13,19,32,.9);
+      background: rgba(255,255,255,.84);
       backdrop-filter: blur(24px);
       border-right: 1px solid var(--border);
       padding: 28px 0;
@@ -104,7 +104,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 15px;
       font-weight: 700;
-      background: linear-gradient(135deg, #fff 15%, var(--red) 80%);
+      background: linear-gradient(135deg, #2a3d54 15%, var(--blue) 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -201,7 +201,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 30px;
       font-weight: 700;
-      background: linear-gradient(135deg, #fff 20%, var(--red) 80%);
+      background: linear-gradient(135deg, #2a3d54 20%, var(--blue) 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -270,7 +270,7 @@
     .panel {
       border-radius: 20px;
       border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.8));
       overflow: hidden;
     }
     .panel-head {
@@ -306,7 +306,7 @@
       position: sticky;
       top: 0;
       z-index: 1;
-      background: #0f1522;
+      background: #f2f7fd;
       color: var(--muted);
       font-size: 11px;
       text-transform: uppercase;
@@ -437,6 +437,10 @@
     </main>
   </div>
 
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_purchase_orders_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script>
     var PURCHASE_ORDERS_KEY = 'cloto_purchase_orders_v1';
     var orders = [];

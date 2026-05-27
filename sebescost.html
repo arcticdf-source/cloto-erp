@@ -10,28 +10,28 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #080c14;
-      --bg2:      #0d1320;
-      --surface:  rgba(255,255,255,0.04);
-      --surface2: rgba(255,255,255,0.07);
-      --border:   rgba(255,255,255,0.08);
-      --border2:  rgba(255,255,255,0.14);
+      --bg:       #eef4fb;
+      --bg2:      #e3edf8;
+      --surface:  rgba(255,255,255,0.86);
+      --surface2: rgba(255,255,255,0.97);
+      --border:   rgba(136,158,186,0.25);
+      --border2:  rgba(94,143,199,0.38);
       --accent:   #7c5cfc;
       --accent2:  #b07dff;
-      --cyan:     #3de8c7;
-      --gold:     #f5c842;
-      --red:      #ff5e7d;
-      --green:    #48bb78;
-      --blue:     #63b3ed;
+      --cyan:     #24b7ad;
+      --gold:     #d9a83a;
+      --red:      #d96576;
+      --green:    #3ea66d;
+      --blue:     #3b91da;
       --orange:   #f6ad55;
-      --pink:     #ed64a6;
-      --text:     #e8eaf0;
-      --muted:    #6b7491;
+      --pink:     #d96aa4;
+      --text:     #1e2c3c;
+      --muted:    #6f839c;
       --radius:   16px;
     }
 
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    body { background: linear-gradient(180deg, var(--bg), var(--bg2)); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
 
     .bg-grid {
       position: fixed; inset: 0; z-index: 0;
@@ -61,7 +61,7 @@
     /* sidebar */
     .sidebar {
       width: 250px; min-height: 100vh;
-      background: rgba(13,19,32,0.9); backdrop-filter: blur(24px);
+      background: rgba(255,255,255,0.84); backdrop-filter: blur(24px);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column; padding: 28px 0;
       position: sticky; top: 0; height: 100vh; flex-shrink: 0; overflow-y: auto;
@@ -120,10 +120,39 @@
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .page-title {
       font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700;
-      background: linear-gradient(135deg, #fff 30%, var(--pink));
+      background: linear-gradient(135deg, #2a3d54 30%, var(--blue));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .page-sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .search-box {
+      min-width: min(320px, 100%);
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .search-box:focus-within { border-color: rgba(237,100,166,.35); box-shadow: 0 0 0 3px rgba(237,100,166,.08); }
+    .search-box input {
+      width: 100%; background: transparent; border: 0; outline: 0;
+      color: var(--text); font-size: 13.5px; font-family: inherit;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 10px;
+      font-size: 13px; font-weight: 700; border: 1px solid transparent;
+      cursor: pointer; transition: all .2s; text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink), #f687b3);
+      color: #fff; box-shadow: 0 8px 24px rgba(237,100,166,.24);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(237,100,166,.32); }
+    .btn-ghost {
+      background: var(--surface); color: var(--text); border-color: var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface2); border-color: var(--border2); }
 
     /* kpi */
     .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
@@ -163,6 +192,35 @@
     .pr-name { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; }
     .pr-sub  { font-size: 12px; color: var(--muted); margin-top: 2px; }
     .pr-arrow { margin-left: auto; font-size: 16px; opacity: 0; transition: opacity .2s; color: var(--muted); }
+    .product-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 6px; padding: 4px 9px; border-radius: 999px;
+      font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      background: rgba(124,92,252,.16); color: #5f57a8;
+    }
+    .empty-state {
+      padding: 26px; border-radius: 14px; border: 1px dashed var(--border2);
+      color: var(--muted); background: rgba(255,255,255,.72); text-align: center;
+      font-size: 13px;
+    }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(149,168,192,.32); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 20px; z-index: 30;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      width: min(560px, 100%); border-radius: 18px; background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(247,251,255,.9));
+      border: 1px solid var(--border2); box-shadow: 0 16px 34px rgba(36,66,100,.2); padding: 22px;
+    }
+    .modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
+    .modal-sub { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+    .modal-field { display: flex; flex-direction: column; gap: 6px; }
+    .modal-field.full { grid-column: 1 / -1; }
+    .modal-field label { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .modal-field input { width: 100%; border: 1px solid var(--border); background: rgba(255,255,255,.74); color: var(--text); border-radius: 10px; padding: 11px 12px; font: inherit; outline: none; }
+    .modal-field input:focus { border-color: rgba(237,100,166,.45); box-shadow: 0 0 0 3px rgba(237,100,166,.1); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -172,7 +230,14 @@
     .fade-up { animation: fadeUp .4s ease both; }
     .du-1{animation-delay:.04s} .du-2{animation-delay:.10s} .du-3{animation-delay:.16s} .du-4{animation-delay:.22s}
 
-    @media(max-width:900px) { .sidebar{display:none} .main{padding:20px} .kpi-row{grid-template-columns:1fr 1fr} }
+    @media(max-width:900px) {
+      .sidebar{display:none}
+      .main{padding:20px}
+      .kpi-row{grid-template-columns:1fr 1fr}
+      .topbar{flex-direction:column; align-items:stretch}
+      .topbar-actions{flex-wrap:wrap}
+      .search-box{width:100%}
+    }
   </style>
 </head>
 <body>
@@ -219,21 +284,29 @@
     <div class="topbar fade-up du-1">
       <div>
         <div class="page-title">🧮 Себестоимость</div>
-        <div class="page-sub">Калькуляция производства · 1 продукт</div>
+        <div class="page-sub" id="page-subtitle">Калькуляция производства · 0 продуктов</div>
+      </div>
+      <div class="topbar-actions">
+        <label class="search-box" for="cost-search-input">
+          <span>🔎</span>
+          <input id="cost-search-input" type="text" placeholder="Найти продукт по названию, SKU, описанию" />
+        </label>
+        <button class="btn btn-ghost" type="button" onclick="reloadCatalog()">↻ Обновить</button>
+        <button class="btn btn-primary" type="button" onclick="addCostProduct()">＋ Добавить продукт</button>
       </div>
     </div>
 
     <div class="kpi-row fade-up du-2">
       <div class="kpi-card kc-pink">
         <div class="kpi-label">Продуктов в расчёте</div>
-        <div class="kpi-value">1</div>
-        <div class="kpi-sub">Стабилайт II</div>
+        <div class="kpi-value" id="kpi-products">0</div>
+        <div class="kpi-sub" id="kpi-product-sub">Нет калькуляций</div>
         <div class="kpi-icon">🧮</div>
       </div>
       <div class="kpi-card kc-green">
         <div class="kpi-label">Средняя маржа</div>
-        <div class="kpi-value">34%</div>
-        <div class="kpi-sub">По активным продуктам</div>
+        <div class="kpi-value" id="kpi-margin">—</div>
+        <div class="kpi-sub">По сохраненным калькуляциям</div>
         <div class="kpi-icon">📈</div>
       </div>
       <div class="kpi-card kc-purple">
@@ -244,57 +317,232 @@
       </div>
     </div>
 
-    <div class="products-list fade-up du-3">
-
-      <a class="product-row" href="stabilight-cost.html">
-        <span class="pr-icon">🧪</span>
-        <div>
-          <div class="pr-name">Стабилайт II</div>
-          <div class="pr-sub">SKU: STB-002 · Калькуляция 1 тонны производства</div>
-        </div>
-        <span class="pr-arrow">→</span>
-      </a>
-
-      <a class="product-row" href="uschr-cost.html">
-        <span class="pr-icon">🪨</span>
-        <div>
-          <div class="pr-name">УЩР (собственный)</div>
-          <div class="pr-sub">SKU: UShR-001 · Калькуляция 1 тонны производства</div>
-        </div>
-        <span class="pr-arrow">→</span>
-      </a>
-
-      <a class="product-row" href="optitrol-cost.html">
-        <span class="pr-icon">🛢️</span>
-        <div>
-          <div class="pr-name">Оптитрол жидкий</div>
-          <div class="pr-sub">SKU: OPT-LIQ-001 · Калькуляция 1 тонны производства · бочка 200 кг</div>
-        </div>
-        <span class="pr-arrow">→</span>
-      </a>
-
-      <a class="product-row" href="blacktrol-cost.html">
-        <span class="pr-icon">🖤</span>
-        <div>
-          <div class="pr-name">Блэктрол</div>
-          <div class="pr-sub">SKU: BLK-001 · Калькуляция 1 тонны производства · бочка 200 кг</div>
-        </div>
-        <span class="pr-arrow">→</span>
-      </a>
-
-      <a class="product-row" href="maksflex-cost.html">
-        <span class="pr-icon">🟢</span>
-        <div>
-          <div class="pr-name">Макс-Флекс</div>
-          <div class="pr-sub">SKU: MF-001 · Калькуляция 1 тонны производства · бочка 200 кг</div>
-        </div>
-        <span class="pr-arrow">→</span>
-      </a>
-
-    </div>
+    <div class="products-list fade-up du-3" id="cost-products-list"></div>
 
   </main>
 </div>
+
+<div class="modal-backdrop" id="cost-product-modal">
+  <form class="modal-card" id="cost-product-form">
+    <div class="modal-title">Новая калькуляция</div>
+    <div class="modal-sub">Создай продукт в модуле себестоимости. Карточка расчета откроется сразу после сохранения.</div>
+    <div class="modal-grid">
+      <div class="modal-field full">
+        <label for="cost-product-name">Название продукта</label>
+        <input id="cost-product-name" name="name" type="text" placeholder="Например, Reactrol X" required />
+      </div>
+      <div class="modal-field">
+        <label for="cost-product-sku">SKU</label>
+        <input id="cost-product-sku" name="sku" type="text" placeholder="Например, RX-001" required />
+      </div>
+      <div class="modal-field">
+        <label for="cost-product-icon">Иконка</label>
+        <input id="cost-product-icon" name="icon" type="text" value="🧮" maxlength="4" />
+      </div>
+      <div class="modal-field full">
+        <label for="cost-product-subtitle">Описание калькуляции</label>
+        <input id="cost-product-subtitle" name="subtitle" type="text" value="Калькуляция 1 тонны производства" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" onclick="closeCostProductModal()">Отмена</button>
+      <button class="btn btn-primary" type="submit">Создать продукт</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  window.__sharedStateConfig = { keys: ['cloto_cost_catalog_v1'] };
+</script>
+<script src="shared-state-sync.js"></script>
+<script>
+var COST_CATALOG_KEY = 'cloto_cost_catalog_v1';
+var BUILTIN_PRODUCTS = [
+  { id:'builtin-stabilight', type:'builtin', name:'Стабилайт II', sku:'STB-002', subtitle:'Калькуляция 1 тонны производства', href:'stabilight-cost.html', icon:'🧪' },
+  { id:'builtin-uschr', type:'builtin', name:'УЩР (собственный)', sku:'UShR-001', subtitle:'Калькуляция 1 тонны производства', href:'uschr-cost.html', icon:'🪨' },
+  { id:'builtin-optitrol', type:'builtin', name:'Оптитрол жидкий', sku:'OPT-LIQ-001', subtitle:'Калькуляция 1 тонны производства · бочка 200 кг', href:'optitrol-cost.html', icon:'🛢️' },
+  { id:'builtin-blacktrol', type:'builtin', name:'Блэктрол', sku:'BLK-001', subtitle:'Калькуляция 1 тонны производства · бочка 200 кг', href:'blacktrol-cost.html', icon:'🖤' },
+  { id:'builtin-maksflex', type:'builtin', name:'Макс-Флекс', sku:'MF-001', subtitle:'Калькуляция 1 тонны производства · бочка 200 кг', href:'maksflex-cost.html', icon:'🟢' }
+];
+
+function esc(value){
+  return String(value || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function readCatalog(){
+  try {
+    var raw = localStorage.getItem(COST_CATALOG_KEY);
+    if(!raw) return [];
+    var parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function writeCatalog(items){
+  localStorage.setItem(COST_CATALOG_KEY, JSON.stringify(items));
+}
+
+function getCustomCostHref(productId){
+  return 'cost-custom.html#id=' + encodeURIComponent(productId);
+}
+
+function getCatalog(){
+  return BUILTIN_PRODUCTS.concat(readCatalog());
+}
+
+function getSearchQuery(){
+  var input = document.getElementById('cost-search-input');
+  return input ? String(input.value || '').trim().toLowerCase() : '';
+}
+
+function getCustomCalcState(productId){
+  try {
+    var raw = localStorage.getItem('cloto_cost_calc_custom_' + productId);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function computeMargin(calcState){
+  if(!calcState) return null;
+  var rawRows = Array.isArray(calcState.rawRows) ? calcState.rawRows : [];
+  var packRows = Array.isArray(calcState.packRows) ? calcState.packRows : [];
+  var prodRows = Array.isArray(calcState.prodRows) ? calcState.prodRows : [];
+  var indRows = Array.isArray(calcState.indRows) ? calcState.indRows : [];
+  var saleKg = Number(calcState.salePriceKg || 0);
+  var rawSum = rawRows.reduce(function(sum, row){ return sum + (Number(row.qty || 0) * Number(row.price || 0) / 1000); }, 0);
+  var packSum = packRows.reduce(function(sum, row){ return sum + (Number(row.qty || 0) * Number(row.price || 0)); }, 0);
+  var prodSum = prodRows.reduce(function(sum, row){ return sum + (Number(row.qty || 0) * Number(row.price || 0)); }, 0);
+  var indSum = indRows.reduce(function(sum, row){ return sum + Number(row.sum || 0); }, 0);
+  var total = rawSum + packSum + prodSum + indSum;
+  var saleT = saleKg * 1000;
+  if(!saleT) return null;
+  return (saleT - total) / saleT * 100;
+}
+
+function renderCatalog(){
+  var items = getCatalog();
+  var query = getSearchQuery();
+  var root = document.getElementById('cost-products-list');
+  var navBadge = document.querySelector('.nav-badge');
+  var customCount = readCatalog().length;
+  var margins = readCatalog().map(function(item){ return computeMargin(getCustomCalcState(item.id)); }).filter(function(value){ return value !== null && !isNaN(value); });
+  var avgMargin = margins.length ? margins.reduce(function(sum, value){ return sum + value; }, 0) / margins.length : null;
+  var filteredItems = items.filter(function(item){
+    if(!query) return true;
+    return [item.name, item.sku, item.subtitle]
+      .join(' ')
+      .toLowerCase()
+      .indexOf(query) !== -1;
+  });
+
+  document.getElementById('page-subtitle').textContent = 'Калькуляция производства · ' + items.length + ' продуктов';
+  document.getElementById('kpi-products').textContent = String(items.length);
+  document.getElementById('kpi-product-sub').textContent = items.length ? items[0].name : 'Нет калькуляций';
+  document.getElementById('kpi-margin').textContent = avgMargin === null ? '—' : avgMargin.toFixed(1) + '%';
+  if(navBadge) navBadge.textContent = String(items.length);
+
+  if(!items.length){
+    root.innerHTML = '<div class="empty-state">Пока нет ни одной калькуляции. Нажмите «Добавить продукт», чтобы создать первую карточку расчета.</div>';
+    return;
+  }
+
+  if(!filteredItems.length){
+    root.innerHTML = '<div class="empty-state">По вашему запросу ничего не найдено. Измените строку поиска и попробуйте снова.</div>';
+    return;
+  }
+
+  root.innerHTML = filteredItems.map(function(item){
+    var badge = item.type === 'custom' ? '<div class="product-tag">Новая калькуляция</div>' : '';
+    var href = item.type === 'custom' ? getCustomCostHref(item.id) : item.href;
+    return '<a class="product-row" href="' + esc(href) + '">' +
+      '<span class="pr-icon">' + esc(item.icon || '🧮') + '</span>' +
+      '<div>' +
+        '<div class="pr-name">' + esc(item.name) + '</div>' +
+        '<div class="pr-sub">SKU: ' + esc(item.sku || '—') + ' · ' + esc(item.subtitle || 'Калькуляция продукта') + '</div>' +
+        badge +
+      '</div>' +
+      '<span class="pr-arrow">→</span>' +
+    '</a>';
+  }).join('');
+}
+
+function slugify(value){
+  return String(value || '').toLowerCase().replace(/[^a-z0-9а-яё]+/gi,'-').replace(/^-+|-+$/g,'').slice(0, 40) || 'cost';
+}
+
+function addCostProduct(){
+  var modal = document.getElementById('cost-product-modal');
+  var form = document.getElementById('cost-product-form');
+  form.reset();
+  document.getElementById('cost-product-icon').value = '🧮';
+  document.getElementById('cost-product-subtitle').value = 'Калькуляция 1 тонны производства';
+  document.getElementById('cost-product-sku').value = 'COST-' + Date.now().toString().slice(-5);
+  modal.classList.add('open');
+  document.getElementById('cost-product-name').focus();
+}
+
+function closeCostProductModal(){
+  document.getElementById('cost-product-modal').classList.remove('open');
+}
+
+function createCostProduct(name, sku, packaging, icon){
+  var catalog = readCatalog();
+  var id = 'custom-' + slugify(name) + '-' + Date.now();
+  catalog.unshift({
+    id: id,
+    type: 'custom',
+    name: name.trim(),
+    sku: String(sku || '').trim() || ('COST-' + Date.now().toString().slice(-5)),
+    subtitle: String(packaging || '').trim() || 'Калькуляция 1 тонны производства',
+    href: getCustomCostHref(id),
+    icon: String(icon || '').trim() || '🧮',
+    salePriceKg: 0,
+    createdAt: new Date().toISOString()
+  });
+  writeCatalog(catalog);
+  renderCatalog();
+  window.location.href = getCustomCostHref(id);
+}
+
+function reloadCatalog(){
+  renderCatalog();
+}
+
+window.addEventListener('storage', function(event){
+  if(!event.key || event.key === COST_CATALOG_KEY || event.key.indexOf('cloto_cost_calc_custom_') === 0){
+    renderCatalog();
+  }
+});
+window.addEventListener('focus', renderCatalog);
+window.addEventListener('pageshow', renderCatalog);
+
+document.getElementById('cost-search-input').addEventListener('input', renderCatalog);
+
+document.getElementById('cost-product-form').addEventListener('submit', function(event){
+  event.preventDefault();
+  var name = document.getElementById('cost-product-name').value.trim();
+  var sku = document.getElementById('cost-product-sku').value.trim();
+  var subtitle = document.getElementById('cost-product-subtitle').value.trim();
+  var icon = document.getElementById('cost-product-icon').value.trim();
+  if(!name || !sku) return;
+  closeCostProductModal();
+  createCostProduct(name, sku, subtitle, icon);
+});
+
+document.getElementById('cost-product-modal').addEventListener('click', function(event){
+  if(event.target === this) closeCostProductModal();
+});
+
+window.addEventListener('keydown', function(event){
+  if(event.key === 'Escape') closeCostProductModal();
+});
+
+renderCatalog();
+</script>
 
 </body>
 </html>

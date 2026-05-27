@@ -1,0 +1,3212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сделки — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="crm-module-sidebar.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #eef4fb;
+      --surface: #ffffff;
+      --surface-strong: #f7fbff;
+      --border: rgba(140, 160, 183, 0.28);
+      --border-strong: rgba(95, 146, 206, 0.4);
+      --text: #1f2d3d;
+      --muted: #6f8299;
+      --cyan: #1fb9b2;
+      --blue: #3b91da;
+      --gold: #d9a83a;
+      --green: #3ba771;
+      --red: #d76577;
+      --shadow: 0 14px 34px rgba(33, 63, 98, 0.12);
+      --glass-bg: rgba(255, 255, 255, 0.72);
+      --card-grad: linear-gradient(180deg, #ffffff, #f5f9ff);
+      --accent-soft: rgba(31, 185, 178, 0.12);
+      --on-accent: #0f3d3a;
+      --crm-stage-grad: linear-gradient(150deg, #edf5ff 0%, #e7f1ff 36%, #deecff 68%, #d6e7ff 100%);
+      --crm-sidebar-grad: linear-gradient(180deg, #f4f9ff, #e9f2ff);
+      --overlay-grad: linear-gradient(150deg, #edf5ff 0%, #e5f0ff 36%, #dceaff 68%, #d3e4ff 100%);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(76, 225, 198, 0.2), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(93, 141, 238, 0.2), transparent 60%),
+        radial-gradient(ellipse at 100% 100%, rgba(125, 200, 255, 0.12), transparent 72%),
+        #f0f6ff;
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 26px 16px 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+      color: white;
+      box-shadow: 0 4px 14px rgba(31, 185, 178, 0.28);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(31, 185, 178, 0.36);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--glass-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-strong);
+      border-color: var(--border-strong);
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-toggle::after {
+      content: '▼';
+      font-size: 8px;
+      margin-left: 4px;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--glass-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-chip:hover {
+      background: var(--surface-strong);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .filter-chip.active {
+      background: linear-gradient(135deg, rgba(31, 185, 178, 0.12), rgba(59, 167, 113, 0.08));
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .tab {
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab:hover {
+      color: var(--text);
+    }
+
+    .tab.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+
+    .deals-container {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      min-height: 400px;
+    }
+
+    .leads-list-shell {
+      display: none;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 12px 28px rgba(33, 63, 98, 0.08);
+    }
+
+    .leads-list-shell.open {
+      display: block;
+    }
+
+    .leads-list-head,
+    .leads-list-row {
+      display: grid;
+      grid-template-columns: 44px 240px 220px 170px 130px 170px 180px 170px;
+      align-items: center;
+      gap: 0;
+      min-width: 1260px;
+    }
+
+    .leads-list-head {
+      background: #f7fbff;
+      border-bottom: 1px solid rgba(130, 161, 196, 0.22);
+      color: #4e637b;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .leads-list-scroll {
+      overflow-x: auto;
+    }
+
+    .leads-list-cell {
+      padding: 14px 12px;
+      border-right: 1px solid rgba(130, 161, 196, 0.12);
+    }
+
+    .leads-list-head .leads-list-cell:last-child,
+    .leads-list-row .leads-list-cell:last-child {
+      border-right: 0;
+    }
+
+    .leads-list-body .leads-list-row {
+      border-bottom: 1px solid rgba(130, 161, 196, 0.12);
+      background: rgba(255, 255, 255, 0.97);
+      cursor: pointer;
+    }
+
+    .leads-list-body .leads-list-row:hover {
+      background: rgba(240, 248, 255, 0.86);
+    }
+
+    .lead-name {
+      color: #1b5ca5;
+      font-size: 22px;
+      line-height: 1.08;
+      margin-bottom: 7px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .lead-sub {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .stage-line {
+      height: 10px;
+      border-radius: 999px;
+      background: #e8eef6;
+      border: 1px solid rgba(130, 161, 196, 0.24);
+      overflow: hidden;
+      margin-bottom: 7px;
+    }
+
+    .stage-line-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #3db2ff, #268fe9);
+    }
+
+    .owner-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .owner-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #7e8b9a;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .leads-list-empty {
+      padding: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .tasks-overview-shell,
+    .calendar-shell {
+      display: none;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 12px 28px rgba(33, 63, 98, 0.08);
+      overflow: hidden;
+    }
+
+    .tasks-overview-shell.open,
+    .calendar-shell.open {
+      display: block;
+    }
+
+    .tasks-overview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(130, 161, 196, 0.2);
+      background: #f7fbff;
+    }
+
+    .tasks-overview-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #20466d;
+    }
+
+    .tasks-overview-sub {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tasks-overview-body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tasks-overview-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(130, 161, 196, 0.14);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .tasks-overview-item:hover {
+      background: rgba(238, 247, 255, 0.8);
+    }
+
+    .tasks-overview-item:last-child {
+      border-bottom: 0;
+    }
+
+    .task-overview-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      color: #4a607a;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .task-overview-deal {
+      color: #1f5f9d;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .task-overview-text {
+      color: #214f80;
+      font-size: 19px;
+      line-height: 1.15;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .task-overview-meta,
+    .task-overview-completed {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .task-overview-empty,
+    .calendar-empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .calendar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(130, 161, 196, 0.2);
+      background: #f7fbff;
+    }
+
+    .calendar-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #20466d;
+      text-transform: capitalize;
+    }
+
+    .calendar-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calendar-nav-btn {
+      border: 1px solid rgba(130, 161, 196, 0.35);
+      background: #fff;
+      color: #3a5d85;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .calendar-grid-wrap {
+      overflow-x: auto;
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      min-width: 980px;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .calendar-weekdays {
+      background: rgba(243, 249, 255, 0.8);
+      border-bottom: 1px solid rgba(130, 161, 196, 0.16);
+    }
+
+    .calendar-weekday {
+      padding: 10px 8px;
+      text-align: center;
+      color: #58708d;
+      font-size: 12px;
+      font-weight: 800;
+      border-right: 1px solid rgba(130, 161, 196, 0.12);
+    }
+
+    .calendar-weekday:last-child {
+      border-right: 0;
+    }
+
+    .calendar-cell {
+      min-height: 132px;
+      border-right: 1px solid rgba(130, 161, 196, 0.12);
+      border-bottom: 1px solid rgba(130, 161, 196, 0.12);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .calendar-cell.is-outside {
+      background: rgba(245, 250, 255, 0.82);
+      opacity: 0.72;
+    }
+
+    .calendar-day {
+      color: #4b6788;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .calendar-task {
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: rgba(53, 157, 233, 0.14);
+      color: #205f99;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(57, 143, 211, 0.26);
+    }
+
+    .calendar-task.completed {
+      background: rgba(72, 178, 120, 0.14);
+      color: #236945;
+      border-color: rgba(72, 178, 120, 0.26);
+    }
+
+    .calendar-task small {
+      display: block;
+      font-size: 10px;
+      margin-top: 2px;
+      opacity: 0.9;
+      font-weight: 700;
+    }
+
+    .deal-column {
+      display: flex;
+      flex-direction: column;
+      background: var(--card-grad);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      min-height: 500px;
+    }
+
+    .deal-column-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .deal-column-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .deal-column-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: var(--glass-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .deal-add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .deal-add-btn:hover {
+      background: var(--accent-soft);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .deal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+      min-height: 40px;
+      margin-bottom: 12px;
+    }
+
+    .deal-card {
+      border: 1px solid rgba(86, 131, 183, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 10px 24px rgba(40, 74, 114, 0.08);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .deal-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .deal-card-meta {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .deal-card-tag {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(31, 185, 178, 0.12);
+      color: var(--cyan);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .deals-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      min-height: 400px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      opacity: 0.4;
+    }
+
+    .empty-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .empty-desc {
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 240px;
+    }
+
+    .crm-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: var(--glass-bg);
+      border: 1px solid var(--border);
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 20px;
+    }
+
+    .crm-back-link:hover {
+      background: var(--surface-strong);
+      border-color: var(--border-strong);
+    }
+
+    .status-colors {
+      --status-new: #e8f0ff;
+      --status-prep: #fff4e8;
+      --status-invoice: #e8f8ff;
+      --status-work: #e8ffe8;
+      --status-final: #fff0e8;
+    }
+
+    .bg-noise {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-orb {
+      position: fixed;
+      width: 360px;
+      height: 360px;
+      right: -80px;
+      top: 140px;
+      background: rgba(125, 200, 255, 0.14);
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .deal-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 28, 51, 0.5);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 20;
+    }
+
+    .deal-modal-overlay.open {
+      display: flex;
+    }
+
+    .result-modal {
+      width: min(680px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,250,255,0.96));
+      border: 1px solid rgba(120, 155, 196, 0.32);
+      border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(16, 42, 76, 0.28);
+      padding: 22px;
+    }
+
+    .result-modal-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .result-modal-copy {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .result-choice-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .result-choice-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 18px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .result-choice-btn.success {
+      background: linear-gradient(135deg, #2bcf73, #17b65d);
+      box-shadow: 0 12px 26px rgba(29, 159, 85, 0.24);
+    }
+
+    .result-choice-btn.fail {
+      background: linear-gradient(135deg, #ef5d66, #d94953);
+      box-shadow: 0 12px 26px rgba(195, 49, 59, 0.24);
+    }
+
+    .result-form {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .result-form.open {
+      display: flex;
+    }
+
+    .result-question {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .result-answer {
+      width: 100%;
+      border: 1px solid rgba(120, 155, 196, 0.28);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.94);
+      color: var(--text);
+      font: inherit;
+      padding: 12px 14px;
+      outline: none;
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(120, 155, 196, 0.2);
+    }
+
+    .deal-modal {
+      width: min(920px, 100%);
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,249,255,0.96));
+      border: 1px solid rgba(120, 155, 196, 0.32);
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(16, 42, 76, 0.28);
+    }
+
+    .deal-modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid rgba(120, 155, 196, 0.2);
+    }
+
+    .deal-modal-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .deal-modal-subtitle {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.45;
+    }
+
+    .deal-modal-close {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.82);
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .deal-modal-body {
+      padding: 20px 24px 24px;
+    }
+
+    .deal-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 18px;
+    }
+
+    .deal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .deal-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .deal-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .deal-control,
+    .deal-select,
+    .deal-textarea {
+      width: 100%;
+      border: 1px solid rgba(120, 155, 196, 0.28);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.94);
+      color: var(--text);
+      font: inherit;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .deal-control:focus,
+    .deal-select:focus,
+    .deal-textarea:focus {
+      border-color: rgba(59, 145, 218, 0.65);
+      box-shadow: 0 0 0 4px rgba(59, 145, 218, 0.12);
+    }
+
+    .deal-textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .deal-help {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .deal-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(120, 155, 196, 0.2);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.88);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .deal-toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: rgba(19, 56, 44, 0.94);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      box-shadow: 0 16px 38px rgba(13, 38, 29, 0.22);
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      z-index: 30;
+    }
+
+    .deal-toast.open {
+      display: block;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .deal-detail {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .deal-detail-main,
+    .deal-detail-side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .deal-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .deal-detail-breadcrumbs {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .deal-detail-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.15;
+    }
+
+    .detail-stage-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .detail-stage-pill {
+      background: #d8dee8;
+      color: #5f6d81;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .detail-stage-pill[data-stage-action] {
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .detail-stage-pill[data-stage-action]:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(66, 94, 129, 0.14);
+    }
+
+    .detail-stage-pill.active {
+      background: linear-gradient(135deg, #39aef6, #2d92ea);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(55, 139, 225, 0.26);
+    }
+
+    .detail-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(130, 161, 196, 0.22);
+      border-radius: 18px;
+      box-shadow: 0 12px 34px rgba(25, 58, 99, 0.08);
+      overflow: hidden;
+    }
+
+    .detail-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(130, 161, 196, 0.16);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .detail-card-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .detail-price {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .detail-field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(130, 161, 196, 0.12);
+    }
+
+    .detail-field-block:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .detail-field-label {
+      color: #8b9bb0;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .detail-field-value {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .detail-contact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .detail-contact-card {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(245,249,255,0.94), rgba(238,245,255,0.9));
+      border: 1px solid rgba(130, 161, 196, 0.18);
+    }
+
+    .detail-contact-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .detail-contact-meta {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .activity-shell {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(130, 161, 196, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 12px 34px rgba(25, 58, 99, 0.08);
+      padding: 14px;
+    }
+
+    .activity-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .activity-tab {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .activity-tab.active {
+      color: #1482e6;
+      background: rgba(219, 236, 255, 0.82);
+      border-color: rgba(80, 158, 231, 0.3);
+    }
+
+    .activity-panel {
+      display: none;
+    }
+
+    .activity-panel.active {
+      display: block;
+    }
+
+    .task-composer {
+      border: 1px solid rgba(68, 147, 227, 0.65);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.98);
+      padding: 16px;
+      min-height: 108px;
+      transition: min-height 0.2s ease;
+    }
+
+    .task-composer.hidden {
+      display: none !important;
+    }
+
+    .task-composer.expanded {
+      min-height: 198px;
+    }
+
+    .create-task-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(130, 161, 196, 0.22);
+      background: rgba(255,255,255,0.96);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(25, 58, 99, 0.06);
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+
+    .create-task-cta.hidden {
+      display: none !important;
+    }
+
+    .create-task-cta-badge {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2fce73, #18b85e);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .task-input {
+      width: 100%;
+      min-height: 54px;
+      border: 0;
+      resize: none;
+      background: transparent;
+      font: inherit;
+      color: var(--text);
+      outline: none;
+      padding: 0;
+    }
+
+    .task-input::placeholder,
+    .comment-input::placeholder {
+      color: #a0afc0;
+    }
+
+    .task-toolbar,
+    .comment-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .task-toolbar-left,
+    .comment-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .date-button,
+    .invite-button,
+    .attach-button,
+    .actions-button,
+    .reminder-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(115, 171, 221, 0.35);
+      background: rgba(255,255,255,0.95);
+      color: var(--muted);
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .date-button,
+    .save-inline-button {
+      color: #5d6d82;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 0;
+      background: rgba(230, 238, 248, 0.92);
+      color: #7a8a9d;
+      font-size: 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .icon-button.has-selection {
+      background: rgba(83, 190, 117, 0.16);
+      color: #219c4c;
+    }
+
+    .save-inline-button {
+      border: 0;
+      background: linear-gradient(135deg, #36c3ff, #24b1ea);
+      color: white;
+      border-radius: 999px;
+      padding: 10px 22px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(45, 171, 232, 0.24);
+    }
+
+    .cancel-inline-button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 8px 0;
+    }
+
+    .inline-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .comment-composer {
+      border: 1px solid rgba(130, 161, 196, 0.26);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.98);
+      padding: 16px;
+      min-height: 150px;
+    }
+
+    .comment-input {
+      width: 100%;
+      min-height: 120px;
+      border: 0;
+      resize: vertical;
+      background: transparent;
+      font: inherit;
+      color: var(--text);
+      outline: none;
+      padding: 0;
+    }
+
+    .discussion-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(130, 161, 196, 0.22);
+      box-shadow: 0 10px 24px rgba(25, 58, 99, 0.06);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .discussion-users {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .discussion-chip,
+    .file-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(231, 242, 255, 0.9);
+      color: #2472bb;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .file-list,
+    .timeline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .timeline-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(247, 250, 255, 0.92);
+      border: 1px solid rgba(130, 161, 196, 0.16);
+    }
+
+    .timeline-item-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: #94a2b6;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .timeline-item-title {
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .timeline-item-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .task-section-heading {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2fd089, #18b65f);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      margin: 4px 0 10px;
+    }
+
+    .saved-task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .saved-task-card {
+      background: linear-gradient(180deg, rgba(255, 251, 228, 0.96), rgba(255, 249, 216, 0.94));
+      border: 1px solid rgba(237, 219, 143, 0.52);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 12px 28px rgba(164, 142, 49, 0.08);
+    }
+
+    .saved-task-card.completed {
+      background: rgba(246, 249, 253, 0.96);
+      border-color: rgba(130, 161, 196, 0.18);
+      opacity: 0.92;
+    }
+
+    .saved-task-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .saved-task-checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 2px solid rgba(113, 135, 161, 0.46);
+      background: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #24ab61;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .saved-task-card.completed .saved-task-checkbox {
+      border-color: rgba(36, 171, 97, 0.46);
+      background: rgba(36, 171, 97, 0.12);
+    }
+
+    .saved-task-body {
+      display: grid;
+      grid-template-columns: 84px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .saved-task-date {
+      border-radius: 16px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(130, 161, 196, 0.16);
+      padding: 10px 8px;
+      text-align: center;
+      color: #2e93e8;
+      font-weight: 800;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .saved-task-date strong {
+      display: block;
+      color: #1e2f44;
+      font-size: 28px;
+      line-height: 1;
+      margin: 2px 0;
+    }
+
+    .saved-task-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .saved-task-meta-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .saved-task-deadline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255, 240, 208, 0.84);
+      color: #a26b00;
+    }
+
+    .saved-task-text {
+      border: 1px solid rgba(130, 161, 196, 0.18);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.92);
+      padding: 14px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 54px;
+    }
+
+    .saved-task-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .saved-task-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .saved-task-button.complete {
+      background: linear-gradient(135deg, #33c6ff, #22b0eb);
+      color: white;
+    }
+
+    .saved-task-button.secondary {
+      background: rgba(255,255,255,0.86);
+      border: 1px solid rgba(130, 161, 196, 0.22);
+      color: var(--muted);
+    }
+
+    .popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 220px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid rgba(130, 161, 196, 0.22);
+      border-radius: 18px;
+      box-shadow: 0 24px 44px rgba(23, 56, 97, 0.16);
+      padding: 10px;
+      display: none;
+      z-index: 5;
+    }
+
+    .popover.open {
+      display: block;
+    }
+
+    .popover-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: var(--text);
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .popover-item:hover {
+      background: rgba(236, 244, 255, 0.95);
+    }
+
+    .popover-item.active::before {
+      content: '✓';
+      color: #1482e6;
+      font-weight: 800;
+      margin-right: 10px;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .custom-reminder-form,
+    .invite-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 260px;
+    }
+
+    .mini-input,
+    .mini-select {
+      width: 100%;
+      border: 1px solid rgba(130, 161, 196, 0.24);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    .mini-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .mini-button {
+      border: 0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mini-button.primary {
+      background: linear-gradient(135deg, #36c3ff, #24b1ea);
+      color: #fff;
+    }
+
+    .mini-button.secondary {
+      background: rgba(236, 243, 251, 0.92);
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .deal-detail {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-stage-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .deals-container {
+        grid-template-columns: repeat(3, minmax(260px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .deal-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .task-overview-text {
+        font-size: 17px;
+      }
+
+      .calendar-cell {
+        min-height: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-noise"></div>
+  <div class="bg-orb"></div>
+
+  <div class="wrap">
+    <a class="crm-back-link" href="clients.html">← Назад в клиенты</a>
+
+    <div id="board-view">
+    <div class="topbar">
+      <div class="topbar-title">Сделки</div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="openDealModalButton">+ Создать</button>
+        <button class="btn btn-secondary dropdown dropdown-toggle">Общая воронка</button>
+        <button class="btn btn-secondary dropdown dropdown-toggle">Сделки в работе</button>
+        <button class="btn btn-secondary">+ поиск</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-board-view="kanban">Канбан</button>
+      <button class="tab" data-board-view="list">Список</button>
+      <button class="tab" data-board-view="deals">Дела</button>
+      <button class="tab" data-board-view="calendar">Календарь</button>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-chip active">Входящие</div>
+      <div class="filter-chip">Запланированные</div>
+      <div class="filter-chip">Еще ▼</div>
+    </div>
+
+    <div class="deals-container" id="dealsBoard">
+      <div class="deal-column">
+        <div class="deal-column-header">
+          <div class="deal-column-title">Новая</div>
+          <div class="deal-column-count" data-stage-count="new">0</div>
+        </div>
+        <div class="deal-list" data-stage-list="new"></div>
+        <button class="deal-add-btn" data-open-deal-modal="true">+</button>
+      </div>
+
+      <div class="deal-column">
+        <div class="deal-column-header">
+          <div class="deal-column-title">В работе</div>
+          <div class="deal-column-count" data-stage-count="work">0</div>
+        </div>
+        <div class="deal-list" data-stage-list="work"></div>
+        <button class="deal-add-btn" data-open-deal-modal="true">+</button>
+      </div>
+
+      <div class="deal-column">
+        <div class="deal-column-header">
+          <div class="deal-column-title">Результат</div>
+          <div class="deal-column-count" data-stage-count="final">0</div>
+        </div>
+        <div class="deal-list" data-stage-list="final"></div>
+        <button class="deal-add-btn" data-open-deal-modal="true">+</button>
+      </div>
+    </div>
+
+    <div class="leads-list-shell" id="leadsListView">
+      <div class="leads-list-scroll">
+        <div class="leads-list-head">
+          <div class="leads-list-cell">☐</div>
+          <div class="leads-list-cell">Сделка</div>
+          <div class="leads-list-cell">Стадия сделки</div>
+          <div class="leads-list-cell">Дела</div>
+          <div class="leads-list-cell">Клиент</div>
+          <div class="leads-list-cell">Сумма/Валюта</div>
+          <div class="leads-list-cell">Ответственный</div>
+          <div class="leads-list-cell">Дата создания</div>
+        </div>
+        <div class="leads-list-body" id="leadsListBody"></div>
+      </div>
+    </div>
+
+    <div class="tasks-overview-shell" id="dealsTasksView">
+      <div class="tasks-overview-head">
+        <div>
+          <div class="tasks-overview-title">Все дела по лидам</div>
+          <div class="tasks-overview-sub" id="dealsTasksCounter">0 дел</div>
+        </div>
+      </div>
+      <div class="tasks-overview-body" id="dealsTasksBody"></div>
+    </div>
+
+    <div class="calendar-shell" id="tasksCalendarView">
+      <div class="calendar-head">
+        <div class="calendar-title" id="calendarTitle">Календарь</div>
+        <div class="calendar-nav">
+          <button class="calendar-nav-btn" type="button" id="calendarPrevButton">←</button>
+          <button class="calendar-nav-btn" type="button" id="calendarTodayButton">Сегодня</button>
+          <button class="calendar-nav-btn" type="button" id="calendarNextButton">→</button>
+        </div>
+      </div>
+      <div class="calendar-grid-wrap">
+        <div class="calendar-weekdays" id="calendarWeekdays"></div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+      <div class="calendar-empty hidden" id="calendarEmpty">Для календаря пока нет дел с датой.</div>
+    </div>
+
+    <div class="deals-empty" style="display: none;">
+      <div class="empty-icon">📋</div>
+      <div class="empty-text">Пока данных на этой странице нет</div>
+      <div class="empty-desc">Создайте первую сделку, нажав кнопку "Создать" выше</div>
+    </div>
+    </div>
+
+    <div class="hidden" id="detail-view">
+      <div class="deal-detail-header">
+        <div>
+          <div class="deal-detail-breadcrumbs">
+            <button class="cancel-inline-button" type="button" id="backToBoardButton">← Общая воронка</button>
+            <span>•</span>
+            <span id="detail-breadcrumb-company">Сделка</span>
+          </div>
+          <div class="deal-detail-title" id="detail-title">Сделка</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-secondary" type="button" id="detailEditButton">Редактировать</button>
+        </div>
+      </div>
+
+      <div class="detail-stage-strip">
+        <div class="detail-stage-pill active" data-stage-action="new">Новая</div>
+        <div class="detail-stage-pill" data-stage-action="work">В работе</div>
+        <div class="detail-stage-pill" data-stage-action="final">Результат</div>
+        <div class="detail-stage-pill" data-stage-action="completed">Завершить сделку</div>
+      </div>
+
+      <div class="deal-detail">
+        <div class="deal-detail-side">
+          <section class="detail-card">
+            <div class="detail-card-head">
+              <span>О сделке</span>
+            </div>
+            <div class="detail-card-body">
+              <div>
+                <div class="detail-field-label">Сумма сделки</div>
+                <div class="detail-price" id="detail-amount">0 ₽</div>
+              </div>
+              <div class="detail-field-block">
+                <div class="detail-field-label">Стадия</div>
+                <div class="detail-field-value" id="detail-stage">Новая</div>
+              </div>
+              <div class="detail-field-block">
+                <div class="detail-field-label">Дата начала</div>
+                <div class="detail-field-value" id="detail-created-at">—</div>
+              </div>
+              <div class="detail-field-block">
+                <div class="detail-field-label">Ответственный</div>
+                <div class="detail-field-value" id="detail-owner">—</div>
+              </div>
+              <div class="detail-field-block">
+                <div class="detail-field-label">Наблюдатель</div>
+                <div class="detail-field-value" id="detail-observer">Не выбран</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-card">
+            <div class="detail-card-head">
+              <span>Клиент и контакты</span>
+            </div>
+            <div class="detail-card-body detail-contact-grid">
+              <div class="detail-contact-card">
+                <div class="detail-contact-title" id="detail-company">—</div>
+                <div class="detail-contact-meta">Клиент</div>
+              </div>
+              <div class="detail-contact-card">
+                <div class="detail-contact-title" id="detail-contact">—</div>
+                <div class="detail-contact-meta">Контакт</div>
+              </div>
+              <div class="detail-contact-card">
+                <div class="detail-contact-title">Товар</div>
+                <div class="detail-contact-meta" id="detail-product">—</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-card">
+            <div class="detail-card-head">
+              <span>Комментарий к сделке</span>
+            </div>
+            <div class="detail-card-body">
+              <div class="detail-field-value" id="detail-comment">—</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="deal-detail-main">
+          <section class="activity-shell">
+            <div class="activity-tabs">
+              <button class="activity-tab active" type="button" data-activity-tab="task">Дело</button>
+              <button class="activity-tab" type="button" data-activity-tab="comment">Комментарий</button>
+            </div>
+
+            <div class="activity-panel active" data-activity-panel="task">
+              <button class="create-task-cta hidden" type="button" id="createTaskCta"><span class="create-task-cta-badge">+</span><span>Создайте дело</span></button>
+              <div class="task-composer" id="taskComposer">
+                <textarea class="task-input" id="taskInput" placeholder="Что нужно сделать"></textarea>
+                <div class="task-toolbar">
+                  <div class="task-toolbar-left">
+                    <button class="date-button" type="button" id="taskDateButton">📅 <span id="taskDateLabel">Выбрать дату и время</span></button>
+                    <div class="relative">
+                      <button class="icon-button" type="button" id="reminderToggleButton" aria-label="Напоминание">🔔</button>
+                      <div class="popover" id="reminderPopover">
+                        <button class="popover-item active" type="button" data-reminder-value="event">В момент события</button>
+                        <button class="popover-item" type="button" data-reminder-value="15m">За 15 минут</button>
+                        <button class="popover-item" type="button" data-reminder-value="30m">За 30 минут</button>
+                        <button class="popover-item" type="button" data-reminder-value="1h">За 1 час</button>
+                        <button class="popover-item" type="button" data-reminder-value="2h">За 2 часа</button>
+                        <button class="popover-item" type="button" data-reminder-value="1d">За 1 день</button>
+                        <button class="popover-item" type="button" id="customReminderButton">Другое напоминание ›</button>
+                      </div>
+                    </div>
+                    <div class="relative">
+                      <div class="popover" id="customReminderPopover">
+                        <div class="custom-reminder-form">
+                          <input class="mini-input" id="customReminderDate" type="date" />
+                          <input class="mini-input" id="customReminderTime" type="time" />
+                          <div class="mini-actions">
+                            <button class="mini-button secondary" type="button" id="cancelCustomReminderButton">Закрыть</button>
+                            <button class="mini-button primary" type="button" id="saveCustomReminderButton">Выбрать</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="actions-button" type="button">действия ▾</button>
+                </div>
+                <div class="inline-actions">
+                  <button class="save-inline-button" type="button" id="saveTaskButton">СОХРАНИТЬ</button>
+                  <button class="cancel-inline-button" type="button" id="cancelTaskButton">ОТМЕНА</button>
+                </div>
+              </div>
+              <div class="task-section-heading">Что нужно сделать</div>
+              <div class="saved-task-list" id="savedTaskList"></div>
+            </div>
+
+            <div class="activity-panel" data-activity-panel="comment">
+              <div class="comment-composer">
+                <textarea class="comment-input" id="commentInput" placeholder="Добавьте комментарий"></textarea>
+                <div class="comment-toolbar">
+                  <div class="comment-toolbar-left">
+                    <label class="attach-button" for="commentFileInput">📎 Файл</label>
+                    <input class="hidden" id="commentFileInput" type="file" multiple />
+                    <div class="relative">
+                      <button class="invite-button" type="button" id="inviteDiscussionButton">👥 Пригласить к обсуждению</button>
+                      <div class="popover" id="invitePopover">
+                        <div class="invite-form">
+                          <select class="mini-select" id="inviteSelect"></select>
+                          <div class="mini-actions">
+                            <button class="mini-button secondary" type="button" id="cancelInviteButton">Закрыть</button>
+                            <button class="mini-button primary" type="button" id="saveInviteButton">Пригласить</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="discussion-users" id="discussionUsers"></div>
+                <div class="file-list" id="commentFileList"></div>
+                <div class="inline-actions">
+                  <button class="save-inline-button" type="button" id="saveCommentButton">ОТПРАВИТЬ</button>
+                  <button class="cancel-inline-button" type="button" id="cancelCommentButton">ОТМЕНА</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="discussion-strip" id="discussionStripButton">👥 Пригласить к обсуждению</div>
+
+          <section class="detail-card">
+            <div class="detail-card-head">
+              <span>Лента активности</span>
+            </div>
+            <div class="detail-card-body">
+              <div class="timeline-list" id="timelineList"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="deal-modal-overlay" id="deal-modal-overlay" aria-hidden="true">
+    <div class="deal-modal" role="dialog" aria-modal="true" aria-labelledby="deal-modal-title">
+      <div class="deal-modal-head">
+        <div>
+          <div class="deal-modal-title" id="deal-modal-title">Создание сделки</div>
+          <div class="deal-modal-subtitle">Контакт, клиент и товар можно ввести вручную или выбрать из выпадающих списков. Источник и поле об источнике не добавлял, как вы просили.</div>
+        </div>
+        <button class="deal-modal-close" id="closeDealModalButton" type="button" aria-label="Закрыть">×</button>
+      </div>
+
+      <form class="deal-modal-body" id="deal-form">
+        <div class="deal-form-grid">
+          <label class="deal-field full">
+            <span class="deal-label">Название сделки</span>
+            <input class="deal-control" id="deal-title" name="title" type="text" placeholder="Например, Омас · Stabilight II" />
+          </label>
+
+          <label class="deal-field">
+            <span class="deal-label">Имя контакта</span>
+            <input class="deal-control" id="deal-contact" name="contact" type="text" list="deal-contact-options" placeholder="Введите или выберите контакт" />
+            <span class="deal-help">Можно написать вручную или выбрать существующий контакт.</span>
+          </label>
+
+          <label class="deal-field">
+            <span class="deal-label">Компания (клиент)</span>
+            <input class="deal-control" id="deal-company" name="company" type="text" list="deal-company-options" placeholder="Введите или выберите клиента" />
+            <span class="deal-help">Список собирается из карточек клиентов.</span>
+          </label>
+
+          <label class="deal-field">
+            <span class="deal-label">Ответственный</span>
+            <select class="deal-select" id="deal-owner" name="owner"></select>
+            <span class="deal-help">По умолчанию выбран сотрудник Клото, но его можно поменять.</span>
+          </label>
+
+          <label class="deal-field">
+            <span class="deal-label">Наблюдатель</span>
+            <select class="deal-select" id="deal-observer" name="observer"></select>
+            <span class="deal-help">Наблюдатель контролирует исполнение сделки.</span>
+          </label>
+
+          <label class="deal-field full">
+            <span class="deal-label">Товары</span>
+            <input class="deal-control" id="deal-product" name="product" type="text" list="deal-product-options" placeholder="Введите или выберите товар" />
+            <span class="deal-help">Список подтягивается со страницы продуктов и из клиентских продуктовых карточек.</span>
+          </label>
+
+          <label class="deal-field full">
+            <span class="deal-label">Комментарий</span>
+            <textarea class="deal-textarea" id="deal-comment" name="comment" placeholder="Короткий комментарий по сделке"></textarea>
+          </label>
+        </div>
+
+        <div class="deal-modal-actions">
+          <button class="btn btn-ghost" type="button" id="cancelDealButton">Отменить</button>
+          <button class="btn btn-primary" type="submit">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="deal-modal-overlay" id="result-modal-overlay" aria-hidden="true">
+    <div class="result-modal" role="dialog" aria-modal="true" aria-labelledby="result-modal-title">
+      <div class="result-modal-title" id="result-modal-title">Результат лида</div>
+      <div class="result-modal-copy">Выберите итог: успешно или неудачно. Если неудачно, заполните короткий разбор и сохраните.</div>
+
+      <div class="result-choice-row" id="result-choice-row">
+        <button class="result-choice-btn success" type="button" id="result-success-button">Успешно</button>
+        <button class="result-choice-btn fail" type="button" id="result-fail-button">Лажа</button>
+      </div>
+
+      <div class="result-form" id="result-fail-form">
+        <label>
+          <div class="result-question">Почему не получилось?</div>
+          <textarea class="result-answer" id="result-fail-why" placeholder="Опишите причину"></textarea>
+        </label>
+        <label>
+          <div class="result-question">Что можно улучшить в следующий раз?</div>
+          <textarea class="result-answer" id="result-fail-improve" placeholder="Опишите, как улучшить процесс"></textarea>
+        </label>
+        <div class="result-actions">
+          <button class="btn btn-ghost" type="button" id="result-cancel-button">Отменить</button>
+          <button class="btn btn-primary" type="button" id="result-save-button">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <datalist id="deal-contact-options"></datalist>
+  <datalist id="deal-company-options"></datalist>
+  <datalist id="deal-product-options"></datalist>
+  <div class="deal-toast" id="deal-toast">Сделка сохранена</div>
+
+  <script>
+    (function() {
+      var DEALS_STORAGE_KEY = 'cloto_leads_deals_v1';
+      var CLIENT_STORAGE_KEY = 'cloto_client_cards_v2';
+      var BUILTIN_PRODUCTS = [
+        { id: 'stabilight', key: 'cloto_product_stabilight', name: 'Стабилайт II' },
+        { id: 'uschr', key: 'cloto_product_uschr', name: 'УЩР (собственный)' },
+        { id: 'optitrol', key: 'cloto_product_optitrol', name: 'Оптитрол жидкий' },
+        { id: 'blacktrol', key: 'cloto_product_blacktrol', name: 'Блэктрол' },
+        { id: 'maksflex', key: 'cloto_product_maksflex', name: 'Макс-Флекс' }
+      ];
+      var KNOWN_PRODUCT_KEYS = BUILTIN_PRODUCTS.map(function(product) { return product.key; });
+      var EMPLOYEES = [
+        { id: 'andrey', name: 'Андрей К.', role: 'Главный администратор', email: 'andrey@cloto.ru' },
+        { id: 'petrov', name: 'Илья Петров', role: 'Enterprise account owner', email: 'i.petrov@cloto.ru' },
+        { id: 'orlova', name: 'Наталья Орлова', role: 'Growth manager', email: 'n.orlova@cloto.ru' },
+        { id: 'sidorov', name: 'Алексей Сидоров', role: 'Commercial lead', email: 'a.sidorov@cloto.ru' }
+      ];
+      var STAGE_LABELS = {
+        new: 'Новая',
+        work: 'В работе',
+        final: 'Результат',
+        completed: 'Завершена'
+      };
+
+      var modalOverlay = document.getElementById('deal-modal-overlay');
+      var openDealModalButton = document.getElementById('openDealModalButton');
+      var closeDealModalButton = document.getElementById('closeDealModalButton');
+      var cancelDealButton = document.getElementById('cancelDealButton');
+      var dealForm = document.getElementById('deal-form');
+      var dealToast = document.getElementById('deal-toast');
+      var contactInput = document.getElementById('deal-contact');
+      var companyInput = document.getElementById('deal-company');
+      var ownerSelect = document.getElementById('deal-owner');
+      var observerSelect = document.getElementById('deal-observer');
+      var productInput = document.getElementById('deal-product');
+      var titleInput = document.getElementById('deal-title');
+      var commentInput = document.getElementById('deal-comment');
+      var companyDatalist = document.getElementById('deal-company-options');
+      var contactDatalist = document.getElementById('deal-contact-options');
+      var productDatalist = document.getElementById('deal-product-options');
+      var currentDeals = readDeals();
+      var boardView = document.getElementById('board-view');
+      var detailView = document.getElementById('detail-view');
+      var backToBoardButton = document.getElementById('backToBoardButton');
+      var detailEditButton = document.getElementById('detailEditButton');
+      var taskComposer = document.getElementById('taskComposer');
+      var taskInput = document.getElementById('taskInput');
+      var taskDateButton = document.getElementById('taskDateButton');
+      var taskDateLabel = document.getElementById('taskDateLabel');
+      var reminderToggleButton = document.getElementById('reminderToggleButton');
+      var reminderPopover = document.getElementById('reminderPopover');
+      var customReminderButton = document.getElementById('customReminderButton');
+      var customReminderPopover = document.getElementById('customReminderPopover');
+      var customReminderDate = document.getElementById('customReminderDate');
+      var customReminderTime = document.getElementById('customReminderTime');
+      var cancelCustomReminderButton = document.getElementById('cancelCustomReminderButton');
+      var saveCustomReminderButton = document.getElementById('saveCustomReminderButton');
+      var saveTaskButton = document.getElementById('saveTaskButton');
+      var cancelTaskButton = document.getElementById('cancelTaskButton');
+      var createTaskCta = document.getElementById('createTaskCta');
+      var savedTaskList = document.getElementById('savedTaskList');
+      var commentInputField = document.getElementById('commentInput');
+      var commentFileInput = document.getElementById('commentFileInput');
+      var commentFileList = document.getElementById('commentFileList');
+      var inviteDiscussionButton = document.getElementById('inviteDiscussionButton');
+      var discussionStripButton = document.getElementById('discussionStripButton');
+      var invitePopover = document.getElementById('invitePopover');
+      var inviteSelect = document.getElementById('inviteSelect');
+      var cancelInviteButton = document.getElementById('cancelInviteButton');
+      var saveInviteButton = document.getElementById('saveInviteButton');
+      var discussionUsers = document.getElementById('discussionUsers');
+      var saveCommentButton = document.getElementById('saveCommentButton');
+      var cancelCommentButton = document.getElementById('cancelCommentButton');
+      var timelineList = document.getElementById('timelineList');
+      var detailTitle = document.getElementById('detail-title');
+      var detailBreadcrumbCompany = document.getElementById('detail-breadcrumb-company');
+      var detailAmount = document.getElementById('detail-amount');
+      var detailStage = document.getElementById('detail-stage');
+      var detailCreatedAt = document.getElementById('detail-created-at');
+      var detailOwner = document.getElementById('detail-owner');
+      var detailObserver = document.getElementById('detail-observer');
+      var detailCompany = document.getElementById('detail-company');
+      var detailContact = document.getElementById('detail-contact');
+      var detailProduct = document.getElementById('detail-product');
+      var detailComment = document.getElementById('detail-comment');
+      var detailStageButtons = document.querySelectorAll('[data-stage-action]');
+      var boardTabButtons = document.querySelectorAll('[data-board-view]');
+      var dealsBoard = document.getElementById('dealsBoard');
+      var leadsListView = document.getElementById('leadsListView');
+      var leadsListBody = document.getElementById('leadsListBody');
+      var dealsTasksView = document.getElementById('dealsTasksView');
+      var dealsTasksBody = document.getElementById('dealsTasksBody');
+      var dealsTasksCounter = document.getElementById('dealsTasksCounter');
+      var tasksCalendarView = document.getElementById('tasksCalendarView');
+      var calendarTitle = document.getElementById('calendarTitle');
+      var calendarPrevButton = document.getElementById('calendarPrevButton');
+      var calendarTodayButton = document.getElementById('calendarTodayButton');
+      var calendarNextButton = document.getElementById('calendarNextButton');
+      var calendarWeekdays = document.getElementById('calendarWeekdays');
+      var calendarGrid = document.getElementById('calendarGrid');
+      var calendarEmpty = document.getElementById('calendarEmpty');
+      var resultModalOverlay = document.getElementById('result-modal-overlay');
+      var resultSuccessButton = document.getElementById('result-success-button');
+      var resultFailButton = document.getElementById('result-fail-button');
+      var resultFailForm = document.getElementById('result-fail-form');
+      var resultFailWhy = document.getElementById('result-fail-why');
+      var resultFailImprove = document.getElementById('result-fail-improve');
+      var resultCancelButton = document.getElementById('result-cancel-button');
+      var resultSaveButton = document.getElementById('result-save-button');
+      var pendingCommentFiles = [];
+      var currentDealId = getDealIdFromUrl();
+      var currentBoardView = 'kanban';
+      var calendarCursor = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      var reminderSelection = { type: 'preset', value: 'event', label: 'В момент события' };
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function readJsonObject(storageKey, fallbackValue) {
+        try {
+          var raw = localStorage.getItem(storageKey);
+          if (!raw) return fallbackValue;
+          var parsed = JSON.parse(raw);
+          return parsed && typeof parsed === 'object' ? parsed : fallbackValue;
+        } catch (error) {
+          return fallbackValue;
+        }
+      }
+
+      function readDeals() {
+        var parsed = readJsonObject(DEALS_STORAGE_KEY, []);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+
+      function writeDeals(deals) {
+        localStorage.setItem(DEALS_STORAGE_KEY, JSON.stringify(deals));
+      }
+
+      function formatRubles(value) {
+        var number = Number(value || 0);
+        return number.toLocaleString('ru-RU') + ' ₽';
+      }
+
+      function formatDateTime(value) {
+        if (!value) return '—';
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '—';
+        return date.toLocaleString('ru-RU', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      function formatDateTimeShort(value) {
+        if (!value) return 'Выбрать дату и время';
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return 'Выбрать дату и время';
+        return date.toLocaleString('ru-RU', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      function formatDateOnly(value) {
+        if (!value) return '—';
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '—';
+        return date.toLocaleString('ru-RU', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+
+      function formatCalendarMonth(value) {
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return 'Календарь';
+        return date.toLocaleString('ru-RU', {
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+
+      function toDateKey(value) {
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+        var y = date.getFullYear();
+        var m = String(date.getMonth() + 1).padStart(2, '0');
+        var d = String(date.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + d;
+      }
+
+      function collectAllTasks() {
+        var items = [];
+        currentDeals.forEach(function(deal) {
+          ensureDealDefaults(deal);
+          var pushTask = function(task, completed) {
+            if (!task || task.type !== 'task') return;
+            var taskDate = task.deadline || task.createdAt || deal.createdAt;
+            var baseMeta = String(task.meta || '').trim();
+            if (completed && baseMeta.indexOf('Статус: выполнено') === -1) {
+              baseMeta = (baseMeta ? baseMeta + ' · ' : '') + 'Статус: выполнено';
+            }
+            items.push({
+              id: String(task.id || ''),
+              dealId: String(deal.id || ''),
+              dealTitle: String(deal.title || 'Сделка'),
+              company: String(deal.company || '—'),
+              owner: String(deal.owner || '—'),
+              text: String(task.text || task.title || 'Дело'),
+              createdAt: task.createdAt || deal.createdAt,
+              deadline: task.deadline || '',
+              reminderLabel: String(task.reminderLabel || '').trim(),
+              meta: baseMeta,
+              completedAt: task.completedAt || '',
+              taskDate: taskDate,
+              status: completed ? 'completed' : 'active'
+            });
+          };
+
+          deal.activities.forEach(function(task) {
+            pushTask(task, false);
+          });
+          (deal.completedActivities || []).forEach(function(task) {
+            pushTask(task, true);
+          });
+        });
+        return items.sort(function(a, b) {
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+        });
+      }
+
+      function getDealIdFromUrl() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('deal');
+      }
+
+      function updateUrlForDeal(dealId) {
+        var url = dealId ? (window.location.pathname + '?deal=' + encodeURIComponent(dealId)) : window.location.pathname;
+        window.history.replaceState({}, '', url);
+        currentDealId = dealId || null;
+      }
+
+      function getDealById(dealId) {
+        return currentDeals.find(function(item) { return item.id === dealId; }) || null;
+      }
+
+      function ensureDealDefaults(deal) {
+        if (!deal.activities || !Array.isArray(deal.activities)) deal.activities = [];
+        if (!deal.comments || !Array.isArray(deal.comments)) deal.comments = [];
+        if (!deal.discussionUsers || !Array.isArray(deal.discussionUsers)) deal.discussionUsers = [];
+        if (!deal.completedActivities || !Array.isArray(deal.completedActivities)) deal.completedActivities = [];
+        if (!deal.amount) deal.amount = 150000;
+        return deal;
+      }
+
+      function syncCurrentDeal(deal) {
+        currentDeals = currentDeals.map(function(item) {
+          return item.id === deal.id ? deal : item;
+        });
+        writeDeals(currentDeals);
+      }
+
+      function closeAllPopovers() {
+        reminderPopover.classList.remove('open');
+        customReminderPopover.classList.remove('open');
+        invitePopover.classList.remove('open');
+      }
+
+      function openResultModal() {
+        resultFailForm.classList.remove('open');
+        resultFailWhy.value = '';
+        resultFailImprove.value = '';
+        resultModalOverlay.classList.add('open');
+        resultModalOverlay.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeResultModal() {
+        resultModalOverlay.classList.remove('open');
+        resultModalOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      function saveDealAsFinal(outcome, failureMeta) {
+        var deal = getDealById(currentDealId);
+        if (!deal) return;
+        ensureDealDefaults(deal);
+        deal.stage = 'final';
+        deal.resultStatus = outcome;
+        deal.resultAt = new Date().toISOString();
+        if (outcome === 'failed') {
+          deal.resultFailure = {
+            why: String(failureMeta && failureMeta.why || '').trim(),
+            improve: String(failureMeta && failureMeta.improve || '').trim()
+          };
+        } else {
+          deal.resultFailure = null;
+        }
+        syncCurrentDeal(deal);
+        renderDeals();
+        renderDetail(deal);
+        closeResultModal();
+        showToast('Лид перенесен в Результат');
+      }
+
+      function collectClientStore() {
+        var parsed = readJsonObject(CLIENT_STORAGE_KEY, {});
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      }
+
+      function uniqueSorted(values) {
+        var seen = Object.create(null);
+        var items = [];
+        values.forEach(function(value) {
+          var text = String(value || '').trim();
+          var key = text.toLowerCase();
+          if (!text || seen[key]) return;
+          seen[key] = true;
+          items.push(text);
+        });
+        return items.sort(function(a, b) {
+          return a.localeCompare(b, 'ru', { sensitivity: 'base' });
+        });
+      }
+
+      function collectCompanies() {
+        var store = collectClientStore();
+        var companies = Object.keys(store).map(function(key) {
+          var card = store[key];
+          return String((card && (card.companyName || card.name)) || key || '').trim();
+        });
+        return uniqueSorted(companies);
+      }
+
+      function collectContacts() {
+        var store = collectClientStore();
+        var contacts = [];
+        Object.keys(store).forEach(function(key) {
+          var card = store[key] || {};
+          var companyName = String(card.companyName || card.name || key || '').trim();
+          var cardContacts = Array.isArray(card.contacts) ? card.contacts : [];
+          cardContacts.forEach(function(contact) {
+            var name = String(contact && contact.name || '').trim();
+            if (!name) return;
+            contacts.push(companyName ? name + ' (' + companyName + ')' : name);
+            contacts.push(name);
+          });
+        });
+        return uniqueSorted(contacts);
+      }
+
+      function collectProducts() {
+        var names = [];
+        BUILTIN_PRODUCTS.forEach(function(product) {
+          var saved = readJsonObject(product.key, null) || {};
+          names.push(String(saved.name || product.name || '').trim());
+        });
+
+        for (var index = 0; index < localStorage.length; index += 1) {
+          var key = localStorage.key(index);
+          if (!key || key.indexOf('cloto_product_') !== 0 || KNOWN_PRODUCT_KEYS.indexOf(key) !== -1) continue;
+          var productData = readJsonObject(key, null) || {};
+          names.push(String(productData.name || '').trim());
+        }
+
+        var store = collectClientStore();
+        Object.keys(store).forEach(function(key) {
+          var card = store[key] || {};
+          var products = Array.isArray(card.products) ? card.products : [];
+          products.forEach(function(product) {
+            names.push(String(product && product.name || '').trim());
+          });
+        });
+
+        return uniqueSorted(names);
+      }
+
+      function populateDatalist(element, values) {
+        element.innerHTML = values.map(function(value) {
+          return '<option value="' + escapeHtml(value) + '"></option>';
+        }).join('');
+      }
+
+      function populateEmployees() {
+        ownerSelect.innerHTML = EMPLOYEES.map(function(employee) {
+          return '<option value="' + escapeHtml(employee.name) + '">' + escapeHtml(employee.name + ' · ' + employee.role) + '</option>';
+        }).join('');
+        observerSelect.innerHTML = '<option value="">Не выбран</option>' + EMPLOYEES.map(function(employee) {
+          return '<option value="' + escapeHtml(employee.name) + '">' + escapeHtml(employee.name + ' · ' + employee.role) + '</option>';
+        }).join('');
+        ownerSelect.value = EMPLOYEES[0].name;
+        observerSelect.value = '';
+        inviteSelect.innerHTML = EMPLOYEES.map(function(employee) {
+          return '<option value="' + escapeHtml(employee.name) + '">' + escapeHtml(employee.name + ' · ' + employee.role) + '</option>';
+        }).join('');
+      }
+
+      function refreshLookups() {
+        populateDatalist(companyDatalist, collectCompanies());
+        populateDatalist(contactDatalist, collectContacts());
+        populateDatalist(productDatalist, collectProducts());
+        populateEmployees();
+      }
+
+      function openModal() {
+        refreshLookups();
+        modalOverlay.classList.add('open');
+        modalOverlay.setAttribute('aria-hidden', 'false');
+        window.setTimeout(function() {
+          titleInput.focus();
+        }, 0);
+      }
+
+      function closeModal() {
+        modalOverlay.classList.remove('open');
+        modalOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      function resetForm() {
+        dealForm.reset();
+        ownerSelect.value = EMPLOYEES[0].name;
+        observerSelect.value = '';
+      }
+
+      function showToast(message) {
+        dealToast.textContent = message;
+        dealToast.classList.add('open');
+        window.clearTimeout(showToast.timerId);
+        showToast.timerId = window.setTimeout(function() {
+          dealToast.classList.remove('open');
+        }, 1800);
+      }
+
+      function buildDealTitle(values) {
+        var explicitTitle = String(values.title || '').trim();
+        if (explicitTitle) return explicitTitle;
+        var company = String(values.company || '').trim();
+        var product = String(values.product || '').trim();
+        if (company && product) return company + ' · ' + product;
+        if (company) return company + ' · Новая сделка';
+        if (product) return 'Сделка · ' + product;
+        return 'Новая сделка';
+      }
+
+      function stageProgressPercent(stage) {
+        if (stage === 'new') return 26;
+        if (stage === 'work') return 62;
+        if (stage === 'final') return 100;
+        if (stage === 'completed') return 100;
+        return 22;
+      }
+
+      function formatRelativeTime(value) {
+        if (!value) return '—';
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '—';
+        var diffMs = Date.now() - date.getTime();
+        var minutes = Math.floor(diffMs / 60000);
+        if (minutes < 1) return 'только что';
+        if (minutes < 60) return minutes + ' минут назад';
+        var hours = Math.floor(minutes / 60);
+        if (hours < 24) return hours + ' час назад';
+        var days = Math.floor(hours / 24);
+        return days + ' дн. назад';
+      }
+
+      function setBoardMode(mode) {
+        var normalized = ['kanban', 'list', 'deals', 'calendar'].indexOf(mode) !== -1 ? mode : 'kanban';
+        currentBoardView = normalized;
+        Array.prototype.forEach.call(boardTabButtons, function(button) {
+          var view = button.getAttribute('data-board-view');
+          button.classList.toggle('active', view === normalized);
+        });
+        dealsBoard.style.display = normalized === 'kanban' ? 'grid' : 'none';
+        leadsListView.classList.toggle('open', normalized === 'list');
+        dealsTasksView.classList.toggle('open', normalized === 'deals');
+        tasksCalendarView.classList.toggle('open', normalized === 'calendar');
+      }
+
+      function renderLeadsList() {
+        var sorted = currentDeals.slice().sort(function(a, b) {
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+        });
+        if (!sorted.length) {
+          leadsListBody.innerHTML = '<div class="leads-list-empty">Лиды отсутствуют</div>';
+          return;
+        }
+        leadsListBody.innerHTML = sorted.map(function(deal) {
+          var ownerName = String(deal.owner || '').trim() || '<Без имени>';
+          var ownerBadge = ownerName.charAt(0).toUpperCase();
+          var tasksCount = (Array.isArray(deal.activities) ? deal.activities.length : 0);
+          return '<div class="leads-list-row" data-list-deal-id="' + escapeHtml(deal.id) + '">'
+            + '<div class="leads-list-cell">☐</div>'
+            + '<div class="leads-list-cell"><div class="lead-name">' + escapeHtml(deal.title || 'Сделка') + '</div><div class="lead-sub">Продажа</div></div>'
+            + '<div class="leads-list-cell"><div class="stage-line"><div class="stage-line-fill" style="width:' + String(stageProgressPercent(deal.stage)) + '%;"></div></div><div class="lead-sub">' + escapeHtml(STAGE_LABELS[deal.stage] || STAGE_LABELS.new) + '</div></div>'
+            + '<div class="leads-list-cell"><span class="lead-sub">' + escapeHtml(tasksCount ? ('Активных дел: ' + tasksCount) : 'Дела отсутствуют') + '</span></div>'
+            + '<div class="leads-list-cell"><span class="lead-sub">' + escapeHtml(deal.company || '—') + '</span></div>'
+            + '<div class="leads-list-cell"><span class="lead-sub">' + escapeHtml(formatRubles(deal.amount || 0)) + '</span></div>'
+            + '<div class="leads-list-cell"><span class="owner-pill"><span class="owner-badge">' + escapeHtml(ownerBadge || '—') + '</span>' + escapeHtml(ownerName) + '</span></div>'
+            + '<div class="leads-list-cell"><span class="lead-sub">' + escapeHtml(formatRelativeTime(deal.createdAt)) + '</span></div>'
+            + '</div>';
+        }).join('');
+        Array.prototype.forEach.call(leadsListBody.querySelectorAll('[data-list-deal-id]'), function(row) {
+          row.addEventListener('click', function() {
+            openDealDetail(row.getAttribute('data-list-deal-id'));
+          });
+        });
+      }
+
+      function renderDeals() {
+        Object.keys(STAGE_LABELS).forEach(function(stageKey) {
+          var list = document.querySelector('[data-stage-list="' + stageKey + '"]');
+          var count = document.querySelector('[data-stage-count="' + stageKey + '"]');
+          var stageDeals = currentDeals.filter(function(deal) { return deal.stage === stageKey; });
+          if (count) count.textContent = String(stageDeals.length);
+          if (!list) return;
+          list.innerHTML = stageDeals.map(function(deal) {
+            var meta = [];
+            if (deal.company) meta.push('Клиент: ' + deal.company);
+            if (deal.contact) meta.push('Контакт: ' + deal.contact);
+            if (deal.product) meta.push('Товар: ' + deal.product);
+            if (deal.owner) meta.push('Ответственный: ' + deal.owner);
+            if (deal.observer) meta.push('Наблюдатель: ' + deal.observer);
+            return '<article class="deal-card">'
+              + '<span class="deal-card-tag">' + escapeHtml(STAGE_LABELS[deal.stage] || STAGE_LABELS.new) + '</span>'
+              + '<div class="deal-card-title">' + escapeHtml(deal.title) + '</div>'
+              + '<div class="deal-card-meta">' + escapeHtml(meta.join(' · ')) + '</div>'
+              + (deal.comment ? '<div class="deal-card-meta">' + escapeHtml(deal.comment) + '</div>' : '')
+              + '</article>';
+          }).join('');
+          Array.prototype.forEach.call(list.querySelectorAll('.deal-card'), function(card, cardIndex) {
+            card.addEventListener('click', function() {
+              openDealDetail(stageDeals[cardIndex].id);
+            });
+          });
+        });
+        renderLeadsList();
+        renderDealsTasksView();
+        renderTasksCalendar();
+      }
+
+      function renderDealsTasksView() {
+        var tasks = collectAllTasks();
+        dealsTasksCounter.textContent = tasks.length + ' ' + (tasks.length === 1 ? 'дело' : (tasks.length > 1 && tasks.length < 5 ? 'дела' : 'дел'));
+        if (!tasks.length) {
+          dealsTasksBody.innerHTML = '<div class="task-overview-empty">Запланированных дел пока нет.</div>';
+          return;
+        }
+        dealsTasksBody.innerHTML = tasks.map(function(task) {
+          var metaParts = [];
+          if (task.deadline) {
+            metaParts.push('Срок: ' + formatDateTimeShort(task.deadline));
+          }
+          if (task.reminderLabel) {
+            metaParts.push('Напоминание: ' + task.reminderLabel);
+          }
+          if (task.status === 'completed') {
+            metaParts.push('Статус: выполнено');
+          }
+          var metaLine = metaParts.join(' · ') || (task.meta || 'Без дополнительных параметров');
+          return '<article class="tasks-overview-item" data-task-deal-id="' + escapeHtml(task.dealId) + '">'
+            + '<div class="task-overview-top"><span>Дело</span><span>' + escapeHtml(formatDateTime(task.createdAt)) + '</span></div>'
+            + '<div class="task-overview-deal">Лид: ' + escapeHtml(task.dealTitle) + ' · ' + escapeHtml(task.company) + '</div>'
+            + '<div class="task-overview-text">' + escapeHtml(task.text) + '</div>'
+            + '<div class="task-overview-meta">' + escapeHtml(metaLine) + '</div>'
+            + (task.completedAt ? '<div class="task-overview-completed">Завершено: ' + escapeHtml(formatDateTime(task.completedAt)) + '</div>' : '')
+            + '</article>';
+        }).join('');
+        Array.prototype.forEach.call(dealsTasksBody.querySelectorAll('[data-task-deal-id]'), function(row) {
+          row.addEventListener('click', function() {
+            openDealDetail(row.getAttribute('data-task-deal-id'));
+          });
+        });
+      }
+
+      function renderCalendarWeekdays() {
+        var names = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+        calendarWeekdays.innerHTML = names.map(function(name) {
+          return '<div class="calendar-weekday">' + name + '</div>';
+        }).join('');
+      }
+
+      function renderTasksCalendar() {
+        var tasks = collectAllTasks().filter(function(task) {
+          return Boolean(task.taskDate && toDateKey(task.taskDate));
+        });
+        calendarTitle.textContent = formatCalendarMonth(calendarCursor);
+        renderCalendarWeekdays();
+
+        if (!tasks.length) {
+          calendarGrid.innerHTML = '';
+          calendarEmpty.classList.remove('hidden');
+          return;
+        }
+
+        calendarEmpty.classList.add('hidden');
+        var tasksByDay = {};
+        tasks.forEach(function(task) {
+          var key = toDateKey(task.taskDate);
+          if (!key) return;
+          if (!tasksByDay[key]) tasksByDay[key] = [];
+          tasksByDay[key].push(task);
+        });
+
+        var year = calendarCursor.getFullYear();
+        var month = calendarCursor.getMonth();
+        var firstDay = new Date(year, month, 1);
+        var lastDay = new Date(year, month + 1, 0);
+        var offset = (firstDay.getDay() + 6) % 7;
+        var start = new Date(year, month, 1 - offset);
+        var totalCells = 42;
+        var cells = [];
+
+        for (var i = 0; i < totalCells; i += 1) {
+          var cellDate = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+          var key = toDateKey(cellDate);
+          var dayTasks = tasksByDay[key] || [];
+          var isOutside = cellDate < firstDay || cellDate > lastDay;
+          var taskMarkup = dayTasks.slice(0, 3).map(function(task) {
+            return '<div class="calendar-task ' + (task.status === 'completed' ? 'completed' : '') + '" data-calendar-deal-id="' + escapeHtml(task.dealId) + '">'
+              + escapeHtml(task.text)
+              + '<small>' + escapeHtml(task.dealTitle) + '</small>'
+              + '</div>';
+          }).join('') + (dayTasks.length > 3 ? '<div class="calendar-task">+' + String(dayTasks.length - 3) + ' еще</div>' : '');
+          cells.push('<div class="calendar-cell ' + (isOutside ? 'is-outside' : '') + '"><div class="calendar-day">' + String(cellDate.getDate()) + '</div>' + taskMarkup + '</div>');
+        }
+
+        calendarGrid.innerHTML = cells.join('');
+        Array.prototype.forEach.call(calendarGrid.querySelectorAll('[data-calendar-deal-id]'), function(item) {
+          item.addEventListener('click', function(event) {
+            event.stopPropagation();
+            openDealDetail(item.getAttribute('data-calendar-deal-id'));
+          });
+        });
+      }
+
+      function showBoardView() {
+        boardView.classList.remove('hidden');
+        detailView.classList.add('hidden');
+        updateUrlForDeal('');
+        setBoardMode(currentBoardView);
+      }
+
+      function renderDiscussionUsers(deal) {
+        discussionUsers.innerHTML = deal.discussionUsers.map(function(user) {
+          return '<span class="discussion-chip">👤 ' + escapeHtml(user) + '</span>';
+        }).join('');
+      }
+
+      function renderPendingCommentFiles() {
+        commentFileList.innerHTML = pendingCommentFiles.map(function(fileName) {
+          return '<span class="file-chip">📎 ' + escapeHtml(fileName) + '</span>';
+        }).join('');
+      }
+
+      function renderTimeline(deal) {
+        var activities = deal.activities.concat(deal.completedActivities || []).slice().reverse().map(function(item) {
+          return '<div class="timeline-item">'
+            + '<div class="timeline-item-head"><span>' + escapeHtml(item.type === 'comment' ? 'Комментарий' : 'Дело') + '</span><span>' + escapeHtml(formatDateTime(item.createdAt)) + '</span></div>'
+            + '<div class="timeline-item-title">' + escapeHtml(item.title || item.text || 'Запись') + '</div>'
+            + '<div class="timeline-item-meta">' + escapeHtml(item.meta || '') + '</div>'
+            + (item.completedAt ? '<div class="timeline-item-meta">Завершено: ' + escapeHtml(formatDateTime(item.completedAt)) + '</div>' : '')
+            + (item.files && item.files.length ? '<div class="timeline-item-meta">Файлы: ' + escapeHtml(item.files.join(', ')) + '</div>' : '')
+            + '</div>';
+        });
+        var comments = deal.comments.slice().reverse().map(function(item) {
+          return '<div class="timeline-item">'
+            + '<div class="timeline-item-head"><span>Комментарий</span><span>' + escapeHtml(formatDateTime(item.createdAt)) + '</span></div>'
+            + '<div class="timeline-item-title">' + escapeHtml(item.text || 'Комментарий') + '</div>'
+            + (item.files && item.files.length ? '<div class="timeline-item-meta">Файлы: ' + escapeHtml(item.files.join(', ')) + '</div>' : '')
+            + (item.invited && item.invited.length ? '<div class="timeline-item-meta">Приглашены: ' + escapeHtml(item.invited.join(', ')) + '</div>' : '')
+            + '</div>';
+        });
+        timelineList.innerHTML = activities.concat(comments).join('') || '<div class="timeline-item"><div class="timeline-item-title">Пока активности нет</div><div class="timeline-item-meta">После планирования дела или комментария записи появятся здесь.</div></div>';
+      }
+
+      function formatTaskDateBadge(value) {
+        if (!value) {
+          return { day: '—', month: 'Без даты', time: '' };
+        }
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+          return { day: '—', month: 'Без даты', time: '' };
+        }
+        return {
+          day: date.toLocaleString('ru-RU', { day: 'numeric' }),
+          month: date.toLocaleString('ru-RU', { month: 'short' }).replace('.', '').toUpperCase(),
+          time: date.toLocaleString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+        };
+      }
+
+      function renderSavedTasks(deal) {
+        var items = deal.activities.slice().sort(function(a, b) {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+        savedTaskList.innerHTML = items.map(function(item) {
+          var badge = formatTaskDateBadge(item.deadline || item.createdAt);
+          return '<article class="saved-task-card" data-task-id="' + escapeHtml(item.id) + '">'
+            + '<div class="saved-task-head"><span class="saved-task-checkbox"></span><span>Связаться с клиентом</span><span>' + escapeHtml(formatDateTime(item.createdAt)) + '</span></div>'
+            + '<div class="saved-task-body">'
+            + '<div class="saved-task-date"><span>' + escapeHtml(badge.month) + '</span><strong>' + escapeHtml(badge.day) + '</strong><span>' + escapeHtml(badge.time) + '</span></div>'
+            + '<div class="saved-task-content">'
+            + '<div class="saved-task-meta-row">'
+            + (item.deadline ? '<span class="saved-task-deadline">Сделать до ' + escapeHtml(formatDateTimeShort(item.deadline)) + '</span>' : '')
+            + (item.reminderLabel ? '<span>🔔 ' + escapeHtml(item.reminderLabel) + '</span>' : '')
+            + '</div>'
+            + '<div class="saved-task-text">' + escapeHtml(item.text || '') + '</div>'
+            + '<div class="saved-task-actions">'
+            + '<button class="saved-task-button complete" type="button" data-task-complete="' + escapeHtml(item.id) + '">ВЫПОЛНЕНО</button>'
+            + '<button class="saved-task-button secondary" type="button">РЕДАКТИРОВАТЬ</button>'
+            + '</div>'
+            + '</div>'
+            + '</div>'
+            + '</article>';
+        }).join('');
+        Array.prototype.forEach.call(savedTaskList.querySelectorAll('[data-task-complete]'), function(button) {
+          button.addEventListener('click', function() {
+            completeTask(button.getAttribute('data-task-complete'));
+          });
+        });
+      }
+
+      function renderDetail(deal) {
+        detailTitle.textContent = deal.title;
+        detailBreadcrumbCompany.textContent = deal.company || 'Сделка';
+        detailAmount.textContent = formatRubles(deal.amount || 150000);
+        detailStage.textContent = STAGE_LABELS[deal.stage] || 'Новая';
+        detailCreatedAt.textContent = formatDateTime(deal.createdAt);
+        detailOwner.textContent = deal.owner || '—';
+        detailObserver.textContent = deal.observer || 'Не выбран';
+        detailCompany.textContent = deal.company || '—';
+        detailContact.textContent = deal.contact || '—';
+        detailProduct.textContent = deal.product || '—';
+        detailComment.textContent = deal.comment || 'Комментарий не добавлен';
+        Array.prototype.forEach.call(detailStageButtons, function(button) {
+          button.classList.toggle('active', button.getAttribute('data-stage-action') === (deal.stage || 'new'));
+        });
+        renderDiscussionUsers(deal);
+        renderSavedTasks(deal);
+        renderTimeline(deal);
+        taskInput.value = '';
+        commentInputField.value = '';
+        pendingCommentFiles = [];
+        renderPendingCommentFiles();
+        taskDateLabel.textContent = 'Выбрать дату и время';
+        reminderSelection = { type: 'preset', value: 'event', label: 'В момент события' };
+        createTaskCta.classList.toggle('hidden', deal.activities.length === 0);
+        taskComposer.classList.toggle('hidden', deal.activities.length > 0);
+        Array.prototype.forEach.call(reminderPopover.querySelectorAll('[data-reminder-value]'), function(button) {
+          button.classList.toggle('active', button.getAttribute('data-reminder-value') === 'event');
+        });
+        reminderToggleButton.classList.remove('has-selection');
+      }
+
+      function resetTaskComposer() {
+        taskInput.value = '';
+        taskComposer.classList.remove('expanded');
+        taskDateLabel.textContent = 'Выбрать дату и время';
+        reminderSelection = { type: 'preset', value: 'event', label: 'В момент события' };
+        reminderToggleButton.classList.remove('has-selection');
+        Array.prototype.forEach.call(reminderPopover.querySelectorAll('[data-reminder-value]'), function(item) {
+          item.classList.toggle('active', item.getAttribute('data-reminder-value') === 'event');
+        });
+      }
+
+      function showTaskComposer() {
+        createTaskCta.classList.add('hidden');
+        taskComposer.classList.remove('hidden');
+        taskComposer.classList.add('expanded');
+        taskInput.focus();
+      }
+
+      function completeTask(taskId) {
+        var deal = getDealById(currentDealId);
+        if (!deal) return;
+        ensureDealDefaults(deal);
+        var taskIndex = deal.activities.findIndex(function(item) { return item.id === taskId; });
+        if (taskIndex === -1) return;
+        var task = deal.activities.splice(taskIndex, 1)[0];
+        task.completedAt = new Date().toISOString();
+        task.meta = (task.meta ? task.meta + ' · ' : '') + 'Статус: выполнено';
+        deal.completedActivities.push(task);
+        syncCurrentDeal(deal);
+        renderDetail(deal);
+        createTaskCta.classList.remove('hidden');
+        taskComposer.classList.add('hidden');
+        showToast('Дело выполнено');
+      }
+
+      function openDealDetail(dealId) {
+        var deal = getDealById(dealId);
+        if (!deal) {
+          showBoardView();
+          return;
+        }
+        ensureDealDefaults(deal);
+        boardView.classList.add('hidden');
+        detailView.classList.remove('hidden');
+        updateUrlForDeal(dealId);
+        renderDetail(deal);
+      }
+
+      function updateDealStage(nextStage) {
+        var deal = getDealById(currentDealId);
+        if (!deal) return;
+        ensureDealDefaults(deal);
+        var allowedStages = { new: true, work: true, final: true, completed: true };
+        if (!allowedStages[nextStage]) return;
+        if (nextStage === 'final') {
+          openResultModal();
+          return;
+        }
+        deal.stage = nextStage;
+        if (nextStage === 'completed') {
+          deal.completedAt = new Date().toISOString();
+        } else {
+          deal.completedAt = '';
+        }
+        syncCurrentDeal(deal);
+        renderDeals();
+        renderDetail(deal);
+        showToast('Стадия обновлена');
+      }
+
+      function activateActivityTab(tabName) {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-activity-tab]'), function(button) {
+          button.classList.toggle('active', button.getAttribute('data-activity-tab') === tabName);
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-activity-panel]'), function(panel) {
+          panel.classList.toggle('active', panel.getAttribute('data-activity-panel') === tabName);
+        });
+      }
+
+      function saveTaskActivity() {
+        var deal = getDealById(currentDealId);
+        if (!deal) return;
+        ensureDealDefaults(deal);
+        var taskText = String(taskInput.value || '').trim();
+        if (!taskText) return;
+        var dateText = taskDateLabel.textContent;
+        var meta = [dateText !== 'Выбрать дату и время' ? 'Срок: ' + dateText : '', 'Напоминание: ' + reminderSelection.label].filter(Boolean).join(' · ');
+        deal.activities.push({
+          id: 'task_' + Date.now(),
+          type: 'task',
+          title: taskText,
+          text: taskText,
+          meta: meta,
+          deadline: dateText !== 'Выбрать дату и время' ? (reminderSelection.type === 'custom' ? reminderSelection.value : new Date().toISOString()) : '',
+          reminderLabel: reminderSelection.label,
+          createdAt: new Date().toISOString()
+        });
+        syncCurrentDeal(deal);
+        renderDetail(deal);
+        taskComposer.classList.add('hidden');
+        createTaskCta.classList.remove('hidden');
+        resetTaskComposer();
+        showToast('Дело сохранено');
+      }
+
+      function saveCommentActivity() {
+        var deal = getDealById(currentDealId);
+        if (!deal) return;
+        ensureDealDefaults(deal);
+        var text = String(commentInputField.value || '').trim();
+        if (!text && !pendingCommentFiles.length) return;
+        deal.comments.push({
+          text: text,
+          files: pendingCommentFiles.slice(),
+          invited: deal.discussionUsers.slice(),
+          createdAt: new Date().toISOString()
+        });
+        syncCurrentDeal(deal);
+        renderDetail(deal);
+        activateActivityTab('comment');
+        showToast('Комментарий сохранен');
+      }
+
+      function createDealFromForm() {
+        var values = {
+          title: titleInput.value,
+          contact: contactInput.value,
+          company: companyInput.value,
+          owner: ownerSelect.value,
+          observer: observerSelect.value,
+          product: productInput.value,
+          comment: commentInput.value
+        };
+
+        var deal = {
+          id: 'deal_' + Date.now(),
+          stage: 'new',
+          title: buildDealTitle(values),
+          contact: String(values.contact || '').trim(),
+          company: String(values.company || '').trim(),
+          owner: String(values.owner || '').trim(),
+          observer: String(values.observer || '').trim(),
+          product: String(values.product || '').trim(),
+          comment: String(values.comment || '').trim(),
+          createdAt: new Date().toISOString(),
+          amount: 150000,
+          activities: [],
+          comments: [],
+          discussionUsers: []
+        };
+
+        currentDeals.unshift(deal);
+        writeDeals(currentDeals);
+        renderDeals();
+        closeModal();
+        resetForm();
+        openDealDetail(deal.id);
+        showToast('Сделка сохранена');
+      }
+
+      openDealModalButton.addEventListener('click', openModal);
+      Array.prototype.forEach.call(document.querySelectorAll('[data-open-deal-modal="true"]'), function(button) {
+        button.addEventListener('click', openModal);
+      });
+      closeDealModalButton.addEventListener('click', closeModal);
+      cancelDealButton.addEventListener('click', function() {
+        closeModal();
+        resetForm();
+      });
+      modalOverlay.addEventListener('click', function(event) {
+        if (event.target === modalOverlay) closeModal();
+      });
+      resultModalOverlay.addEventListener('click', function(event) {
+        if (event.target === resultModalOverlay) closeResultModal();
+      });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modalOverlay.classList.contains('open')) {
+          closeModal();
+        }
+        if (event.key === 'Escape' && resultModalOverlay.classList.contains('open')) {
+          closeResultModal();
+        }
+        if (event.key === 'Escape') closeAllPopovers();
+      });
+      resultSuccessButton.addEventListener('click', function() {
+        saveDealAsFinal('success', null);
+      });
+      resultFailButton.addEventListener('click', function() {
+        resultFailForm.classList.add('open');
+      });
+      resultCancelButton.addEventListener('click', function() {
+        closeResultModal();
+      });
+      resultSaveButton.addEventListener('click', function() {
+        var whyText = String(resultFailWhy.value || '').trim();
+        var improveText = String(resultFailImprove.value || '').trim();
+        if (!whyText || !improveText) {
+          showToast('Заполните оба ответа');
+          return;
+        }
+        saveDealAsFinal('failed', { why: whyText, improve: improveText });
+      });
+      dealForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        createDealFromForm();
+      });
+
+      backToBoardButton.addEventListener('click', showBoardView);
+      detailEditButton.addEventListener('click', openModal);
+      Array.prototype.forEach.call(boardTabButtons, function(button) {
+        button.addEventListener('click', function() {
+          var view = button.getAttribute('data-board-view');
+          if (view === 'kanban' || view === 'list' || view === 'deals' || view === 'calendar') {
+            setBoardMode(view);
+            return;
+          }
+          showToast('Этот режим будет добавлен позже');
+        });
+      });
+      calendarPrevButton.addEventListener('click', function() {
+        calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() - 1, 1);
+        renderTasksCalendar();
+      });
+      calendarNextButton.addEventListener('click', function() {
+        calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() + 1, 1);
+        renderTasksCalendar();
+      });
+      calendarTodayButton.addEventListener('click', function() {
+        var now = new Date();
+        calendarCursor = new Date(now.getFullYear(), now.getMonth(), 1);
+        renderTasksCalendar();
+      });
+      Array.prototype.forEach.call(detailStageButtons, function(button) {
+        button.addEventListener('click', function() {
+          updateDealStage(button.getAttribute('data-stage-action'));
+        });
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-activity-tab]'), function(button) {
+        button.addEventListener('click', function() {
+          activateActivityTab(button.getAttribute('data-activity-tab'));
+        });
+      });
+      taskInput.addEventListener('focus', function() {
+        taskComposer.classList.add('expanded');
+      });
+      taskInput.addEventListener('click', function() {
+        taskComposer.classList.add('expanded');
+      });
+      taskDateButton.addEventListener('click', function() {
+        customReminderPopover.classList.toggle('open');
+        reminderPopover.classList.remove('open');
+      });
+      reminderToggleButton.addEventListener('click', function() {
+        reminderPopover.classList.toggle('open');
+        customReminderPopover.classList.remove('open');
+      });
+      Array.prototype.forEach.call(reminderPopover.querySelectorAll('[data-reminder-value]'), function(button) {
+        button.addEventListener('click', function() {
+          var value = button.getAttribute('data-reminder-value');
+          var labels = {
+            event: 'В момент события',
+            '15m': 'За 15 минут',
+            '30m': 'За 30 минут',
+            '1h': 'За 1 час',
+            '2h': 'За 2 часа',
+            '1d': 'За 1 день'
+          };
+          reminderSelection = { type: 'preset', value: value, label: labels[value] || 'Напоминание' };
+          Array.prototype.forEach.call(reminderPopover.querySelectorAll('[data-reminder-value]'), function(item) {
+            item.classList.toggle('active', item === button);
+          });
+          reminderToggleButton.classList.add('has-selection');
+          reminderPopover.classList.remove('open');
+        });
+      });
+      customReminderButton.addEventListener('click', function() {
+        reminderPopover.classList.remove('open');
+        customReminderPopover.classList.add('open');
+      });
+      cancelCustomReminderButton.addEventListener('click', function() {
+        customReminderPopover.classList.remove('open');
+      });
+      saveCustomReminderButton.addEventListener('click', function() {
+        var dateValue = customReminderDate.value;
+        var timeValue = customReminderTime.value || '09:00';
+        if (!dateValue) return;
+        var iso = dateValue + 'T' + timeValue;
+        reminderSelection = { type: 'custom', value: iso, label: formatDateTime(iso) };
+        taskDateLabel.textContent = formatDateTimeShort(iso);
+        reminderToggleButton.classList.add('has-selection');
+        customReminderPopover.classList.remove('open');
+      });
+      saveTaskButton.addEventListener('click', saveTaskActivity);
+      cancelTaskButton.addEventListener('click', function() {
+        resetTaskComposer();
+        var deal = getDealById(currentDealId);
+        if (deal && deal.activities.length > 0) {
+          taskComposer.classList.add('hidden');
+          createTaskCta.classList.remove('hidden');
+        }
+      });
+      createTaskCta.addEventListener('click', showTaskComposer);
+      commentFileInput.addEventListener('change', function() {
+        pendingCommentFiles = Array.prototype.map.call(commentFileInput.files || [], function(file) { return file.name; });
+        renderPendingCommentFiles();
+      });
+      inviteDiscussionButton.addEventListener('click', function() {
+        invitePopover.classList.toggle('open');
+      });
+      discussionStripButton.addEventListener('click', function() {
+        activateActivityTab('comment');
+        invitePopover.classList.add('open');
+      });
+      cancelInviteButton.addEventListener('click', function() {
+        invitePopover.classList.remove('open');
+      });
+      saveInviteButton.addEventListener('click', function() {
+        var deal = getDealById(currentDealId);
+        if (!deal) return;
+        ensureDealDefaults(deal);
+        var employeeName = String(inviteSelect.value || '').trim();
+        if (!employeeName) return;
+        if (deal.discussionUsers.indexOf(employeeName) === -1) deal.discussionUsers.push(employeeName);
+        syncCurrentDeal(deal);
+        renderDiscussionUsers(deal);
+        invitePopover.classList.remove('open');
+        showToast('Коллега приглашен');
+      });
+      saveCommentButton.addEventListener('click', saveCommentActivity);
+      cancelCommentButton.addEventListener('click', function() {
+        commentInputField.value = '';
+        pendingCommentFiles = [];
+        commentFileInput.value = '';
+        renderPendingCommentFiles();
+      });
+      document.addEventListener('click', function(event) {
+        if (!event.target.closest('.relative') && !event.target.closest('#discussionStripButton') && !event.target.closest('#taskDateButton')) {
+          closeAllPopovers();
+        }
+      });
+
+      refreshLookups();
+      renderDeals();
+      setBoardMode('kanban');
+      if (currentDealId) {
+        openDealDetail(currentDealId);
+      }
+    }());
+  </script>
+  <script src="crm-module-sidebar.js"></script>
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_client_cards_v2', 'cloto_companies_list_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
+</body>
+</html>

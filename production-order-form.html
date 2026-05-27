@@ -161,51 +161,69 @@
     }
 
     .paper {
-      padding: 24px;
+      padding: 28px;
     }
 
     .paper-title {
-      text-align: center;
-      font-family: 'Georgia', 'Times New Roman', serif;
-      font-size: 34px;
-      font-weight: 700;
-      margin-bottom: 24px;
-      color: #1b1f24;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(24,33,44,0.08);
     }
 
     .paper-title span {
-      font-weight: 800;
+      color: var(--gold);
     }
 
     .header-grid {
       display: grid;
-      gap: 12px;
-      margin-bottom: 18px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
     .header-row {
-      display: grid;
-      grid-template-columns: minmax(220px, 0.5fr) minmax(0, 1fr);
-      gap: 12px;
-      align-items: baseline;
-      font-family: 'Georgia', 'Times New Roman', serif;
-      font-size: 18px;
-      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .header-row strong {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
     }
 
     .header-row input {
-      border: none;
-      border-bottom: 1px solid #aab7c8;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(24,33,44,0.12);
+      background: rgba(247,251,255,0.9);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
       outline: none;
-      background: transparent;
-      font: inherit;
-      color: #1b1f24;
-      padding: 2px 4px;
-      min-width: 0;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .header-row input:focus {
+      border-color: rgba(85,123,184,0.5);
+      box-shadow: 0 0 0 3px rgba(85,123,184,0.12);
+    }
+
+    .header-row input[readonly] {
+      background: rgba(227,237,248,0.5);
+      color: var(--muted);
+      cursor: default;
     }
 
     .spec-table {
@@ -213,24 +231,48 @@
       border-collapse: collapse;
       table-layout: fixed;
       margin-top: 8px;
-      border: 2px solid #2a2f35;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(24, 33, 44, 0.10);
+      box-shadow: 0 2px 16px rgba(24,33,44,0.06), inset 0 1px 0 rgba(255,255,255,0.5);
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(247,251,255,0.93));
     }
 
     .spec-table th,
     .spec-table td {
-      border: 1px solid #2a2f35;
-      padding: 10px 10px;
-      vertical-align: top;
-      font-family: 'Georgia', 'Times New Roman', serif;
-      font-size: 17px;
-      line-height: 1.25;
+      border: none;
+      border-bottom: 1px solid rgba(24, 33, 44, 0.08);
+      padding: 12px 16px;
+      vertical-align: middle;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .spec-table tbody tr:last-child th,
+    .spec-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .spec-table tbody tr:hover th,
+    .spec-table tbody tr:hover td {
+      background: rgba(227, 237, 248, 0.40);
     }
 
     .spec-table th {
-      width: 40%;
+      width: 38%;
       text-align: left;
       font-weight: 700;
-      background: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #3b536e;
+      background: rgba(227, 237, 248, 0.70);
+    }
+
+    .spec-table td {
+      background: transparent;
+      color: #1b1f24;
     }
 
     .spec-table td input,
@@ -239,13 +281,29 @@
       border: none;
       outline: none;
       background: transparent;
-      font: inherit;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
       color: #1b1f24;
       resize: vertical;
       min-height: 28px;
+      line-height: 1.4;
     }
 
-    .spec-table td textarea { min-height: 54px; }
+    .spec-table td textarea { min-height: 52px; }
+
+    .spec-table td textarea#recipe {
+      min-height: 84px;
+      resize: none;
+      overflow: hidden;
+    }
+
+    .spec-table td input:focus,
+    .spec-table td textarea:focus {
+      background: rgba(227, 237, 248, 0.35);
+      border-radius: 6px;
+      outline: 2px solid rgba(89, 151, 235, 0.30);
+      outline-offset: 2px;
+    }
 
     .form-actions {
       margin-top: 18px;
@@ -280,6 +338,132 @@
       line-height: 1.55;
     }
 
+    /* ── BOM Modal ── */
+    .recipe-btns { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .btn-bom-trigger {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(85,123,184,0.30);
+      background: rgba(85,123,184,0.10); color: #2c5282;
+      font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-bom-trigger:hover { background: rgba(85,123,184,0.20); border-color: rgba(85,123,184,0.50); }
+    .btn-other-recipe {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(24,33,44,0.12);
+      background: rgba(24,33,44,0.04); color: var(--muted);
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-other-recipe:hover { background: rgba(24,33,44,0.08); border-color: rgba(24,33,44,0.20); }
+    .bom-overlay {
+      position: fixed; inset: 0;
+      background: rgba(24,33,44,0.40);
+      backdrop-filter: blur(6px);
+      z-index: 3000;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .bom-overlay.open { display: flex; }
+    .bom-modal-box {
+      width: min(1000px, 96vw); max-height: 90vh; overflow: auto;
+      border-radius: 20px;
+      border: 1px solid rgba(24,33,44,0.10);
+      background: #fff;
+      box-shadow: 0 24px 60px rgba(24,33,44,0.22);
+      display: flex; flex-direction: column;
+    }
+    .bom-modal-hdr {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; padding: 18px 20px;
+      border-bottom: 1px solid rgba(24,33,44,0.08);
+      background: rgba(227,237,248,0.40);
+      border-radius: 20px 20px 0 0;
+    }
+    .bom-modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 800; }
+    .bom-modal-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .bom-modal-close {
+      min-width: 80px; padding: 8px 14px; border-radius: 10px;
+      border: 1px solid rgba(24,33,44,0.14); background: #f6f8fb;
+      font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+    }
+    .bom-modal-close:hover { background: #eef2f7; }
+    .bom-modal-save {
+      min-width: 96px; padding: 8px 14px; border-radius: 10px;
+      border: 1px solid rgba(85,155,184,0.45); background: rgba(85,155,184,0.12);
+      color: #2f6077; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;
+    }
+    .bom-modal-save:hover { background: rgba(85,155,184,0.20); }
+    .bom-modal-save:disabled {
+      opacity: 0.45; cursor: not-allowed; background: #f6f8fb; border-color: rgba(24,33,44,0.14); color: #6e7a88;
+    }
+    .bom-modal-actions { display: flex; gap: 8px; align-items: center; }
+    .bom-modal-body { padding: 16px 20px 20px; overflow: auto; }
+    .bom-tbl-wrap { overflow: auto; border: 1px solid rgba(24,33,44,0.10); border-radius: 12px; }
+    .bom-tbl { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .bom-tbl th {
+      padding: 10px 12px; background: rgba(227,237,248,0.80);
+      border-bottom: 1px solid rgba(24,33,44,0.08);
+      font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #3b536e; text-align: left;
+    }
+    .bom-tbl td {
+      padding: 10px 12px; border-bottom: 1px solid rgba(24,33,44,0.06);
+      font-size: 14px; vertical-align: middle;
+    }
+    .bom-tbl tbody tr:last-child td { border-bottom: none; }
+    .bom-tbl tbody tr:hover td { background: rgba(227,237,248,0.30); }
+    .bom-tbl tfoot td {
+      padding: 10px 12px; background: rgba(227,237,248,0.50);
+      border-top: 2px solid rgba(24,33,44,0.12);
+      font-weight: 800; font-size: 14px;
+    }
+    .bom-num-col { width: 44px; text-align: center; font-weight: 800; color: var(--gold); }
+    .bom-pct-col { width: 90px; text-align: right; }
+    .bom-req-col { width: 130px; text-align: right; font-weight: 700; }
+    .bom-stock-col { width: 130px; text-align: right; }
+    .bom-status-col { width: 160px; text-align: center; }
+    .tag-ok {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      background: rgba(46,160,67,0.12); border: 1px solid rgba(46,160,67,0.30);
+      color: #1a7f37; font-size: 12px; font-weight: 700;
+    }
+    .tag-fail {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      background: rgba(207,34,46,0.10); border: 1px solid rgba(207,34,46,0.28);
+      color: #b91c1c; font-size: 12px; font-weight: 700;
+    }
+    .tag-nodata {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 999px;
+      background: rgba(24,33,44,0.06); border: 1px solid rgba(24,33,44,0.12);
+      color: var(--muted); font-size: 12px; font-weight: 700;
+    }
+    .bom-no-bom {
+      text-align: center; padding: 32px; color: var(--muted);
+      font-size: 14px; line-height: 1.7;
+    }
+    .custom-bom-actions {
+      display: flex; justify-content: flex-end; margin: 10px 0 12px;
+    }
+    .custom-bom-add {
+      padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(85,123,184,0.28);
+      background: rgba(85,123,184,0.09); color: #2c5282; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .custom-bom-add:hover { background: rgba(85,123,184,0.16); }
+    .custom-bom-remove {
+      padding: 5px 9px; border-radius: 8px; border: 1px solid rgba(207,34,46,0.24);
+      background: rgba(207,34,46,0.08); color: #b91c1c; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .custom-bom-remove:hover { background: rgba(207,34,46,0.14); }
+    .custom-bom-select,
+    .custom-bom-input {
+      width: 100%; min-height: 34px; border: 1px solid rgba(24,33,44,0.12); border-radius: 8px;
+      background: #fff; padding: 6px 10px; font-family: 'Space Grotesk', sans-serif; font-size: 13px;
+    }
+    .custom-bom-input { text-align: right; min-width: 82px; }
+
     @media (max-width: 1180px) {
       .hero,
       .layout { grid-template-columns: 1fr; }
@@ -289,11 +473,10 @@
     @media (max-width: 760px) {
       .wrap { padding: 18px 14px 32px; }
       .title { font-size: 38px; }
-      .header-row { grid-template-columns: 1fr; }
-      .paper-title { font-size: 26px; }
+      .header-grid { grid-template-columns: 1fr; }
+      .paper-title { font-size: 20px; }
       .spec-table th,
-      .spec-table td,
-      .header-row { font-size: 15px; }
+      .spec-table td { font-size: 13px; }
     }
   </style>
 </head>
@@ -340,7 +523,9 @@
           </div>
           <div class="header-row">
             <strong>Ф.И.О. Заявителя (должности):</strong>
-            <input id="applicant-name" placeholder="Например: Широков Михаил" oninput="syncPreview()">
+            <select id="applicant-name" onchange="syncPreview()" style="min-height:38px;padding:8px 12px;border-radius:10px;border:1px solid rgba(24,33,44,0.12);background:rgba(247,251,255,0.9);font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:#1b1f24;outline:none;cursor:pointer;width:100%">
+              <option value="Михаил Широков">Михаил Широков</option>
+            </select>
           </div>
           <div class="header-row">
             <strong>Дата размещения заявки:</strong>
@@ -364,7 +549,13 @@
             </tr>
             <tr>
               <th>Рецептура</th>
-              <td><textarea id="recipe" placeholder="Рецептура / состав"></textarea></td>
+              <td>
+                <div class="recipe-btns">
+                  <button type="button" class="btn-bom-trigger" onclick="openBomModal('standard')">📋 Стандарт (Тех. карта)</button>
+                  <button type="button" class="btn-other-recipe" onclick="openBomModal('custom')">Другая</button>
+                </div>
+                <textarea id="recipe" placeholder="Рецептура / состав"></textarea>
+              </td>
             </tr>
             <tr>
               <th>Номер заказа/спецификация</th>
@@ -375,8 +566,8 @@
               <td><input id="shipment-date" placeholder="Например: 17-20 апреля"></td>
             </tr>
             <tr>
-              <th>Объем</th>
-              <td><textarea id="volume" placeholder="Например: 8,64 т 288 канистр"></textarea></td>
+              <th>Количество</th>
+              <td><textarea id="volume" placeholder="Например: 8,64 т / 288 мешков"></textarea></td>
             </tr>
             <tr>
               <th>Номер партии</th>
@@ -435,6 +626,27 @@
     </div>
   </div>
 
+  <!-- BOM Modal -->
+  <div id="bom-modal-overlay" class="bom-overlay" onclick="handleBomOverlayClick(event)">
+    <div class="bom-modal-box">
+      <div class="bom-modal-hdr">
+        <div>
+          <div class="bom-modal-title" id="bom-modal-title">Технологическая карта (BOM)</div>
+          <div class="bom-modal-sub" id="bom-modal-sub">Рецептура на основе карточки продукта</div>
+        </div>
+        <div class="bom-modal-actions">
+          <button type="button" id="bom-save-btn" class="bom-modal-save" onclick="saveBomToRecipe()" disabled>✓ Сохранить</button>
+          <button type="button" class="bom-modal-close" onclick="closeBomModal()">✕ Закрыть</button>
+        </div>
+      </div>
+      <div class="bom-modal-body" id="bom-modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_production_orders', 'cloto_sales_orders_new'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script>
     var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
     var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
@@ -458,7 +670,7 @@
 
     function getDefaultRequestNumber() {
       var existing = readStorageArray(PRODUCTION_ORDERS_KEY).length + 1;
-      return '№' + String(existing).padStart(3, '0');
+      return String(existing);
     }
 
     function getExistingRequest(requestNumber) {
@@ -493,7 +705,23 @@
     }
 
     function fillField(id, value) {
-      document.getElementById(id).value = value || '';
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.value = value || '';
+      if (el.tagName === 'TEXTAREA') autoGrowTextarea(el);
+    }
+
+    function autoGrowTextarea(el) {
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight + 2) + 'px';
+    }
+
+    function initRecipeAutosize() {
+      var recipeEl = document.getElementById('recipe');
+      if (!recipeEl) return;
+      recipeEl.addEventListener('input', function() { autoGrowTextarea(recipeEl); });
+      autoGrowTextarea(recipeEl);
     }
 
     function loadExistingRequest(payload) {
@@ -518,19 +746,69 @@
       fillField('notes', payload.notes);
     }
 
+    function findProductKeyByName(name) {
+      if (!name) return null;
+      var normalizedName = String(name).trim().toLowerCase();
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (!key || key.indexOf('cloto_product_') !== 0) continue;
+        try {
+          var data = JSON.parse(localStorage.getItem(key) || '{}');
+          if (data && String(data.name || '').trim().toLowerCase() === normalizedName) return key;
+        } catch (error) {}
+      }
+      return null;
+    }
+
+    function prefillFromProductCard(productName) {
+      if (!productName) return;
+      var key = findProductKeyByName(productName);
+      if (!key) return;
+      try {
+        var data = JSON.parse(localStorage.getItem(key) || '{}');
+        var packLabel = data.pack === 'drums' ? 'бочка' : 'мешок';
+        var weight = data.weight ? String(data.weight) + ' кг' : '';
+        if (!document.getElementById('package-weight').value.trim()) {
+          fillField('package-weight', weight);
+        }
+        if (!document.getElementById('packages-per-pallet').value.trim()) {
+          fillField('packages-per-pallet', data.pallet ? String(data.pallet) + ' ' + (data.pack === 'drums' ? 'бочек' : 'мешков') : '');
+        }
+        if (!document.getElementById('package-type').value.trim()) {
+          fillField('package-type', data.pack === 'drums' ? 'Бочка' : 'Мешок');
+        }
+        if (!document.getElementById('nomenclature-1c').value.trim() && data.name) {
+          var nomen = data.name;
+          if (packLabel && data.weight) nomen += ', ' + packLabel + ' ' + data.weight + 'кг';
+          fillField('nomenclature-1c', nomen);
+        }
+      } catch (error) {}
+    }
+
     function prefillFromOrder(order) {
       if (!order) return;
       fillField('company-receiver', order.buyer && order.buyer.name);
       fillField('order-specification', order.number);
-      fillField('shipment-date', order.lines && order.lines[0] && order.lines[0].deliveryDate ? order.lines[0].deliveryDate : order.date);
-      fillField('volume', String((order.lines || []).reduce(function(sum, line) {
-        return sum + Number(line && line.tons || 0);
-      }, 0)).replace('.', ',') + ' т');
-      fillField('product-name', order.lines && order.lines[0] && order.lines[0].productName);
-      fillField('package-type', order.lines && order.lines[0] && order.lines[0].unitLabel);
+
+      var firstLine = order.lines && order.lines[0];
+      fillField('shipment-date', firstLine && firstLine.deliveryDate ? firstLine.deliveryDate : (order.date || ''));
+      fillField('product-name', firstLine && firstLine.productName);
+
+      var totalTons = (order.lines || []).reduce(function(sum, l) { return sum + Number(l && l.tons || 0); }, 0);
+      var totalUnits = (order.lines || []).reduce(function(sum, l) { return sum + Number(l && l.units || 0); }, 0);
+      var unitLabel = (firstLine && firstLine.unitLabel) || 'мешков';
+      var qtyStr = totalTons.toLocaleString('ru-RU', { maximumFractionDigits: 3 }) + ' т';
+      if (totalUnits > 0) qtyStr += ' / ' + totalUnits.toLocaleString('ru-RU', { maximumFractionDigits: 0 }) + ' ' + unitLabel;
+      fillField('volume', qtyStr);
+
+      fillField('package-type', unitLabel === 'бочки' ? 'Бочка' : 'Мешок');
+
       if (!document.getElementById('notes').value.trim()) {
         fillField('notes', order.comment || '');
       }
+
+      prefillFromProductCard(firstLine && firstLine.productName);
+      syncPreview();
     }
 
     function syncSalesOrderSentToProduction(payload) {
@@ -624,6 +902,411 @@
       window.location.href = 'production-orders.html?created=' + encodeURIComponent(payload.requestNumber || '');
     }
 
+    /* ═══════════════════ BOM MODAL FUNCTIONS ═══════════════════ */
+
+    function closeBomModal() {
+      document.getElementById('bom-modal-overlay').classList.remove('open');
+    }
+
+    var lastBomRecipeText = '';
+    var bomMode = 'standard';
+    var customRecipeRows = [];
+    var customBomCtx = { productName: '', totalKg: 0, stock: null };
+
+    function buildRecipeText(productName, totalKg, rows, totalPct) {
+      var title = 'Техкарта (BOM): ' + (productName || '—');
+      var volume = totalKg > 0 ? 'Расчет на объем: ' + bomFmtNum(totalKg) + ' кг' : 'Расчетный объем не указан';
+      var list = rows.map(function(r, idx) {
+        var pct = parseFloat(String(r.percent || '0').replace(',', '.')) || 0;
+        var per1000 = parseFloat(String(r.per1000 || '0').replace(',', '.')) || 0;
+        return (idx + 1) + '. ' + String(r.material || '—') + ' — ' + bomFmtNum(pct) + '% (' + bomFmtNum(per1000) + ' кг/т)';
+      });
+      list.push('Итого: ' + bomFmtNum(totalPct) + '%');
+      return [title, volume, 'Состав:', list.join('\n')].join('\n\n');
+    }
+
+    function buildCustomRecipeText(productName, totalKg, rows) {
+      var validRows = rows.filter(function(r) {
+        var pct = parseFloat(String(r.percent || '0').replace(',', '.')) || 0;
+        return String(r.material || '').trim() && pct > 0;
+      });
+      if (!validRows.length) return '';
+
+      var totalPct = validRows.reduce(function(sum, r) {
+        return sum + (parseFloat(String(r.percent || '0').replace(',', '.')) || 0);
+      }, 0);
+
+      var title = 'Кастом-рецептура: ' + (productName || '—');
+      var volume = totalKg > 0 ? 'Расчет на объем: ' + bomFmtNum(totalKg) + ' кг' : 'Расчетный объем не указан';
+      var list = validRows.map(function(r, idx) {
+        var pct = parseFloat(String(r.percent || '0').replace(',', '.')) || 0;
+        var requiredKg = totalKg > 0 ? (totalKg * pct / 100) : 0;
+        return (idx + 1) + '. ' + String(r.material || '—') + ' — ' + bomFmtNum(pct) + '% (' + bomFmtNum(requiredKg) + ' кг)';
+      });
+      list.push('Итого: ' + bomFmtNum(totalPct) + '%');
+      return [title, volume, 'Состав:', list.join('\n')].join('\n\n');
+    }
+
+    function saveBomToRecipe() {
+      var recipeField = document.getElementById('recipe');
+      if (!recipeField || !lastBomRecipeText) return;
+      recipeField.value = lastBomRecipeText;
+      autoGrowTextarea(recipeField);
+      recipeField.dispatchEvent(new Event('input', { bubbles: true }));
+      closeBomModal();
+      recipeField.focus();
+    }
+
+    function ensureCustomRows() {
+      if (!customRecipeRows.length) customRecipeRows = [{ material: '', percent: '' }];
+    }
+
+    function addCustomBomRow() {
+      customRecipeRows.push({ material: '', percent: '' });
+      renderCustomBomEditor();
+    }
+
+    function removeCustomBomRow(idx) {
+      if (customRecipeRows.length <= 1) {
+        customRecipeRows = [{ material: '', percent: '' }];
+      } else {
+        customRecipeRows.splice(idx, 1);
+      }
+      renderCustomBomEditor();
+    }
+
+    function updateCustomBomRow(idx, field, value, shouldRender) {
+      if (!customRecipeRows[idx]) return;
+      if (field === 'percent') {
+        var normalized = String(value || '').replace(',', '.').replace(/[^\d.]/g, '');
+        var firstDot = normalized.indexOf('.');
+        if (firstDot >= 0) {
+          normalized = normalized.slice(0, firstDot + 1) + normalized.slice(firstDot + 1).replace(/\./g, '');
+        }
+        customRecipeRows[idx][field] = normalized;
+      } else {
+        customRecipeRows[idx][field] = value;
+      }
+      if (shouldRender !== false) renderCustomBomEditor();
+    }
+
+    function handleBomOverlayClick(e) {
+      if (e.target === document.getElementById('bom-modal-overlay')) closeBomModal();
+    }
+
+    function parseTonsFromVolume(volumeStr) {
+      var m = String(volumeStr || '').replace(/\s/g, '').match(/([\d]+[,.]?[\d]*)\s*т/);
+      if (!m) return 0;
+      return parseFloat(m[1].replace(',', '.')) || 0;
+    }
+
+    function findBomByProductName(name) {
+      if (!name) return null;
+      var target = name.trim().toLowerCase();
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (!key || key.indexOf('cloto_product_') !== 0) continue;
+        try {
+          var data = JSON.parse(localStorage.getItem(key) || '{}');
+          if (String(data.name || '').trim().toLowerCase() === target &&
+              Array.isArray(data.bomRows) && data.bomRows.length) {
+            return { productData: data, bomRows: data.bomRows };
+          }
+        } catch (err) {}
+      }
+      return null;
+    }
+
+    function normalizeMaterialKey(v) {
+      return String(v || '')
+        .toLowerCase()
+        .replace(/ё/g, 'е')
+        .replace(/[^\w\sа-я]/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function buildSkladMapFromRows(rows) {
+      var map = {};
+      rows.forEach(function(r) {
+        var close = (r.open || 0) + (r.inc || 0) - (r.cons || 0) - (r.ship || 0);
+        var entry = { name: r.name, unit: r.unit || 'кг', balance: close };
+
+        var rawKey = String(r.name || '').trim().toLowerCase();
+        var normKey = normalizeMaterialKey(r.name || '');
+        var noBracketKey = normalizeMaterialKey(String(r.name || '').replace(/\([^)]*\)/g, ' '));
+
+        if (rawKey) map[rawKey] = entry;
+        if (normKey) map[normKey] = entry;
+        if (noBracketKey && !map[noBracketKey]) map[noBracketKey] = entry;
+      });
+      return map;
+    }
+
+    function getStockEntryByMaterial(stock, materialName) {
+      if (!stock) return null;
+      var rawMaterialKey = String(materialName || '').trim().toLowerCase();
+      var normMaterialKey = normalizeMaterialKey(materialName || '');
+      var noBracketMaterialKey = normalizeMaterialKey(String(materialName || '').replace(/\([^)]*\)/g, ' '));
+      return stock.map[rawMaterialKey] || stock.map[normMaterialKey] || stock.map[noBracketMaterialKey] || null;
+    }
+
+    function getCustomMaterialOptions(stock) {
+      if (!stock || !Array.isArray(stock.rows)) return [];
+      var sourceRows = stock.rows.filter(function(r) { return String(r.cat || '').toLowerCase() === 'syryo'; });
+      if (!sourceRows.length) sourceRows = stock.rows.slice();
+
+      var seen = {};
+      var options = [];
+      sourceRows.forEach(function(r) {
+        var name = String(r.name || '').trim();
+        if (!name) return;
+        var key = normalizeMaterialKey(name);
+        if (seen[key]) return;
+        seen[key] = true;
+        options.push(name);
+      });
+      options.sort(function(a, b) { return a.localeCompare(b, 'ru'); });
+      return options;
+    }
+
+    function getSkladMatchCount(map, bomRows) {
+      if (!Array.isArray(bomRows) || !bomRows.length) return 0;
+      var count = 0;
+      bomRows.forEach(function(r) {
+        var rawKey = String(r.material || '').trim().toLowerCase();
+        var normKey = normalizeMaterialKey(r.material || '');
+        var noBracketKey = normalizeMaterialKey(String(r.material || '').replace(/\([^)]*\)/g, ' '));
+        if (map[rawKey] || map[normKey] || map[noBracketKey]) count++;
+      });
+      return count;
+    }
+
+    function loadLatestSkladStock(bomRows) {
+      var pfx = 'cloto_sklad_';
+      var dates = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf(pfx) === 0) dates.push(k.slice(pfx.length));
+      }
+      if (!dates.length) return null;
+      dates.sort().reverse();
+
+      var best = null;
+      var bestMatchCount = -1;
+
+      for (var j = 0; j < dates.length; j++) {
+        var date = dates[j];
+        try {
+          var raw = localStorage.getItem(pfx + date);
+          var saved = JSON.parse(raw || '{}');
+          var rows = Array.isArray(saved.rows) ? saved.rows : [];
+          var map = buildSkladMapFromRows(rows);
+
+          if (!Array.isArray(bomRows) || !bomRows.length) {
+            return { date: date, map: map, matchCount: 0, rows: rows };
+          }
+
+          var matchCount = getSkladMatchCount(map, bomRows);
+          if (matchCount > bestMatchCount) {
+            bestMatchCount = matchCount;
+            best = { date: date, map: map, matchCount: matchCount, rows: rows };
+          }
+
+          if (matchCount === bomRows.length) break;
+        } catch (err) {}
+      }
+
+      return best;
+    }
+
+    function bomFmtNum(n) {
+      return Number(n).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+    }
+
+    function renderCustomBomEditor() {
+      var body = document.getElementById('bom-modal-body');
+      var stock = customBomCtx.stock;
+      var totalKg = customBomCtx.totalKg;
+      var options = getCustomMaterialOptions(stock);
+      ensureCustomRows();
+
+      var totalPct = 0;
+      var totalReq = 0;
+
+      var rowsHtml = customRecipeRows.map(function(r, idx) {
+        var pct = parseFloat(String(r.percent || '0').replace(',', '.')) || 0;
+        var requiredKg = totalKg > 0 ? (totalKg * pct / 100) : null;
+        totalPct += pct;
+        if (requiredKg !== null) totalReq += requiredKg;
+
+        var stockEntry = getStockEntryByMaterial(stock, r.material || '');
+        var statusHtml;
+        if (!totalKg || requiredKg === null) {
+          statusHtml = '<span class="tag-nodata">объём не задан</span>';
+        } else if (!stock || !stockEntry) {
+          statusHtml = '<span class="tag-nodata">нет данных</span>';
+        } else if (stockEntry.balance >= requiredKg) {
+          statusHtml = '<span class="tag-ok">✓ Достаточно</span>';
+        } else {
+          statusHtml = '<span class="tag-fail">✗ Нехватка ' + bomFmtNum(requiredKg - stockEntry.balance) + ' кг</span>';
+        }
+
+        var optionsHtml = '<option value="">— выберите сырьё —</option>' + options.map(function(name) {
+          var selected = String(r.material || '') === name ? ' selected' : '';
+          return '<option value="' + escHtml(name) + '"' + selected + '>' + escHtml(name) + '</option>';
+        }).join('');
+
+        return '<tr>' +
+          '<td class="bom-num-col">' + (idx + 1) + '</td>' +
+          '<td><select class="custom-bom-select" onchange="updateCustomBomRow(' + idx + ',\'material\',this.value, true)">' + optionsHtml + '</select></td>' +
+          '<td class="bom-pct-col"><input class="custom-bom-input" type="text" inputmode="decimal" placeholder="0-100" value="' + escHtml(String(r.percent || '')) + '" oninput="updateCustomBomRow(' + idx + ',\'percent\',this.value, false)" onchange="updateCustomBomRow(' + idx + ',\'percent\',this.value, true)" onblur="updateCustomBomRow(' + idx + ',\'percent\',this.value, true)" /></td>' +
+          '<td class="bom-req-col">' + (requiredKg !== null ? bomFmtNum(requiredKg) + ' кг' : '—') + '</td>' +
+          '<td class="bom-stock-col">' + (stockEntry ? bomFmtNum(stockEntry.balance) + ' ' + (stockEntry.unit || 'кг') : '—') + '</td>' +
+          '<td class="bom-status-col">' + statusHtml + '</td>' +
+          '<td style="width:56px;text-align:center"><button type="button" class="custom-bom-remove" onclick="removeCustomBomRow(' + idx + ')">✕</button></td>' +
+          '</tr>';
+      }).join('');
+
+      lastBomRecipeText = buildCustomRecipeText(customBomCtx.productName, totalKg, customRecipeRows);
+      document.getElementById('bom-save-btn').disabled = !lastBomRecipeText;
+
+      body.innerHTML =
+        '<div class="custom-bom-actions"><button type="button" class="custom-bom-add" onclick="addCustomBomRow()">+ Добавить сырьё</button></div>' +
+        '<div class="bom-tbl-wrap">' +
+        '<table class="bom-tbl">' +
+        '<thead><tr>' +
+          '<th class="bom-num-col">№</th>' +
+          '<th>Сырьё (выбор)</th>' +
+          '<th class="bom-pct-col">Кол-во, %</th>' +
+          '<th class="bom-req-col">Необходимо</th>' +
+          '<th class="bom-stock-col">Остаток склад</th>' +
+          '<th class="bom-status-col">Статус</th>' +
+          '<th style="width:56px"></th>' +
+        '</tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody>' +
+        '<tfoot><tr>' +
+          '<td></td><td style="text-align:right;padding-right:16px">ИТОГО</td>' +
+          '<td class="bom-pct-col">' + bomFmtNum(totalPct) + '%</td>' +
+          '<td class="bom-req-col">' + (totalKg > 0 ? bomFmtNum(totalReq) + ' кг' : '—') + '</td>' +
+          '<td></td><td></td><td></td>' +
+        '</tr></tfoot>' +
+        '</table></div>' +
+        (options.length ? '' : '<p style="margin-top:10px;font-size:12px;color:var(--muted)">Список сырья пуст. Добавьте сырьё в модуле Склад.</p>');
+    }
+
+    function openBomModal(mode) {
+      bomMode = mode || 'standard';
+      var productName = document.getElementById('product-name').value.trim();
+      var volumeVal = document.getElementById('volume').value.trim();
+      var tons = parseTonsFromVolume(volumeVal);
+      var totalKg = tons * 1000;
+
+      var bomResult = productName ? findBomByProductName(productName) : null;
+      var stock = bomResult && Array.isArray(bomResult.bomRows)
+        ? loadLatestSkladStock(bomResult.bomRows)
+        : loadLatestSkladStock();
+
+      var modalSub = 'Продукция: ' + (productName || '—') +
+                     (totalKg > 0 ? ' · Объём: ' + bomFmtNum(totalKg) + ' кг (' + tons + ' т)' : ' · Объём не указан');
+      if (stock) modalSub += ' · Склад на ' + stock.date.split('-').reverse().join('.');
+      document.getElementById('bom-modal-sub').textContent = modalSub;
+
+      var body = document.getElementById('bom-modal-body');
+
+      if (bomMode === 'custom') {
+        document.getElementById('bom-modal-title').textContent = 'Кастом-рецептура (BOM)';
+        customBomCtx = { productName: productName || '—', totalKg: totalKg, stock: stock };
+        renderCustomBomEditor();
+        document.getElementById('bom-modal-overlay').classList.add('open');
+        return;
+      }
+
+      document.getElementById('bom-modal-title').textContent = 'Технологическая карта (BOM)';
+
+      if (!bomResult) {
+        lastBomRecipeText = '';
+        document.getElementById('bom-save-btn').disabled = true;
+        body.innerHTML = '<div class="bom-no-bom">' +
+          (productName
+            ? '⚠ Технологическая карта (BOM) для продукта «' + escHtml(productName) + '» не найдена.<br>' +
+              'Откройте карточку продукта в разделе «Продукты» и заполните раздел «Тех. карта».'
+            : 'Сначала заполните поле «Название продукции» в форме.') +
+          '</div>';
+        document.getElementById('bom-modal-overlay').classList.add('open');
+        return;
+      }
+
+      var rows = bomResult.bomRows;
+      var totalPct = 0, totalReq = 0;
+
+      var rowsHtml = rows.map(function(r, idx) {
+        var pct = parseFloat(String(r.percent || '0').replace(',', '.')) || 0;
+        var per1000 = parseFloat(String(r.per1000 || '0').replace(',', '.')) || 0;
+        var requiredKg = totalKg > 0 ? (per1000 / 1000) * totalKg : null;
+        totalPct += pct;
+        if (requiredKg !== null) totalReq += requiredKg;
+
+        var stockEntry = getStockEntryByMaterial(stock, r.material || '');
+        var statusHtml;
+        if (!totalKg || requiredKg === null) {
+          statusHtml = '<span class="tag-nodata">объём не задан</span>';
+        } else if (!stock || !stockEntry) {
+          statusHtml = '<span class="tag-nodata">нет данных</span>';
+        } else if (stockEntry.balance >= requiredKg) {
+          statusHtml = '<span class="tag-ok">✓ Достаточно</span>';
+        } else {
+          var deficit = requiredKg - stockEntry.balance;
+          statusHtml = '<span class="tag-fail">✗ Нехватка ' + bomFmtNum(deficit) + ' кг</span>';
+        }
+
+        return '<tr>' +
+          '<td class="bom-num-col">' + (idx + 1) + '</td>' +
+          '<td>' + escHtml(r.material || '—') + '</td>' +
+          '<td class="bom-pct-col">' + bomFmtNum(pct) + '%</td>' +
+          '<td class="bom-req-col">' + (requiredKg !== null ? bomFmtNum(requiredKg) + ' кг' : '—') + '</td>' +
+          '<td class="bom-stock-col">' + (stockEntry ? bomFmtNum(stockEntry.balance) + ' ' + (stockEntry.unit || 'кг') : '—') + '</td>' +
+          '<td class="bom-status-col">' + statusHtml + '</td>' +
+          '</tr>';
+      }).join('');
+
+      var stockInfo = stock
+        ? 'Остатки со склада на ' + stock.date.split('-').reverse().join('.') + '.'
+        : 'Данные склада не найдены — откройте Склад и внесите остатки.';
+
+      lastBomRecipeText = buildRecipeText(productName, totalKg, rows, totalPct);
+      document.getElementById('bom-save-btn').disabled = !lastBomRecipeText;
+
+      body.innerHTML =
+        '<div class="bom-tbl-wrap">' +
+        '<table class="bom-tbl">' +
+        '<thead><tr>' +
+          '<th class="bom-num-col">№</th>' +
+          '<th>Наименование сырья</th>' +
+          '<th class="bom-pct-col">Кол-во, %</th>' +
+          '<th class="bom-req-col">Необходимо</th>' +
+          '<th class="bom-stock-col">Остаток склад</th>' +
+          '<th class="bom-status-col">Статус</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody>' +
+        '<tfoot><tr>' +
+          '<td></td><td style="text-align:right;padding-right:16px">ИТОГО</td>' +
+          '<td class="bom-pct-col">' + bomFmtNum(totalPct) + '%</td>' +
+          '<td class="bom-req-col">' + (totalKg > 0 ? bomFmtNum(totalReq) + ' кг' : '—') + '</td>' +
+          '<td></td><td></td>' +
+        '</tr></tfoot>' +
+        '</table></div>' +
+        '<p style="margin-top:10px;font-size:12px;color:var(--muted)">' + escHtml(stockInfo) + '</p>';
+
+      document.getElementById('bom-modal-overlay').classList.add('open');
+    }
+
+    function escHtml(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ═════════════════════════════════════════════════════════════ */
+
     (function init() {
       var requestFromUrl = new URLSearchParams(window.location.search).get('request');
       var orderFromUrl = new URLSearchParams(window.location.search).get('order');
@@ -631,9 +1314,13 @@
       var existingOrder = orderFromUrl ? getExistingOrder(orderFromUrl) : null;
       document.getElementById('request-number').value = existingRequest && existingRequest.requestNumber ? existingRequest.requestNumber : getDefaultRequestNumber();
       document.getElementById('posted-date').value = existingRequest && existingRequest.postedDate ? existingRequest.postedDate : getTodayIso();
+      if (!existingRequest) {
+        document.getElementById('applicant-name').value = 'Михаил Широков';
+      }
       if (existingRequest) loadExistingRequest(existingRequest);
       if (!existingRequest && existingOrder) prefillFromOrder(existingOrder);
       document.getElementById('saved-count').textContent = String(readStorageArray(PRODUCTION_ORDERS_KEY).length);
+      initRecipeAutosize();
       syncPreview();
     })();
   </script>

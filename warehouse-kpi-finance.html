@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPI и метрики склада</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #edf7f5;
+      --bg2: #e3f1ee;
+      --card: #ffffff;
+      --card-soft: #f5fbf9;
+      --border: #cfe1db;
+      --text: #1f3335;
+      --muted: #647d7f;
+      --cyan: #1f9f97;
+      --blue: #2b7fc6;
+      --gold: #b9832c;
+      --shadow: 0 12px 28px rgba(28, 77, 82, 0.12);
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(31,159,151,0.1), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(43,127,198,0.09), transparent 36%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 1520px; margin: 0 auto; padding: 28px 20px 44px; }
+    .top { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap; }
+    .title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 800; letter-spacing: -0.03em; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 1120px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .focus {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f4fbf8);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .focus h2 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; }
+    .focus-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+    .focus-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      padding: 10px 12px;
+      min-width: 0;
+    }
+    .focus-item span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .focus-item strong {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      color: var(--cyan);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .period {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f8fcfb);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .period-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: baseline;
+    }
+
+    .period-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f1faf8;
+      color: #16756f;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .period-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .period-desc {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 980px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .kpi h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; line-height: 1.15; }
+    .desc { font-size: 13px; line-height: 1.65; color: var(--muted); }
+
+    .formula {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-soft);
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #155f63;
+      font-weight: 600;
+    }
+
+    .example {
+      border-left: 4px solid #57a5e0;
+      border-radius: 10px;
+      background: #f4fafd;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .calc {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fbfefd;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .calc h4 { font-size: 13px; color: var(--cyan); }
+
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .field { display: grid; gap: 5px; min-width: 0; }
+
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+
+    .result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .result-box span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .result-box strong {
+      display: block;
+      margin-top: 5px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 19px;
+      color: var(--blue);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    @media (max-width: 1100px) {
+      .grid { grid-template-columns: 1fr; }
+      .fields, .result { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 class="title">KPI и метрики оптимизации склада</h1>
+        <p class="sub">Все метрики распределены по частоте контроля: ежедневные, еженедельные, ежемесячные и ежеквартальные. Включены: коэффициент выполнения заказов, идеальные заказы, точность размещения, возвраты, повреждения, затраты на персонал, стоимость хранения, внутренние передачи, доступность запасов и другие.</p>
+      </div>
+      <a class="btn" href="warehouse-dashboard.html">← Назад в раздел склада</a>
+      <button class="btn" id="snapBtn" type="button" title="Сформировать отчёт за текущий месяц">📋 Сформировать отчёт</button>
+    </div>
+
+    <section class="focus">
+      <h2>Главные KPI для первого дашборда склада</h2>
+      <div class="focus-grid">
+        <div class="focus-item"><span>Точность остатков</span><strong>Точность учёта</strong></div>
+        <div class="focus-item"><span>Точность комплектации</span><strong>Точность комплект.</strong></div>
+        <div class="focus-item"><span>Дни запаса</span><strong>ДИО</strong></div>
+        <div class="focus-item"><span>Неликвид</span><strong>Неликвид %</strong></div>
+        <div class="focus-item"><span>Потери</span><strong>Потери %</strong></div>
+        <div class="focus-item"><span>Использование площади</span><strong>Исп. площади</strong></div>
+      </div>
+    </section>
+
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Ежедневные</span>
+        <h2 class="period-title">Ежедневные KPI</h2>
+      </div>
+      <p class="period-desc">Оперативный контроль текущей смены: скорость потоков, доступность материалов, ошибки и узкие места отгрузки/приемки.</p>
+      <div class="grid">
+        <article class="kpi">
+          <h3>1. Коэффициент выполнения заказов</h3>
+          <p class="desc">Какой процент строк заказов закрыт сразу из наличия.</p>
+          <div class="formula">Коэфф. выполнения = Выполнено строк / Всего строк × 100</div>
+          <div class="example">Пример: 2280 / 2400 × 100 = 95%.</div>
+          <div class="calc" data-kpi="fillRate">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Всего строк заказов</label><input type="number" min="0" step="1" data-f="total" value="2400"></div>
+              <div class="field"><label>Выполнено сразу</label><input type="number" min="0" step="1" data-f="filled" value="2280"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Коэфф. выполнения</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>2. Точность комплектации</h3>
+          <p class="desc">Точность комплектации заказов.</p>
+          <div class="formula">Точность комплект. = (Всего заказов − Ошибок) / Всего заказов × 100</div>
+          <div class="example">Пример: (800 - 12) / 800 × 100 = 98.5%.</div>
+          <div class="calc" data-kpi="pickingAccuracy">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Всего собранных заказов</label><input type="number" min="0" step="1" data-f="total" value="800"></div>
+              <div class="field"><label>Ошибок комплектации</label><input type="number" min="0" step="1" data-f="errors" value="12"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Точность комплектации</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>3. Точность размещения</h3>
+          <p class="desc">Насколько корректно товар размещается по адресам хранения.</p>
+          <div class="formula">Точность размещения = Правильных размещений / Всего размещений × 100</div>
+          <div class="example">Пример: 882 / 900 × 100 = 98%.</div>
+          <div class="calc" data-kpi="putawayAccuracy">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Всего размещений</label><input type="number" min="0" step="1" data-f="total" value="900"></div>
+              <div class="field"><label>Правильных размещений</label><input type="number" min="0" step="1" data-f="correct" value="882"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Точность размещения</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>4. Время приёмки до размещения</h3>
+          <p class="desc">Время от приемки до размещения товара на складе.</p>
+          <div class="formula">Время до размещения = Время размещения − Время приёмки</div>
+          <div class="example">Пример: 13:30 - 09:00 = 4.5 часа.</div>
+          <div class="calc" data-kpi="dockToStock">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Время приемки</label><input type="time" data-f="start" value="09:00"></div>
+              <div class="field"><label>Время размещения</label><input type="time" data-f="end" value="13:30"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Время до размещения</span><strong data-r="v">0 ч</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>5. Время внутренней передачи</h3>
+          <p class="desc">Сколько времени уходит на доставку материала в производство.</p>
+          <div class="formula">Время передачи = Доставка в производство − Запрос материала</div>
+          <div class="example">Пример: 09:15 - 08:00 = 1.25 часа.</div>
+          <div class="calc" data-kpi="internalTransferTime">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Запрос материала</label><input type="time" data-f="start" value="08:00"></div>
+              <div class="field"><label>Доставка в производство</label><input type="time" data-f="end" value="09:15"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Время передачи</span><strong data-r="v">0 ч</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>6. Время ожидания загрузки</h3>
+          <p class="desc">Сколько транспорт ожидает начала загрузки.</p>
+          <div class="formula">Ожидание загрузки = Начало загрузки − Прибытие машины</div>
+          <div class="example">Пример: 11:40 - 10:00 = 1.67 часа.</div>
+          <div class="calc" data-kpi="loadingQueueTime">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Прибытие машины</label><input type="time" data-f="start" value="10:00"></div>
+              <div class="field"><label>Начало загрузки</label><input type="time" data-f="end" value="11:40"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Ожидание загрузки</span><strong data-r="v">0 ч</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>7. Доступность запасов</h3>
+          <p class="desc">Какой процент нужных SKU доступен для производства/отгрузки.</p>
+          <div class="formula">Доступность запасов = Доступных SKU / Требуемых SKU × 100</div>
+          <div class="example">Пример: 816 / 850 × 100 = 96%.</div>
+          <div class="calc" data-kpi="inventoryAvailability">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Требуемые SKU</label><input type="number" min="0" step="1" data-f="required" value="850"></div>
+              <div class="field"><label>Доступные SKU</label><input type="number" min="0" step="1" data-f="available" value="816"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доступность запасов</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>8. Критический уровень запаса</h3>
+          <p class="desc">Насколько текущий остаток покрывает минимальный запас.</p>
+          <div class="formula">Критический уровень = Текущий остаток / Минимальный запас × 100</div>
+          <div class="example">Пример: 1800 / 2500 × 100 = 72% от минимального уровня.</div>
+          <div class="calc" data-kpi="criticalInventoryLevel">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Текущий остаток, кг</label><input type="number" min="0" step="0.1" data-f="current" value="1800"></div>
+              <div class="field"><label>Минимальный запас, кг</label><input type="number" min="1" step="0.1" data-f="minimum" value="2500"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Критический уровень</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>9. Очередь необработанных приёмок</h3>
+          <p class="desc">Сколько приемок еще не обработано.</p>
+          <div class="formula">Очередь приёмок = Необработанных приёмок</div>
+          <div class="example">Пример: 47 необработанных приемок.</div>
+          <div class="calc" data-kpi="receivingBacklog">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Необработанных приемок</label><input type="number" min="0" step="1" data-f="pending" value="47"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Очередь приёмок</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>10. Уровень повреждений</h3>
+          <p class="desc">Какой процент обработанного товара повреждается.</p>
+          <div class="formula">Уровень повреждений = Повреждено / Обработано × 100</div>
+          <div class="example">Пример: 175 / 50 000 × 100 = 0.35%.</div>
+          <div class="calc" data-kpi="damageRate">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Обработано единиц</label><input type="number" min="0" step="1" data-f="handled" value="50000"></div>
+              <div class="field"><label>Повреждено</label><input type="number" min="0" step="1" data-f="damaged" value="175"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Уровень повреждений</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>11. Загрузка погрузчиков</h3>
+          <p class="desc">Насколько загружены погрузчики относительно доступного времени.</p>
+          <div class="formula">Загрузка погрузчиков = Время работы / Доступное время × 100</div>
+          <div class="example">Пример: 18 / 24 × 100 = 75%.</div>
+          <div class="calc" data-kpi="forkliftUtilization">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Время работы, ч</label><input type="number" min="0" step="0.1" data-f="operating" value="18"></div>
+              <div class="field"><label>Доступное время, ч</label><input type="number" min="1" step="0.1" data-f="available" value="24"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Загрузка погрузчиков</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Еженедельные</span>
+        <h2 class="period-title">Еженедельные KPI</h2>
+      </div>
+      <p class="period-desc">Контроль качества выполнения за неделю: точность, возвраты, недогруз, производительность и использование пространства.</p>
+      <div class="grid">
+        <article class="kpi">
+          <h3>12. Точность учёта остатков</h3>
+          <p class="desc">Доля SKU без расхождений после проверок остатков.</p>
+          <div class="formula">Точность учёта = Без расхождений / Проверено × 100</div>
+          <div class="example">Пример: 1164 / 1200 × 100 = 97%.</div>
+          <div class="calc" data-kpi="inventoryAccuracy">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Проверено SKU</label><input type="number" min="0" step="1" data-f="checked" value="1200"></div>
+              <div class="field"><label>SKU без расхождений</label><input type="number" min="0" step="1" data-f="correct" value="1164"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Точность учёта</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>13. Точность цикл. инвентаризации</h3>
+          <p class="desc">Точность циклической инвентаризации.</p>
+          <div class="formula">Точность инвентаризации = Без расхождений / Всего проверок × 100</div>
+          <div class="example">Пример: 582 / 600 × 100 = 97%.</div>
+          <div class="calc" data-kpi="cycleCountAccuracy">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Всего проверок</label><input type="number" min="0" step="1" data-f="total" value="600"></div>
+              <div class="field"><label>Проверок без расхождений</label><input type="number" min="0" step="1" data-f="correct" value="582"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Точность инвентаризации</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>14. Уровень возвратов</h3>
+          <p class="desc">Какой процент заказов возвращается.</p>
+          <div class="formula">Доля возвратов = Возвратов / Всего заказов × 100</div>
+          <div class="example">Пример: 54 / 1800 × 100 = 3%.</div>
+          <div class="calc" data-kpi="returnRate">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Всего заказов</label><input type="number" min="0" step="1" data-f="total" value="1800"></div>
+              <div class="field"><label>Возвратов</label><input type="number" min="0" step="1" data-f="returned" value="54"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доля возвратов</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>15. Доля невыполненных заказов</h3>
+          <p class="desc">Какой процент заказов не удалось выполнить сразу.</p>
+          <div class="formula">Доля невыполн. = Backorder заказов / Всего заказов × 100</div>
+          <div class="example">Пример: 90 / 1500 × 100 = 6%.</div>
+          <div class="calc" data-kpi="backorderRate">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Всего заказов</label><input type="number" min="0" step="1" data-f="total" value="1500"></div>
+              <div class="field"><label>Backorder заказов</label><input type="number" min="0" step="1" data-f="backordered" value="90"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доля невыполн. заказов</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>16. Эффективность приёмки</h3>
+          <p class="desc">Какой процент приемок обработан вовремя.</p>
+          <div class="formula">Эфф. приёмки = Обработано вовремя / Всего приёмок × 100</div>
+          <div class="example">Пример: 391 / 420 × 100 = 93.1%.</div>
+          <div class="calc" data-kpi="receivingPerformance">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Приемок всего</label><input type="number" min="0" step="1" data-f="total" value="420"></div>
+              <div class="field"><label>Вовремя обработано</label><input type="number" min="0" step="1" data-f="ontime" value="391"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Эфф. приёмки</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>17. Использование площади</h3>
+          <p class="desc">Использование площади склада относительно общей площади.</p>
+          <div class="formula">Использование площади = Занятая площадь / Общая площадь × 100</div>
+          <div class="example">Пример: 3800 / 5000 × 100 = 76%.</div>
+          <div class="calc" data-kpi="spaceUtilization">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Используемая площадь, м²</label><input type="number" min="0" step="0.1" data-f="used" value="3800"></div>
+              <div class="field"><label>Общая площадь, м²</label><input type="number" min="1" step="0.1" data-f="total" value="5000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Использование площади</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>18. Производительность склада</h3>
+          <p class="desc">Производительность: заказы и тонны на сотрудника.</p>
+          <div class="formula">Производительность = Обработано заказов / Сотрудников; Тоннаж = Обработано тонн / Сотрудников</div>
+          <div class="example">Пример: 4000/20=200 заказов; 2500/20=125 тонн на сотрудника.</div>
+          <div class="calc" data-kpi="productivity">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Обработано заказов</label><input type="number" min="0" step="1" data-f="orders" value="4000"></div>
+              <div class="field"><label>Обработано тонн</label><input type="number" min="0" step="0.1" data-f="tons" value="2500"></div>
+              <div class="field"><label>Сотрудников склада</label><input type="number" min="1" step="1" data-f="employees" value="20"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Заказов на сотрудника</span><strong data-r="orders">0</strong></div>
+              <div class="result-box"><span>Тонн на сотрудника</span><strong data-r="tons">0</strong></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Ежемесячные</span>
+        <h2 class="period-title">Ежемесячные KPI</h2>
+      </div>
+      <p class="period-desc">Финансовый и сервисный обзор месяца: стоимость операций, качество отгрузок, запасы и потери.</p>
+      <div class="grid">
+        <article class="kpi">
+          <h3>19. Доля идеальных заказов</h3>
+          <p class="desc">Процент заказов, выполненных идеально: вовремя, полностью, без ошибок, без повреждений, с верными документами.</p>
+          <div class="formula">Идеальные заказы = Идеальных заказов / Всего заказов × 100</div>
+          <div class="example">Пример: 1116 / 1200 × 100 = 93%.</div>
+          <div class="calc" data-kpi="perfectOrderRate">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Всего заказов</label><input type="number" min="0" step="1" data-f="total" value="1200"></div>
+              <div class="field"><label>Идеальных заказов</label><input type="number" min="0" step="1" data-f="perfect" value="1116"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Идеальные заказы</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>20. Оборачиваемость запасов</h3>
+          <p class="desc">Оборачиваемость запасов за период.</p>
+          <div class="formula">Оборачиваемость = Себестоимость / Средний остаток склада</div>
+          <div class="example">Пример: 36 000 000 / 6 000 000 = 6 раз.</div>
+          <div class="calc" data-kpi="inventoryTurnover">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Себестоимость за период, ₽</label><input type="number" min="0" step="1" data-f="cogs" value="36000000"></div>
+              <div class="field"><label>Средняя стоимость склада, ₽</label><input type="number" min="1" step="1" data-f="avg" value="6000000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Оборачиваемость</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>21. ДИО — Дни покрытия запасом</h3>
+          <p class="desc">Дни покрытия запасом (Days Inventory Outstanding).</p>
+          <div class="formula">ДИО = Средний остаток склада / Себестоимость × 365</div>
+          <div class="example">Пример: 6 000 000 / 36 000 000 × 365 = 60.8.</div>
+          <div class="calc" data-kpi="dio">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Средняя стоимость склада, ₽</label><input type="number" min="0" step="1" data-f="avg" value="6000000"></div>
+              <div class="field"><label>Себестоимость за год, ₽</label><input type="number" min="1" step="1" data-f="cogs" value="36000000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>ДИО</span><strong data-r="v">0 дней</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>22. Доля неликвида</h3>
+          <p class="desc">Доля неликвида в общей стоимости склада.</p>
+          <div class="formula">Неликвид % = Стоимость неликвида / Стоимость склада × 100</div>
+          <div class="example">Пример: 400 000 / 5 000 000 × 100 = 8%.</div>
+          <div class="calc" data-kpi="deadStock">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Стоимость неликвида, ₽</label><input type="number" min="0" step="1" data-f="dead" value="400000"></div>
+              <div class="field"><label>Общая стоимость склада, ₽</label><input type="number" min="1" step="1" data-f="total" value="5000000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Неликвид</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>23. Потери и недостачи</h3>
+          <p class="desc">Потери/недостачи/порча в доле к общей стоимости склада.</p>
+          <div class="formula">Потери % = Стоимость потерь / Стоимость склада × 100</div>
+          <div class="example">Пример: 35 000 / 5 000 000 × 100 = 0.7%.</div>
+          <div class="calc" data-kpi="shrinkage">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Потери, ₽</label><input type="number" min="0" step="1" data-f="lost" value="35000"></div>
+              <div class="field"><label>Общая стоимость склада, ₽</label><input type="number" min="1" step="1" data-f="total" value="5000000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Потери</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>24. Доля затрат на персонал</h3>
+          <p class="desc">Доля затрат на персонал в общих затратах склада.</p>
+          <div class="formula">Затраты персонал % = Затраты на персонал / Общие затраты склада × 100</div>
+          <div class="example">Пример: 85 000 / 240 000 × 100 = 35.4%.</div>
+          <div class="calc" data-kpi="warehouseLaborCost">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Затраты на персонал, ₽</label><input type="number" min="0" step="1" data-f="labor" value="85000"></div>
+              <div class="field"><label>Общие затраты склада, ₽</label><input type="number" min="1" step="1" data-f="operating" value="240000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Затраты на персонал</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>25. Стоимость хранения паллета</h3>
+          <p class="desc">Стоимость хранения одного паллетоместа.</p>
+          <div class="formula">Стоим. хранения паллета = Затраты хранения / Среднее число паллет</div>
+          <div class="example">Пример: 180 000 / 3 200 = 56.25 на паллет.</div>
+          <div class="calc" data-kpi="storageCostPerPallet">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Затраты хранения, ₽</label><input type="number" min="0" step="1" data-f="cost" value="180000"></div>
+              <div class="field"><label>Среднее число паллет</label><input type="number" min="1" step="1" data-f="pallets" value="3200"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Стоимость паллета</span><strong data-r="v">0 ₽</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>26. Динамика затрат склада</h3>
+          <p class="desc">Рост или снижение затрат склада к прошлому месяцу.</p>
+          <div class="formula">Динамика затрат = (Тек. месяц − Прош. месяц) / Прош. месяц × 100</div>
+          <div class="example">Пример: (228000 - 210000) / 210000 × 100 = 8.6%.</div>
+          <div class="calc" data-kpi="warehouseCostTrend">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Прошлый месяц, ₽</label><input type="number" min="1" step="1" data-f="previous" value="210000"></div>
+              <div class="field"><label>Текущий месяц, ₽</label><input type="number" min="0" step="1" data-f="current" value="228000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Динамика затрат</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Ежеквартальные</span>
+        <h2 class="period-title">Ежеквартальные KPI</h2>
+      </div>
+      <p class="period-desc">Стратегическая оценка вклада склада в деньги и устойчивость цепочки снабжения.</p>
+      <div class="grid">
+        <article class="kpi full">
+          <h3>27. ROI склада</h3>
+          <p class="desc">Насколько склад создает ценность относительно затрат.</p>
+          <div class="formula">ROI склада = (Суммарная выгода − Затраты) / Затраты × 100</div>
+          <div class="example">Пример: (480 000 - 220 000) / 220 000 × 100 = 118%.</div>
+          <div class="calc" data-kpi="fullWarehouseRoi">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Суммарная выгода, ₽</label><input type="number" min="0" step="1" data-f="benefits" value="480000"></div>
+              <div class="field"><label>Затраты склада, ₽</label><input type="number" min="1" step="1" data-f="costs" value="220000"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>ROI склада</span><strong data-r="v">0%</strong></div>
+              <div class="result-box"><span>Чистая выгода, ₽</span><strong data-r="net">0</strong></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function n(v) {
+      var x = Number(v);
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function pct(v, d) { return n(v).toFixed(d) + '%'; }
+    function num(v, d) { return n(v).toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    function rub(v) { return n(v).toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 2 }); }
+
+    function ratio(a, b) { return b > 0 ? (a / b) : 0; }
+
+    function input(scope, name) {
+      var el = scope.querySelector('[data-f="' + name + '"]');
+      return el ? n(el.value) : 0;
+    }
+
+    function out(scope, name, value) {
+      var el = scope.querySelector('[data-r="' + name + '"]');
+      if (el) el.textContent = value;
+    }
+
+    function timeToHours(value) {
+      if (!value || value.indexOf(':') === -1) return 0;
+      var parts = value.split(':');
+      var h = Number(parts[0]);
+      var m = Number(parts[1]);
+      if (!Number.isFinite(h) || !Number.isFinite(m)) return 0;
+      return h + (m / 60);
+    }
+
+    function diffHours(scope) {
+      var startEl = scope.querySelector('[data-f="start"]');
+      var endEl = scope.querySelector('[data-f="end"]');
+      var start = startEl ? timeToHours(startEl.value) : 0;
+      var end = endEl ? timeToHours(endEl.value) : 0;
+      var diff = end - start;
+      if (diff < 0) diff += 24;
+      return diff;
+    }
+
+    var calculators = {
+      fillRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'filled'), input(scope, 'total')) * 100, 2));
+      },
+      pickingAccuracy: function(scope) {
+        var total = input(scope, 'total');
+        out(scope, 'v', pct(ratio(total - input(scope, 'errors'), total) * 100, 2));
+      },
+      putawayAccuracy: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'correct'), input(scope, 'total')) * 100, 2));
+      },
+      dockToStock: function(scope) {
+        out(scope, 'v', num(diffHours(scope), 2) + ' ч');
+      },
+      internalTransferTime: function(scope) {
+        out(scope, 'v', num(diffHours(scope), 2) + ' ч');
+      },
+      loadingQueueTime: function(scope) {
+        out(scope, 'v', num(diffHours(scope), 2) + ' ч');
+      },
+      inventoryAvailability: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'available'), input(scope, 'required')) * 100, 2));
+      },
+      criticalInventoryLevel: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'current'), input(scope, 'minimum')) * 100, 2));
+      },
+      receivingBacklog: function(scope) {
+        out(scope, 'v', num(input(scope, 'pending'), 0));
+      },
+      damageRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'damaged'), input(scope, 'handled')) * 100, 2));
+      },
+      forkliftUtilization: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'operating'), input(scope, 'available')) * 100, 2));
+      },
+      inventoryAccuracy: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'correct'), input(scope, 'checked')) * 100, 2));
+      },
+      cycleCountAccuracy: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'correct'), input(scope, 'total')) * 100, 2));
+      },
+      returnRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'returned'), input(scope, 'total')) * 100, 2));
+      },
+      backorderRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'backordered'), input(scope, 'total')) * 100, 2));
+      },
+      receivingPerformance: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'ontime'), input(scope, 'total')) * 100, 2));
+      },
+      spaceUtilization: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'used'), input(scope, 'total')) * 100, 2));
+      },
+      productivity: function(scope) {
+        var e = input(scope, 'employees');
+        out(scope, 'orders', num(ratio(input(scope, 'orders'), e), 1));
+        out(scope, 'tons', num(ratio(input(scope, 'tons'), e), 1));
+      },
+      perfectOrderRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'perfect'), input(scope, 'total')) * 100, 2));
+      },
+      inventoryTurnover: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'cogs'), input(scope, 'avg')), 2));
+      },
+      dio: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'avg'), input(scope, 'cogs')) * 365, 1) + ' дней');
+      },
+      deadStock: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'dead'), input(scope, 'total')) * 100, 2));
+      },
+      shrinkage: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'lost'), input(scope, 'total')) * 100, 2));
+      },
+      warehouseLaborCost: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'labor'), input(scope, 'operating')) * 100, 2));
+      },
+      storageCostPerPallet: function(scope) {
+        out(scope, 'v', rub(ratio(input(scope, 'cost'), input(scope, 'pallets'))));
+      },
+      warehouseCostTrend: function(scope) {
+        var prev = input(scope, 'previous');
+        var curr = input(scope, 'current');
+        out(scope, 'v', pct(ratio(curr - prev, prev) * 100, 2));
+      },
+      fullWarehouseRoi: function(scope) {
+        var benefits = input(scope, 'benefits');
+        var costs = input(scope, 'costs');
+        var net = benefits - costs;
+        out(scope, 'v', pct(ratio(net, costs) * 100, 2));
+        out(scope, 'net', rub(net));
+      }
+    };
+
+    document.querySelectorAll('.calc').forEach(function(scope) {
+      var key = scope.dataset.kpi;
+      var run = function() {
+        if (calculators[key]) calculators[key](scope);
+      };
+      scope.querySelectorAll('input').forEach(function(field) {
+        field.addEventListener('input', run);
+        field.addEventListener('change', run);
+      });
+      run();
+    });
+
+    // ── Фиксация периода (снапшот KPI) ──────────────────────────────
+    (function() {
+      var DEPT = 'warehouse';
+      var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+      var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+      function periodKey() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+      function labelBtn() { var d = new Date(); return '📋 Отчёт ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear(); }
+      function saveSnapshot() {
+        var snap = { period: periodKey(), dept: DEPT, savedAt: new Date().toISOString(), inputs: {}, results: {}, resultLabels: {} };
+        document.querySelectorAll('.calc').forEach(function(sc) {
+          var k = sc.getAttribute('data-kpi') || '_';
+          snap.inputs[k] = {};
+          sc.querySelectorAll('input[data-f]').forEach(function(el) { snap.inputs[k][el.getAttribute('data-f')] = el.value; });
+          snap.results[k] = {};
+          sc.querySelectorAll('strong[data-r]').forEach(function(el) {
+            var rKey = el.getAttribute('data-r'); snap.results[k][rKey] = el.textContent;
+            var sib = el.previousElementSibling; if (sib && sib.tagName === 'SPAN') snap.resultLabels[k + '.' + rKey] = sib.textContent.trim();
+          });
+        });
+        try {
+          var all = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
+          all[snap.period + '_' + DEPT] = snap;
+          localStorage.setItem(SNAP_KEY, JSON.stringify(all));
+          var btn = document.getElementById('snapBtn');
+          window.open('kpi-monthly-report.html?dept=' + DEPT + '&period=' + snap.period, '_blank');
+          if (btn) { btn.textContent = '✓ Отчёт открыт'; btn.style.cssText = 'background:#d4edda;color:#1f915e;border-color:#b8ddc4'; setTimeout(function() { btn.textContent = labelBtn(); btn.style.cssText = ''; }, 2000); }
+        } catch(e) { alert('Ошибка: ' + e.message); }
+      }
+      window.addEventListener('load', function() {
+        var btn = document.getElementById('snapBtn');
+        if (btn) { btn.textContent = labelBtn(); btn.addEventListener('click', saveSnapshot); }
+      });
+    })();
+  </script>
+</body>
+</html>

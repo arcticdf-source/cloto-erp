@@ -1,0 +1,2332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отчет о продажах — Клото</title>
+  <link rel="stylesheet" href="crm-module-sidebar.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eef4f2;
+      --surface: #ffffff;
+      --surface-soft: #f7fbf9;
+      --surface-tint: #edf5f1;
+      --line: rgba(78, 109, 101, 0.18);
+      --line-strong: rgba(36, 102, 88, 0.34);
+      --text: #17312d;
+      --muted: #65817a;
+      --teal: #1f9a86;
+      --teal-soft: rgba(31, 154, 134, 0.12);
+      --blue: #4d7cfe;
+      --blue-soft: rgba(77, 124, 254, 0.1);
+      --amber: #d09a3b;
+      --amber-soft: rgba(208, 154, 59, 0.13);
+      --green: #2f9b62;
+      --green-soft: rgba(47, 155, 98, 0.13);
+      --red: #ca6577;
+      --red-soft: rgba(202, 101, 119, 0.13);
+      --shadow: 0 20px 44px rgba(19, 40, 36, 0.08);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Manrope', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(31, 154, 134, 0.12), transparent 24%),
+        radial-gradient(circle at 100% 0%, rgba(77, 124, 254, 0.1), transparent 26%),
+        linear-gradient(180deg, #f8fbfa 0%, #eff5f2 100%);
+    }
+
+    .report-shell {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 12px 14px 28px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      background:
+        linear-gradient(135deg, rgba(14, 55, 48, 0.98), rgba(29, 93, 79, 0.94)),
+        linear-gradient(180deg, #1f5c4c, #153f36);
+      color: #eafff8;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-top {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+      max-width: 860px;
+    }
+
+    .hero-copy {
+      margin-top: 10px;
+      max-width: 860px;
+      color: rgba(227, 247, 241, 0.85);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn,
+    .pill,
+    .select {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .hero .btn,
+    .hero .pill,
+    .hero .select {
+      background: rgba(255,255,255,0.1);
+      color: #f5fffb;
+      border-color: rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero .select {
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #8df1df, #5fd8c5);
+      color: #083e35;
+      border-color: rgba(95, 216, 197, 0.42);
+    }
+
+    .hero-metrics {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .hero-panel {
+      min-height: 112px;
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      display: grid;
+      gap: 8px;
+    }
+
+    .hero-panel-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 800;
+      color: rgba(212, 245, 235, 0.72);
+    }
+
+    .hero-panel-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+      color: #fff;
+    }
+
+    .hero-panel-copy {
+      color: rgba(226, 245, 239, 0.8);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .section {
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: 'Sora', sans-serif;
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .section-copy {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 800px;
+    }
+
+    .section-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 178px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff, #f8fbfa);
+      display: grid;
+      gap: 12px;
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      right: -14px;
+      top: -14px;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: rgba(31, 154, 134, 0.06);
+    }
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .kpi-status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 6px transparent;
+      margin-top: 2px;
+    }
+
+    .tone-green .kpi-status-dot { background: var(--green); box-shadow: 0 0 0 6px rgba(47,155,98,0.1); }
+    .tone-yellow .kpi-status-dot { background: var(--amber); box-shadow: 0 0 0 6px rgba(208,154,59,0.12); }
+    .tone-red .kpi-status-dot { background: var(--red); box-shadow: 0 0 0 6px rgba(202,101,119,0.12); }
+
+    .kpi-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .kpi-subtitle,
+    .kpi-trend {
+      position: relative;
+      z-index: 1;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .kpi-trend strong {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .sparkline {
+      position: relative;
+      z-index: 1;
+      height: 44px;
+      width: 100%;
+    }
+
+    .sparkline svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .sparkline polyline.main {
+      fill: none;
+      stroke-width: 2.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sparkline polyline.fill {
+      stroke: none;
+      opacity: 0.12;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(3, minmax(150px, 0.5fr));
+      gap: 10px;
+      align-items: center;
+    }
+
+    .input,
+    .toolbar select {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      padding: 11px 13px;
+    }
+
+    .input:focus,
+    .toolbar select:focus {
+      outline: none;
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 3px var(--teal-soft);
+    }
+
+    .table-shell {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .table-wrap {
+      max-height: 540px;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 0;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #edf5f1;
+      color: #44635b;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    tbody td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(78, 109, 101, 0.1);
+      font-size: 13px;
+      vertical-align: top;
+      color: var(--text);
+    }
+
+    tbody tr:hover td { background: #fbfefd; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .cell-title {
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .cell-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .num {
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .variance-positive { color: var(--green); font-weight: 800; }
+    .variance-negative { color: var(--red); font-weight: 800; }
+    .variance-neutral { color: var(--muted); font-weight: 800; }
+
+    .status-badge,
+    .priority-badge,
+    .severity-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .status-green,
+    .severity-green,
+    .priority-low {
+      color: #12613a;
+      background: var(--green-soft);
+      border-color: rgba(47,155,98,0.25);
+    }
+
+    .status-yellow,
+    .severity-yellow,
+    .priority-medium {
+      color: #845400;
+      background: var(--amber-soft);
+      border-color: rgba(208,154,59,0.28);
+    }
+
+    .status-red,
+    .severity-red,
+    .priority-high {
+      color: #97293b;
+      background: var(--red-soft);
+      border-color: rgba(202,101,119,0.28);
+    }
+
+    .status-blue {
+      color: #2248ba;
+      background: var(--blue-soft);
+      border-color: rgba(77,124,254,0.24);
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2 { grid-template-columns: 1.3fr 1fr; }
+    .grid-3 { grid-template-columns: 1.1fr 1.1fr 0.9fr; }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .subcard {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #ffffff, #f9fcfb);
+      display: grid;
+      gap: 12px;
+    }
+
+    .subcard h3,
+    .subcard h4 {
+      margin: 0;
+      font-family: 'Sora', sans-serif;
+      letter-spacing: -0.03em;
+    }
+
+    .subcard-title {
+      font-size: 16px;
+      line-height: 1.15;
+    }
+
+    .subcard-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .chart-box {
+      height: 300px;
+      position: relative;
+    }
+
+    .chart-box.tall { height: 340px; }
+
+    .chart-fallback {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      border-radius: 14px;
+      background: var(--surface-soft);
+    }
+
+    .client-list,
+    .risk-list,
+    .reason-list,
+    .insight-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .client-item,
+    .risk-item,
+    .reason-item,
+    .insight-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 13px;
+      background: #fff;
+      display: grid;
+      gap: 8px;
+    }
+
+    .client-item-head,
+    .risk-item-head,
+    .reason-item-head,
+    .insight-item-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .client-name,
+    .risk-title,
+    .reason-title,
+    .insight-title {
+      font-weight: 800;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .client-metrics,
+    .risk-meta,
+    .reason-meta,
+    .insight-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .bar-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(101,127,120,0.16);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #69dccb, #2f9b62);
+    }
+
+    .bar-fill.red { background: linear-gradient(90deg, #e58d98, #ca6577); }
+    .bar-fill.yellow { background: linear-gradient(90deg, #f3c05c, #d09a3b); }
+    .bar-fill.blue { background: linear-gradient(90deg, #8faeff, #4d7cfe); }
+
+    .donut-card {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .donut {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .donut::after {
+      content: attr(data-center);
+      position: absolute;
+      inset: 26px;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      color: var(--text);
+      white-space: pre-line;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 14px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .risk-exec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .exec-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .exec-metric {
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      display: grid;
+      gap: 4px;
+    }
+
+    .exec-metric-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .exec-metric-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .exec-progress {
+      display: grid;
+      gap: 10px;
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(180deg, #f7fbf9, #ffffff);
+      border: 1px solid var(--line);
+    }
+
+    .exec-progress-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .exec-progress-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 36px;
+      letter-spacing: -0.05em;
+    }
+
+    .exec-progress-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .action-table-shell {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .empty-state {
+      padding: 32px;
+      text-align: center;
+      display: grid;
+      gap: 12px;
+      place-items: center;
+    }
+
+    .empty-state h2 {
+      margin: 0;
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .empty-state p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1280px) {
+      .kpi-grid,
+      .grid-4,
+      .exec-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-2,
+      .grid-3,
+      .risk-exec-grid,
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .report-shell { padding: 18px 14px 34px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .grid-4,
+      .exec-metrics { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .hero,
+      .section { padding: 16px; }
+      .grid-4,
+      .exec-metrics { grid-template-columns: 1fr; }
+      .hero-actions { justify-content: flex-start; }
+      .donut { width: 150px; height: 150px; }
+      .donut::after { inset: 20px; font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="report-shell">
+    <section class="hero card">
+      <span class="eyebrow">Modern Industrial Command Center</span>
+      <div class="hero-top">
+        <div>
+          <h1 class="hero-title">Отчет о продажах: план, факт, отклонение, причины и действия</h1>
+          <p class="hero-copy">Страница напрямую связана с квартальным планом продаж и поставок. План остается single source of truth, а фактические значения пока моделируются реалистично на его основе, чтобы директор сразу видел выполнение плана, риск по клиентам, потери маржи и необходимые действия.</p>
+        </div>
+        <div class="hero-actions">
+          <span class="pill" id="quarter-pill">Q2 2026</span>
+          <select class="select" id="quarter-select" aria-label="Выбор квартала">
+            <option value="1">Q1</option>
+            <option value="2">Q2</option>
+            <option value="3">Q3</option>
+            <option value="4">Q4</option>
+          </select>
+          <a class="btn" id="plan-link" href="quarterly-sales-supply-plan.html?quarter=2">Открыть план продаж</a>
+          <button class="btn primary" id="refresh-btn" type="button">Обновить отчет</button>
+        </div>
+      </div>
+      <div class="hero-metrics">
+        <div class="hero-panel">
+          <span class="hero-panel-label">Источник данных</span>
+          <div class="hero-panel-value" id="source-key">cloto_quarterly_supply_plan_v2_q2</div>
+          <div class="hero-panel-copy">Отчет считывает план напрямую из localStorage страницы квартального плана. Никаких независимых mock-планов здесь нет.</div>
+        </div>
+        <div class="hero-panel">
+          <span class="hero-panel-label">Фокус директора</span>
+          <div class="hero-panel-value" id="hero-focus-1">0</div>
+          <div class="hero-panel-copy" id="hero-focus-copy-1">Клиентов в риске</div>
+        </div>
+        <div class="hero-panel">
+          <span class="hero-panel-label">Потеря к плану</span>
+          <div class="hero-panel-value" id="hero-focus-2">0 т</div>
+          <div class="hero-panel-copy" id="hero-focus-copy-2">Суммарное отклонение</div>
+        </div>
+        <div class="hero-panel">
+          <span class="hero-panel-label">Action load</span>
+          <div class="hero-panel-value" id="hero-focus-3">0</div>
+          <div class="hero-panel-copy" id="hero-focus-copy-3">Критических действий</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card empty-state" id="empty-state" hidden>
+      <h2>Нет данных квартального плана</h2>
+      <p>Чтобы построить отчет о продажах, сначала заполните строки на странице квартального плана продаж и поставок. После сохранения этот отчет автоматически подтянет клиентов, продукты, плановые тонны, вероятности, выручку и маржу.</p>
+      <a class="btn primary" id="empty-plan-link" href="quarterly-sales-supply-plan.html?quarter=2">Перейти к квартальному плану</a>
+    </section>
+
+    <div id="dashboard" hidden>
+      <section class="card section" id="executive-kpi">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">1. Executive KPI Summary</h2>
+            <p class="section-copy">Ключевые показатели собираются из квартального плана, forecast и realistic actual. За 30 секунд видно выполнение плана, точность прогноза, динамику выручки и качество исполнения.</p>
+          </div>
+          <div class="section-note" id="summary-note">Источник: квартальный план / current quarter</div>
+        </div>
+        <div class="kpi-grid" id="kpi-grid"></div>
+      </section>
+
+      <section class="card section" id="sales-performance">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">2. Sales Performance</h2>
+            <p class="section-copy">Главная операционная таблица: plan vs forecast vs actual по клиентам и продуктам. Цвета и статусы показывают, где идет недовыполнение, нереалистичный forecast или отрицательная маржа.</p>
+          </div>
+          <div class="section-note" id="table-stats">0 строк</div>
+        </div>
+        <div class="toolbar">
+          <input class="input" id="search-input" type="search" placeholder="Поиск по клиенту, продукту или причине отклонения">
+          <select id="client-filter" aria-label="Фильтр по клиенту"></select>
+          <select id="status-filter" aria-label="Фильтр по статусу">
+            <option value="all">Все статусы</option>
+            <option value="green">Green</option>
+            <option value="yellow">Yellow</option>
+            <option value="red">Red</option>
+          </select>
+          <select id="manager-filter" aria-label="Фильтр по менеджеру"></select>
+        </div>
+        <div class="table-shell">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>Product</th>
+                  <th class="num">Plan Tons</th>
+                  <th class="num">Forecast Tons</th>
+                  <th class="num">Actual Tons</th>
+                  <th class="num">Variance %</th>
+                  <th class="num">Revenue</th>
+                  <th class="num">Margin %</th>
+                  <th class="num">Forecast Accuracy</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="performance-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section" id="client-performance">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">3. Client Performance</h2>
+            <p class="section-copy">Показатели автоматически агрегируются по клиенту, если у клиента несколько продуктов. Так видно, кто тащит выручку, кто дает маржу, кто ниже плана и где execution реально под риском.</p>
+          </div>
+          <div class="section-note" id="client-summary-note">0 клиентов</div>
+        </div>
+        <div class="grid-3">
+          <div class="subcard">
+            <h3 class="subcard-title">Top Clients by Revenue</h3>
+            <p class="subcard-copy">Фокус на выручке и проценте выполнения плана.</p>
+            <div class="chart-box" id="client-revenue-chart-box"><canvas id="client-revenue-chart"></canvas></div>
+          </div>
+          <div class="subcard">
+            <h3 class="subcard-title">Top Clients by Margin</h3>
+            <p class="subcard-copy">Маржинальность показывает, где создается value, а не просто объем.</p>
+            <div class="chart-box" id="client-margin-chart-box"><canvas id="client-margin-chart"></canvas></div>
+          </div>
+          <div class="subcard donut-card">
+            <h3 class="subcard-title">Client Status Mix</h3>
+            <p class="subcard-copy">Сколько клиентов в green, watch и risk.</p>
+            <div class="donut" id="client-status-donut" data-center="0\nclients"></div>
+            <div class="legend" id="client-status-legend"></div>
+          </div>
+        </div>
+        <div class="grid-4">
+          <div class="subcard">
+            <h4 class="subcard-title">Top Clients by Revenue</h4>
+            <div class="client-list" id="top-revenue-list"></div>
+          </div>
+          <div class="subcard">
+            <h4 class="subcard-title">Top Clients by Margin</h4>
+            <div class="client-list" id="top-margin-list"></div>
+          </div>
+          <div class="subcard">
+            <h4 class="subcard-title">Clients Below Plan</h4>
+            <div class="client-list" id="below-plan-list"></div>
+          </div>
+          <div class="subcard">
+            <h4 class="subcard-title">Risky Clients</h4>
+            <div class="client-list" id="risky-clients-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section" id="forecast-variance">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">4. Forecast Accuracy & Variance</h2>
+            <p class="section-copy">Ниже видно, как расходятся plan, forecast и actual по месяцам внутри квартала, и какие причины сильнее всего бьют по тоннам и выручке.</p>
+          </div>
+          <div class="section-note" id="variance-note">0 причин отклонения</div>
+        </div>
+        <div class="grid-2">
+          <div class="subcard">
+            <h3 class="subcard-title">Plan vs Forecast vs Actual</h3>
+            <p class="subcard-copy">Линейный тренд по месяцам текущего квартала.</p>
+            <div class="chart-box tall" id="trend-chart-box"><canvas id="trend-chart"></canvas></div>
+          </div>
+          <div class="subcard">
+            <h3 class="subcard-title">Main Reasons of Variance</h3>
+            <p class="subcard-copy">Топ причин, которые съедают тонны и выручку.</p>
+            <div class="chart-box tall" id="reasons-chart-box"><canvas id="reasons-chart"></canvas></div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="subcard">
+            <h4 class="subcard-title">Variance Analysis</h4>
+            <div class="reason-list" id="reason-list"></div>
+          </div>
+          <div class="subcard">
+            <h4 class="subcard-title">Accuracy Insights</h4>
+            <div class="insight-list" id="accuracy-insights"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section" id="risks-execution">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">5. Risks & Execution</h2>
+            <p class="section-copy">Если у клиента есть execution plan, отчет подтягивает readiness, open actions и risks. Если нет, страница автоматически подсвечивает риск по факту, forecast accuracy, отрицательной марже и недовыполнению плана.</p>
+          </div>
+          <div class="section-note" id="risk-note">Execution + risks overview</div>
+        </div>
+        <div class="risk-exec-grid">
+          <div class="subcard">
+            <h3 class="subcard-title">Execution Status</h3>
+            <div class="exec-metrics" id="exec-metrics"></div>
+            <div class="exec-progress">
+              <div class="exec-progress-top">
+                <div>
+                  <div class="exec-progress-value" id="readiness-value">0%</div>
+                  <div class="exec-progress-copy" id="readiness-copy">Нет execution data</div>
+                </div>
+                <span class="status-badge status-yellow" id="readiness-status">Watch</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" id="readiness-bar" style="width:0%"></div></div>
+              <div class="footer-note" id="execution-footnote">Readiness score агрегируется по execution plan клиентов текущего квартала.</div>
+            </div>
+          </div>
+          <div class="subcard">
+            <h3 class="subcard-title">Main Risks</h3>
+            <p class="subcard-copy">Критические риски из execution plan и авто-детектированных variance patterns.</p>
+            <div class="risk-list" id="risk-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card section" id="action-plan">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">6. Action Plan</h2>
+            <p class="section-copy">Простой operational plan: где проблема, что нужно сделать, кто владелец действия, какой срок и статус исполнения.</p>
+          </div>
+          <div class="section-note" id="action-note">0 actions</div>
+        </div>
+        <div class="action-table-shell">
+          <div class="table-wrap" style="max-height:none">
+            <table>
+              <thead>
+                <tr>
+                  <th>Issue</th>
+                  <th>Action</th>
+                  <th>Owner</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
+              <tbody id="action-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script>
+    (function() {
+      var STORAGE_KEY_BASE = 'cloto_quarterly_supply_plan_v2';
+      var LEGACY_KEY = 'cloto_quarterly_supply_plan_v1';
+      var EP_STORAGE_KEY = 'cloto_exec_plans_v1';
+      var MANAGERS = ['Иванов А.', 'Соколова Е.', 'Кузнецов М.', 'Орлова Н.', 'Петров Д.', 'Егорова Т.'];
+      var REASONS = ['Client Delay', 'Raw Material Issues', 'Logistics Delay', 'Low Probability Conversion', 'Price Reduction'];
+      var ACTION_OWNER_BY_REASON = {
+        'Client Delay': 'Коммерческий отдел',
+        'Raw Material Issues': 'Закупки / Производство',
+        'Logistics Delay': 'Логистика',
+        'Low Probability Conversion': 'Аккаунт-менеджер',
+        'Price Reduction': 'Коммерческий директор'
+      };
+
+      var charts = [];
+      var reportModel = null;
+      var state = {
+        quarter: detectInitialQuarter(),
+        search: '',
+        client: 'all',
+        status: 'all',
+        manager: 'all'
+      };
+
+      var refs = {
+        quarterPill: document.getElementById('quarter-pill'),
+        quarterSelect: document.getElementById('quarter-select'),
+        planLink: document.getElementById('plan-link'),
+        emptyPlanLink: document.getElementById('empty-plan-link'),
+        sourceKey: document.getElementById('source-key'),
+        refreshBtn: document.getElementById('refresh-btn'),
+        heroFocus1: document.getElementById('hero-focus-1'),
+        heroFocus2: document.getElementById('hero-focus-2'),
+        heroFocus3: document.getElementById('hero-focus-3'),
+        heroFocusCopy1: document.getElementById('hero-focus-copy-1'),
+        heroFocusCopy2: document.getElementById('hero-focus-copy-2'),
+        heroFocusCopy3: document.getElementById('hero-focus-copy-3'),
+        emptyState: document.getElementById('empty-state'),
+        dashboard: document.getElementById('dashboard'),
+        summaryNote: document.getElementById('summary-note'),
+        kpiGrid: document.getElementById('kpi-grid'),
+        tableStats: document.getElementById('table-stats'),
+        searchInput: document.getElementById('search-input'),
+        clientFilter: document.getElementById('client-filter'),
+        statusFilter: document.getElementById('status-filter'),
+        managerFilter: document.getElementById('manager-filter'),
+        performanceBody: document.getElementById('performance-body'),
+        clientSummaryNote: document.getElementById('client-summary-note'),
+        topRevenueList: document.getElementById('top-revenue-list'),
+        topMarginList: document.getElementById('top-margin-list'),
+        belowPlanList: document.getElementById('below-plan-list'),
+        riskyClientsList: document.getElementById('risky-clients-list'),
+        clientStatusDonut: document.getElementById('client-status-donut'),
+        clientStatusLegend: document.getElementById('client-status-legend'),
+        varianceNote: document.getElementById('variance-note'),
+        reasonList: document.getElementById('reason-list'),
+        accuracyInsights: document.getElementById('accuracy-insights'),
+        riskNote: document.getElementById('risk-note'),
+        execMetrics: document.getElementById('exec-metrics'),
+        readinessValue: document.getElementById('readiness-value'),
+        readinessCopy: document.getElementById('readiness-copy'),
+        readinessStatus: document.getElementById('readiness-status'),
+        readinessBar: document.getElementById('readiness-bar'),
+        executionFootnote: document.getElementById('execution-footnote'),
+        riskList: document.getElementById('risk-list'),
+        actionNote: document.getElementById('action-note'),
+        actionBody: document.getElementById('action-body')
+      };
+
+      bindEvents();
+      render();
+
+      function bindEvents() {
+        refs.refreshBtn.addEventListener('click', render);
+        refs.quarterSelect.addEventListener('change', function() {
+          var quarter = Number(refs.quarterSelect.value) || 2;
+          state.quarter = quarter;
+          var url = new URL(window.location.href);
+          url.searchParams.set('quarter', String(quarter));
+          window.history.replaceState({}, '', url.toString());
+          render();
+        });
+        refs.searchInput.addEventListener('input', function() {
+          state.search = refs.searchInput.value.trim().toLowerCase();
+          renderPerformanceTable();
+        });
+        refs.clientFilter.addEventListener('change', function() {
+          state.client = refs.clientFilter.value;
+          renderPerformanceTable();
+        });
+        refs.statusFilter.addEventListener('change', function() {
+          state.status = refs.statusFilter.value;
+          renderPerformanceTable();
+        });
+        refs.managerFilter.addEventListener('change', function() {
+          state.manager = refs.managerFilter.value;
+          renderPerformanceTable();
+        });
+      }
+
+      function render() {
+        destroyCharts();
+        var planState = loadQuarterPlan(state.quarter);
+        updateHeader(planState);
+
+        if (!planState.rows.length) {
+          refs.emptyState.hidden = false;
+          refs.dashboard.hidden = true;
+          return;
+        }
+
+        refs.emptyState.hidden = true;
+        refs.dashboard.hidden = false;
+
+        reportModel = buildReportModel(planState);
+        syncFilterControls(reportModel);
+        renderHero(reportModel);
+        renderExecutiveSummary(reportModel);
+        renderPerformanceTable();
+        renderClientPerformance(reportModel);
+        renderVariance(reportModel);
+        renderRisksExecution(reportModel);
+        renderActionPlan(reportModel);
+      }
+
+      function updateHeader(planState) {
+        var quarterLabel = 'Q' + state.quarter + ' ' + planState.year;
+        refs.quarterPill.textContent = quarterLabel;
+        refs.quarterSelect.value = String(state.quarter);
+        refs.sourceKey.textContent = getStorageKey(state.quarter);
+        refs.planLink.href = 'quarterly-sales-supply-plan.html?quarter=' + state.quarter;
+        refs.emptyPlanLink.href = refs.planLink.href;
+      }
+
+      function loadQuarterPlan(quarter) {
+        var raw = null;
+        try {
+          raw = localStorage.getItem(getStorageKey(quarter));
+          if (!raw && quarter === 2) raw = localStorage.getItem(LEGACY_KEY);
+          var parsed = raw ? JSON.parse(raw) : {};
+          var rows = Array.isArray(parsed.rows) ? parsed.rows.map(normalizeRow).filter(function(row) {
+            return row.client || row.product;
+          }) : [];
+          return {
+            year: toNumber(parsed.year, new Date().getFullYear()),
+            quarter: quarter,
+            rows: rows
+          };
+        } catch (error) {
+          return { year: new Date().getFullYear(), quarter: quarter, rows: [] };
+        }
+      }
+
+      function buildReportModel(planState) {
+        var rows = planState.rows.map(function(row, index) {
+          return buildRowModel(row, index, planState.year, planState.quarter);
+        });
+
+        var monthly = {
+          labels: getQuarterMonths(planState.quarter, planState.year),
+          plan: [0, 0, 0],
+          forecast: [0, 0, 0],
+          actual: [0, 0, 0]
+        };
+
+        rows.forEach(function(row) {
+          row.planMonths.forEach(function(value, index) { monthly.plan[index] += value; });
+          row.forecastMonths.forEach(function(value, index) { monthly.forecast[index] += value; });
+          row.actualMonths.forEach(function(value, index) { monthly.actual[index] += value; });
+        });
+
+        var clients = aggregateClients(rows);
+        var reasons = aggregateReasons(rows);
+        var risks = buildRiskList(rows, clients);
+        var actions = buildActionPlan(rows, clients, reasons);
+        var summary = buildSummary(rows, clients, monthly, actions);
+
+        return {
+          planState: planState,
+          rows: rows,
+          clients: clients,
+          monthly: monthly,
+          reasons: reasons,
+          risks: risks,
+          actions: actions,
+          summary: summary,
+          options: {
+            clients: uniqueValues(rows.map(function(item) { return item.client; })),
+            managers: uniqueValues(rows.map(function(item) { return item.manager; }))
+          }
+        };
+      }
+
+      function buildRowModel(row, index, year, quarter) {
+        var computed = rowComputed(row);
+        var exec = getExecutionSummary(row.client, year, quarter);
+        var manager = assignManager(row.client);
+        var actual = buildActualMetrics(row, computed, year, quarter, index);
+        var planFulfillment = computed.planTons > 0 ? (actual.actualTons / computed.planTons) * 100 : 0;
+        var variancePct = computed.planTons > 0 ? ((actual.actualTons - computed.planTons) / computed.planTons) * 100 : 0;
+        var forecastAccuracy = calcForecastAccuracy(computed.forecastTons, actual.actualTons);
+        var actualMarginPct = actual.actualRevenue > 0 ? (actual.actualMargin / actual.actualRevenue) * 100 : 0;
+        var readiness = exec.readiness;
+        var status = deriveStatus({
+          planFulfillment: planFulfillment,
+          forecastAccuracy: forecastAccuracy,
+          readiness: readiness,
+          marginPct: actualMarginPct
+        });
+
+        return {
+          client: row.client,
+          product: row.product,
+          manager: manager,
+          planTons: computed.planTons,
+          forecastTons: computed.forecastTons,
+          forecastRevenue: computed.forecastRevenue,
+          forecastMargin: computed.forecastMargin,
+          marginPctPlan: row.marginPct,
+          pricePerTon: row.pricePerTon,
+          probability: clamp(row.probability, 0, 100),
+          planMonths: [row.m1, row.m2, row.m3],
+          forecastMonths: [row.m1, row.m2, row.m3].map(function(value) {
+            return value * (clamp(row.probability, 0, 100) / 100);
+          }),
+          actualTons: actual.actualTons,
+          actualRevenue: actual.actualRevenue,
+          actualMargin: actual.actualMargin,
+          actualMarginPct: actualMarginPct,
+          actualMonths: actual.actualMonths,
+          variancePct: variancePct,
+          varianceTons: actual.actualTons - computed.planTons,
+          forecastAccuracy: forecastAccuracy,
+          readiness: readiness,
+          execOpenActions: exec.openActions,
+          execDoneActions: exec.doneActions,
+          execBlockedActions: exec.blockedActions,
+          execRiskCount: exec.risks.length,
+          execRisks: exec.risks,
+          executionStatus: exec.hasPlan ? 'Execution plan linked' : 'No execution plan',
+          mainReason: actual.reason,
+          impactTons: actual.impactTons,
+          impactRevenue: actual.impactRevenue,
+          otif: actual.otif,
+          status: status,
+          statusLabel: statusLabel(status),
+          statusReason: buildStatusReason(planFulfillment, forecastAccuracy, readiness, actualMarginPct),
+          riskFlag: status === 'red'
+        };
+      }
+
+      function buildActualMetrics(row, computed, year, quarter, index) {
+        var seed = hashString([row.client, row.product, year, quarter, index].join('|'));
+        var probability = clamp(row.probability, 0, 100);
+        var probableFactor = 0.72 + rand(seed, 1) * 0.36 + ((probability - 50) / 100) * 0.2;
+        if (rand(seed, 2) > 0.84) probableFactor += 0.12;
+        if (rand(seed, 3) < 0.18) probableFactor -= 0.2;
+        probableFactor = clamp(probableFactor, 0.35, 1.15);
+
+        var baseReason = pickReason(seed, probability, computed, probableFactor);
+        var priceFactor = 0.96 + rand(seed, 4) * 0.08;
+        if (baseReason === 'Price Reduction') priceFactor -= 0.08;
+
+        var actualTons = round1(computed.planTons * probableFactor);
+        var actualPricePerTon = row.pricePerTon * clamp(priceFactor, 0.82, 1.08);
+        var marginShift = -5 + rand(seed, 5) * 13;
+        if (rand(seed, 6) < 0.18) marginShift -= 15;
+        if (baseReason === 'Price Reduction') marginShift -= 6;
+        var actualMarginPct = row.marginPct + marginShift;
+
+        var actualRevenue = actualTons * actualPricePerTon;
+        var actualMargin = actualRevenue * (actualMarginPct / 100);
+        var actualMonths = distributeActualMonths([row.m1, row.m2, row.m3], actualTons, seed);
+        var shortfallTons = Math.max(0, computed.planTons - actualTons);
+        var priceImpactRevenue = baseReason === 'Price Reduction'
+          ? Math.max(0, computed.forecastRevenue - actualRevenue)
+          : shortfallTons * row.pricePerTon;
+        var otif = clamp(84 + ((100 - Math.abs(shortfallTons)) * 0.03) + (probability * 0.05) - (baseReason === 'Logistics Delay' ? 11 : 0) - (baseReason === 'Raw Material Issues' ? 8 : 0), 46, 99);
+
+        return {
+          actualTons: actualTons,
+          actualRevenue: actualRevenue,
+          actualMargin: actualMargin,
+          actualMonths: actualMonths,
+          reason: baseReason,
+          impactTons: shortfallTons,
+          impactRevenue: Math.max(0, priceImpactRevenue),
+          otif: otif
+        };
+      }
+
+      function aggregateClients(rows) {
+        var map = {};
+        rows.forEach(function(row) {
+          if (!map[row.client]) {
+            map[row.client] = {
+              client: row.client,
+              manager: row.manager,
+              rows: [],
+              planTons: 0,
+              forecastTons: 0,
+              actualTons: 0,
+              forecastRevenue: 0,
+              actualRevenue: 0,
+              forecastMargin: 0,
+              actualMargin: 0,
+              readinessSum: 0,
+              readinessWeight: 0,
+              accuracyWeighted: 0,
+              accuracyWeight: 0,
+              otifWeighted: 0,
+              otifWeight: 0,
+              openActions: 0,
+              doneActions: 0,
+              blockedActions: 0,
+              execRisks: 0,
+              reasons: {},
+              risky: false
+            };
+          }
+
+          var target = map[row.client];
+          target.rows.push(row);
+          target.planTons += row.planTons;
+          target.forecastTons += row.forecastTons;
+          target.actualTons += row.actualTons;
+          target.forecastRevenue += row.forecastRevenue;
+          target.actualRevenue += row.actualRevenue;
+          target.forecastMargin += row.forecastMargin;
+          target.actualMargin += row.actualMargin;
+          target.readinessSum += row.readiness * Math.max(row.planTons, 1);
+          target.readinessWeight += Math.max(row.planTons, 1);
+          target.accuracyWeighted += row.forecastAccuracy * Math.max(row.actualTons, 1);
+          target.accuracyWeight += Math.max(row.actualTons, 1);
+          target.otifWeighted += row.otif * Math.max(row.actualTons, 1);
+          target.otifWeight += Math.max(row.actualTons, 1);
+          target.openActions += row.execOpenActions;
+          target.doneActions += row.execDoneActions;
+          target.blockedActions += row.execBlockedActions;
+          target.execRisks += row.execRiskCount;
+          target.reasons[row.mainReason] = (target.reasons[row.mainReason] || 0) + row.impactTons;
+          if (row.status === 'red') target.risky = true;
+        });
+
+        return Object.keys(map).map(function(key) {
+          var client = map[key];
+          client.planFulfillment = client.planTons > 0 ? (client.actualTons / client.planTons) * 100 : 0;
+          client.forecastAccuracy = client.accuracyWeight > 0 ? client.accuracyWeighted / client.accuracyWeight : 100;
+          client.readiness = client.readinessWeight > 0 ? client.readinessSum / client.readinessWeight : 100;
+          client.otif = client.otifWeight > 0 ? client.otifWeighted / client.otifWeight : 100;
+          client.marginPct = client.actualRevenue > 0 ? (client.actualMargin / client.actualRevenue) * 100 : 0;
+          client.status = deriveStatus({
+            planFulfillment: client.planFulfillment,
+            forecastAccuracy: client.forecastAccuracy,
+            readiness: client.readiness,
+            marginPct: client.marginPct
+          });
+          client.statusLabel = statusLabel(client.status);
+          client.productCount = client.rows.length;
+          return client;
+        }).sort(function(a, b) {
+          return b.actualRevenue - a.actualRevenue;
+        });
+      }
+
+      function aggregateReasons(rows) {
+        var map = {};
+        REASONS.forEach(function(reason) {
+          map[reason] = { reason: reason, tons: 0, revenue: 0, count: 0 };
+        });
+        rows.forEach(function(row) {
+          map[row.mainReason].tons += row.impactTons;
+          map[row.mainReason].revenue += row.impactRevenue;
+          map[row.mainReason].count += 1;
+        });
+        return Object.keys(map).map(function(key) { return map[key]; }).sort(function(a, b) {
+          return b.revenue - a.revenue;
+        });
+      }
+
+      function buildRiskList(rows, clients) {
+        var list = [];
+
+        clients.forEach(function(client) {
+          if (client.status === 'red') {
+            list.push({
+              title: 'Риск по клиенту: ' + client.client,
+              severity: 'red',
+              client: client.client,
+              mitigation: buildStatusReason(client.planFulfillment, client.forecastAccuracy, client.readiness, client.marginPct)
+            });
+          }
+        });
+
+        rows.forEach(function(row) {
+          row.execRisks.forEach(function(risk) {
+            list.push({
+              title: risk.title || ('Риск: ' + row.client),
+              severity: severityTone(risk.severity),
+              client: row.client,
+              mitigation: risk.mitigation || 'Требуется уточнить план снижения риска'
+            });
+          });
+        });
+
+        return list.slice(0, 8);
+      }
+
+      function buildActionPlan(rows, clients, reasons) {
+        var actions = [];
+        clients.filter(function(client) { return client.status !== 'green'; }).slice(0, 6).forEach(function(client, index) {
+          var topReason = Object.keys(client.reasons).sort(function(a, b) {
+            return client.reasons[b] - client.reasons[a];
+          })[0] || 'Client Delay';
+          actions.push({
+            issue: client.client + ': ' + buildStatusReason(client.planFulfillment, client.forecastAccuracy, client.readiness, client.marginPct),
+            action: buildActionText(topReason, client.client),
+            owner: client.manager || ACTION_OWNER_BY_REASON[topReason] || 'Коммерческий отдел',
+            deadline: offsetDate(5 + index * 3),
+            status: deriveActionStatus(client.status, index),
+            priority: client.status === 'red' ? 'High' : 'Medium'
+          });
+        });
+
+        reasons.slice(0, 2).forEach(function(reason, index) {
+          actions.push({
+            issue: reason.reason + ': impact ' + formatTon(reason.tons) + ' т / ' + formatMoneyShort(reason.revenue),
+            action: buildPortfolioAction(reason.reason),
+            owner: ACTION_OWNER_BY_REASON[reason.reason] || 'Коммерческий отдел',
+            deadline: offsetDate(12 + index * 4),
+            status: index === 0 ? 'In Progress' : 'Planned',
+            priority: index === 0 ? 'High' : 'Medium'
+          });
+        });
+
+        return actions.slice(0, 8);
+      }
+
+      function buildSummary(rows, clients, monthly, actions) {
+        var totals = rows.reduce(function(acc, row) {
+          acc.planTons += row.planTons;
+          acc.forecastTons += row.forecastTons;
+          acc.actualTons += row.actualTons;
+          acc.actualRevenue += row.actualRevenue;
+          acc.actualMargin += row.actualMargin;
+          acc.accuracyWeighted += row.forecastAccuracy * Math.max(row.actualTons, 1);
+          acc.accuracyWeight += Math.max(row.actualTons, 1);
+          acc.otifWeighted += row.otif * Math.max(row.actualTons, 1);
+          acc.otifWeight += Math.max(row.actualTons, 1);
+          acc.readinessWeighted += row.readiness * Math.max(row.planTons, 1);
+          acc.readinessWeight += Math.max(row.planTons, 1);
+          return acc;
+        }, {
+          planTons: 0,
+          forecastTons: 0,
+          actualTons: 0,
+          actualRevenue: 0,
+          actualMargin: 0,
+          accuracyWeighted: 0,
+          accuracyWeight: 0,
+          otifWeighted: 0,
+          otifWeight: 0,
+          readinessWeighted: 0,
+          readinessWeight: 0
+        });
+
+        totals.planFulfillment = totals.planTons > 0 ? (totals.actualTons / totals.planTons) * 100 : 0;
+        totals.forecastAccuracy = totals.accuracyWeight > 0 ? totals.accuracyWeighted / totals.accuracyWeight : 100;
+        totals.marginPct = totals.actualRevenue > 0 ? (totals.actualMargin / totals.actualRevenue) * 100 : 0;
+        totals.otif = totals.otifWeight > 0 ? totals.otifWeighted / totals.otifWeight : 100;
+        totals.readiness = totals.readinessWeight > 0 ? totals.readinessWeighted / totals.readinessWeight : 100;
+        totals.varianceTons = totals.actualTons - totals.planTons;
+        totals.riskyClients = clients.filter(function(client) { return client.status === 'red'; }).length;
+        totals.criticalActions = actions.filter(function(action) { return action.priority === 'High'; }).length;
+        totals.monthIndex = activeMonthIndex(state.quarter);
+        return totals;
+      }
+
+      function renderHero(model) {
+        refs.heroFocus1.textContent = model.summary.riskyClients;
+        refs.heroFocus2.textContent = signedTon(model.summary.varianceTons);
+        refs.heroFocus3.textContent = model.summary.criticalActions;
+        refs.heroFocusCopy1.textContent = 'Клиентов в red status';
+        refs.heroFocusCopy2.textContent = model.summary.varianceTons < 0 ? 'Недовыполнение к плану' : 'Перевыполнение к плану';
+        refs.heroFocusCopy3.textContent = 'High-priority действий в action plan';
+      }
+
+      function renderExecutiveSummary(model) {
+        refs.summaryNote.textContent = 'Источник: ' + getStorageKey(state.quarter) + ' / direct plan linkage';
+        var cards = [
+          buildKpiCard('План тонн', formatTon(model.summary.planTons), 'Квартальный план поставок из source of truth', trendDescriptor(model.monthly.plan), toneByPlan(model.summary.planTons > 0 ? 100 : 0), model.monthly.plan),
+          buildKpiCard('Факт тонн', formatTon(model.summary.actualTons), 'Realistic actual на основе плана и execution context', trendDescriptor(model.monthly.actual), toneByFulfillment(model.summary.planFulfillment), model.monthly.actual),
+          buildKpiCard('Выполнение плана %', formatPct(model.summary.planFulfillment), 'Actual / Plan × 100', trendDescriptorPercent(model.monthly.actual, model.monthly.plan), toneByFulfillment(model.summary.planFulfillment), ratioSeries(model.monthly.actual, model.monthly.plan)),
+          buildKpiCard('Forecast тонн', formatTon(model.summary.forecastTons), 'Потенциал, скорректированный вероятностью', trendDescriptor(model.monthly.forecast), toneByAccuracy(model.summary.forecastAccuracy), model.monthly.forecast),
+          buildKpiCard('Forecast Accuracy', formatPct(model.summary.forecastAccuracy), '100 - abs((Forecast - Actual) / Actual × 100)', trendVsSeries(model.monthly.forecast, model.monthly.actual), toneByAccuracy(model.summary.forecastAccuracy), accuracySeries(model.monthly.forecast, model.monthly.actual)),
+          buildKpiCard('Выручка', formatMoneyShort(model.summary.actualRevenue), 'Фактическая выручка по products / clients', trendRevenue(model.monthly.actual, model.rows), toneByRevenue(model.summary.actualRevenue, model.summary.planTons), model.monthly.actual),
+          buildKpiCard('Маржа', formatPct(model.summary.marginPct), 'Фактическая маржа sales mix', trendMargin(model.summary.marginPct), toneByMargin(model.summary.marginPct), marginSeries(model.rows)),
+          buildKpiCard('OTIF', formatPct(model.summary.otif), 'On-time in-full service proxy', trendOtof(model.summary.otif), toneByOtif(model.summary.otif), otifSeries(model.clients))
+        ];
+        refs.kpiGrid.innerHTML = cards.join('');
+      }
+
+      function renderPerformanceTable() {
+        if (!reportModel) return;
+        var rows = filteredRows(reportModel.rows);
+        refs.tableStats.textContent = rows.length + ' строк после фильтра';
+        if (!rows.length) {
+          refs.performanceBody.innerHTML = '<tr><td colspan="10"><div class="empty-state" style="padding:20px 12px"><p>По текущим фильтрам нет строк. Измените client, status или manager.</p></div></td></tr>';
+          return;
+        }
+
+        refs.performanceBody.innerHTML = rows.map(function(row) {
+          return '<tr>'
+            + '<td><div class="cell-title">' + escapeHtml(row.client) + '</div><div class="cell-meta">Менеджер: ' + escapeHtml(row.manager) + '</div></td>'
+            + '<td><div class="cell-title">' + escapeHtml(row.product) + '</div><div class="cell-meta">' + escapeHtml(row.mainReason) + '</div></td>'
+            + '<td class="num">' + formatTon(row.planTons) + '</td>'
+            + '<td class="num">' + formatTon(row.forecastTons) + '</td>'
+            + '<td class="num">' + formatTon(row.actualTons) + '</td>'
+            + '<td class="num ' + varianceClass(row.variancePct) + '">' + signedPct(row.variancePct) + '</td>'
+            + '<td class="num">' + formatMoneyShort(row.actualRevenue) + '</td>'
+            + '<td class="num ' + toneClass(toneByMargin(row.actualMarginPct)) + '">' + signedPct(row.actualMarginPct) + '</td>'
+            + '<td class="num">' + formatPct(row.forecastAccuracy) + '</td>'
+            + '<td><span class="status-badge ' + badgeClass(row.status) + '">' + row.statusLabel + '</span><div class="cell-meta">' + escapeHtml(row.statusReason) + '</div></td>'
+            + '</tr>';
+        }).join('');
+      }
+
+      function renderClientPerformance(model) {
+        refs.clientSummaryNote.textContent = model.clients.length + ' клиентов / auto aggregation';
+        refs.topRevenueList.innerHTML = renderClientCards(model.clients.slice(0, 4), 'revenue');
+        refs.topMarginList.innerHTML = renderClientCards(model.clients.slice().sort(function(a, b) { return b.actualMargin - a.actualMargin; }).slice(0, 4), 'margin');
+        refs.belowPlanList.innerHTML = renderClientCards(model.clients.slice().sort(function(a, b) { return a.planFulfillment - b.planFulfillment; }).slice(0, 4), 'fulfillment');
+        refs.riskyClientsList.innerHTML = renderClientCards(model.clients.filter(function(client) { return client.status === 'red'; }).slice(0, 4), 'risk');
+
+        renderDonut(model.clients);
+        renderCharts(model);
+      }
+
+      function renderVariance(model) {
+        refs.varianceNote.textContent = model.reasons.length + ' причин отклонения / monthly trend';
+        refs.reasonList.innerHTML = model.reasons.map(function(item) {
+          var width = model.reasons[0] && model.reasons[0].revenue > 0 ? (item.revenue / model.reasons[0].revenue) * 100 : 0;
+          return '<div class="reason-item">'
+            + '<div class="reason-item-head"><span class="reason-title">' + escapeHtml(item.reason) + '</span><span class="status-badge ' + badgeClass(width > 66 ? 'red' : width > 33 ? 'yellow' : 'green') + '">' + formatMoneyShort(item.revenue) + '</span></div>'
+            + '<div class="reason-meta"><span>Impact: ' + formatTon(item.tons) + ' т</span><span>Revenue impact: ' + formatMoneyShort(item.revenue) + '</span><span>Rows: ' + item.count + '</span></div>'
+            + '<div class="bar-track"><div class="bar-fill ' + (width > 66 ? 'red' : width > 33 ? 'yellow' : 'blue') + '" style="width:' + clamp(width, 10, 100) + '%"></div></div>'
+            + '</div>';
+        }).join('');
+
+        var lowAccuracy = model.rows.filter(function(row) { return row.forecastAccuracy < 60; }).length;
+        var negativeMargin = model.rows.filter(function(row) { return row.actualMarginPct < 0; }).length;
+        var lowProbability = model.rows.filter(function(row) { return row.probability < 50; }).length;
+        refs.accuracyInsights.innerHTML = [
+          buildInsight('Forecast accuracy below 60%', lowAccuracy + ' строк', 'Нужна пересборка forecast и уточнение conversion assumptions.'),
+          buildInsight('Negative margin positions', negativeMargin + ' строк', 'Цена, скидка или cost-to-serve уже съедают валовую маржу.'),
+          buildInsight('Low probability conversion', lowProbability + ' строк', 'Прогноз слишком optimistic относительно текущей вероятности.'),
+          buildInsight('Quarter signal', formatPct(model.summary.planFulfillment), model.summary.planFulfillment < 90 ? 'Нужны приоритетные действия по red/yellow клиентам.' : 'Портфель держит план на приемлемом уровне.')
+        ].join('');
+      }
+
+      function renderRisksExecution(model) {
+        var openActions = sumBy(model.rows, 'execOpenActions');
+        var doneActions = sumBy(model.rows, 'execDoneActions');
+        var blockedActions = sumBy(model.rows, 'execBlockedActions');
+        var readiness = model.summary.readiness;
+
+        refs.riskNote.textContent = model.risks.length + ' risk items / execution linked';
+        refs.execMetrics.innerHTML = [
+          execMetric('Open Actions', openActions),
+          execMetric('Done Actions', doneActions),
+          execMetric('Blocked Actions', blockedActions),
+          execMetric('Linked Risks', model.risks.length)
+        ].join('');
+        refs.readinessValue.textContent = formatPct(readiness);
+        refs.readinessCopy.textContent = readinessCopy(readiness);
+        refs.readinessStatus.className = 'status-badge ' + badgeClass(toneByReadiness(readiness));
+        refs.readinessStatus.textContent = statusLabel(toneByReadiness(readiness));
+        refs.readinessBar.className = 'bar-fill ' + barToneClass(toneByReadiness(readiness));
+        refs.readinessBar.style.width = clamp(readiness, 0, 100) + '%';
+        refs.executionFootnote.textContent = 'Open: ' + openActions + ' · Done: ' + doneActions + ' · Blocked: ' + blockedActions + ' · Avg readiness: ' + formatPct(readiness);
+        refs.riskList.innerHTML = model.risks.length ? model.risks.map(function(item) {
+          return '<div class="risk-item">'
+            + '<div class="risk-item-head"><span class="risk-title">' + escapeHtml(item.title) + '</span><span class="severity-badge ' + badgeClass(item.severity) + '">' + severityLabel(item.severity) + '</span></div>'
+            + '<div class="risk-meta"><span>Client: ' + escapeHtml(item.client) + '</span><span>Mitigation: ' + escapeHtml(item.mitigation) + '</span></div>'
+            + '</div>';
+        }).join('') : '<div class="empty-state" style="padding:20px 12px"><p>Риски не обнаружены. Портфель выглядит контролируемым.</p></div>';
+      }
+
+      function renderActionPlan(model) {
+        refs.actionNote.textContent = model.actions.length + ' actions';
+        refs.actionBody.innerHTML = model.actions.map(function(action) {
+          return '<tr>'
+            + '<td><div class="cell-title">' + escapeHtml(action.issue) + '</div></td>'
+            + '<td><div class="cell-title">' + escapeHtml(action.action) + '</div></td>'
+            + '<td><div class="cell-title">' + escapeHtml(action.owner) + '</div></td>'
+            + '<td><div class="cell-title">' + escapeHtml(action.deadline) + '</div></td>'
+            + '<td><span class="status-badge ' + statusBadgeByAction(action.status) + '">' + escapeHtml(action.status) + '</span></td>'
+            + '<td><span class="priority-badge ' + priorityBadgeClass(action.priority) + '">' + escapeHtml(action.priority) + '</span></td>'
+            + '</tr>';
+        }).join('');
+      }
+
+      function renderCharts(model) {
+        if (!window.Chart) {
+          ['client-revenue-chart-box', 'client-margin-chart-box', 'trend-chart-box', 'reasons-chart-box'].forEach(function(id) {
+            var box = document.getElementById(id);
+            box.innerHTML = '<div class="chart-fallback">Chart.js не загрузился. Данные и KPI при этом рассчитаны корректно.</div>';
+          });
+          return;
+        }
+
+        charts.push(new Chart(document.getElementById('client-revenue-chart'), {
+          type: 'bar',
+          data: {
+            labels: model.clients.slice(0, 6).map(function(client) { return shortLabel(client.client); }),
+            datasets: [{
+              data: model.clients.slice(0, 6).map(function(client) { return round0(client.actualRevenue / 1000000); }),
+              backgroundColor: 'rgba(31, 154, 134, 0.75)',
+              borderRadius: 8,
+              maxBarThickness: 28
+            }]
+          },
+          options: chartOptions('млн ₽')
+        }));
+
+        charts.push(new Chart(document.getElementById('client-margin-chart'), {
+          type: 'bar',
+          data: {
+            labels: model.clients.slice().sort(function(a, b) { return b.actualMargin - a.actualMargin; }).slice(0, 6).map(function(client) { return shortLabel(client.client); }),
+            datasets: [{
+              data: model.clients.slice().sort(function(a, b) { return b.actualMargin - a.actualMargin; }).slice(0, 6).map(function(client) { return round0(client.actualMargin / 1000000); }),
+              backgroundColor: 'rgba(77, 124, 254, 0.72)',
+              borderRadius: 8,
+              maxBarThickness: 28
+            }]
+          },
+          options: chartOptions('млн ₽')
+        }));
+
+        charts.push(new Chart(document.getElementById('trend-chart'), {
+          type: 'line',
+          data: {
+            labels: model.monthly.labels,
+            datasets: [
+              lineSeries('Plan', model.monthly.plan, '#1f9a86', 'rgba(31,154,134,0.08)'),
+              lineSeries('Forecast', model.monthly.forecast, '#4d7cfe', 'rgba(77,124,254,0.07)'),
+              lineSeries('Actual', model.monthly.actual, '#ca6577', 'rgba(202,101,119,0.07)')
+            ]
+          },
+          options: lineOptions('т')
+        }));
+
+        charts.push(new Chart(document.getElementById('reasons-chart'), {
+          type: 'bar',
+          data: {
+            labels: model.reasons.map(function(item) { return item.reason; }),
+            datasets: [{
+              label: 'Revenue impact, млн ₽',
+              data: model.reasons.map(function(item) { return round0(item.revenue / 1000000); }),
+              backgroundColor: ['#ca6577', '#e18c73', '#d09a3b', '#6b8cff', '#5cb7a2'],
+              borderRadius: 10,
+              barThickness: 18
+            }]
+          },
+          options: horizontalBarOptions('млн ₽')
+        }));
+      }
+
+      function renderDonut(clients) {
+        var green = clients.filter(function(client) { return client.status === 'green'; }).length;
+        var yellow = clients.filter(function(client) { return client.status === 'yellow'; }).length;
+        var red = clients.filter(function(client) { return client.status === 'red'; }).length;
+        var total = Math.max(clients.length, 1);
+        var g = (green / total) * 100;
+        var y = (yellow / total) * 100;
+        var r = (red / total) * 100;
+        refs.clientStatusDonut.style.background = 'conic-gradient(#2f9b62 0 ' + g + '%, #d09a3b ' + g + '% ' + (g + y) + '%, #ca6577 ' + (g + y) + '% 100%)';
+        refs.clientStatusDonut.setAttribute('data-center', clients.length + '\nclients');
+        refs.clientStatusLegend.innerHTML = [
+          legendItem('#2f9b62', 'Green: ' + green),
+          legendItem('#d09a3b', 'Yellow: ' + yellow),
+          legendItem('#ca6577', 'Red: ' + red)
+        ].join('');
+      }
+
+      function syncFilterControls(model) {
+        fillSelect(refs.clientFilter, 'Все клиенты', model.options.clients, state.client);
+        fillSelect(refs.managerFilter, 'Все менеджеры', model.options.managers, state.manager);
+        refs.searchInput.value = state.search;
+      }
+
+      function fillSelect(select, label, values, selected) {
+        select.innerHTML = '<option value="all">' + label + '</option>' + values.map(function(value) {
+          return '<option value="' + escapeHtmlAttr(value) + '"' + (selected === value ? ' selected' : '') + '>' + escapeHtml(value) + '</option>';
+        }).join('');
+      }
+
+      function filteredRows(rows) {
+        return rows.filter(function(row) {
+          if (state.client !== 'all' && row.client !== state.client) return false;
+          if (state.status !== 'all' && row.status !== state.status) return false;
+          if (state.manager !== 'all' && row.manager !== state.manager) return false;
+          if (!state.search) return true;
+          var haystack = [row.client, row.product, row.mainReason, row.statusReason, row.manager].join(' ').toLowerCase();
+          return haystack.indexOf(state.search) !== -1;
+        }).sort(function(a, b) {
+          var score = statusRank(a.status) - statusRank(b.status);
+          if (score !== 0) return score;
+          return b.actualRevenue - a.actualRevenue;
+        });
+      }
+
+      function getExecutionSummary(clientName, year, quarter) {
+        var all = loadAllExecPlans();
+        var key = epPlanKey(clientName, year, quarter);
+        var plan = all[key] || { tasks: [], risks: [] };
+        var tasks = Array.isArray(plan.tasks) ? plan.tasks : [];
+        var risks = Array.isArray(plan.risks) ? plan.risks : [];
+        var doneActions = tasks.filter(isTaskDone).length;
+        var blockedActions = tasks.filter(function(task) { return String(task.status || '') === 'Заблокировано'; }).length;
+        var openActions = Math.max(0, tasks.length - doneActions - blockedActions);
+        return {
+          hasPlan: tasks.length > 0 || risks.length > 0,
+          readiness: calcExecutionReadiness(plan),
+          openActions: openActions,
+          doneActions: doneActions,
+          blockedActions: blockedActions,
+          risks: risks.map(function(risk) {
+            return {
+              title: String(risk.title || 'Риск'),
+              severity: String(risk.severity || 'Средний'),
+              mitigation: String(risk.mitigation || '')
+            };
+          })
+        };
+      }
+
+      function calcExecutionReadiness(plan) {
+        var tasks = Array.isArray(plan.tasks) ? plan.tasks : [];
+        var risks = Array.isArray(plan.risks) ? plan.risks : [];
+        if (!tasks.length && !risks.length) return 100;
+        var done = tasks.filter(isTaskDone).length;
+        var blocked = tasks.filter(function(task) { return String(task.status || '') === 'Заблокировано'; }).length;
+        var high = risks.filter(function(risk) { return String(risk.severity || '') === 'Высокий'; }).length;
+        var medium = risks.filter(function(risk) { return String(risk.severity || '') === 'Средний'; }).length;
+        var base = tasks.length ? Math.round((done / tasks.length) * 100) : 100;
+        return clamp(base - blocked * 10 - high * 12 - medium * 5 - Math.max(0, risks.length - high - medium) * 2, 0, 100);
+      }
+
+      function loadAllExecPlans() {
+        try {
+          return JSON.parse(localStorage.getItem(EP_STORAGE_KEY) || '{}');
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function epPlanKey(clientName, year, quarter) {
+        var safe = String(clientName || '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-zа-яё0-9_]/giu, '');
+        return safe + '_' + year + '_q' + quarter;
+      }
+
+      function assignManager(clientName) {
+        return MANAGERS[hashString(String(clientName || '')) % MANAGERS.length];
+      }
+
+      function buildKpiCard(label, value, subtitle, trend, tone, series) {
+        return '<div class="kpi-card tone-' + tone + '">'
+          + '<div class="kpi-top"><div class="kpi-label">' + escapeHtml(label) + '</div><span class="kpi-status-dot"></span></div>'
+          + '<div class="kpi-value">' + escapeHtml(value) + '</div>'
+          + '<div class="kpi-subtitle">' + escapeHtml(subtitle) + '</div>'
+          + '<div class="sparkline">' + buildSparkline(series, tone) + '</div>'
+          + '<div class="kpi-trend"><strong>' + escapeHtml(trend.title) + '</strong><br>' + escapeHtml(trend.copy) + '</div>'
+          + '</div>';
+      }
+
+      function buildSparkline(values, tone) {
+        var safe = Array.isArray(values) && values.length ? values.slice() : [0, 0, 0];
+        var width = 220;
+        var height = 44;
+        var min = Math.min.apply(null, safe);
+        var max = Math.max.apply(null, safe);
+        var range = max - min || 1;
+        var points = safe.map(function(value, index) {
+          var x = safe.length === 1 ? width / 2 : (index / (safe.length - 1)) * width;
+          var y = height - ((value - min) / range) * (height - 8) - 4;
+          return [x, y];
+        });
+        var polyline = points.map(function(point) { return point[0].toFixed(1) + ',' + point[1].toFixed(1); }).join(' ');
+        var fill = '0,' + height + ' ' + polyline + ' ' + width + ',' + height;
+        var colors = { green: '#2f9b62', yellow: '#d09a3b', red: '#ca6577' };
+        return '<svg viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="none">'
+          + '<polyline class="fill" fill="' + colors[tone] + '" points="' + fill + '"></polyline>'
+          + '<polyline class="main" stroke="' + colors[tone] + '" points="' + polyline + '"></polyline>'
+          + '</svg>';
+      }
+
+      function renderClientCards(clients, mode) {
+        if (!clients.length) return '<div class="empty-state" style="padding:18px 8px"><p>Нет данных для этого среза.</p></div>';
+        return clients.map(function(client) {
+          var width = clamp(client.planFulfillment, 0, 120);
+          var fillTone = client.status === 'red' ? 'red' : client.status === 'yellow' ? 'yellow' : 'blue';
+          var valueText = mode === 'margin'
+            ? formatMoneyShort(client.actualMargin)
+            : mode === 'fulfillment'
+              ? formatPct(client.planFulfillment)
+              : mode === 'risk'
+                ? client.statusLabel
+                : formatMoneyShort(client.actualRevenue);
+          return '<div class="client-item">'
+            + '<div class="client-item-head"><span class="client-name">' + escapeHtml(client.client) + '</span><span class="status-badge ' + badgeClass(client.status) + '">' + escapeHtml(valueText) + '</span></div>'
+            + '<div class="client-metrics"><span>Revenue: ' + formatMoneyShort(client.actualRevenue) + '</span><span>Fulfillment: ' + formatPct(client.planFulfillment) + '</span><span>Accuracy: ' + formatPct(client.forecastAccuracy) + '</span><span>Readiness: ' + formatPct(client.readiness) + '</span></div>'
+            + '<div class="bar-track"><div class="bar-fill ' + fillTone + '" style="width:' + clamp(width, 8, 100) + '%"></div></div>'
+            + '</div>';
+        }).join('');
+      }
+
+      function buildInsight(title, metric, copy) {
+        return '<div class="insight-item">'
+          + '<div class="insight-item-head"><span class="insight-title">' + escapeHtml(title) + '</span><span class="status-badge status-blue">' + escapeHtml(metric) + '</span></div>'
+          + '<div class="insight-meta">' + escapeHtml(copy) + '</div>'
+          + '</div>';
+      }
+
+      function execMetric(label, value) {
+        return '<div class="exec-metric"><span class="exec-metric-label">' + escapeHtml(label) + '</span><span class="exec-metric-value">' + escapeHtml(String(value)) + '</span></div>';
+      }
+
+      function legendItem(color, text) {
+        return '<span class="legend-item"><span class="legend-swatch" style="background:' + color + '"></span>' + escapeHtml(text) + '</span>';
+      }
+
+      function buildActionText(reason, clientName) {
+        if (reason === 'Client Delay') return 'Согласовать commit по отгрузке и ускорить закрытие клиента ' + clientName;
+        if (reason === 'Raw Material Issues') return 'Подтвердить сырье и снять узкие места по производству для ' + clientName;
+        if (reason === 'Logistics Delay') return 'Перепланировать окно отгрузки и зарезервировать транспорт';
+        if (reason === 'Price Reduction') return 'Пересобрать ценовое предложение и защитить маржу по ' + clientName;
+        return 'Обновить вероятность сделки и сделать re-forecast по ' + clientName;
+      }
+
+      function buildPortfolioAction(reason) {
+        if (reason === 'Client Delay') return 'Пересмотреть pipeline cadence и weekly follow-up по red clients';
+        if (reason === 'Raw Material Issues') return 'Сверить availability сырья с производством и закупками';
+        if (reason === 'Logistics Delay') return 'Вынести проблемные перевозки в отдельный control tower list';
+        if (reason === 'Price Reduction') return 'Сегментировать скидки и согласовать floor margin';
+        return 'Пересчитать вероятность conversion по low-confidence forecast';
+      }
+
+      function deriveActionStatus(status, index) {
+        if (status === 'red') return index % 2 === 0 ? 'In Progress' : 'Planned';
+        if (status === 'yellow') return 'Planned';
+        return 'Done';
+      }
+
+      function deriveStatus(input) {
+        if (input.planFulfillment < 70 || input.forecastAccuracy < 60 || input.readiness < 50 || input.marginPct < 0) return 'red';
+        if (input.planFulfillment < 90 || input.forecastAccuracy < 80 || input.readiness < 75 || input.marginPct < 8) return 'yellow';
+        return 'green';
+      }
+
+      function buildStatusReason(planFulfillment, forecastAccuracy, readiness, marginPct) {
+        if (marginPct < 0) return 'Отрицательная маржа';
+        if (planFulfillment < 70) return 'Факт сильно ниже плана';
+        if (forecastAccuracy < 60) return 'Низкая точность forecast';
+        if (readiness < 50) return 'Слабое execution readiness';
+        if (planFulfillment < 90) return 'Нужно догонять квартальный план';
+        return 'Портфель идет в рабочем коридоре';
+      }
+
+      function pickReason(seed, probability, computed, actualFactor) {
+        if (probability < 50 && actualFactor < 0.82) return 'Low Probability Conversion';
+        var roll = rand(seed, 7);
+        if (roll < 0.22) return 'Client Delay';
+        if (roll < 0.42) return 'Raw Material Issues';
+        if (roll < 0.62) return 'Logistics Delay';
+        if (roll < 0.8) return 'Price Reduction';
+        return 'Low Probability Conversion';
+      }
+
+      function distributeActualMonths(planMonths, totalActual, seed) {
+        var multipliers = [0.9 + rand(seed, 11) * 0.3, 0.88 + rand(seed, 12) * 0.34, 0.9 + rand(seed, 13) * 0.32];
+        var raw = planMonths.map(function(value, index) { return Math.max(0, value) * multipliers[index]; });
+        var sum = raw.reduce(function(acc, value) { return acc + value; }, 0);
+        if (sum <= 0) return [0, 0, 0];
+        var values = raw.map(function(value) { return round1((value / sum) * totalActual); });
+        var diff = round1(totalActual - values.reduce(function(acc, value) { return acc + value; }, 0));
+        values[2] = round1(values[2] + diff);
+        return values;
+      }
+
+      function chartOptions(unit) {
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(context) { return context.raw + ' ' + unit; } } } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#65817a', font: { size: 11, weight: '600' } } },
+            y: { beginAtZero: true, grid: { color: 'rgba(78,109,101,0.08)' }, ticks: { color: '#65817a', font: { size: 11 }, callback: function(value) { return value + ' ' + unit; } } }
+          }
+        };
+      }
+
+      function lineOptions(unit) {
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, color: '#65817a' } } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#65817a', font: { size: 11, weight: '600' } } },
+            y: { beginAtZero: true, grid: { color: 'rgba(78,109,101,0.08)' }, ticks: { color: '#65817a', callback: function(value) { return value + ' ' + unit; } } }
+          }
+        };
+      }
+
+      function horizontalBarOptions(unit) {
+        return {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, grid: { color: 'rgba(78,109,101,0.08)' }, ticks: { color: '#65817a', callback: function(value) { return value + ' ' + unit; } } },
+            y: { grid: { display: false }, ticks: { color: '#17312d', font: { size: 11, weight: '700' } } }
+          }
+        };
+      }
+
+      function lineSeries(label, values, borderColor, backgroundColor) {
+        return {
+          label: label,
+          data: values.map(round1),
+          borderColor: borderColor,
+          backgroundColor: backgroundColor,
+          borderWidth: 3,
+          pointRadius: 4,
+          pointHoverRadius: 5,
+          tension: 0.36,
+          fill: false
+        };
+      }
+
+      function trendDescriptor(series) {
+        return seriesTrend(series, 'к предыдущему месяцу');
+      }
+
+      function trendDescriptorPercent(actualSeries, planSeries) {
+        var ratios = ratioSeries(actualSeries, planSeries);
+        return seriesTrend(ratios, 'динамика выполнения');
+      }
+
+      function trendVsSeries(forecastSeries, actualSeries) {
+        var values = forecastSeries.map(function(value, index) {
+          return calcForecastAccuracy(value, actualSeries[index]);
+        });
+        return seriesTrend(values, 'динамика accuracy');
+      }
+
+      function trendRevenue(actualSeries, rows) {
+        var avgPrice = rows.length ? rows.reduce(function(acc, row) { return acc + row.actualRevenue; }, 0) / Math.max(1, rows.reduce(function(acc, row) { return acc + row.actualTons; }, 0)) : 0;
+        var revenueSeries = actualSeries.map(function(value) { return value * avgPrice; });
+        return seriesTrend(revenueSeries, 'к предыдущему месяцу');
+      }
+
+      function trendMargin(marginPct) {
+        return {
+          title: signedPct(marginPct - 12),
+          copy: marginPct < 0 ? 'Маржа ушла ниже нуля, нужен немедленный action.' : 'Сравнение с целевым уровнем 12%.'
+        };
+      }
+
+      function trendOtof(value) {
+        return {
+          title: signedPct(value - 92),
+          copy: value < 90 ? 'Service level нужно выравнивать.' : 'Отгрузочный сервис держится на хорошем уровне.'
+        };
+      }
+
+      function seriesTrend(series, suffix) {
+        var idx = activeMonthIndex(state.quarter);
+        var current = series[Math.min(idx, series.length - 1)] || 0;
+        var previous = series[Math.max(0, Math.min(idx - 1, series.length - 1))] || 0;
+        var delta = previous === 0 ? current : ((current - previous) / Math.max(Math.abs(previous), 1)) * 100;
+        return {
+          title: signedPct(delta),
+          copy: suffix
+        };
+      }
+
+      function ratioSeries(actualSeries, planSeries) {
+        return actualSeries.map(function(actual, index) {
+          var plan = planSeries[index] || 0;
+          return plan > 0 ? (actual / plan) * 100 : 0;
+        });
+      }
+
+      function accuracySeries(forecastSeries, actualSeries) {
+        return forecastSeries.map(function(forecast, index) {
+          return calcForecastAccuracy(forecast, actualSeries[index]);
+        });
+      }
+
+      function marginSeries(rows) {
+        return rows.slice(0, 6).map(function(row) { return row.actualMarginPct; });
+      }
+
+      function otifSeries(clients) {
+        return clients.slice(0, 6).map(function(client) { return client.otif; });
+      }
+
+      function calcForecastAccuracy(forecast, actual) {
+        if (actual === 0 && forecast === 0) return 100;
+        if (actual === 0) return 0;
+        return clamp(100 - Math.abs((forecast - actual) / actual * 100), 0, 100);
+      }
+
+      function toneByFulfillment(value) {
+        if (value >= 95) return 'green';
+        if (value >= 80) return 'yellow';
+        return 'red';
+      }
+
+      function toneByAccuracy(value) {
+        if (value >= 85) return 'green';
+        if (value >= 65) return 'yellow';
+        return 'red';
+      }
+
+      function toneByMargin(value) {
+        if (value >= 12) return 'green';
+        if (value >= 0) return 'yellow';
+        return 'red';
+      }
+
+      function toneByOtif(value) {
+        if (value >= 93) return 'green';
+        if (value >= 84) return 'yellow';
+        return 'red';
+      }
+
+      function toneByPlan(value) {
+        if (value > 0) return 'green';
+        return 'yellow';
+      }
+
+      function toneByRevenue(revenue, planTons) {
+        if (revenue > 0 && planTons > 0) return 'green';
+        return 'yellow';
+      }
+
+      function toneByReadiness(value) {
+        if (value >= 80) return 'green';
+        if (value >= 50) return 'yellow';
+        return 'red';
+      }
+
+      function readinessCopy(value) {
+        if (value >= 80) return 'Execution выглядит контролируемым.';
+        if (value >= 50) return 'Есть зоны внимания по action follow-up.';
+        return 'Высокий риск срыва без корректирующих действий.';
+      }
+
+      function statusLabel(status) {
+        return status === 'green' ? 'Green' : status === 'yellow' ? 'Yellow' : 'Red';
+      }
+
+      function severityLabel(severity) {
+        return severity === 'red' ? 'High' : severity === 'yellow' ? 'Medium' : 'Low';
+      }
+
+      function severityTone(value) {
+        if (String(value || '') === 'Высокий') return 'red';
+        if (String(value || '') === 'Средний') return 'yellow';
+        return 'green';
+      }
+
+      function statusRank(status) {
+        if (status === 'red') return -2;
+        if (status === 'yellow') return -1;
+        return 0;
+      }
+
+      function badgeClass(tone) {
+        return tone === 'green' ? 'status-green' : tone === 'yellow' ? 'status-yellow' : tone === 'red' ? 'status-red' : 'status-blue';
+      }
+
+      function priorityBadgeClass(priority) {
+        return priority === 'High' ? 'priority-high' : priority === 'Medium' ? 'priority-medium' : 'priority-low';
+      }
+
+      function statusBadgeByAction(status) {
+        if (status === 'Done') return 'status-green';
+        if (status === 'Blocked') return 'status-red';
+        if (status === 'In Progress') return 'status-blue';
+        return 'status-yellow';
+      }
+
+      function barToneClass(tone) {
+        if (tone === 'red') return 'red';
+        if (tone === 'yellow') return 'yellow';
+        return 'blue';
+      }
+
+      function varianceClass(value) {
+        if (value > 0) return 'variance-positive';
+        if (value < 0) return 'variance-negative';
+        return 'variance-neutral';
+      }
+
+      function toneClass(tone) {
+        if (tone === 'green') return 'variance-positive';
+        if (tone === 'yellow') return 'variance-neutral';
+        return 'variance-negative';
+      }
+
+      function formatTon(value) { return formatNumber(value, 1); }
+      function signedTon(value) { return (value >= 0 ? '+' : '') + formatTon(value) + ' т'; }
+      function formatPct(value) { return formatNumber(value, 0) + '%'; }
+      function signedPct(value) { return (value >= 0 ? '+' : '') + formatNumber(value, 0) + '%'; }
+      function formatMoneyShort(value) {
+        if (Math.abs(value) >= 1000000) return formatNumber(value / 1000000, 1) + ' млн ₽';
+        if (Math.abs(value) >= 1000) return formatNumber(value / 1000, 0) + ' тыс ₽';
+        return formatNumber(value, 0) + ' ₽';
+      }
+
+      function formatNumber(value, digits) {
+        return Number(value || 0).toLocaleString('ru-RU', {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits
+        });
+      }
+
+      function shortLabel(value) {
+        return String(value || '').length > 14 ? String(value).slice(0, 14) + '…' : String(value || '');
+      }
+
+      function sumBy(list, key) {
+        return list.reduce(function(acc, item) { return acc + Number(item[key] || 0); }, 0);
+      }
+
+      function uniqueValues(values) {
+        var map = {};
+        values.forEach(function(value) {
+          if (!value) return;
+          map[value] = true;
+        });
+        return Object.keys(map).sort();
+      }
+
+      function normalizeRow(row) {
+        return {
+          client: String(row.client || ''),
+          product: String(row.product || ''),
+          m1: toNumber(row.m1, 0),
+          m2: toNumber(row.m2, 0),
+          m3: toNumber(row.m3, 0),
+          probability: toNumber(row.probability, 0),
+          pricePerTon: toNumber(row.pricePerTon, 0),
+          marginPct: toNumber(row.marginPct, 0),
+          rawCoef: toNumber(row.rawCoef, 1)
+        };
+      }
+
+      function rowComputed(row) {
+        var planTons = Math.max(0, row.m1) + Math.max(0, row.m2) + Math.max(0, row.m3);
+        var probability = clamp(row.probability, 0, 100) / 100;
+        var forecastTons = planTons * probability;
+        var forecastRevenue = forecastTons * Math.max(0, row.pricePerTon);
+        var forecastMargin = forecastRevenue * (row.marginPct / 100);
+        return {
+          planTons: planTons,
+          forecastTons: forecastTons,
+          forecastRevenue: forecastRevenue,
+          forecastMargin: forecastMargin
+        };
+      }
+
+      function activeMonthIndex(quarter) {
+        var now = new Date();
+        var currentQuarter = Math.floor(now.getMonth() / 3) + 1;
+        if (currentQuarter !== quarter) return 2;
+        return now.getMonth() % 3;
+      }
+
+      function getQuarterMonths(quarter, year) {
+        var labels = {
+          1: ['Янв', 'Фев', 'Мар'],
+          2: ['Апр', 'Май', 'Июн'],
+          3: ['Июл', 'Авг', 'Сен'],
+          4: ['Окт', 'Ноя', 'Дек']
+        };
+        return (labels[quarter] || labels[2]).map(function(label) { return label + ' ' + year; });
+      }
+
+      function offsetDate(days) {
+        var date = new Date();
+        date.setDate(date.getDate() + days);
+        return date.toISOString().slice(0, 10);
+      }
+
+      function getStorageKey(quarter) {
+        return STORAGE_KEY_BASE + '_q' + quarter;
+      }
+
+      function detectInitialQuarter() {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var value = Number(params.get('quarter'));
+          if (value >= 1 && value <= 4) return value;
+        } catch (error) {}
+        for (var quarter = 4; quarter >= 1; quarter -= 1) {
+          try {
+            var raw = localStorage.getItem(getStorageKey(quarter));
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              if (parsed && Array.isArray(parsed.rows) && parsed.rows.length) return quarter;
+            }
+          } catch (error) {}
+        }
+        return 2;
+      }
+
+      function hashString(value) {
+        var hash = 0;
+        for (var i = 0; i < value.length; i += 1) {
+          hash = ((hash << 5) - hash) + value.charCodeAt(i);
+          hash |= 0;
+        }
+        return Math.abs(hash);
+      }
+
+      function rand(seed, salt) {
+        var x = Math.sin((seed + salt * 997) * 12.9898) * 43758.5453;
+        return x - Math.floor(x);
+      }
+
+      function isTaskDone(task) {
+        return !!(task && (task.done === true || String(task.status || '') === 'Выполнено' || String(task.status || '') === 'Done'));
+      }
+
+      function toNumber(value, fallback) {
+        var number = Number(value);
+        return Number.isFinite(number) ? number : fallback;
+      }
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, Number(value) || 0));
+      }
+
+      function round1(value) { return Math.round((Number(value) || 0) * 10) / 10; }
+      function round0(value) { return Math.round(Number(value) || 0); }
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function escapeHtmlAttr(value) {
+        return escapeHtml(value);
+      }
+
+      function destroyCharts() {
+        charts.forEach(function(chart) {
+          try { chart.destroy(); } catch (error) {}
+        });
+        charts = [];
+      }
+    }());
+  </script>
+  <script src="crm-module-sidebar.js"></script>
+</body>
+</html>

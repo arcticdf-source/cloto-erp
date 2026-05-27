@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Логистика — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255,255,255,0.88);
+      --surface2: rgba(255,255,255,0.98);
+      --border: rgba(94, 130, 170, 0.22);
+      --text: #1e2c3c;
+      --muted: #6a7f99;
+      --blue: #3b91da;
+      --cyan: #24b7ad;
+      --gold: #d9a83a;
+      --radius: 20px;
+      --shadow: 0 14px 30px rgba(30, 70, 120, 0.13);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(59,145,218,0.13), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(36,183,173,0.11), transparent 32%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(59,145,218,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,145,218,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .hero {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(59,145,218,0.12), rgba(255,255,255,0.94));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+      gap: 18px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(59,145,218,0.28);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .title span { color: var(--blue); }
+
+    .sub {
+      margin-top: 12px;
+      max-width: 700px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s, box-shadow 0.18s;
+      box-shadow: var(--shadow);
+    }
+
+    .btn:hover { background: #e8f3fc; }
+
+    .hero-stat {
+      align-self: start;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface2);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-stat-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .stat-label { font-size: 13px; color: var(--muted); flex: 1; }
+    .stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .module-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(30, 70, 120, 0.18);
+      background: var(--surface2);
+    }
+
+    .module-arrow {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-size: 18px;
+      color: var(--muted);
+      opacity: 0.5;
+    }
+
+    .module-icon-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .mi-blue { background: rgba(59,145,218,0.12); }
+    .mi-cyan { background: rgba(36,183,173,0.12); }
+    .mi-gold { background: rgba(217,168,58,0.12); }
+
+    .module-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .module-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .module-count {
+      justify-self: start;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mc-blue { background: rgba(59,145,218,0.12); color: var(--blue); }
+    .mc-cyan { background: rgba(36,183,173,0.12); color: var(--cyan); }
+    .mc-gold { background: rgba(217,168,58,0.12); color: var(--gold); }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="wrap">
+
+    <div class="hero">
+      <div>
+        <div class="eyebrow">🚚 Клото · Логистика</div>
+        <h1 class="title">Отдел<br><span>логистики</span></h1>
+        <p class="sub">Расчёт стоимости и сроков доставки: автомобильный транспорт, морские контейнеры, железнодорожные вагоны.</p>
+        <div class="hero-actions">
+          <a class="btn" href="portal.html">← Портал</a>
+        </div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-title">Модули раздела</div>
+        <div class="stat-row">
+          <div class="stat-dot" style="background:var(--blue)"></div>
+          <span class="stat-label">Расчёт логистики</span>
+          <span class="stat-value" style="color:var(--blue)">Авто / Контейнер / ЖД</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Модули</div>
+    <div class="modules-grid">
+
+      <a class="module-card" href="logistic.html">
+        <div class="module-arrow">↗</div>
+        <div class="module-icon-wrap mi-blue">🚚</div>
+        <div>
+          <div class="module-name">Расчёт логистики</div>
+          <div class="module-desc">Расчёт доставки: авто, морской контейнер, Ж/Д вагон. Тарифы, сроки, стоимость.</div>
+        </div>
+        <div class="module-count mc-blue">Открыть →</div>
+      </a>
+
+      <a class="module-card" href="logistics-kpi-finance.html">
+        <div class="module-arrow">↗</div>
+        <div class="module-icon-wrap mi-cyan">📊</div>
+        <div>
+          <div class="module-name">KPI / Метрики логистики</div>
+          <div class="module-desc">26 KPI-калькуляторов: OTIF, OTD, фрахт, ОГ, таможня, маршруты, CO₂. Ежедневные, еженедельные, ежемесячные и ежеквартальные показатели.</div>
+        </div>
+        <div class="module-count mc-cyan">Открыть →</div>
+      </a>
+
+    </div>
+
+  </div>
+</body>
+</html>

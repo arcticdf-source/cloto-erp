@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPI логистики — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --card: #ffffff;
+      --card-soft: #f4f9fd;
+      --border: #c4d8f0;
+      --text: #1e2c3c;
+      --muted: #6a7f99;
+      --blue: #2b7fc6;
+      --accent2: #1f9f97;
+      --gold: #b9832c;
+      --shadow: 0 12px 28px rgba(28, 65, 110, 0.12);
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(43,127,198,0.10), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(31,159,151,0.09), transparent 36%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 1520px; margin: 0 auto; padding: 28px 20px 44px; }
+    .top { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap; }
+    .title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 800; letter-spacing: -0.03em; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 1120px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 40px; padding: 10px 14px; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--text); text-decoration: none; font-size: 13px; font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .focus {
+      margin-top: 16px; border: 1px solid var(--border); border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f0f8ff);
+      box-shadow: var(--shadow); padding: 16px; display: grid; gap: 10px;
+    }
+    .focus h2 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; }
+    .focus-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+    .focus-item { border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 10px 12px; min-width: 0; }
+    .focus-item span { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .focus-item strong { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: var(--blue); word-break: break-word; overflow-wrap: anywhere; }
+
+    .period {
+      margin-top: 16px; border: 1px solid var(--border); border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      box-shadow: var(--shadow); padding: 14px; display: grid; gap: 12px;
+    }
+    .period-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: baseline; }
+    .period-tag {
+      display: inline-flex; align-items: center; padding: 6px 10px;
+      border-radius: 999px; border: 1px solid var(--border); background: #eef6ff;
+      color: #1a6db5; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .period-title { font-family: 'Space Grotesk', sans-serif; font-size: 24px; line-height: 1.1; }
+    .period-desc { color: var(--muted); font-size: 13px; line-height: 1.65; max-width: 980px; }
+
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+    .kpi {
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--card);
+      box-shadow: var(--shadow); padding: 16px; display: grid; gap: 10px; min-width: 0;
+    }
+    .kpi h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; line-height: 1.15; }
+    .desc { font-size: 13px; line-height: 1.65; color: var(--muted); }
+
+    .formula {
+      border: 1px solid var(--border); border-radius: 12px; background: var(--card-soft);
+      padding: 10px; font-size: 13px; line-height: 1.55; color: #1a5b8f; font-weight: 600;
+    }
+
+    .example {
+      border-left: 4px solid #57a5e0; border-radius: 10px; background: #f4fafd;
+      padding: 10px 12px; font-size: 13px; line-height: 1.55;
+    }
+
+    .benchmark {
+      border: 1px solid var(--border); border-radius: 12px; background: #f9fcff;
+      padding: 10px 12px; font-size: 12px; line-height: 1.6; color: var(--muted);
+    }
+    .benchmark strong { color: var(--text); }
+
+    .calc {
+      border: 1px solid var(--border); border-radius: 12px; background: #f9fcff;
+      padding: 12px; display: grid; gap: 10px; min-width: 0;
+    }
+    .calc h4 { font-size: 13px; color: var(--blue); }
+
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .field { display: grid; gap: 5px; min-width: 0; }
+    .field label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+    .field input {
+      width: 100%; min-width: 0; max-width: 100%; min-height: 38px;
+      border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px;
+      font: inherit; color: var(--text); background: #fff; outline: none;
+    }
+
+    .result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .result-box {
+      border: 1px solid var(--border); border-radius: 10px; background: #fff;
+      padding: 8px 10px; min-width: 0; overflow: hidden;
+    }
+    .result-box span {
+      display: block; font-size: 11px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.04em; word-break: break-word; overflow-wrap: anywhere;
+    }
+    .result-box strong {
+      display: block; margin-top: 5px; font-family: 'Space Grotesk', sans-serif;
+      font-size: 19px; color: var(--blue); word-break: break-word; overflow-wrap: anywhere;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    @media (max-width: 1100px) {
+      .grid { grid-template-columns: 1fr; }
+      .fields, .result { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 class="title">KPI и метрики логистики</h1>
+        <p class="sub">Показатели для отдела логистики химического завода: DELIVERY + COST + RELIABILITY + RISK + SPEED. Охватывает 8 блоков: доставка, фрахт, затраты, автопарк, клиентский сервис, таможня и экспорт, безопасность ОГ, аналитика. Распределены по частоте контроля.</p>
+      </div>
+      <a class="btn" href="logistics-dashboard.html">← Назад в раздел логистики</a>
+      <button class="btn" id="snapBtn" type="button" title="Сформировать отчёт за текущий месяц">📋 Сформировать отчёт</button>
+    </div>
+
+    <section class="focus">
+      <h2>Главные KPI для дашборда логистики</h2>
+      <div class="focus-grid">
+        <div class="focus-item"><span>Идеальные заказы</span><strong>OTIF</strong></div>
+        <div class="focus-item"><span>Своевременность</span><strong>OTD</strong></div>
+        <div class="focus-item"><span>Фрахт / тонна</span><strong>Стоимость доставки</strong></div>
+        <div class="focus-item"><span>Загрузка ТС</span><strong>Загрузка парка</strong></div>
+        <div class="focus-item"><span>Соответствие ОГ</span><strong>DG Compliance</strong></div>
+        <div class="focus-item"><span>Идеальная отправка</span><strong>Perfect Shipment</strong></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ЕЖЕДНЕВНЫЕ ═══════════════════ -->
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Ежедневные</span>
+        <h2 class="period-title">Ежедневные KPI</h2>
+      </div>
+      <p class="period-desc">Оперативный мониторинг текущей смены: OTIF-алерты, задержки, повреждения, жалобы клиентов.</p>
+      <div class="grid">
+
+        <article class="kpi">
+          <h3>1. OTIF — Идеальные заказы</h3>
+          <p class="desc">Главный KPI логистики. Доля заказов, доставленных одновременно вовремя и в полном объёме.</p>
+          <div class="formula">OTIF = Заказов OTIF / Всего заказов × 100</div>
+          <div class="example">Пример: 782 / 850 × 100 = 92%.</div>
+          <div class="calc" data-kpi="otif">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего заказов</label><input type="number" min="0" step="1" data-f="total" value="850"></div>
+              <div class="field"><label>Доставлено OTIF</label><input type="number" min="0" step="1" data-f="filled" value="782"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>OTIF</span><strong data-r="v">0%</strong></div></div>
+          </div>
+          <div class="benchmark"><strong>Бенчмарк:</strong> &gt;98% — мировой класс · 95–98% — хорошо · &lt;95% — требует внимания</div>
+        </article>
+
+        <article class="kpi">
+          <h3>2. OTD — Доставка вовремя</h3>
+          <p class="desc">Доля доставок, выполненных в срок (без учёта полноты заказа). Отличие от OTIF: здесь только проверяется время, не количество.</p>
+          <div class="formula">OTD = Доставлено вовремя / Всего доставок × 100</div>
+          <div class="example">Пример: 1116 / 1200 × 100 = 93%.</div>
+          <div class="calc" data-kpi="otd">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего доставок</label><input type="number" min="0" step="1" data-f="total" value="1200"></div>
+              <div class="field"><label>Вовремя</label><input type="number" min="0" step="1" data-f="ontime" value="1116"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>OTD</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>3. Повреждение грузов</h3>
+          <p class="desc">Доля отправок с повреждениями. Критично для химии: упаковка, ОГ, температурный режим, коррозия.</p>
+          <div class="formula">Повреждения = Повреждённых отправок / Всего отправок × 100</div>
+          <div class="example">Пример: 7 / 1400 × 100 = 0.500%.</div>
+          <div class="calc" data-kpi="damageRate">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего отправок</label><input type="number" min="0" step="1" data-f="total" value="1400"></div>
+              <div class="field"><label>Повреждённых</label><input type="number" min="0" step="1" data-f="damaged" value="7"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Уровень повреждений</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>4. Жалобы клиентов на доставку</h3>
+          <p class="desc">Доля доставок, по которым получена претензия от клиента (опоздание, недовоз, повреждение).</p>
+          <div class="formula">Жалобы = Жалоб / Всего доставок × 100</div>
+          <div class="example">Пример: 18 / 900 × 100 = 2%.</div>
+          <div class="calc" data-kpi="complaintRate">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего доставок</label><input type="number" min="0" step="1" data-f="total" value="900"></div>
+              <div class="field"><label>Жалоб</label><input type="number" min="0" step="1" data-f="complaints" value="18"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Уровень жалоб</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ЕЖЕНЕДЕЛЬНЫЕ ═══════════════════ -->
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Еженедельные</span>
+        <h2 class="period-title">Еженедельные KPI</h2>
+      </div>
+      <p class="period-desc">Контроль скорости, стоимости фрахта, загрузки и пробегов автопарка, таможенных операций и пограничных задержек.</p>
+      <div class="grid">
+
+        <article class="kpi">
+          <h3>5. Среднее время доставки</h3>
+          <p class="desc">Среднее количество дней от отгрузки до получения клиентом.</p>
+          <div class="formula">Среднее время = Сумма дней всех доставок / Количество доставок</div>
+          <div class="example">Пример: (3 + 5 + 4) / 3 = 4 дня.</div>
+          <div class="calc" data-kpi="avgDeliveryTime">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Сумма дней (все доставки)</label><input type="number" min="0" step="0.1" data-f="totaldays" value="12"></div>
+              <div class="field"><label>Количество доставок</label><input type="number" min="1" step="1" data-f="count" value="3"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Среднее время</span><strong data-r="v">0 дн</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>6. Вариабельность сроков доставки</h3>
+          <p class="desc">Насколько нестабильны сроки: разброс (макс − мин) и среднее по 5 последним доставкам. Чем ниже разброс — тем лучше.</p>
+          <div class="formula">Разброс = Макс. время − Мин. время · Среднее = Σ времён / N</div>
+          <div class="example">Пример: 3, 5, 4, 6, 4 → среднее 4.4 дн, разброс 3 дн.</div>
+          <div class="calc" data-kpi="transitVariability">
+            <h4>Время 5 последних доставок, дней</h4>
+            <div class="fields">
+              <div class="field"><label>Доставка 1</label><input type="number" min="0" step="0.1" data-f="t1" value="3"></div>
+              <div class="field"><label>Доставка 2</label><input type="number" min="0" step="0.1" data-f="t2" value="5"></div>
+              <div class="field"><label>Доставка 3</label><input type="number" min="0" step="0.1" data-f="t3" value="4"></div>
+              <div class="field"><label>Доставка 4</label><input type="number" min="0" step="0.1" data-f="t4" value="6"></div>
+              <div class="field"><label>Доставка 5</label><input type="number" min="0" step="0.1" data-f="t5" value="4"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Среднее время</span><strong data-r="avg">0 дн</strong></div>
+              <div class="result-box"><span>Разброс (макс − мин)</span><strong data-r="range">0 дн</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>7. Стоимость фрахта на тонну</h3>
+          <p class="desc">Главный cost KPI логистики. Показывает эффективность транспортных расходов на единицу груза.</p>
+          <div class="formula">Фрахт/тонну = Общий фрахт / Доставлено тонн</div>
+          <div class="example">Пример: 240 000 / 12 000 = 20 ₽/тонну.</div>
+          <div class="calc" data-kpi="freightCostPerTon">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Общий фрахт, ₽</label><input type="number" min="0" step="1" data-f="cost" value="240000"></div>
+              <div class="field"><label>Доставлено тонн</label><input type="number" min="1" step="0.1" data-f="tons" value="12000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Фрахт / тонну</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>8. Доля фрахта в выручке</h3>
+          <p class="desc">Какой процент выручки уходит на транспортные расходы. Ключевой финансовый индикатор эффективности логистики.</p>
+          <div class="formula">Доля фрахта = Фрахт / Выручка × 100</div>
+          <div class="example">Пример: 240 000 / 6 000 000 × 100 = 4%.</div>
+          <div class="calc" data-kpi="freightCostSales">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Фрахт, ₽</label><input type="number" min="0" step="1" data-f="freight" value="240000"></div>
+              <div class="field"><label>Выручка, ₽</label><input type="number" min="1" step="1" data-f="revenue" value="6000000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доля фрахта</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>9. Загрузка транспортного средства</h3>
+          <p class="desc">Насколько полно используется грузоподъёмность ТС. Чем выше — тем меньше стоимость на тонну.</p>
+          <div class="formula">Загрузка = Фактический груз / Максимальная грузоподъёмность × 100</div>
+          <div class="example">Пример: 19.2 / 24 × 100 = 80%.</div>
+          <div class="calc" data-kpi="loadUtilization">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Грузоподъёмность, т</label><input type="number" min="1" step="0.1" data-f="capacity" value="24"></div>
+              <div class="field"><label>Фактический груз, т</label><input type="number" min="0" step="0.1" data-f="actual" value="19.2"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Загрузка ТС</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>10. Пустой пробег</h3>
+          <p class="desc">Сколько км транспорт едет без груза (обратный рейс, холостой ход). Чем меньше — тем лучше.</p>
+          <div class="formula">Пустой пробег = Пустых км / Всего км × 100</div>
+          <div class="example">Пример: 2400 / 12 000 × 100 = 20%.</div>
+          <div class="calc" data-kpi="emptyMiles">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего км</label><input type="number" min="0" step="1" data-f="total" value="12000"></div>
+              <div class="field"><label>Пустых км</label><input type="number" min="0" step="1" data-f="empty" value="2400"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Пустой пробег</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>11. Использование автопарка</h3>
+          <p class="desc">Какой процент доступного времени ТС реально работает (в рейсе, под погрузкой).</p>
+          <div class="formula">Использование = Рабочее время / Доступное время × 100</div>
+          <div class="example">Пример: 760 / 1000 × 100 = 76%.</div>
+          <div class="calc" data-kpi="fleetUtilization">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Доступно, ч</label><input type="number" min="1" step="1" data-f="available" value="1000"></div>
+              <div class="field"><label>Рабочее время, ч</label><input type="number" min="0" step="1" data-f="operating" value="760"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Использование парка</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>12. Расход топлива на км</h3>
+          <p class="desc">Эффективность использования топлива. Влияет на затраты и углеродный след.</p>
+          <div class="formula">Расход = Топливо (л) / Пробег (км)</div>
+          <div class="example">Пример: 3200 / 8000 = 0.400 л/км.</div>
+          <div class="calc" data-kpi="fuelPerKm">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Топливо, л</label><input type="number" min="0" step="1" data-f="fuel" value="3200"></div>
+              <div class="field"><label>Пробег, км</label><input type="number" min="1" step="1" data-f="distance" value="8000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Расход топлива</span><strong data-r="v">0 л/км</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>13. Простой транспорта</h3>
+          <p class="desc">Доля времени, когда ТС не работает (ремонт, техобслуживание, ожидание). Прямой ущерб для производительности.</p>
+          <div class="formula">Простой = Простой, ч / Доступно, ч × 100</div>
+          <div class="example">Пример: 240 / 1000 × 100 = 24%.</div>
+          <div class="calc" data-kpi="vehicleDowntime">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Доступно, ч</label><input type="number" min="1" step="1" data-f="available" value="1000"></div>
+              <div class="field"><label>Простой, ч</label><input type="number" min="0" step="1" data-f="downtime" value="240"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Простой</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>14. Время таможенного оформления</h3>
+          <p class="desc">Количество дней от подачи декларации до выпуска груза таможней. Критично для экспорта химии.</p>
+          <div class="formula">Время = Дата выпуска − Дата подачи декларации</div>
+          <div class="example">Пример: подача 1 июня, выпуск 5 июня → 4 дня.</div>
+          <div class="calc" data-kpi="customsClearance">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Дата подачи декларации</label><input type="date" data-f="submit" value="2026-06-01"></div>
+              <div class="field"><label>Дата выпуска груза</label><input type="date" data-f="release" value="2026-06-05"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Время оформления</span><strong data-r="v">0 дн</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>15. Задержки на границе</h3>
+          <p class="desc">Доля международных отправок, задержанных на таможне или КПП сверх стандартного срока.</p>
+          <div class="formula">Задержки = Задержанных / Всего международных отправок × 100</div>
+          <div class="example">Пример: 45 / 300 × 100 = 15%.</div>
+          <div class="calc" data-kpi="borderDelayRate">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего межд. отправок</label><input type="number" min="0" step="1" data-f="total" value="300"></div>
+              <div class="field"><label>Задержано</label><input type="number" min="0" step="1" data-f="delayed" value="45"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Задержки на границе</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ЕЖЕМЕСЯЧНЫЕ ═══════════════════ -->
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Ежемесячные</span>
+        <h2 class="period-title">Ежемесячные KPI</h2>
+      </div>
+      <p class="period-desc">Финансовый и качественный обзор: затраты, рекламации, опасные грузы, точность прогноза, маршруты, экология.</p>
+      <div class="grid">
+
+        <article class="kpi">
+          <h3>16. Логистические затраты на заказ</h3>
+          <p class="desc">Сколько в среднем стоит доставка одного заказа с учётом всех логистических расходов.</p>
+          <div class="formula">Затраты / заказ = Общие лог. затраты / Доставлено заказов</div>
+          <div class="example">Пример: 300 000 / 1500 = 200 ₽/заказ.</div>
+          <div class="calc" data-kpi="logisticsCostPerOrder">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Лог. затраты, ₽</label><input type="number" min="0" step="1" data-f="cost" value="300000"></div>
+              <div class="field"><label>Доставлено заказов</label><input type="number" min="1" step="1" data-f="orders" value="1500"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Затраты / заказ</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>17. Доля срочных отправок</h3>
+          <p class="desc">Сколько денег тратится на экстренный фрахт. Высокий показатель = проблемы с планированием и нехватка склада.</p>
+          <div class="formula">Срочный фрахт = Стоимость срочных / Весь фрахт × 100</div>
+          <div class="example">Пример: 48 000 / 240 000 × 100 = 20%.</div>
+          <div class="calc" data-kpi="expediteCost">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Весь фрахт, ₽</label><input type="number" min="1" step="1" data-f="total" value="240000"></div>
+              <div class="field"><label>Срочные отправки, ₽</label><input type="number" min="0" step="1" data-f="urgent" value="48000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Срочный фрахт</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>18. Ошибки таможенных деклараций</h3>
+          <p class="desc">Доля деклараций с ошибками, отказами в выпуске или требованием корректировки. Прямые потери: штрафы и задержки.</p>
+          <div class="formula">Ошибки = Некорректных деклараций / Всего деклараций × 100</div>
+          <div class="example">Пример: 4 / 200 × 100 = 2%.</div>
+          <div class="calc" data-kpi="customsErrorRate">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего деклараций</label><input type="number" min="0" step="1" data-f="total" value="200"></div>
+              <div class="field"><label>С ошибками</label><input type="number" min="0" step="1" data-f="errors" value="4"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Ошибки деклараций</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>19. Рекламации клиентов</h3>
+          <p class="desc">Доля отправок, по которым клиент выставил официальную претензию (недостача, опоздание, повреждение).</p>
+          <div class="formula">Рекламации = Рекламаций / Всего отправок × 100</div>
+          <div class="example">Пример: 15 / 900 × 100 = 1.67%.</div>
+          <div class="calc" data-kpi="claimRate">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего отправок</label><input type="number" min="0" step="1" data-f="total" value="900"></div>
+              <div class="field"><label>Рекламаций</label><input type="number" min="0" step="1" data-f="claims" value="15"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Рекламации</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>20. Разливы / инциденты с ОГ</h3>
+          <p class="desc">Частота разливов или нарушений целостности тары при перевозке опасных грузов. Критично для химических предприятий.</p>
+          <div class="formula">Разливы = Инцидентов с ОГ / Всего отправок × 100</div>
+          <div class="example">Пример: 2 / 1400 × 100 = 0.143%.</div>
+          <div class="calc" data-kpi="spillRate">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего отправок</label><input type="number" min="0" step="1" data-f="total" value="1400"></div>
+              <div class="field"><label>Инцидентов с ОГ</label><input type="number" min="0" step="1" data-f="spills" value="2"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Разливы ОГ</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>21. Соответствие требованиям ОГ</h3>
+          <p class="desc">Доля отправок опасных грузов, полностью соответствующих требованиям (маркировка, документы, упаковка, ADR/IMDG).</p>
+          <div class="formula">ОГ Compliance = Соответствующих / Всего отправок ОГ × 100</div>
+          <div class="example">Пример: 138 / 140 × 100 = 98.57%.</div>
+          <div class="calc" data-kpi="dgCompliance">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего отправок ОГ</label><input type="number" min="0" step="1" data-f="total" value="140"></div>
+              <div class="field"><label>Соответствующих</label><input type="number" min="0" step="1" data-f="compliant" value="138"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>ОГ Compliance</span><strong data-r="v">0%</strong></div></div>
+          </div>
+          <div class="benchmark"><strong>Норма:</strong> 100% — обязательный стандарт для химических ОГ</div>
+        </article>
+
+        <article class="kpi">
+          <h3>22. Идеальная отправка</h3>
+          <p class="desc">Отправка, которая: вовремя, без повреждений, с правильными документами, без претензий клиента. Комплексный quality KPI.</p>
+          <div class="formula">Идеальная отправка = Идеальных / Всего отправок × 100</div>
+          <div class="example">Пример: 780 / 850 × 100 = 91.76%.</div>
+          <div class="calc" data-kpi="perfectShipment">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего отправок</label><input type="number" min="0" step="1" data-f="total" value="850"></div>
+              <div class="field"><label>Идеальных отправок</label><input type="number" min="0" step="1" data-f="perfect" value="780"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Идеальная отправка</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>23. Точность прогноза</h3>
+          <p class="desc">Насколько точно прогнозируются объёмы. Влияет на планирование ТС, ёмкость склада и загрузку перевозчиков.</p>
+          <div class="formula">Точность = 100 − |Прогноз − Факт| / Факт × 100</div>
+          <div class="example">Пример: |11500 − 12000| / 12000 = 4.17% отклонение → точность 95.83%.</div>
+          <div class="calc" data-kpi="forecastAccuracy">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Прогноз (тонн / заказов)</label><input type="number" min="0" step="1" data-f="forecast" value="11500"></div>
+              <div class="field"><label>Факт</label><input type="number" min="1" step="1" data-f="actual" value="12000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Точность прогноза</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>24. Эффективность маршрута</h3>
+          <p class="desc">Насколько оптимален фактический маршрут по сравнению с теоретически кратчайшим. Показывает потенциал оптимизации.</p>
+          <div class="formula">Эффективность = Оптимальный путь / Фактический путь × 100</div>
+          <div class="example">Пример: 420 / 500 × 100 = 84%.</div>
+          <div class="calc" data-kpi="routeEfficiency">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Оптимальный путь, км</label><input type="number" min="0" step="1" data-f="optimal" value="420"></div>
+              <div class="field"><label>Фактический путь, км</label><input type="number" min="1" step="1" data-f="actual" value="500"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Эфф. маршрута</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi">
+          <h3>25. Выбросы CO₂ на тонну</h3>
+          <p class="desc">Углеродный след логистики на единицу доставленного груза. Актуально для ESG-отчётности и экспортных требований.</p>
+          <div class="formula">CO₂/тонну = Общий CO₂ (кг) / Доставлено тонн</div>
+          <div class="example">Пример: 18 000 / 12 000 = 1.500 кг CO₂/тонну.</div>
+          <div class="calc" data-kpi="co2PerTon">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Всего CO₂, кг</label><input type="number" min="0" step="1" data-f="co2" value="18000"></div>
+              <div class="field"><label>Доставлено тонн</label><input type="number" min="1" step="0.1" data-f="tons" value="12000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>CO₂ / тонну</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ЕЖЕКВАРТАЛЬНЫЕ ═══════════════════ -->
+    <section class="period">
+      <div class="period-head">
+        <span class="period-tag">Ежеквартальные</span>
+        <h2 class="period-title">Ежеквартальные KPI</h2>
+      </div>
+      <p class="period-desc">Стратегическая оценка безопасности: показатель производственного травматизма по стандарту OSHA. Критично для перевозки опасных грузов.</p>
+      <div class="grid">
+
+        <article class="kpi full">
+          <h3>26. Показатель инцидентности (TRIR)</h3>
+          <p class="desc">Стандартный показатель производственного травматизма: инциденты на 200 000 рабочих часов (норматив OSHA). Обязателен для опасных грузов и страховых отчётов.</p>
+          <div class="formula">TRIR = Инцидентов × 200 000 / Отработанных часов</div>
+          <div class="example">Пример: 3 × 200 000 / 120 000 = 5.00. Норма для транспортных компаний: ниже 3.</div>
+          <div class="calc" data-kpi="incidentRate">
+            <h4>Поля для расчёта</h4>
+            <div class="fields">
+              <div class="field"><label>Инцидентов (квартал)</label><input type="number" min="0" step="1" data-f="incidents" value="3"></div>
+              <div class="field"><label>Отработано часов</label><input type="number" min="1" step="1" data-f="hours" value="120000"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>TRIR</span><strong data-r="v">0</strong></div>
+              <div class="result-box"><span>Бенчмарк</span><strong style="font-size:12px;margin-top:6px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:600;">&lt; 3 — хорошо · &lt; 1 — отлично</strong></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    function n(v) { var x = Number(v); return Number.isFinite(x) ? x : 0; }
+    function pct(v, d) { return n(v).toFixed(d) + '%'; }
+    function num(v, d) { return n(v).toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    function rub(v) { return n(v).toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 2 }); }
+    function ratio(a, b) { return b > 0 ? (a / b) : 0; }
+
+    function input(scope, name) {
+      var el = scope.querySelector('[data-f="' + name + '"]');
+      return el ? n(el.value) : 0;
+    }
+
+    function inputStr(scope, name) {
+      var el = scope.querySelector('[data-f="' + name + '"]');
+      return el ? el.value : '';
+    }
+
+    function out(scope, name, value) {
+      var el = scope.querySelector('[data-r="' + name + '"]');
+      if (el) el.textContent = value;
+    }
+
+    var calculators = {
+      otif: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'filled'), input(scope, 'total')) * 100, 2));
+      },
+      otd: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'ontime'), input(scope, 'total')) * 100, 2));
+      },
+      damageRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'damaged'), input(scope, 'total')) * 100, 3));
+      },
+      complaintRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'complaints'), input(scope, 'total')) * 100, 2));
+      },
+      avgDeliveryTime: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'totaldays'), input(scope, 'count')), 1) + ' дн');
+      },
+      transitVariability: function(scope) {
+        var vals = ['t1', 't2', 't3', 't4', 't5']
+          .map(function(k) { return input(scope, k); })
+          .filter(function(v) { return v > 0; });
+        if (vals.length === 0) { out(scope, 'avg', '—'); out(scope, 'range', '—'); return; }
+        var avg = vals.reduce(function(s, v) { return s + v; }, 0) / vals.length;
+        var rng = Math.max.apply(null, vals) - Math.min.apply(null, vals);
+        out(scope, 'avg', num(avg, 1) + ' дн');
+        out(scope, 'range', num(rng, 1) + ' дн');
+      },
+      freightCostPerTon: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'cost'), input(scope, 'tons')), 2) + ' ₽/т');
+      },
+      freightCostSales: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'freight'), input(scope, 'revenue')) * 100, 2));
+      },
+      loadUtilization: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'actual'), input(scope, 'capacity')) * 100, 2));
+      },
+      emptyMiles: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'empty'), input(scope, 'total')) * 100, 2));
+      },
+      fleetUtilization: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'operating'), input(scope, 'available')) * 100, 2));
+      },
+      fuelPerKm: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'fuel'), input(scope, 'distance')), 3) + ' л/км');
+      },
+      vehicleDowntime: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'downtime'), input(scope, 'available')) * 100, 2));
+      },
+      customsClearance: function(scope) {
+        var s = inputStr(scope, 'submit');
+        var r = inputStr(scope, 'release');
+        if (!s || !r) { out(scope, 'v', '—'); return; }
+        var diff = Math.round((new Date(r) - new Date(s)) / 86400000);
+        out(scope, 'v', diff >= 0 ? diff + ' дн' : 'Ошибка дат');
+      },
+      borderDelayRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'delayed'), input(scope, 'total')) * 100, 2));
+      },
+      logisticsCostPerOrder: function(scope) {
+        out(scope, 'v', rub(ratio(input(scope, 'cost'), input(scope, 'orders'))));
+      },
+      expediteCost: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'urgent'), input(scope, 'total')) * 100, 2));
+      },
+      customsErrorRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'errors'), input(scope, 'total')) * 100, 2));
+      },
+      claimRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'claims'), input(scope, 'total')) * 100, 2));
+      },
+      spillRate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'spills'), input(scope, 'total')) * 100, 3));
+      },
+      dgCompliance: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'compliant'), input(scope, 'total')) * 100, 2));
+      },
+      perfectShipment: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'perfect'), input(scope, 'total')) * 100, 2));
+      },
+      forecastAccuracy: function(scope) {
+        var forecast = input(scope, 'forecast');
+        var actual = input(scope, 'actual');
+        if (actual === 0) { out(scope, 'v', '—'); return; }
+        var acc = 100 - Math.abs((forecast - actual) / actual * 100);
+        out(scope, 'v', pct(Math.max(0, acc), 2));
+      },
+      routeEfficiency: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'optimal'), input(scope, 'actual')) * 100, 2));
+      },
+      co2PerTon: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'co2'), input(scope, 'tons')), 3) + ' кг CO₂/т');
+      },
+      incidentRate: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'incidents') * 200000, input(scope, 'hours')), 2));
+      }
+    };
+
+    document.querySelectorAll('.calc').forEach(function(scope) {
+      var key = scope.dataset.kpi;
+      var run = function() { if (calculators[key]) calculators[key](scope); };
+      scope.querySelectorAll('input').forEach(function(field) {
+        field.addEventListener('input', run);
+        field.addEventListener('change', run);
+      });
+      run();
+    });
+
+    // ── Фиксация периода (снапшот KPI) ──────────────────────────────
+    (function() {
+      var DEPT = 'logistics';
+      var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+      var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+      function periodKey() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+      function labelBtn() { var d = new Date(); return '📋 Отчёт ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear(); }
+      function saveSnapshot() {
+        var snap = { period: periodKey(), dept: DEPT, savedAt: new Date().toISOString(), inputs: {}, results: {}, resultLabels: {} };
+        document.querySelectorAll('.calc').forEach(function(sc) {
+          var k = sc.getAttribute('data-kpi') || '_';
+          snap.inputs[k] = {};
+          sc.querySelectorAll('input[data-f]').forEach(function(el) { snap.inputs[k][el.getAttribute('data-f')] = el.value; });
+          snap.results[k] = {};
+          sc.querySelectorAll('strong[data-r]').forEach(function(el) {
+            var rKey = el.getAttribute('data-r'); snap.results[k][rKey] = el.textContent;
+            var sib = el.previousElementSibling; if (sib && sib.tagName === 'SPAN') snap.resultLabels[k + '.' + rKey] = sib.textContent.trim();
+          });
+        });
+        try {
+          var all = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
+          all[snap.period + '_' + DEPT] = snap;
+          localStorage.setItem(SNAP_KEY, JSON.stringify(all));
+          var btn = document.getElementById('snapBtn');
+          window.open('kpi-monthly-report.html?dept=' + DEPT + '&period=' + snap.period, '_blank');
+          if (btn) { btn.textContent = '✓ Отчёт открыт'; btn.style.cssText = 'background:#d4edda;color:#1f915e;border-color:#b8ddc4'; setTimeout(function() { btn.textContent = labelBtn(); btn.style.cssText = ''; }, 2000); }
+        } catch(e) { alert('Ошибка: ' + e.message); }
+      }
+      window.addEventListener('load', function() {
+        var btn = document.getElementById('snapBtn');
+        if (btn) { btn.textContent = labelBtn(); btn.addEventListener('click', saveSnapshot); }
+      });
+    })();
+  </script>
+</body>
+</html>

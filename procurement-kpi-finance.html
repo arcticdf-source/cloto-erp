@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Показатели отдела закупок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f2f6ef;
+      --bg2: #e4ece1;
+      --card: #ffffff;
+      --card-soft: #f7fbf4;
+      --border: #d7e2d2;
+      --text: #1f3125;
+      --muted: #627665;
+      --green: #2b7d4f;
+      --teal: #1f7f7a;
+      --gold: #b9781b;
+      --red: #c24d4d;
+      --shadow: 0 12px 26px rgba(52, 80, 57, 0.12);
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(43, 125, 79, 0.1), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(185, 120, 27, 0.1), transparent 36%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 1450px; margin: 0 auto; padding: 28px 20px 46px; }
+    .top { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap; }
+    .title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.03em; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 1020px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 14px;
+    }
+
+    .summary, .focus {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f6fbf5);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .summary h2, .focus h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 21px;
+      margin-bottom: 10px;
+    }
+
+    .summary table, .focus table { width: 100%; border-collapse: collapse; }
+    .summary th, .summary td, .focus th, .focus td {
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      padding: 8px;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    .summary th, .focus th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .kpi h3 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; line-height: 1.1; }
+    .desc { font-size: 13px; line-height: 1.65; color: var(--muted); }
+    .formula {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-soft);
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #1f5f3c;
+      font-weight: 600;
+    }
+    .example {
+      border-left: 4px solid #7bb66f;
+      border-radius: 10px;
+      background: #f7fbf5;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .interp { width: 100%; border-collapse: collapse; }
+    .interp th, .interp td { border-bottom: 1px solid var(--border); text-align: left; padding: 8px; font-size: 12px; }
+    .interp th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .calc {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fbfdf9;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+    .calc h4 { font-size: 13px; color: var(--green); }
+
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .field { display: grid; gap: 5px; min-width: 0; }
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+    .field input {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+
+    .result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .result-box span { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; word-break: break-word; overflow-wrap: anywhere; }
+    .result-box strong { display: block; margin-top: 5px; font-family: 'Space Grotesk', sans-serif; font-size: 21px; word-break: break-word; overflow-wrap: anywhere; }
+
+    .full { grid-column: 1 / -1; }
+
+    .addon-section {
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f6fbf5);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+    .addon-section h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+    }
+    .addon-section > .desc {
+      max-width: 980px;
+    }
+    .addon-group {
+      display: grid;
+      gap: 12px;
+    }
+    .addon-group h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+    }
+    .addon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .mini-kpi h3 { font-size: 18px; }
+    .mini-kpi .formula, .mini-kpi .example, .mini-kpi .desc { font-size: 12px; }
+    .mini-kpi .result-box strong { font-size: 18px; }
+    .mini-kpi .fields,
+    .mini-kpi .result {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    @media (max-width: 1100px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .fields, .result { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 class="title">Показатели и метрики отдела закупок</h1>
+        <p class="sub">Закупки химического завода отвечают сразу за пять вещей: цена, наличие, качество, сроки и устойчивость поставщиков. Поэтому метрики здесь должны показывать не просто объем закупки, а вклад в снижение себестоимости, бесперебойность производства, снижение рисков и высвобождение оборотного капитала.</p>
+      </div>
+      <a class="btn" href="procurement-department.html">← Назад в отдел закупок</a>
+      <button class="btn" id="snapBtn" type="button" title="Сформировать отчёт за текущий месяц">📋 Сформировать отчёт</button>
+    </div>
+
+    <section class="hero">
+      <div class="summary">
+        <h2>7 блоков показателей закупок</h2>
+        <table>
+          <thead><tr><th>Блок</th><th>Что контролирует</th><th>Ключевые показатели</th></tr></thead>
+          <tbody>
+            <tr><td>Экономия затрат</td><td>Снижение прямой себестоимости</td><td>Экономия закупок, предотвращенный рост цены, отклонение закупочной цены</td></tr>
+            <tr><td>Работа поставщиков</td><td>Надежность и стабильность поставщиков</td><td>Своевременность поставок, доля дефектов, срок поставки</td></tr>
+            <tr><td>Запасы</td><td>Склад и риск остановки</td><td>Оборачиваемость запасов, дни запаса, доля отсутствия сырья</td></tr>
+            <tr><td>Исполнение</td><td>Скорость процесса закупок</td><td>Скорость оформления заказа, доля срочных закупок</td></tr>
+            <tr><td>Качество</td><td>Качество входящего сырья</td><td>Проходимость входного контроля, доля претензий к поставщику</td></tr>
+            <tr><td>Финансы</td><td>Эффект на денежный поток и окупаемость</td><td>Окупаемость закупок, улучшение условий оплаты</td></tr>
+            <tr><td>Стратегические закупки</td><td>Устойчивость цепочки поставок</td><td>Зависимость от одного поставщика, контрактное покрытие</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="focus">
+        <h2>Топ-10 для химического завода</h2>
+        <table>
+          <thead><tr><th>Показатель</th><th>Почему важен</th></tr></thead>
+          <tbody>
+            <tr><td>Экономия закупок</td><td>Прямо снижает себестоимость продукции</td></tr>
+            <tr><td>Предотвращенный рост цены</td><td>Защищает маржу от роста цен</td></tr>
+            <tr><td>Своевременность поставок</td><td>Обеспечивает непрерывность производства</td></tr>
+            <tr><td>Доля дефектов поставщика</td><td>Показывает качество сырья и риск брака</td></tr>
+            <tr><td>Оборачиваемость запасов</td><td>Влияет на замороженные деньги и складскую дисциплину</td></tr>
+            <tr><td>Доля отсутствия сырья</td><td>Прямой индикатор риска остановки линии</td></tr>
+            <tr><td>Доля срочных закупок</td><td>Показывает уровень хаоса в планировании</td></tr>
+            <tr><td>Срок поставки</td><td>Формирует запас, риски и потребность в оборотке</td></tr>
+            <tr><td>Окупаемость закупок</td><td>Показывает окупаемость функции закупок</td></tr>
+            <tr><td>Эффект условий оплаты</td><td>Высвобождает оборотный капитал</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="kpi">
+        <h3>1. Экономия закупок</h3>
+        <p class="desc">Что показывает: сколько денег закупки реально сняли с себестоимости за счет снижения цены.</p>
+        <div class="formula">Формула: Экономия = (Базовая цена - Фактическая цена) × Объем закупки</div>
+        <div class="example">Пример: было 180 ₽/кг, стало 162 ₽/кг, объем 400 000 кг. Экономия = 7 200 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Интерпретация</th><th>Смысл</th></tr></thead><tbody><tr><td>Рост</td><td>Закупки реально снижают себестоимость</td></tr><tr><td>Ноль или минус</td><td>Нужно разбирать переговоры, альтернативы и спецификации</td></tr></tbody></table>
+        <div class="calc" data-kpi="savings">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Базовая цена, ₽/кг</label><input type="number" min="0" step="0.01" data-f="base" value="180"></div>
+            <div class="field"><label>Фактическая цена, ₽/кг</label><input type="number" min="0" step="0.01" data-f="actual" value="162"></div>
+            <div class="field"><label>Объем, кг</label><input type="number" min="0" step="1" data-f="qty" value="400000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Экономия, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>2. Предотвращенный рост цены</h3>
+        <p class="desc">Что показывает: сколько роста цены закупки смогли предотвратить. Это защита маржи, даже если цена формально не снизилась.</p>
+        <div class="formula">Формула: Предотвращенный рост цены = (Запрошенная цена - Согласованная цена) × Объем</div>
+        <div class="example">Пример: поставщик просил 240 ₽/кг, согласовали 212 ₽/кг при объеме 300 000 кг. Эффект = 8 400 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Экономия закупок</td><td>Цена реально стала ниже базы</td></tr><tr><td>Предотвращенный рост цены</td><td>Не дали цене вырасти до худшего сценария</td></tr></tbody></table>
+        <div class="calc" data-kpi="avoidance">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Запрошенная цена, ₽/кг</label><input type="number" min="0" step="0.01" data-f="requested" value="240"></div>
+            <div class="field"><label>Согласованная цена, ₽/кг</label><input type="number" min="0" step="0.01" data-f="agreed" value="212"></div>
+            <div class="field"><label>Объем, кг</label><input type="number" min="0" step="1" data-f="qty" value="300000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Предотвращенный рост цены, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>3. Отклонение закупочной цены</h3>
+        <p class="desc">Что показывает: отклонение фактической закупочной цены от стандарта. Это классический показатель контроля закупочной дисциплины.</p>
+        <div class="formula">Формула: Отклонение закупочной цены = (Стандартная цена - Фактическая цена) × Количество</div>
+        <div class="example">Пример: стандарт 500 ₽, факт 470 ₽, объем 100 000. Отклонение = 3 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Отклонение</th><th>Вывод</th></tr></thead><tbody><tr><td>Положительное</td><td>Купили лучше стандарта</td></tr><tr><td>Отрицательное</td><td>Переплата к бюджету</td></tr></tbody></table>
+        <div class="calc" data-kpi="ppv">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Стандартная цена, ₽</label><input type="number" min="0" step="0.01" data-f="standard" value="500"></div>
+            <div class="field"><label>Фактическая цена, ₽</label><input type="number" min="0" step="0.01" data-f="actual" value="470"></div>
+            <div class="field"><label>Количество, ед.</label><input type="number" min="0" step="1" data-f="qty" value="100000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Отклонение закупочной цены, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>4. Своевременность поставок</h3>
+        <p class="desc">Что показывает: какая доля поставок пришла вовремя. Для химзавода это прямая метрика стабильности производства.</p>
+        <div class="formula">Формула: Своевременность поставок = Поставки вовремя / Все поставки × 100</div>
+        <div class="example">Пример: 108 поставок вовремя из 120 дают 90%.</div>
+        <table class="interp"><thead><tr><th>Своевременность</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt; 95%</td><td>Отлично</td></tr><tr><td>90-95%</td><td>Нормально</td></tr><tr><td>&lt; 90%</td><td>Риск для производства</td></tr></tbody></table>
+        <div class="calc" data-kpi="otd">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Все поставки</label><input type="number" min="0" step="1" data-f="total" value="120"></div>
+            <div class="field"><label>Поставки вовремя</label><input type="number" min="0" step="1" data-f="ontime" value="108"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Своевременность поставок, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>5. Доля дефектов поставщика</h3>
+        <p class="desc">Что показывает: долю поставок с браком или отклонением по качеству. Чем выше показатель, тем выше риск брака, простоев и рекламаций.</p>
+        <div class="formula">Формула: Доля дефектов = Отклоненные поставки / Все поставки × 100</div>
+        <div class="example">Пример: из 150 поставок 6 были отклонены. Показатель = 4%.</div>
+        <table class="interp"><thead><tr><th>Уровень</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 1%</td><td>Очень хорошо</td></tr><tr><td>1-3%</td><td>Нормально</td></tr><tr><td>&gt; 3%</td><td>Нужно разбирать поставщика</td></tr></tbody></table>
+        <div class="calc" data-kpi="defect">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Все поставки</label><input type="number" min="0" step="1" data-f="total" value="150"></div>
+            <div class="field"><label>Отклонено QC</label><input type="number" min="0" step="1" data-f="rejected" value="6"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Доля дефектов, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>6. Срок поставки</h3>
+        <p class="desc">Что показывает: сколько дней проходит между заказом и фактической поставкой. Чем дольше срок поставки, тем выше склад, замороженные деньги и риск сбоя.</p>
+        <div class="formula">Формула: Срок поставки = Дата поставки - Дата заказа</div>
+        <div class="example">Пример: заказ 1 марта, поставка 21 марта. Срок поставки = 20 дней.</div>
+        <table class="interp"><thead><tr><th>Динамика</th><th>Вывод</th></tr></thead><tbody><tr><td>Сокращается</td><td>Меньше потребность в запасе</td></tr><tr><td>Растет</td><td>Увеличивается риск и потребность в оборотке</td></tr></tbody></table>
+        <div class="calc" data-kpi="leadtime">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Дата заказа</label><input type="date" data-f="po" value="2026-03-01"></div>
+            <div class="field"><label>Дата поставки</label><input type="date" data-f="delivery" value="2026-03-21"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Срок поставки, дней</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>7. Оборачиваемость запасов</h3>
+        <p class="desc">Что показывает: сколько раз за год склад сырья полностью оборачивается. Это ключевой показатель управления запасом и денежным потоком.</p>
+        <div class="formula">Формула: Оборачиваемость запасов = Себестоимость продаж / Средний запас</div>
+        <div class="example">Пример: себестоимость продаж = 24 000 000 ₽, средний склад = 4 000 000 ₽. Оборачиваемость = 6 раз.</div>
+        <table class="interp"><thead><tr><th>Оборот</th><th>Смысл</th></tr></thead><tbody><tr><td>Высокий</td><td>Меньше денег заморожено в складе</td></tr><tr><td>Низкий</td><td>Избыточный запас и медленный оборот</td></tr></tbody></table>
+        <div class="calc" data-kpi="turnover">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Себестоимость продаж, ₽</label><input type="number" min="0" step="1" data-f="cogs" value="24000000"></div>
+            <div class="field"><label>Средний запас, ₽</label><input type="number" min="0" step="1" data-f="inventory" value="4000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Оборачиваемость, раз</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>8. Дни запаса</h3>
+        <p class="desc">Что показывает: на сколько дней хватит текущего уровня запасов. Это метрика баланса между надежностью снабжения и замороженными деньгами.</p>
+        <div class="formula">Формула: Дни запаса = Средний запас / Себестоимость продаж × 365</div>
+        <div class="example">Пример: 4 000 000 / 24 000 000 × 365 = 61 день.</div>
+        <table class="interp"><thead><tr><th>Дни запаса</th><th>Вывод</th></tr></thead><tbody><tr><td>Слишком высокий</td><td>Лишний склад и давление на денежный поток</td></tr><tr><td>Слишком низкий</td><td>Риск отсутствия сырья и остановки</td></tr></tbody></table>
+        <div class="calc" data-kpi="dio">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Средний запас, ₽</label><input type="number" min="0" step="1" data-f="inventory" value="4000000"></div>
+            <div class="field"><label>Себестоимость продаж, ₽</label><input type="number" min="0" step="1" data-f="cogs" value="24000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Дни запаса, дней</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>9. Доля отсутствия сырья</h3>
+        <p class="desc">Что показывает: насколько часто завод не может закрыть запрос на сырье из-за отсутствия материала. Это один из самых критичных показателей для непрерывного производства.</p>
+        <div class="formula">Формула: Доля отсутствия сырья = События отсутствия / Все запросы на материал × 100</div>
+        <div class="example">Пример: 18 случаев отсутствия при 2 000 запросах дают 0,9%.</div>
+        <table class="interp"><thead><tr><th>Уровень</th><th>Оценка</th></tr></thead><tbody><tr><td>0%</td><td>Идеально</td></tr><tr><td>0-1%</td><td>Допустимо</td></tr><tr><td>&gt; 1%</td><td>Риск остановки производства</td></tr></tbody></table>
+        <div class="calc" data-kpi="stockout">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Все запросы на сырье</label><input type="number" min="0" step="1" data-f="requests" value="2000"></div>
+            <div class="field"><label>Случаи отсутствия</label><input type="number" min="0" step="1" data-f="events" value="18"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Доля отсутствия сырья, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>10. Доля срочных закупок</h3>
+        <p class="desc">Что показывает: какая доля заказов оформлялась срочно, вне нормального процесса. Высокое значение обычно означает слабый прогноз или плохую координацию с производством.</p>
+        <div class="formula">Формула: Доля срочных закупок = Срочные заказы поставщику / Все заказы поставщику × 100</div>
+        <div class="example">Пример: 42 срочных заказа из 300 дают 14%.</div>
+        <table class="interp"><thead><tr><th>Уровень</th><th>Вывод</th></tr></thead><tbody><tr><td>&lt; 5%</td><td>Процесс стабилен</td></tr><tr><td>5-10%</td><td>Нужен контроль</td></tr><tr><td>&gt; 10%</td><td>Высокий риск и слабое планирование</td></tr></tbody></table>
+        <div class="calc" data-kpi="emergency">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Все заказы поставщику</label><input type="number" min="0" step="1" data-f="total" value="300"></div>
+            <div class="field"><label>Срочные заказы поставщику</label><input type="number" min="0" step="1" data-f="urgent" value="42"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Доля срочных закупок, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>11. Проходимость входного контроля</h3>
+        <p class="desc">Что показывает: какая доля входящих партий проходит входной контроль без замечаний. Это показатель качества сырья и качества работы с поставщиком.</p>
+        <div class="formula">Формула: Проходимость входного контроля = Принятые партии / Все партии × 100</div>
+        <div class="example">Пример: 238 принятых партий из 250 дают 95,2%.</div>
+        <table class="interp"><thead><tr><th>Проходимость</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt; 98%</td><td>Сильное качество поставок</td></tr><tr><td>95-98%</td><td>Нормально</td></tr><tr><td>&lt; 95%</td><td>Нужно усиливать аудит и претензионную работу</td></tr></tbody></table>
+        <div class="calc" data-kpi="qcrate">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Все партии</label><input type="number" min="0" step="1" data-f="lots" value="250"></div>
+            <div class="field"><label>Принятые партии</label><input type="number" min="0" step="1" data-f="accepted" value="238"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Проходимость входного контроля, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>12. Окупаемость закупок</h3>
+        <p class="desc">Что показывает: окупается ли сама функция закупок. В сильной системе закупки должны не просто существовать, а приносить измеримый финансовый эффект.</p>
+        <div class="formula">Формула: Окупаемость закупок = (Экономия - Стоимость функции закупок) / Стоимость функции закупок × 100</div>
+        <div class="example">Пример: экономия и предотвращенные потери 24 000 000 ₽, стоимость функции 9 000 000 ₽. Окупаемость = 167%.</div>
+        <table class="interp"><thead><tr><th>Окупаемость</th><th>Вывод</th></tr></thead><tbody><tr><td>&gt; 100%</td><td>Функция закупок создает сильную ценность</td></tr><tr><td>0-100%</td><td>Эффект есть, но нужен рост</td></tr><tr><td>&lt; 0%</td><td>Функция не окупается</td></tr></tbody></table>
+        <div class="calc" data-kpi="roi">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Экономия на переговорах, ₽</label><input type="number" min="0" step="1" data-f="negotiation" value="12000000"></div>
+            <div class="field"><label>Предотвращенный рост цены, ₽</label><input type="number" min="0" step="1" data-f="avoidance" value="8000000"></div>
+            <div class="field"><label>Логистическая оптимизация, ₽</label><input type="number" min="0" step="1" data-f="logistics" value="4000000"></div>
+            <div class="field"><label>Стоимость функции закупок, ₽</label><input type="number" min="1" step="1" data-f="cost" value="9000000"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Окупаемость закупок, %</span><strong data-r="v">0%</strong></div>
+            <div class="result-box"><span>Совокупный эффект, ₽</span><strong data-r="effect">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>13. Улучшение условий оплаты</h3>
+        <p class="desc">Что показывает: какой объем оборотного капитала высвободили закупки, улучшив отсрочку оплаты. Это важнейший показатель денежного потока, который часто недооценивают.</p>
+        <div class="formula">Формула: Влияние на оборотный капитал = Дополнительные дни отсрочки × Средний дневной объем закупок</div>
+        <div class="example">Пример: было отсрочка 30 дней, стало 60 дней, объем закупок 6 000 000 ₽ в месяц. Эффект около 6 000 000 ₽ рабочего капитала.</div>
+        <table class="interp"><thead><tr><th>Результат</th><th>Смысл</th></tr></thead><tbody><tr><td>Рост</td><td>Улучшается ликвидность без внешнего финансирования</td></tr><tr><td>Ноль</td><td>Закупки не используют потенциал условий оплаты</td></tr></tbody></table>
+        <div class="calc" data-kpi="paymentterms">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Было, дней</label><input type="number" min="0" step="1" data-f="old" value="30"></div>
+            <div class="field"><label>Стало, дней</label><input type="number" min="0" step="1" data-f="new" value="60"></div>
+            <div class="field"><label>Месячный объем закупок, ₽</label><input type="number" min="0" step="1" data-f="monthly" value="6000000"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Дополнительные дни</span><strong data-r="days">0</strong></div>
+            <div class="result-box"><span>Эффект на оборотный капитал, ₽</span><strong data-r="v">0 ₽</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>14. Зависимость от одного поставщика</h3>
+        <p class="desc">Что показывает: насколько категория зависит от одного поставщика. Для критичного сырья высокий показатель означает высокий риск срыва поставок.</p>
+        <div class="formula">Формула: Зависимость = Закупки у одного поставщика / Общий объем закупок категории × 100</div>
+        <div class="example">Пример: категория 5 000 000 ₽, один поставщик закрывает 4 000 000 ₽. Зависимость = 80%.</div>
+        <table class="interp"><thead><tr><th>Зависимость</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 40%</td><td>Устойчиво</td></tr><tr><td>40-70%</td><td>Нужно контролировать</td></tr><tr><td>&gt; 70%</td><td>Опасная концентрация риска</td></tr></tbody></table>
+        <div class="calc" data-kpi="dependency">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Объем закупок категории, ₽</label><input type="number" min="0" step="1" data-f="total" value="5000000"></div>
+            <div class="field"><label>Закупки у одного поставщика, ₽</label><input type="number" min="0" step="1" data-f="single" value="4000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Зависимость от одного поставщика, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi">
+        <h3>15. Контрактное покрытие</h3>
+        <p class="desc">Что показывает: какая доля закупок покрыта контрактами. Контрактное покрытие уменьшает риск, стабилизирует цены и улучшает прогнозируемость.</p>
+        <div class="formula">Формула: Контрактное покрытие = Закупки под контрактом / Общий объем закупок × 100</div>
+        <div class="example">Пример: из 40 000 000 ₽ закупок под контрактом закрыто 31 000 000 ₽. Покрытие = 77,5%.</div>
+        <table class="interp"><thead><tr><th>Покрытие</th><th>Вывод</th></tr></thead><tbody><tr><td>&gt; 80%</td><td>Хороший контроль закупочного риска</td></tr><tr><td>60-80%</td><td>Приемлемо</td></tr><tr><td>&lt; 60%</td><td>Слишком много закупок вне рамок контрактов</td></tr></tbody></table>
+        <div class="calc" data-kpi="contract">
+          <h4>Расчет</h4>
+          <div class="fields">
+            <div class="field"><label>Общий объем закупок, ₽</label><input type="number" min="0" step="1" data-f="total" value="40000000"></div>
+            <div class="field"><label>Закупки под контрактом, ₽</label><input type="number" min="0" step="1" data-f="covered" value="31000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Контрактное покрытие, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi full">
+        <h3>Ключевые показатели директора по закупкам</h3>
+        <p class="desc">Для директора по закупкам важен не набор разрозненных цифр, а интегральная картина: экономия, защита маржи, надежность поставок, качество сырья, запас, риск концентрации и эффект на рабочий капитал.</p>
+        <div class="formula">Рекомендуемый набор для ежемесячного обзора: общая экономия, окупаемость закупок, непрерывность снабжения, дни запаса, стратегический риск поставщиков, точность прогноза, эффект на рабочий капитал.</div>
+        <div class="calc" data-kpi="director">
+          <h4>Быстрый индекс устойчивости закупок (0-100)</h4>
+          <div class="fields">
+            <div class="field"><label>Экономия к объему закупок, %</label><input type="number" min="0" step="0.1" data-f="savings" value="4.5"></div>
+            <div class="field"><label>Своевременность поставок, %</label><input type="number" min="0" step="0.1" data-f="otd" value="95"></div>
+            <div class="field"><label>Проходимость входного контроля, %</label><input type="number" min="0" step="0.1" data-f="quality" value="97"></div>
+            <div class="field"><label>Дни запаса, дней</label><input type="number" min="0" step="0.1" data-f="dio" value="61"></div>
+            <div class="field"><label>Зависимость от одного поставщика, %</label><input type="number" min="0" step="0.1" data-f="risk" value="45"></div>
+            <div class="field"><label>Окупаемость закупок, %</label><input type="number" min="-100" step="0.1" data-f="roi" value="167"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Индекс закупочной устойчивости</span><strong data-r="score">0</strong></div>
+            <div class="result-box"><span>Статус</span><strong data-r="label">-</strong></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="addon-section">
+      <div>
+        <h2>Дополнительные KPI закупок по частоте контроля</h2>
+        <p class="desc">Ниже собраны показатели, которых не было в базовом наборе: ежедневные сигналы риска по критичным материалам и задержкам, недельный контроль статуса закупок, а также квартальные стратегические индикаторы устойчивости поставщиков и категорий.</p>
+      </div>
+
+      <div class="addon-group">
+        <h3>Ежедневные</h3>
+        <div class="addon-grid">
+          <article class="kpi mini-kpi">
+            <h3>Доступность критичных материалов</h3>
+            <p class="desc">Показывает, какая доля критичных позиций обеспечена запасом выше минимального безопасного уровня.</p>
+            <div class="formula">Формула: Доступность = Обеспеченные критичные позиции / Все критичные позиции × 100</div>
+            <div class="example">Пример: из 28 критичных материалов 25 закрыты безопасным запасом. Доступность = 89,3%.</div>
+            <div class="calc" data-kpi="criticalAvailability">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Критичные позиции</label><input type="number" min="0" step="1" data-f="total" value="28"></div>
+                <div class="field"><label>Обеспеченные позиции</label><input type="number" min="0" step="1" data-f="covered" value="25"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Доступность, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Задержки поставщиков</h3>
+            <p class="desc">Показывает долю поставок, которые задерживаются относительно обещанной даты и создают риск для снабжения.</p>
+            <div class="formula">Формула: Задержки = Просроченные поставки / Все ожидаемые поставки × 100</div>
+            <div class="example">Пример: из 34 ожидаемых поставок 5 опаздывают. Показатель = 14,7%.</div>
+            <div class="calc" data-kpi="supplierDelays">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Ожидаемые поставки</label><input type="number" min="0" step="1" data-f="total" value="34"></div>
+                <div class="field"><label>Просроченные поставки</label><input type="number" min="0" step="1" data-f="delayed" value="5"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Задержки, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Отказы входного QC</h3>
+            <p class="desc">Показывает, какая доля партий за день не прошла входной контроль и потребовала блокировки или возврата.</p>
+            <div class="formula">Формула: Отказы QC = Отклоненные партии / Проверенные партии × 100</div>
+            <div class="example">Пример: за день проверили 18 партий, 2 партии отклонены. Показатель = 11,1%.</div>
+            <div class="calc" data-kpi="incomingQcFailures">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Проверенные партии</label><input type="number" min="0" step="1" data-f="checked" value="18"></div>
+                <div class="field"><label>Отклоненные партии</label><input type="number" min="0" step="1" data-f="failed" value="2"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Отказы QC, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="addon-group">
+        <h3>Еженедельные</h3>
+        <div class="addon-grid">
+          <article class="kpi mini-kpi">
+            <h3>Уровень запасов к цели</h3>
+            <p class="desc">Показывает, насколько фактический средний запас соответствует целевому уровню по неделе.</p>
+            <div class="formula">Формула: Выполнение по запасу = Фактический запас / Целевой запас × 100</div>
+            <div class="example">Пример: при цели 12 млн ₽ фактический запас 10,8 млн ₽. Выполнение = 90%.</div>
+            <div class="calc" data-kpi="inventoryLevels">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Фактический запас, ₽</label><input type="number" min="0" step="1" data-f="actual" value="10800000"></div>
+                <div class="field"><label>Целевой запас, ₽</label><input type="number" min="1" step="1" data-f="target" value="12000000"></div>
+              </div>
+              <div class="result">
+                <div class="result-box"><span>К цели, %</span><strong data-r="v">0%</strong></div>
+                <div class="result-box"><span>Отклонение, ₽</span><strong data-r="gap">0 ₽</strong></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Изменение срока поставки</h3>
+            <p class="desc">Показывает, как изменился средний срок поставки относительно базовой недели или нормативного уровня.</p>
+            <div class="formula">Формула: Изменение lead time = (Текущий срок - Базовый срок) / Базовый срок × 100</div>
+            <div class="example">Пример: срок вырос с 21 до 25 дней. Изменение = 19,0%.</div>
+            <div class="calc" data-kpi="leadTimeChanges">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Базовый срок, дней</label><input type="number" min="1" step="0.1" data-f="baseline" value="21"></div>
+                <div class="field"><label>Текущий срок, дней</label><input type="number" min="0" step="0.1" data-f="current" value="25"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Изменение, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Рейтинг поставщиков</h3>
+            <p class="desc">Сводный показатель стабильности поставщиков по срокам, качеству и цене для недельного review.</p>
+            <div class="formula">Формула: Рейтинг = (OTD + Качество + Ценовая дисциплина) / 3</div>
+            <div class="example">Пример: OTD 94%, качество 97%, дисциплина цены 92%. Итоговый рейтинг = 94,3.</div>
+            <div class="calc" data-kpi="supplierPerformance">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>OTD, %</label><input type="number" min="0" step="0.1" data-f="otd" value="94"></div>
+                <div class="field"><label>Качество, %</label><input type="number" min="0" step="0.1" data-f="quality" value="97"></div>
+                <div class="field"><label>Ценовая дисциплина, %</label><input type="number" min="0" step="0.1" data-f="cost" value="92"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Рейтинг, балл</span><strong data-r="v">0</strong></div></div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Статус открытых PO</h3>
+            <p class="desc">Показывает, какая доля открытых заказов поставщикам просрочена или требует эскалации.</p>
+            <div class="formula">Формула: Проблемные PO = Просроченные или заблокированные PO / Все открытые PO × 100</div>
+            <div class="example">Пример: из 76 открытых PO 9 находятся в красной зоне. Показатель = 11,8%.</div>
+            <div class="calc" data-kpi="openPoStatus">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Открытые PO</label><input type="number" min="0" step="1" data-f="total" value="76"></div>
+                <div class="field"><label>Проблемные PO</label><input type="number" min="0" step="1" data-f="issue" value="9"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Проблемные PO, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="addon-group">
+        <h3>Ежеквартальные</h3>
+        <div class="addon-grid">
+          <article class="kpi mini-kpi">
+            <h3>Диверсификация поставщиков</h3>
+            <p class="desc">Показывает, какая доля категорий обеспечена минимум двумя активными поставщиками.</p>
+            <div class="formula">Формула: Диверсификация = Категории с 2+ поставщиками / Все стратегические категории × 100</div>
+            <div class="example">Пример: 14 из 18 категорий имеют минимум двух активных поставщиков. Показатель = 77,8%.</div>
+            <div class="calc" data-kpi="supplierDiversification">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Стратегические категории</label><input type="number" min="0" step="1" data-f="total" value="18"></div>
+                <div class="field"><label>Категории с 2+ поставщиками</label><input type="number" min="0" step="1" data-f="diversified" value="14"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Диверсификация, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Стратегический риск поставщиков</h3>
+            <p class="desc">Показывает долю стратегических поставщиков, попавших в красную или желтую зону по риску.</p>
+            <div class="formula">Формула: Риск = Поставщики высокого риска / Все стратегические поставщики × 100</div>
+            <div class="example">Пример: из 22 стратегических поставщиков 4 имеют повышенный риск. Показатель = 18,2%.</div>
+            <div class="calc" data-kpi="strategicSupplierRisk">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Стратегические поставщики</label><input type="number" min="0" step="1" data-f="total" value="22"></div>
+                <div class="field"><label>Высокий риск</label><input type="number" min="0" step="1" data-f="risk" value="4"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Риск, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Покрытие категорий стратегией</h3>
+            <p class="desc">Показывает, какая доля ключевых категорий имеет утвержденную категорийную стратегию и план действий.</p>
+            <div class="formula">Формула: Покрытие стратегией = Категории со стратегией / Все ключевые категории × 100</div>
+            <div class="example">Пример: утверждено 11 стратегий для 15 ключевых категорий. Покрытие = 73,3%.</div>
+            <div class="calc" data-kpi="categoryStrategy">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>Ключевые категории</label><input type="number" min="0" step="1" data-f="total" value="15"></div>
+                <div class="field"><label>Категории со стратегией</label><input type="number" min="0" step="1" data-f="planned" value="11"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Покрытие, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+
+          <article class="kpi mini-kpi">
+            <h3>Покрытие аудитами поставщиков</h3>
+            <p class="desc">Показывает, какая доля запланированных аудитов поставщиков выполнена за квартал.</p>
+            <div class="formula">Формула: Выполнение аудитов = Проведенные аудиты / План аудитов × 100</div>
+            <div class="example">Пример: план 10 аудитов, проведено 8. Выполнение = 80%.</div>
+            <div class="calc" data-kpi="vendorAudits">
+              <h4>Поля для расчета</h4>
+              <div class="fields">
+                <div class="field"><label>План аудитов</label><input type="number" min="0" step="1" data-f="plan" value="10"></div>
+                <div class="field"><label>Проведенные аудиты</label><input type="number" min="0" step="1" data-f="done" value="8"></div>
+              </div>
+              <div class="result"><div class="result-box"><span>Выполнение, %</span><strong data-r="v">0%</strong></div></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function n(value) {
+      var x = Number(value);
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function pct(v, d) { return n(v).toFixed(d) + '%'; }
+    function num(v, d) { return n(v).toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    function rub(v) { return n(v).toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }); }
+
+    function input(scope, name) {
+      var el = scope.querySelector('[data-f="' + name + '"]');
+      return el ? n(el.value) : 0;
+    }
+
+    function out(scope, name, value) {
+      var el = scope.querySelector('[data-r="' + name + '"]');
+      if (el) el.textContent = value;
+    }
+
+    function ratio(numVal, denVal) {
+      return denVal > 0 ? (numVal / denVal) : 0;
+    }
+
+    function dateDiff(scope, startName, endName) {
+      var startEl = scope.querySelector('[data-f="' + startName + '"]');
+      var endEl = scope.querySelector('[data-f="' + endName + '"]');
+      var start = startEl && startEl.value ? new Date(startEl.value) : null;
+      var end = endEl && endEl.value ? new Date(endEl.value) : null;
+      if (!start || !end || isNaN(start) || isNaN(end)) return 0;
+      return Math.round((end - start) / 86400000);
+    }
+
+    var calculators = {
+      savings: function(scope) {
+        var v = (input(scope, 'base') - input(scope, 'actual')) * input(scope, 'qty');
+        out(scope, 'v', rub(v));
+      },
+      avoidance: function(scope) {
+        var v = (input(scope, 'requested') - input(scope, 'agreed')) * input(scope, 'qty');
+        out(scope, 'v', rub(v));
+      },
+      ppv: function(scope) {
+        var v = (input(scope, 'standard') - input(scope, 'actual')) * input(scope, 'qty');
+        out(scope, 'v', rub(v));
+      },
+      otd: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'ontime'), input(scope, 'total')) * 100, 2));
+      },
+      defect: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'rejected'), input(scope, 'total')) * 100, 2));
+      },
+      leadtime: function(scope) {
+        out(scope, 'v', String(dateDiff(scope, 'po', 'delivery')));
+      },
+      turnover: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'cogs'), input(scope, 'inventory')), 2));
+      },
+      dio: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'inventory'), input(scope, 'cogs')) * 365, 1));
+      },
+      stockout: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'events'), input(scope, 'requests')) * 100, 2));
+      },
+      emergency: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'urgent'), input(scope, 'total')) * 100, 2));
+      },
+      qcrate: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'accepted'), input(scope, 'lots')) * 100, 2));
+      },
+      roi: function(scope) {
+        var effect = input(scope, 'negotiation') + input(scope, 'avoidance') + input(scope, 'logistics');
+        var cost = input(scope, 'cost');
+        var roi = ratio(effect - cost, cost) * 100;
+        out(scope, 'v', pct(roi, 2));
+        out(scope, 'effect', rub(effect));
+      },
+      paymentterms: function(scope) {
+        var extraDays = input(scope, 'new') - input(scope, 'old');
+        var dailySpend = input(scope, 'monthly') / 30;
+        out(scope, 'days', num(extraDays, 0));
+        out(scope, 'v', rub(extraDays * dailySpend));
+      },
+      dependency: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'single'), input(scope, 'total')) * 100, 2));
+      },
+      contract: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'covered'), input(scope, 'total')) * 100, 2));
+      },
+      criticalAvailability: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'covered'), input(scope, 'total')) * 100, 2));
+      },
+      supplierDelays: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'delayed'), input(scope, 'total')) * 100, 2));
+      },
+      incomingQcFailures: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'failed'), input(scope, 'checked')) * 100, 2));
+      },
+      inventoryLevels: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'actual'), input(scope, 'target')) * 100, 2));
+        out(scope, 'gap', rub(input(scope, 'actual') - input(scope, 'target')));
+      },
+      leadTimeChanges: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'current') - input(scope, 'baseline'), input(scope, 'baseline')) * 100, 2));
+      },
+      supplierPerformance: function(scope) {
+        var score = (input(scope, 'otd') + input(scope, 'quality') + input(scope, 'cost')) / 3;
+        out(scope, 'v', num(score, 1));
+      },
+      openPoStatus: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'issue'), input(scope, 'total')) * 100, 2));
+      },
+      supplierDiversification: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'diversified'), input(scope, 'total')) * 100, 2));
+      },
+      strategicSupplierRisk: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'risk'), input(scope, 'total')) * 100, 2));
+      },
+      categoryStrategy: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'planned'), input(scope, 'total')) * 100, 2));
+      },
+      vendorAudits: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'done'), input(scope, 'plan')) * 100, 2));
+      },
+      director: function(scope) {
+        var savings = Math.min(input(scope, 'savings') * 8, 100);
+        var otd = Math.min(input(scope, 'otd'), 100);
+        var quality = Math.min(input(scope, 'quality'), 100);
+        var dio = Math.max(0, 100 - Math.abs(input(scope, 'dio') - 60) * 1.5);
+        var risk = Math.max(0, 100 - input(scope, 'risk'));
+        var roi = Math.max(0, Math.min(input(scope, 'roi') / 2, 100));
+        var score = (savings + otd + quality + dio + risk + roi) / 6;
+        var label = 'Требуется стабилизация';
+        if (score >= 85) label = 'Сильная функция закупок';
+        else if (score >= 70) label = 'Управляемо, но есть узкие места';
+        else if (score >= 55) label = 'Повышенный риск';
+        out(scope, 'score', num(score, 1));
+        out(scope, 'label', label);
+      }
+    };
+
+    document.querySelectorAll('.calc').forEach(function(scope) {
+      var key = scope.dataset.kpi;
+      var run = function() {
+        if (calculators[key]) calculators[key](scope);
+      };
+      scope.querySelectorAll('input').forEach(function(field) {
+        field.addEventListener('input', run);
+        field.addEventListener('change', run);
+      });
+      run();
+    });
+
+    // ── Фиксация периода (снапшот KPI) ──────────────────────────────
+    (function() {
+      var DEPT = 'procurement';
+      var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+      var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+      function periodKey() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+      function labelBtn() { var d = new Date(); return '📋 Отчёт ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear(); }
+      function saveSnapshot() {
+        var snap = { period: periodKey(), dept: DEPT, savedAt: new Date().toISOString(), inputs: {}, results: {}, resultLabels: {} };
+        document.querySelectorAll('.calc').forEach(function(sc) {
+          var k = sc.getAttribute('data-kpi') || '_';
+          snap.inputs[k] = {};
+          sc.querySelectorAll('input[data-f]').forEach(function(el) { snap.inputs[k][el.getAttribute('data-f')] = el.value; });
+          snap.results[k] = {};
+          sc.querySelectorAll('strong[data-r]').forEach(function(el) {
+            var rKey = el.getAttribute('data-r'); snap.results[k][rKey] = el.textContent;
+            var sib = el.previousElementSibling; if (sib && sib.tagName === 'SPAN') snap.resultLabels[k + '.' + rKey] = sib.textContent.trim();
+          });
+        });
+        try {
+          var all = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
+          all[snap.period + '_' + DEPT] = snap;
+          localStorage.setItem(SNAP_KEY, JSON.stringify(all));
+          var btn = document.getElementById('snapBtn');
+          window.open('kpi-monthly-report.html?dept=' + DEPT + '&period=' + snap.period, '_blank');
+          if (btn) { btn.textContent = '✓ Отчёт открыт'; btn.style.cssText = 'background:#d4edda;color:#1f915e;border-color:#b8ddc4'; setTimeout(function() { btn.textContent = labelBtn(); btn.style.cssText = ''; }, 2000); }
+        } catch(e) { alert('Ошибка: ' + e.message); }
+      }
+      window.addEventListener('load', function() {
+        var btn = document.getElementById('snapBtn');
+        if (btn) { btn.textContent = labelBtn(); btn.addEventListener('click', saveSnapshot); }
+      });
+    })();
+  </script>
+</body>
+</html>

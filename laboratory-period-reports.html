@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отчеты по периодам — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#eef4fb;--bg2:#e3edf8;--surface:#ffffff;--border:rgba(136,158,186,.28);--text:#1e2c3c;--muted:#6f839c;--blue:#3b91da;--cyan:#24b7ad}
+    body{font-family:'Inter',sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);min-height:100vh}
+    .wrap{max-width:1320px;margin:0 auto;padding:28px 20px 40px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+    .title{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:800}
+    .sub{color:var(--muted);font-size:13px;margin-top:4px}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:#fff;border:1px solid var(--border);color:var(--text);text-decoration:none;font-size:12px;font-weight:600}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px}
+    .card h2{font-family:'Space Grotesk',sans-serif;font-size:22px;margin-bottom:8px}
+    .count{color:var(--muted);font-size:12px;margin-bottom:8px}
+    .empty{color:var(--muted);font-size:13px;padding:8px 0}
+    .report{border:1px solid rgba(136,158,186,.22);border-radius:12px;padding:10px;margin-bottom:10px;background:#fbfdff}
+    .report:last-child{margin-bottom:0}
+    .report-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .report-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .r-title{font-weight:800;font-size:14px}
+    .btn-edit{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 10px;border-radius:8px;border:1px solid rgba(59,145,218,.32);background:rgba(59,145,218,.12);color:#2b6597;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap}
+    .btn-edit:hover{background:rgba(59,145,218,.2)}
+    .btn-trash{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid rgba(217,101,118,.3);background:rgba(217,101,118,.12);color:#c75365;cursor:pointer;font-size:15px;line-height:1;flex-shrink:0}
+    .btn-trash:hover{background:rgba(217,101,118,.2)}
+    .r-meta{color:var(--muted);font-size:12px;margin-top:4px;line-height:1.5}
+    .r-kpi{margin-top:8px;font-size:12px;color:#35536f}
+    .r-row{margin-top:6px;font-size:12px;color:#2b4258}
+    .r-files{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+    .file-pill{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(59,145,218,.1);border:1px solid rgba(59,145,218,.24);font-size:11px;color:#245d8f}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(19,33,50,.45);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;padding:18px;z-index:60}
+    .modal-backdrop.open{display:flex}
+    .modal{width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 20px 50px rgba(19,33,50,.26)}
+    .modal-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .modal-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700}
+    .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;color:#425b74;font-size:18px;cursor:pointer}
+    .modal-body{padding:16px 18px}
+    .modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+    .edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .field{width:100%;padding:8px 10px;border:1px solid rgba(136,158,186,.36);border-radius:8px;font:inherit;color:var(--text);background:#fff}
+    .field:focus{outline:none;border-color:#5ca9e8;box-shadow:0 0 0 2px rgba(92,169,232,.16)}
+    .edit-grid .full{grid-column:1 / -1}
+    @media (max-width:760px){.edit-grid{grid-template-columns:1fr}}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="title">Отчеты по периодам</div>
+        <div class="sub">Автоматически заполняется из страницы плана лаборатории после нажатия "Завершить задачу" в окне отчета.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" href="laboratory-work-plan.html">К плану лаборатории</a>
+        <a class="btn" href="laboratory.html">В лабораторию</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="card" id="week">
+        <h2>Недельные отчеты</h2>
+        <div class="count" id="count-week">0</div>
+        <div id="list-week"></div>
+      </section>
+      <section class="card" id="month">
+        <h2>Месячные отчеты</h2>
+        <div class="count" id="count-month">0</div>
+        <div id="list-month"></div>
+      </section>
+      <section class="card" id="quarter">
+        <h2>Квартальные отчеты</h2>
+        <div class="count" id="count-quarter">0</div>
+        <div id="list-quarter"></div>
+      </section>
+      <section class="card" id="year">
+        <h2>Годовые отчеты</h2>
+        <div class="count" id="count-year">0</div>
+        <div id="list-year"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="editReportModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editReportModalTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="editReportModalTitle">Редактировать отчет</div>
+        <button class="icon-btn" type="button" id="closeEditReportModalBtn" aria-label="Закрыть">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="edit-grid">
+          <input class="field full" id="edit-report-title" placeholder="Название отчета">
+          <input class="field" id="edit-report-owner" placeholder="Исполнитель">
+          <input class="field" id="edit-report-created" placeholder="Дата (ГГГГ-ММ-ДД)">
+          <input class="field" id="edit-report-planned" placeholder="План, ч">
+          <input class="field" id="edit-report-spent" placeholder="Факт, ч">
+          <input class="field" id="edit-report-progress" placeholder="Готовность, %">
+          <input class="field full" id="edit-report-kpi" placeholder="KPI">
+          <textarea class="field full" id="edit-report-delay" placeholder="Причины отставания" style="min-height:72px;resize:vertical"></textarea>
+          <textarea class="field full" id="edit-report-next" placeholder="Следующие шаги" style="min-height:72px;resize:vertical"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" type="button" id="cancelEditReportBtn">Отмена</button>
+        <button class="btn" type="button" id="saveEditReportBtn">Сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_laboratory_task_reports_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
+    var editingReportId = '';
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatDate(dateValue) {
+      if (!dateValue) return '—';
+      var parts = String(dateValue).split('-');
+      if (parts.length !== 3) return dateValue;
+      return parts[2] + '.' + parts[1] + '.' + parts[0].slice(2);
+    }
+
+    function deleteReport(reportId) {
+      if (!reportId) return;
+      var raw = localStorage.getItem('cloto_laboratory_task_reports_v1');
+      var reports = [];
+      try { reports = raw ? JSON.parse(raw) : []; } catch (error) {}
+      reports = reports.filter(function(item) { return item.id !== reportId; });
+      localStorage.setItem('cloto_laboratory_task_reports_v1', JSON.stringify(reports));
+      renderReports();
+    }
+
+    function getReports() {
+      var raw = localStorage.getItem('cloto_laboratory_task_reports_v1');
+      var reports = [];
+      try { reports = raw ? JSON.parse(raw) : []; } catch (error) {}
+      return reports;
+    }
+
+    function saveReports(reports) {
+      localStorage.setItem('cloto_laboratory_task_reports_v1', JSON.stringify(reports || []));
+    }
+
+    function openEditReportModal(reportId) {
+      var reports = getReports();
+      var report = reports.find(function(item) { return item.id === reportId; });
+      if (!report) return;
+      editingReportId = reportId;
+      document.getElementById('edit-report-title').value = report.taskTitle || '';
+      document.getElementById('edit-report-owner').value = report.owner || '';
+      document.getElementById('edit-report-created').value = report.createdAt || '';
+      document.getElementById('edit-report-planned').value = Number(report.plannedHours || 0);
+      document.getElementById('edit-report-spent').value = Number(report.spentHours || 0);
+      document.getElementById('edit-report-progress').value = Number(report.progress || 0);
+      document.getElementById('edit-report-kpi').value = report.keyKpi || '';
+      document.getElementById('edit-report-delay').value = report.delayReason || '';
+      document.getElementById('edit-report-next').value = report.nextSteps || '';
+      document.getElementById('editReportModal').classList.add('open');
+    }
+
+    function closeEditReportModal() {
+      editingReportId = '';
+      var modal = document.getElementById('editReportModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function saveEditedReport() {
+      if (!editingReportId) return;
+      var reports = getReports();
+      var report = reports.find(function(item) { return item.id === editingReportId; });
+      if (!report) return;
+
+      report.taskTitle = (document.getElementById('edit-report-title').value || '').trim();
+      report.owner = (document.getElementById('edit-report-owner').value || '').trim();
+      report.createdAt = (document.getElementById('edit-report-created').value || '').trim();
+      report.plannedHours = Number(document.getElementById('edit-report-planned').value || 0);
+      report.spentHours = Number(document.getElementById('edit-report-spent').value || 0);
+      report.progress = Number(document.getElementById('edit-report-progress').value || 0);
+      report.keyKpi = (document.getElementById('edit-report-kpi').value || '').trim();
+      report.delayReason = (document.getElementById('edit-report-delay').value || '').trim();
+      report.nextSteps = (document.getElementById('edit-report-next').value || '').trim();
+
+      saveReports(reports);
+      closeEditReportModal();
+      renderReports();
+    }
+
+    function initEditModal() {
+      var closeBtn = document.getElementById('closeEditReportModalBtn');
+      var cancelBtn = document.getElementById('cancelEditReportBtn');
+      var saveBtn = document.getElementById('saveEditReportBtn');
+      var modal = document.getElementById('editReportModal');
+
+      if (closeBtn) closeBtn.addEventListener('click', closeEditReportModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeEditReportModal);
+      if (saveBtn) saveBtn.addEventListener('click', saveEditedReport);
+      if (modal) {
+        modal.addEventListener('click', function(event) {
+          if (event.target === modal) closeEditReportModal();
+        });
+      }
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeEditReportModal();
+      });
+    }
+
+    function renderReports() {
+      var raw = localStorage.getItem('cloto_laboratory_task_reports_v1');
+      var reports = [];
+      try { reports = raw ? JSON.parse(raw) : []; } catch (error) {}
+
+      var activePeriod = (function() {
+        var hash = String(window.location.hash || '').replace('#', '').toLowerCase();
+        return ['week', 'month', 'quarter', 'year'].indexOf(hash) !== -1 ? hash : '';
+      })();
+
+      var periodLabels = {
+        week: 'Недельные отчеты',
+        month: 'Месячные отчеты',
+        quarter: 'Квартальные отчеты',
+        year: 'Годовые отчеты'
+      };
+
+      var gridEl = document.querySelector('.grid');
+      var titleEl = document.querySelector('.title');
+      var subEl = document.querySelector('.sub');
+      document.querySelectorAll('.card').forEach(function(card) {
+        card.style.display = (!activePeriod || card.id === activePeriod) ? '' : 'none';
+      });
+      if (gridEl) gridEl.style.gridTemplateColumns = activePeriod ? '1fr' : 'repeat(2,minmax(0,1fr))';
+      if (titleEl) titleEl.textContent = activePeriod ? periodLabels[activePeriod] : 'Отчеты по периодам';
+      if (subEl) {
+        subEl.textContent = activePeriod
+          ? ('Показаны только ' + periodLabels[activePeriod].toLowerCase() + '.')
+          : 'Автоматически заполняется из страницы плана лаборатории после нажатия "Завершить задачу" в окне отчета.';
+      }
+
+      var periods = ['week', 'month', 'quarter', 'year'];
+      periods.forEach(function(period) {
+        var listEl = document.getElementById('list-' + period);
+        var countEl = document.getElementById('count-' + period);
+        if (!listEl || !countEl) return;
+
+        var items = reports.filter(function(item) { return item.period === period; }).reverse();
+        countEl.textContent = 'Отчетов: ' + items.length;
+        if (!items.length) {
+          listEl.innerHTML = '<div class="empty">Пока нет отчетов этого периода.</div>';
+          return;
+        }
+
+        listEl.innerHTML = items.map(function(item) {
+          var doneCount = (item.technicalChecklist || []).filter(function(row) { return row.done; }).length;
+          var totalCount = (item.technicalChecklist || []).length;
+          return '<article class="report">' +
+            '<div class="report-head"><div class="r-title">' + escapeHtml(item.taskTitle || 'Без названия') + '</div><div class="report-actions"><button class="btn-edit" type="button" title="Редактировать отчет" onclick="openEditReportModal(\'' + escapeHtml(item.id || '') + '\')">Редактировать отчет</button><button class="btn-trash" type="button" title="Удалить отчет" onclick="deleteReport(\'' + escapeHtml(item.id || '') + '\')">🗑</button></div></div>' +
+            '<div class="r-meta">Исполнитель: ' + escapeHtml(item.owner || '—') + ' · Дата отчета: ' + escapeHtml(formatDate(item.createdAt)) + ' · Период задачи: ' + escapeHtml(period) + '</div>' +
+            '<div class="r-kpi">План/факт времени: ' + Math.round(Number(item.plannedHours || 0)) + ' ч / ' + Math.round(Number(item.spentHours || 0)) + ' ч</div>' +
+            '<div class="r-row">Техрезультаты: ' + doneCount + '/' + totalCount + ' · Готовность: ' + Number(item.progress || 0) + '%</div>' +
+            (item.keyKpi ? '<div class="r-row">KPI: ' + escapeHtml(item.keyKpi) + '</div>' : '') +
+            (item.delayReason ? '<div class="r-row">Причины отставания: ' + escapeHtml(item.delayReason) + '</div>' : '') +
+            (item.nextSteps ? '<div class="r-row">Следующие шаги: ' + escapeHtml(item.nextSteps) + '</div>' : '') +
+            ((item.attachments || []).length ? '<div class="r-files">' + item.attachments.map(function(file) {
+              return '<span class="file-pill">' + escapeHtml(file.name || 'Файл') + '</span>';
+            }).join('') + '</div>' : '') +
+          '</article>';
+        }).join('');
+      });
+    }
+
+    initEditModal();
+    renderReports();
+    window.addEventListener('hashchange', renderReports);
+  </script>
+</body>
+</html>

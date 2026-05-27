@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ежемесячный KPI-отчет - Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --bg: #eef4fb;
+      --card: #ffffff;
+      --border: #d7e3f2;
+      --text: #1b2940;
+      --muted: #5f7694;
+      --ok: #159a5c;
+      --warn: #c2851d;
+      --bad: #cb3e4b;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% -10%, #d8e9ff 0%, transparent 42%),
+        radial-gradient(circle at 100% 0%, #dff8f0 0%, transparent 34%),
+        linear-gradient(180deg, #eef4fb 0%, #e7eff9 100%);
+      min-height: 100vh;
+    }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px 18px;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(7px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .dept-tabs {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .dept-tab {
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0 13px;
+      font: 600 13px 'Inter', sans-serif;
+      color: var(--muted);
+      background: #fff;
+      cursor: pointer;
+    }
+    .dept-tab.active {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 35%, #ffffff);
+      background: color-mix(in srgb, var(--accent-soft) 65%, #ffffff);
+    }
+    .sel {
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font: 600 13px 'Inter', sans-serif;
+      padding: 0 10px;
+      cursor: pointer;
+    }
+    .ml-auto { margin-left: auto; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font: 600 13px 'Inter', sans-serif;
+      text-decoration: none;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+    .btn:hover { background: #f3f8ff; }
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn-accent:hover { background: #1e56ca; }
+
+    .empty {
+      max-width: 860px;
+      margin: 70px auto;
+      text-align: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 34px 24px;
+    }
+    .empty h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .empty p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+    .entry-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .report {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 24px 18px 56px;
+    }
+    .hero {
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 18px;
+      color: #fff;
+      box-shadow: var(--shadow);
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--accent) 82%, #ffffff) 0%, color-mix(in srgb, var(--accent) 58%, #0b1628) 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.2);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(27px, 4.4vw, 44px);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .hero-meta {
+      margin-top: 8px;
+      font-size: 13px;
+      opacity: 0.86;
+    }
+    .hero-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-btn {
+      display: inline-flex;
+      align-items: center;
+      height: 40px;
+      padding: 0 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font: 600 13px 'Inter', sans-serif;
+      border: 1px solid rgba(255,255,255,0.36);
+      color: #fff;
+      background: rgba(255,255,255,0.15);
+    }
+    .hero-btn.solid {
+      border-color: #fff;
+      background: #fff;
+      color: var(--accent);
+    }
+
+    .kpi-strip {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 18px;
+    }
+    @media (max-width: 980px) { .kpi-strip { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .kpi-strip { grid-template-columns: 1fr; } }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--accent);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .kpi-card .name {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .kpi-card .value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .kpi-card .delta { margin-top: 7px; font-size: 12px; font-weight: 700; }
+    .up { color: var(--ok); }
+    .dn { color: var(--bad); }
+
+    .viz-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 920px) { .viz-grid { grid-template-columns: 1fr; } }
+    .viz-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .viz-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      margin-bottom: 12px;
+    }
+    .chart-wrap { position: relative; height: 250px; }
+
+    .pbar-list { display: grid; gap: 10px; }
+    .pbar-item { display: grid; gap: 5px; }
+    .pbar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .pbar-name { font-size: 12px; font-weight: 600; }
+    .pbar-val { font-size: 14px; font-family: 'Space Grotesk', sans-serif; font-weight: 800; }
+    .pbar-track {
+      height: 9px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e8f0fa;
+    }
+    .pbar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.75s ease;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      margin: 2px 0 12px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 11px;
+      margin-bottom: 18px;
+    }
+    .m-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 14px;
+    }
+    .m-name {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+    .m-val {
+      margin-top: 4px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .history {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      overflow-x: auto;
+    }
+    .history table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .history th {
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 8px 10px;
+      white-space: nowrap;
+    }
+    .history td {
+      border-bottom: 1px solid #edf3fb;
+      padding: 8px 10px;
+      white-space: nowrap;
+    }
+    .history tr:last-child td { border-bottom: none; }
+    .td-up { color: var(--ok); font-weight: 700; }
+    .td-dn { color: var(--bad); font-weight: 700; }
+
+    @media print {
+      .nav, .hero-actions, .dept-tabs { display: none !important; }
+      body { background: #fff; }
+      .viz-card, .kpi-card, .m-card, .history { break-inside: avoid; }
+      .report { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <span class="nav-title">KPI-отчет по отделам</span>
+  <div class="dept-tabs" id="deptTabs"></div>
+  <select id="periodSel" class="sel" title="Период отчета"></select>
+  <select id="compareSel" class="sel" title="Сравнить с периодом"></select>
+  <span class="ml-auto" style="display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn" href="portal.html">Портал</a>
+    <a class="btn btn-accent" href="kpi-ceo-dashboard.html">Сводка CEO</a>
+    <button class="btn" id="exportPdfBtn" onclick="exportPDF()" style="background:#2563eb;border-color:#2563eb;color:#fff">📄 Экспорт PDF</button>
+  </span>
+</nav>
+
+<div id="root"></div>
+
+<script>
+var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+
+var DEPT_CFG = {
+  commercial:  { name: 'Коммерческий отдел', icon: '💼', color: '#2563eb', link: 'commercial-kpi-finance.html' },
+  production:  { name: 'Производство',       icon: '🏭', color: '#b45309', link: 'production-kpi-finance.html' },
+  laboratory:  { name: 'Лаборатория',        icon: '🧪', color: '#7c3aed', link: 'laboratory-kpi-finance.html' },
+  warehouse:   { name: 'Склад',              icon: '📦', color: '#0891b2', link: 'warehouse-kpi-finance.html' },
+  procurement: { name: 'Отдел закупок',      icon: '🛒', color: '#15803d', link: 'procurement-kpi-finance.html' },
+  logistics:   { name: 'Логистика',          icon: '🚚', color: '#dc2626', link: 'logistics-kpi-finance.html' }
+};
+
+var allSnaps = {};
+var chartState = {
+  volume: null,
+  trend: null,
+  split: null,
+  radar: null
+};
+
+function loadSnaps() {
+  try { allSnaps = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}'); }
+  catch (e) { allSnaps = {}; }
+}
+
+function parseParams() {
+  var out = {};
+  location.search.replace(/[?&]([^=&]+)=([^&]*)/g, function(_, k, v) {
+    out[k] = decodeURIComponent(v);
+  });
+  return out;
+}
+
+function periodToRu(period) {
+  if (!period) return '';
+  var p = period.split('-');
+  if (p.length !== 2) return period;
+  var m = parseInt(p[1], 10) - 1;
+  return MONTHS_RU[m] + ' ' + p[0];
+}
+
+function periodsForDept(dept) {
+  return Object.keys(allSnaps)
+    .filter(function(k){ return allSnaps[k].dept === dept; })
+    .map(function(k){ return allSnaps[k].period; })
+    .sort()
+    .reverse();
+}
+
+function deptsPresent() {
+  var map = {};
+  Object.keys(allSnaps).forEach(function(k){
+    var s = allSnaps[k];
+    if (s && s.dept && DEPT_CFG[s.dept]) map[s.dept] = true;
+  });
+  return Object.keys(DEPT_CFG).filter(function(d){ return !!map[d]; });
+}
+
+function snapFor(dept, period) {
+  return allSnaps[period + '_' + dept] || null;
+}
+
+function parseNum(str) {
+  if (!str) return null;
+  var s = str
+    .replace(/[₽\s\u00a0]/g, '')
+    .replace(',', '.')
+    .replace(/[^\d.\-]/g, '');
+  var n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+
+function isPercent(m) { return m.value.indexOf('%') !== -1; }
+function isMoney(m) { return m.value.indexOf('₽') !== -1; }
+
+function metricType(m) {
+  if (isPercent(m)) return 'percent';
+  if (isMoney(m)) return 'money';
+  return 'other';
+}
+
+function extractMetrics(snap) {
+  if (!snap) return [];
+  var out = [];
+  var labels = snap.resultLabels || {};
+  var results = snap.results || {};
+
+  Object.keys(results).forEach(function(kpi) {
+    Object.keys(results[kpi]).forEach(function(rk) {
+      var raw = (results[kpi][rk] || '').trim();
+      if (!raw || raw === '0' || raw === '0 ₽' || raw === '0,00') return;
+      var num = parseNum(raw);
+      if (num === 0) return;
+      var labelRaw = labels[kpi + '.' + rk] || rk;
+      var label = labelRaw.replace(/[,;]?\s*(₽|%|руб\.?|дней|день|раз|кг|т)\s*$/i, '').trim();
+      out.push({
+        kpi: kpi,
+        key: rk,
+        label: label,
+        value: raw,
+        num: num,
+        type: metricType({ value: raw })
+      });
+    });
+  });
+  return out;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function deltaText(curr, prevVal) {
+  if (!prevVal) return '';
+  var c = parseNum(curr), p = parseNum(prevVal);
+  if (c === null || p === null || p === 0) return '';
+  var pct = ((c - p) / Math.abs(p) * 100).toFixed(1);
+  var up = c >= p;
+  return '<span class="delta ' + (up ? 'up' : 'dn') + '">' + (up ? '▲ ' : '▼ ') + Math.abs(pct) + '%</span>';
+}
+
+function destroyCharts() {
+  Object.keys(chartState).forEach(function(k) {
+    if (chartState[k]) {
+      try { chartState[k].destroy(); } catch (e) {}
+      chartState[k] = null;
+    }
+  });
+}
+
+function renderEmpty() {
+  var html = '<div class="empty">'
+    + '<h2>Отчеты пока не сформированы</h2>'
+    + '<p>Откройте KPI-страницу любого отдела и нажмите кнопку "Сформировать отчет". После этого данные появятся здесь автоматически.</p>'
+    + '<div class="entry-list">';
+
+  Object.keys(DEPT_CFG).forEach(function(d) {
+    var cfg = DEPT_CFG[d];
+    html += '<a class="btn" href="' + esc(cfg.link) + '">' + cfg.icon + ' ' + esc(cfg.name) + '</a>';
+  });
+
+  html += '</div></div>';
+  document.getElementById('nav').style.display = 'none';
+  document.getElementById('root').innerHTML = html;
+  destroyCharts();
+}
+
+function makeRadarData(metrics) {
+  var top = metrics
+    .filter(function(m){ return m.num !== null; })
+    .slice()
+    .sort(function(a, b){ return Math.abs(b.num) - Math.abs(a.num); })
+    .slice(0, 6);
+
+  if (!top.length) return null;
+
+  var max = Math.max.apply(null, top.map(function(m){ return Math.abs(m.num); }));
+  if (!max) max = 1;
+
+  return {
+    labels: top.map(function(m){ return m.label.length > 22 ? m.label.slice(0, 22) + '...' : m.label; }),
+    values: top.map(function(m){ return +(Math.abs(m.num) / max * 100).toFixed(1); })
+  };
+}
+
+function renderReport(dept, period, comparePeriod) {
+  var cfg = DEPT_CFG[dept];
+  var snap = snapFor(dept, period);
+  if (!cfg || !snap) { renderEmpty(); return; }
+
+  document.documentElement.style.setProperty('--accent', cfg.color);
+  document.documentElement.style.setProperty('--accent-soft', cfg.color + '1f');
+
+  var prevSnap = comparePeriod ? snapFor(dept, comparePeriod) : null;
+  var metrics = extractMetrics(snap);
+  var prevMetrics = extractMetrics(prevSnap);
+  var prevMap = {};
+  prevMetrics.forEach(function(m){ prevMap[m.kpi + '.' + m.key] = m; });
+
+  var spotlight = metrics.slice(0, 4);
+  var percentMetrics = metrics.filter(function(m){ return m.type === 'percent'; }).slice(0, 8);
+  var valueMetrics = metrics.filter(function(m){ return m.type !== 'percent' && m.num !== null; }).slice(0, 8);
+  var restMetrics = metrics.slice(4);
+
+  var typed = { percent: 0, money: 0, other: 0 };
+  metrics.forEach(function(m){ typed[m.type] += 1; });
+
+  var savedAt = snap.savedAt
+    ? new Date(snap.savedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : '-';
+
+  var html = '<div class="report">'
+    + '<div class="hero">'
+    + '<div>'
+    + '<div class="hero-badge">' + cfg.icon + ' ' + esc(cfg.name) + '</div>'
+    + '<div class="hero-title">Отчет за ' + esc(periodToRu(period)) + '</div>'
+    + '<div class="hero-meta">Сформирован: ' + esc(savedAt)
+    + (comparePeriod ? ' · Сравнение: ' + esc(periodToRu(comparePeriod)) : '')
+    + '</div>'
+    + '</div>'
+    + '<div class="hero-actions">'
+    + '<a class="hero-btn" href="' + esc(cfg.link) + '">Изменить KPI</a>'
+    + '<a class="hero-btn solid" href="kpi-ceo-dashboard.html">Открыть сводку CEO</a>'
+    + '</div>'
+    + '</div>';
+
+  if (spotlight.length) {
+    html += '<div class="kpi-strip">';
+    spotlight.forEach(function(m) {
+      var pm = prevMap[m.kpi + '.' + m.key];
+      html += '<div class="kpi-card">'
+        + '<div class="name">' + esc(m.label) + '</div>'
+        + '<div class="value">' + esc(m.value) + '</div>'
+        + (pm ? deltaText(m.value, pm.value) : '')
+        + '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="viz-grid">'
+    + '<div class="viz-card">'
+    + '<h3>Процентные KPI и прогресс</h3>';
+
+  if (percentMetrics.length) {
+    html += '<div class="pbar-list">';
+    percentMetrics.forEach(function(m) {
+      var n = Math.abs(m.num || 0);
+      var w = Math.min(100, n);
+      var col = n >= 75 ? 'var(--ok)' : n >= 45 ? 'var(--warn)' : 'var(--bad)';
+      var pm = prevMap[m.kpi + '.' + m.key];
+      html += '<div class="pbar-item">'
+        + '<div class="pbar-top">'
+        + '<span class="pbar-name">' + esc(m.label) + '</span>'
+        + '<span class="pbar-val" style="color:' + col + '">' + esc(m.value) + (pm ? ' ' + deltaText(m.value, pm.value) : '') + '</span>'
+        + '</div>'
+        + '<div class="pbar-track"><div class="pbar-fill" style="width:' + w + '%;background:' + col + ';"></div></div>'
+        + '</div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div style="color:var(--muted);font-size:14px">В этом отчете нет процентных показателей.</div>';
+  }
+
+  html += '</div>'
+    + '<div class="viz-card">'
+    + '<h3>Топ-8 объемных показателей</h3>'
+    + '<div class="chart-wrap"><canvas id="volumeChart"></canvas></div>'
+    + '</div>'
+    + '</div>';
+
+  html += '<div class="viz-grid">'
+    + '<div class="viz-card">'
+    + '<h3>Структура показателей</h3>'
+    + '<div class="chart-wrap"><canvas id="splitChart"></canvas></div>'
+    + '</div>'
+    + '<div class="viz-card">'
+    + '<h3>Радар эффективности отдела</h3>'
+    + '<div class="chart-wrap"><canvas id="radarChart"></canvas></div>'
+    + '</div>'
+    + '</div>';
+
+  if (restMetrics.length) {
+    html += '<div class="section-title">Все показатели отдела</div><div class="metrics-grid">';
+    restMetrics.forEach(function(m) {
+      var pm = prevMap[m.kpi + '.' + m.key];
+      html += '<div class="m-card">'
+        + '<div class="m-name">' + esc(m.label) + '</div>'
+        + '<div class="m-val">' + esc(m.value) + '</div>'
+        + (pm ? '<div style="font-size:12px;font-weight:700;margin-top:4px">' + deltaText(m.value, pm.value) + '</div>' : '')
+        + '</div>';
+    });
+    html += '</div>';
+  }
+
+  var periods = periodsForDept(dept).slice().reverse();
+  if (periods.length >= 2) {
+    var keyMap = {};
+    periods.forEach(function(p) {
+      extractMetrics(snapFor(dept, p)).forEach(function(m) {
+        keyMap[m.kpi + '.' + m.key] = m.label;
+      });
+    });
+
+    var keys = Object.keys(keyMap);
+    if (keys.length) {
+      html += '<div class="section-title">История по периодам</div>'
+        + '<div class="history"><table><thead><tr><th>Показатель</th>';
+      periods.forEach(function(p){ html += '<th>' + esc(periodToRu(p)) + '</th>'; });
+      html += '</tr></thead><tbody>';
+
+      keys.forEach(function(k) {
+        html += '<tr><td>' + esc(keyMap[k]) + '</td>';
+        var prevVal = null;
+        periods.forEach(function(p) {
+          var mm = extractMetrics(snapFor(dept, p)).find(function(x){ return x.kpi + '.' + x.key === k; });
+          var val = mm ? mm.value : null;
+          var cls = '';
+          if (val && prevVal) {
+            var cv = parseNum(val);
+            var pv = parseNum(prevVal);
+            if (cv !== null && pv !== null && pv !== 0) cls = cv > pv ? ' class="td-up"' : (cv < pv ? ' class="td-dn"' : '');
+          }
+          html += '<td' + cls + '>' + (val ? esc(val) : '—') + '</td>';
+          prevVal = val;
+        });
+        html += '</tr>';
+      });
+
+      html += '</tbody></table></div>';
+    }
+  }
+
+  html += '</div>';
+
+  document.getElementById('root').innerHTML = html;
+  destroyCharts();
+
+  setTimeout(function() {
+    var volumeCanvas = document.getElementById('volumeChart');
+    var splitCanvas = document.getElementById('splitChart');
+    var radarCanvas = document.getElementById('radarChart');
+
+    if (volumeCanvas) {
+      var labels = valueMetrics.map(function(m){ return m.label; });
+      var values = valueMetrics.map(function(m){ return m.num; });
+      chartState.volume = new Chart(volumeCanvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Значение',
+            data: values,
+            borderRadius: 8,
+            backgroundColor: cfg.color + 'cc',
+            borderColor: cfg.color,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              grid: { color: '#edf4ff' },
+              ticks: {
+                color: '#5f7694',
+                callback: function(v) {
+                  if (Math.abs(v) >= 1000000) return (v / 1000000).toFixed(1) + ' млн';
+                  if (Math.abs(v) >= 1000) return (v / 1000).toFixed(0) + ' тыс';
+                  return v;
+                }
+              }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#5f7694' }
+            }
+          }
+        }
+      });
+    }
+
+    if (splitCanvas) {
+      chartState.split = new Chart(splitCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Процентные', 'Финансовые', 'Прочие'],
+          datasets: [{
+            data: [typed.percent, typed.money, typed.other],
+            backgroundColor: ['#2ea6a6', '#2f74c8', '#95a8c0'],
+            borderColor: '#ffffff',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#5f7694', boxWidth: 14 }
+            }
+          }
+        }
+      });
+    }
+
+    if (radarCanvas) {
+      var radar = makeRadarData(metrics);
+      if (radar) {
+        chartState.radar = new Chart(radarCanvas, {
+          type: 'radar',
+          data: {
+            labels: radar.labels,
+            datasets: [{
+              label: 'Индекс KPI',
+              data: radar.values,
+              backgroundColor: cfg.color + '26',
+              borderColor: cfg.color,
+              pointBackgroundColor: cfg.color,
+              pointRadius: 4,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              r: {
+                min: 0,
+                max: 100,
+                ticks: { stepSize: 20, color: '#7a8ea7', backdropColor: 'transparent' },
+                angleLines: { color: '#e6eef9' },
+                grid: { color: '#e6eef9' },
+                pointLabels: { color: '#5f7694', font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+    }
+  }, 40);
+}
+
+function renderNav(dept, period, comparePeriod) {
+  var tabsEl = document.getElementById('deptTabs');
+  var periodEl = document.getElementById('periodSel');
+  var compareEl = document.getElementById('compareSel');
+
+  var present = deptsPresent();
+  var order = ['commercial','production','laboratory','warehouse','procurement','logistics'];
+
+  tabsEl.innerHTML = '';
+  order.concat(present.filter(function(d){ return order.indexOf(d) === -1; })).forEach(function(d) {
+    if (present.indexOf(d) === -1) return;
+    var cfg = DEPT_CFG[d];
+    var b = document.createElement('button');
+    b.className = 'dept-tab' + (d === dept ? ' active' : '');
+    b.textContent = cfg.name;
+    b.onclick = function() {
+      var pp = periodsForDept(d);
+      var p = pp[0] || '';
+      history.replaceState(null, '', '?dept=' + d + (p ? '&period=' + p : ''));
+      renderAll(d, p, pp[1] || '');
+    };
+    tabsEl.appendChild(b);
+  });
+
+  var periods = periodsForDept(dept);
+  periodEl.innerHTML = periods.map(function(p) {
+    return '<option value="' + esc(p) + '"' + (p === period ? ' selected' : '') + '>' + esc(periodToRu(p)) + '</option>';
+  }).join('');
+
+  compareEl.innerHTML = '<option value="">Без сравнения</option>' + periods.map(function(p) {
+    return '<option value="' + esc(p) + '">' + esc(periodToRu(p)) + '</option>';
+  }).join('');
+
+  if (comparePeriod) compareEl.value = comparePeriod;
+  else if (periods.length >= 2) compareEl.value = periods[1];
+
+  periodEl.onchange = function() {
+    renderAll(dept, periodEl.value, compareEl.value);
+  };
+  compareEl.onchange = function() {
+    renderAll(dept, periodEl.value, compareEl.value);
+  };
+}
+
+function renderAll(dept, period, comparePeriod) {
+  loadSnaps();
+  var present = deptsPresent();
+  if (!present.length) { renderEmpty(); return; }
+
+  if (!dept || present.indexOf(dept) === -1) dept = present[0];
+  var pp = periodsForDept(dept);
+  if (!period || pp.indexOf(period) === -1) period = pp[0] || '';
+
+  document.getElementById('nav').style.display = '';
+  renderNav(dept, period, comparePeriod);
+  renderReport(dept, period, comparePeriod);
+}
+
+var params = parseParams();
+loadSnaps();
+var initDept = params.dept || '';
+var initPeriod = params.period || '';
+var initCompare = '';
+if (initDept) {
+  initCompare = periodsForDept(initDept)[1] || '';
+}
+
+renderAll(initDept, initPeriod, initCompare);
+
+window.addEventListener('storage', function(e) {
+  if (e.key === SNAP_KEY) {
+    var p = parseParams();
+    renderAll(p.dept || initDept, p.period || initPeriod, initCompare);
+  }
+});
+</script>
+
+<!-- ═══ PDF EXPORT ═══ -->
+<script>
+function exportPDF() {
+  var btn = document.getElementById('exportPdfBtn');
+  var origText = btn.textContent;
+  btn.textContent = '⏳ Генерация...';
+  btn.disabled = true;
+
+  var deptEl = document.querySelector('.nav-title');
+  var dept = deptEl ? deptEl.textContent.trim() : 'Отчет';
+  var filename = 'Клото_KPI_' + dept.replace(/\s+/g,'_') + '_' + new Date().toLocaleDateString('ru').replace(/\./g,'-') + '.pdf';
+
+  if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+    window.print();
+    btn.textContent = origText;
+    btn.disabled = false;
+    return;
+  }
+
+  var target = document.querySelector('body');
+  html2canvas(target, {
+    scale: 1.5,
+    useCORS: true,
+    backgroundColor: '#eef4fb',
+    logging: false
+  }).then(function(canvas) {
+    var jsPDF = jspdf.jsPDF;
+    var imgData = canvas.toDataURL('image/jpeg', 0.92);
+    var pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    var pdfW = pdf.internal.pageSize.getWidth();
+    var pdfH = pdf.internal.pageSize.getHeight();
+    var ratio = canvas.width / canvas.height;
+    var imgH = pdfW / ratio;
+
+    if (imgH <= pdfH) {
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, imgH);
+    } else {
+      var pageHeight = canvas.width * (pdfH / pdfW);
+      var y = 0;
+      while (y < canvas.height) {
+        var pageCanvas = document.createElement('canvas');
+        pageCanvas.width  = canvas.width;
+        pageCanvas.height = Math.min(pageHeight, canvas.height - y);
+        var ctx = pageCanvas.getContext('2d');
+        ctx.drawImage(canvas, 0, y, canvas.width, pageCanvas.height, 0, 0, canvas.width, pageCanvas.height);
+        var pageImg = pageCanvas.toDataURL('image/jpeg', 0.92);
+        var h = pdfW * (pageCanvas.height / canvas.width);
+        if (y > 0) pdf.addPage();
+        pdf.addImage(pageImg, 'JPEG', 0, 0, pdfW, h);
+        y += pageHeight;
+      }
+    }
+
+    pdf.save(filename);
+    btn.textContent = '✅ Сохранено!';
+    setTimeout(function() { btn.textContent = origText; btn.disabled = false; }, 2000);
+  }).catch(function(err) {
+    console.error('PDF error:', err);
+    window.print();
+    btn.textContent = origText;
+    btn.disabled = false;
+  });
+}
+</script>
+</body>
+</html>

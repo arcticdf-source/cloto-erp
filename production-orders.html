@@ -10,18 +10,18 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0a121a;
-      --bg2: #112131;
-      --surface: rgba(255, 255, 255, 0.05);
-      --surface2: rgba(255, 255, 255, 0.08);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #edf3fa;
-      --muted: #92a0b1;
-      --gold: #f5c95f;
-      --cyan: #5de5cf;
-      --blue: #7ebfff;
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255, 255, 255, 0.86);
+      --surface2: rgba(255, 255, 255, 0.97);
+      --border: rgba(136,158,186,0.25);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --gold: #d9a83a;
+      --cyan: #24b7ad;
+      --blue: #3b91da;
       --radius: 20px;
-      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+      --shadow: 0 14px 30px rgba(36,66,100,0.14);
     }
 
     body {
@@ -70,7 +70,7 @@
       padding: 24px;
       margin-bottom: 14px;
       background:
-        linear-gradient(135deg, rgba(245, 201, 95, 0.16), rgba(9, 17, 27, 0.34)),
+        linear-gradient(135deg, rgba(245, 201, 95, 0.16), rgba(255, 255, 255, 0.92)),
         var(--surface);
     }
 
@@ -253,10 +253,10 @@
     }
 
     .table-wrap {
-      border-radius: 18px;
+      border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(5, 13, 24, 0.5);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(247,251,255,0.92));
     }
 
     table {
@@ -265,18 +265,18 @@
       min-width: 820px;
     }
 
-    thead { background: rgba(255, 255, 255, 0.05); }
+    thead { background: rgba(227,237,248,0.72); }
 
     th,
     td {
-      padding: 14px 12px;
+      padding: 12px 12px;
       text-align: left;
       vertical-align: top;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(136,158,186,0.16);
     }
 
     th {
-      color: var(--muted);
+      color: #4a617a;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
@@ -285,11 +285,11 @@
 
     td {
       font-size: 13px;
-      color: var(--text);
+      color: #223548;
     }
 
-    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.025); }
-    tbody tr:hover { background: rgba(255, 255, 255, 0.045); }
+    tbody tr:nth-child(even) { background: rgba(227,237,248,0.20); }
+    tbody tr:hover { background: rgba(126,191,255,0.10); }
     .clickable-row { cursor: pointer; }
 
     .table-main {
@@ -311,6 +311,53 @@
     .actions-cell {
       min-width: 270px;
     }
+
+    .open-cell {
+      min-width: 130px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .open-actions {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn-open {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 34px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(59,145,218,0.28);
+      background: rgba(59,145,218,0.10);
+      color: #2f6f98;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-open:hover { background: rgba(59,145,218,0.18); }
+
+    .btn-delete {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid rgba(214, 88, 88, 0.28);
+      background: rgba(214, 88, 88, 0.10);
+      color: #a54646;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .btn-delete:hover { background: rgba(214, 88, 88, 0.18); }
 
     .status-actions {
       display: flex;
@@ -413,6 +460,7 @@
               <th>Отгрузка</th>
               <th>Объем</th>
               <th>Действия</th>
+              <th style="text-align:right">Открыть</th>
             </tr>
           </thead>
           <tbody id="production-orders-body"></tbody>
@@ -421,6 +469,10 @@
     </section>
   </div>
 
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_production_orders', 'cloto_sales_orders_new'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script>
     var PRODUCTION_ORDERS_KEY = 'cloto_production_orders';
     var NEW_ORDERS_KEY = 'cloto_sales_orders_new';
@@ -497,39 +549,195 @@
       return matched && matched.number ? String(matched.number) : '';
     }
 
+    var pendingAcceptRequestNumber = null;
+
     function syncCommercialOrderStage(order, stage) {
       var sourceOrderNumber = resolveSourceOrderNumber(order);
-      if (!sourceOrderNumber) return;
-
       var newOrders = readStorageArray(NEW_ORDERS_KEY);
-      var orderIndex = newOrders.findIndex(function(item) {
-        return normalizeValue(item && item.number) === normalizeValue(sourceOrderNumber);
-      });
+      var orderIndex = -1;
+
+      if (sourceOrderNumber) {
+        orderIndex = newOrders.findIndex(function(item) {
+          return normalizeValue(item && item.number) === normalizeValue(sourceOrderNumber);
+        });
+      }
+
+      if (orderIndex < 0) {
+        orderIndex = newOrders.findIndex(function(item) {
+          return normalizeValue(item && item.productionRequestNumber) === normalizeValue(order && order.requestNumber);
+        });
+      }
+
       if (orderIndex < 0) return;
 
-      newOrders[orderIndex] = Object.assign({}, newOrders[orderIndex], {
+      var update = {
         productionRequestNumber: order.requestNumber || '',
         productionStage: stage,
         productionStageLabel: getCommercialStageLabel(stage),
         productionStageUpdatedAt: new Date().toISOString()
-      });
+      };
+      if (stage === 'accepted' && order.productionDate) {
+        update.productionDate = order.productionDate;
+      }
+      newOrders[orderIndex] = Object.assign({}, newOrders[orderIndex], update);
       writeStorageArray(NEW_ORDERS_KEY, newOrders);
     }
 
     function setStage(requestNumber, stage, event) {
       if (event) event.stopPropagation();
+      if (stage === 'accepted') {
+        pendingAcceptRequestNumber = requestNumber;
+        var today = new Date().toISOString().slice(0, 10);
+        document.getElementById('prod-date-input').value = today;
+        document.getElementById('date-modal-overlay').style.display = 'flex';
+        return;
+      }
+      applyStage(requestNumber, stage, null);
+    }
+
+    function confirmAccepted() {
+      var requestNumber = pendingAcceptRequestNumber;
+      var dateValue = document.getElementById('prod-date-input').value;
+      closeDateModal();
+      applyStage(requestNumber, 'accepted', dateValue || null);
+    }
+
+    function closeDateModal() {
+      document.getElementById('date-modal-overlay').style.display = 'none';
+      pendingAcceptRequestNumber = null;
+    }
+
+    function writeWarehouseNotification(order) {
+      var key = 'cloto_warehouse_notifications';
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+      if (!Array.isArray(list)) list = [];
+      list = list.filter(function(n) { return n.requestNumber !== (order.requestNumber || ''); });
+      list.push({
+        requestNumber: order.requestNumber || '',
+        productName: order.productName || '',
+        volume: order.volume || '',
+        packageType: order.packageType || '',
+        accepted: false,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+
+    function todayISO() {
+      var d = new Date();
+      var mm = String(d.getMonth() + 1).padStart(2, '0');
+      var dd = String(d.getDate()).padStart(2, '0');
+      return d.getFullYear() + '-' + mm + '-' + dd;
+    }
+
+    function parseNumberRu(value) {
+      return Number(String(value || '').replace(/\s+/g, '').replace(',', '.')) || 0;
+    }
+
+    function normalizeName(value) {
+      return String(value || '').trim().toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ');
+    }
+
+    function parseProducedTons(volume) {
+      if (!volume) return 0;
+      var match = String(volume).match(/([\d]+(?:[.,][\d]+)?)\s*т/i);
+      return match ? parseNumberRu(match[1]) : 0;
+    }
+
+    function parseRecipeItems(recipeText, tons) {
+      if (!recipeText || !(tons > 0)) return [];
+      var text = String(recipeText || '');
+      var rx = /\d+\.\s*([^\n\r—-]+?)\s*[—-]\s*[\d.,]+%\s*\(([\d\s.,]+)\s*кг\s*\/\s*т\)/gi;
+      var items = [];
+      var m;
+      while ((m = rx.exec(text))) {
+        var name = String(m[1] || '').trim();
+        var kgPerTon = parseNumberRu(m[2]);
+        if (!name || !(kgPerTon > 0)) continue;
+        items.push({
+          name: name,
+          kgPerTon: kgPerTon,
+          requiredKg: Math.round((kgPerTon * tons) * 1000) / 1000
+        });
+      }
+      return items;
+    }
+
+    function applyRawConsumptionToTodaySklad(order) {
+      var tons = parseProducedTons(order && order.volume);
+      var recipeItems = parseRecipeItems(order && order.recipe, tons);
+      if (!recipeItems.length) {
+        return { applied: false, reason: 'no-recipe-items' };
+      }
+
+      var key = 'cloto_sklad_' + todayISO();
+      var data = null;
+      try { data = JSON.parse(localStorage.getItem(key) || 'null'); } catch (error) { data = null; }
+      if (!data || !Array.isArray(data.rows)) {
+        return { applied: false, reason: 'no-sklad-day' };
+      }
+
+      var appliedRows = 0;
+      recipeItems.forEach(function(item) {
+        var target = normalizeName(item.name);
+        if (!target) return;
+
+        var rowIndex = data.rows.findIndex(function(row) {
+          return row && row.cat === 'syryo' && normalizeName(row.name) === target;
+        });
+
+        if (rowIndex < 0) {
+          rowIndex = data.rows.findIndex(function(row) {
+            if (!row || row.cat !== 'syryo') return false;
+            var rowName = normalizeName(row.name);
+            return rowName.indexOf(target) >= 0 || target.indexOf(rowName) >= 0;
+          });
+        }
+
+        if (rowIndex < 0) return;
+
+        var currentCons = Number(data.rows[rowIndex].cons || 0);
+        data.rows[rowIndex].cons = Math.round((currentCons + item.requiredKg) * 1000) / 1000;
+        appliedRows += 1;
+      });
+
+      if (!appliedRows) {
+        return { applied: false, reason: 'no-matching-rows', items: recipeItems.length };
+      }
+
+      localStorage.setItem(key, JSON.stringify(data));
+      return { applied: true, rows: appliedRows, items: recipeItems.length, tons: tons };
+    }
+
+    function applyStage(requestNumber, stage, productionDate) {
       var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
       var orderIndex = orders.findIndex(function(item) {
         return String(item && item.requestNumber || '') === String(requestNumber || '');
       });
       if (orderIndex < 0) return;
 
-      orders[orderIndex] = Object.assign({}, orders[orderIndex], {
-        productionStage: stage,
-        stageUpdatedAt: new Date().toISOString()
-      });
+      var nowIso = new Date().toISOString();
+      var currentOrder = orders[orderIndex] || {};
+      var update = { productionStage: stage, stageUpdatedAt: nowIso };
+      if (stage === 'accepted' && productionDate) {
+        update.productionDate = productionDate;
+      }
+      if (stage === 'produced' && !currentOrder.rawConsumptionAppliedAt) {
+        var consumption = applyRawConsumptionToTodaySklad(currentOrder);
+        if (consumption.applied) {
+          update.rawConsumptionAppliedAt = nowIso;
+          update.rawConsumptionRows = consumption.rows;
+          update.rawConsumptionItems = consumption.items;
+          update.rawConsumptionTons = consumption.tons;
+        }
+      }
+      orders[orderIndex] = Object.assign({}, orders[orderIndex], update);
       writeStorageArray(PRODUCTION_ORDERS_KEY, orders);
       syncCommercialOrderStage(orders[orderIndex], stage);
+      if (stage === 'warehouse') {
+        writeWarehouseNotification(orders[orderIndex]);
+      }
 
       var bar = document.getElementById('status-bar');
       document.getElementById('status-title').textContent = 'Статус обновлен';
@@ -543,6 +751,26 @@
       window.location.href = 'production-order-form.html?request=' + encodeURIComponent(requestNumber);
     }
 
+    function deleteOrder(requestNumber, event) {
+      if (event) event.stopPropagation();
+      if (!requestNumber) return;
+
+      var confirmed = window.confirm('Удалить заявку ' + requestNumber + '?');
+      if (!confirmed) return;
+
+      var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
+      var nextOrders = orders.filter(function(item) {
+        return String(item && item.requestNumber || '') !== String(requestNumber);
+      });
+      writeStorageArray(PRODUCTION_ORDERS_KEY, nextOrders);
+
+      var bar = document.getElementById('status-bar');
+      document.getElementById('status-title').textContent = 'Заявка удалена';
+      document.getElementById('status-copy').textContent = 'Заявка ' + requestNumber + ' удалена из реестра производства.';
+      bar.style.display = 'block';
+      renderRegistry();
+    }
+
     function renderRegistry() {
       var orders = readStorageArray(PRODUCTION_ORDERS_KEY);
       var body = document.getElementById('production-orders-body');
@@ -551,7 +779,7 @@
       document.getElementById('draft-count').textContent = String(orders.length);
 
       if (!orders.length) {
-        body.innerHTML = '<tr><td colspan="6" class="empty-state">Реестр пока пуст. Создайте первую производственную заявку через кнопку “Новый заказ на производство”.</td></tr>';
+        body.innerHTML = '<tr><td colspan="7" class="empty-state">Реестр пока пуст. Создайте первую производственную заявку через кнопку “Новый заказ на производство”.</td></tr>';
         return;
       }
 
@@ -564,10 +792,14 @@
           '<td><div class="table-main"><strong>' + escapeHtml(order.shipmentDate || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.batchNumber || '—') + '</div></div></td>' +
           '<td><div class="table-main"><strong>' + escapeHtml(order.volume || '—') + '</strong><div class="cell-meta">' + escapeHtml(order.packageType || '—') + '</div></div></td>' +
           '<td class="actions-cell"><div class="status-actions">' +
-            '<button class="btn stage stage-accepted' + (stage === 'accepted' ? ' active' : '') + '" type="button" onclick="setStage(\'' + escapeHtml(order.requestNumber || '') + '\', \'accepted\', event)">Заказ принят</button>' +
+            '<button class="btn stage stage-accepted' + (stage === 'accepted' ? ' active' : '') + '" type="button" onclick="setStage(\'' + escapeHtml(order.requestNumber || '') + '\', \'accepted\', event)">Принять заказ</button>' +
             '<button class="btn stage stage-produced' + (stage === 'produced' ? ' active' : '') + '" type="button" onclick="setStage(\'' + escapeHtml(order.requestNumber || '') + '\', \'produced\', event)">Заказ произведен</button>' +
             '<button class="btn stage stage-warehouse' + (stage === 'warehouse' ? ' active' : '') + '" type="button" onclick="setStage(\'' + escapeHtml(order.requestNumber || '') + '\', \'warehouse\', event)">Заказ отправлен на склад</button>' +
           '</div><div class="cell-meta">Текущий этап: ' + escapeHtml(getStageLabel(stage)) + '</div></td>' +
+          '<td class="open-cell"><div class="open-actions">' +
+            '<button class="btn-delete" type="button" title="Удалить заявку" aria-label="Удалить заявку" onclick="deleteOrder(\'' + escapeHtml(order.requestNumber || '') + '\', event)">🗑</button>' +
+            '<button class="btn-open" type="button" onclick="openRequest(\'' + escapeHtml(order.requestNumber || '') + '\');event.stopPropagation();">Открыть заявку</button>' +
+          '</div></td>' +
         '</tr>';
       }).join('');
     }
@@ -578,5 +810,18 @@
       window.addEventListener('storage', renderRegistry);
     })();
   </script>
+  <!-- Accepted date modal -->
+  <div id="date-modal-overlay" onclick="if(event.target===this)closeDateModal()" style="display:none;position:fixed;inset:0;background:rgba(30,44,60,.5);backdrop-filter:blur(7px);z-index:9000;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#f7fbff;border-radius:20px;padding:28px 30px;width:min(380px,96vw);box-shadow:0 24px 48px rgba(36,66,100,.28);border:1px solid rgba(126,191,255,.28);">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:#1e2c3c;margin-bottom:6px;">Принять заказ в производство</div>
+      <div style="font-size:13px;color:#6f839c;margin-bottom:22px;line-height:1.5;">Укажите реальную дату производства</div>
+      <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6f839c;margin-bottom:7px;">Реальная дата производства</label>
+      <input type="date" id="prod-date-input" style="width:100%;padding:11px 14px;border:1px solid rgba(126,191,255,.38);border-radius:11px;font-size:14px;color:#1e2c3c;background:#fff;outline:none;margin-bottom:22px;font-family:inherit;" />
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button onclick="closeDateModal()" style="padding:10px 18px;border-radius:10px;border:1px solid rgba(136,158,186,.3);background:rgba(255,255,255,.7);color:#6f839c;font-size:13px;font-weight:700;cursor:pointer;">Отмена</button>
+        <button onclick="confirmAccepted()" style="padding:10px 20px;border-radius:10px;border:1px solid rgba(126,191,255,.40);background:rgba(59,145,218,.16);color:#1e5f8a;font-size:13px;font-weight:800;cursor:pointer;">✓ Принять заказ</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

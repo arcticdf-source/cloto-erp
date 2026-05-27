@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>КПЭ коммерческого отдела</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #eff5fb;
+      --bg2: #e2edf8;
+      --card: #ffffff;
+      --card-soft: #f7fbff;
+      --border: #d3e0ee;
+      --text: #1d2d40;
+      --muted: #627a95;
+      --blue: #2f74c8;
+      --green: #1f915e;
+      --gold: #c78521;
+      --red: #cb3e4b;
+      --shadow: 0 12px 26px rgba(40, 74, 110, 0.12);
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(47, 116, 200, 0.1), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(31, 145, 94, 0.1), transparent 34%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 28px 20px 46px; }
+    .top { display: flex; justify-content: space-between; align-items: start; gap: 14px; flex-wrap: wrap; }
+    .title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.03em; }
+    .sub { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 980px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .summary {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffffff, #f4faff);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .summary h2 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; margin-bottom: 10px; }
+    .summary table { width: 100%; border-collapse: collapse; min-width: 480px; }
+    .summary th, .summary td { border-bottom: 1px solid var(--border); text-align: left; padding: 8px; font-size: 13px; }
+    .summary th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .kpi h3 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; line-height: 1.1; }
+    .desc { font-size: 13px; line-height: 1.6; color: var(--muted); }
+    .formula {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-soft);
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #19426c;
+      font-weight: 600;
+    }
+    .example {
+      border-left: 4px solid #63b3ed;
+      border-radius: 10px;
+      background: #f7fbff;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .interp { width: 100%; border-collapse: collapse; }
+    .interp th, .interp td { border-bottom: 1px solid var(--border); text-align: left; padding: 8px; font-size: 12px; }
+    .interp th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .calc {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+    .calc h4 { font-size: 13px; color: var(--blue); }
+
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .field { display: grid; gap: 5px; min-width: 0; }
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+    .field input {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+
+    .result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .result-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .result-box span { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; word-break: break-word; overflow-wrap: anywhere; }
+    .result-box strong { display: block; margin-top: 5px; font-family: 'Space Grotesk', sans-serif; font-size: 21px; word-break: break-word; overflow-wrap: anywhere; }
+
+    .full { grid-column: 1 / -1; }
+
+    .addon-section {
+      margin-top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+    .addon-head { display: grid; gap: 6px; }
+    .addon-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .addon-copy {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 980px;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .addon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .mini-kpi h3 { font-size: 18px; }
+    .mini-kpi .formula, .mini-kpi .example, .mini-kpi .desc { font-size: 12px; }
+    .mini-kpi .result-box strong { font-size: 18px; }
+    .mini-kpi .fields,
+    .mini-kpi .result {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    @media (max-width: 1060px) {
+      .grid { grid-template-columns: 1fr; }
+      .fields, .result { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 class="title">КПЭ коммерческого отдела</h1>
+        <p class="sub">Все показатели переведены на русский язык и в рубли. В каждом КПЭ есть: что показывает, формула, пример, интерпретация и интерактивные поля ручного ввода с автоматическим расчетом.</p>
+      </div>
+      <a class="btn" href="commercial.html">← Назад в коммерческий отдел</a>
+      <button class="btn" id="snapBtn" type="button" title="Сформировать отчёт за текущий месяц">📋 Сформировать отчёт</button>
+    </div>
+
+    <section class="summary">
+      <h2>Минимальный набор КПЭ для химического В2В</h2>
+      <table>
+        <thead><tr><th>Блок</th><th>КПЭ</th></tr></thead>
+        <tbody>
+          <tr><td>Деньги</td><td>Выручка, Валовая прибыль, Валовая маржа</td></tr>
+          <tr><td>Рост</td><td>Рост продаж, Новые клиенты</td></tr>
+          <tr><td>Сделки</td><td>Доля выигранных сделок, Воронка, Покрытие воронкой</td></tr>
+          <tr><td>Скорость</td><td>Цикл продаж</td></tr>
+          <tr><td>Клиенты</td><td>Удержание, Повторные продажи, Отток клиентов</td></tr>
+          <tr><td>Эффективность</td><td>Валовая прибыль на менеджера, стоимость привлечения клиента, соотношение ценности к стоимости привлечения</td></tr>
+          <tr><td>Финдисциплина</td><td>Оплата вовремя</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid">
+      <article class="kpi" id="k1">
+        <h3>1. Выручка</h3>
+        <p class="desc">Что показывает: сколько денег отдел продаж принес по отгруженным заказам.</p>
+        <div class="formula">Формула: Выручка = сумма всех продаж</div>
+        <div class="example">Пример: 5 000 000 ₽ + 8 000 000 ₽ + 12 000 000 ₽ = 25 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Вывод</th></tr></thead><tbody><tr><td>Растет</td><td>Есть рост бизнеса</td></tr><tr><td>Падает</td><td>Нужна диагностика спроса и цен</td></tr></tbody></table>
+        <div class="calc" data-kpi="revenue">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Продажа 1, ₽</label><input type="number" min="0" step="1" data-f="s1" value="5000000"></div>
+            <div class="field"><label>Продажа 2, ₽</label><input type="number" min="0" step="1" data-f="s2" value="8000000"></div>
+            <div class="field"><label>Продажа 3, ₽</label><input type="number" min="0" step="1" data-f="s3" value="12000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Выручка, ₽</span><strong data-r="rev">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k2">
+        <h3>2. Валовая прибыль</h3>
+        <p class="desc">Что показывает: сколько компания заработала после себестоимости.</p>
+        <div class="formula">Формула: Валовая прибыль = Выручка - Себестоимость</div>
+        <div class="example">Пример: 25 000 000 ₽ - 17 000 000 ₽ = 8 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Вывод</th></tr></thead><tbody><tr><td>&gt; 0</td><td>Продажи создают ценность</td></tr><tr><td>&lt;= 0</td><td>Продажи убыточные</td></tr></tbody></table>
+        <div class="calc" data-kpi="grossprofit">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Выручка, ₽</label><input type="number" min="0" step="1" data-f="rev" value="25000000"></div>
+            <div class="field"><label>Себестоимость, ₽</label><input type="number" min="0" step="1" data-f="cogs" value="17000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Валовая прибыль, ₽</span><strong data-r="gp">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k3">
+        <h3>3. Валовая маржа, %</h3>
+        <p class="desc">Что показывает: доля выручки, которая остается валовой прибылью.</p>
+        <div class="formula">Формула: Валовая маржа % = (Валовая прибыль / Выручка) × 100</div>
+        <div class="example">Пример: (8 000 000 / 25 000 000) × 100 = 32%.</div>
+        <table class="interp"><thead><tr><th>Маржа</th><th>Оценка</th></tr></thead><tbody><tr><td>10-15%</td><td>Слабая</td></tr><tr><td>20-30%</td><td>Нормально</td></tr><tr><td>&gt; 30%</td><td>Хорошо</td></tr></tbody></table>
+        <div class="calc" data-kpi="grossmargin">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Валовая прибыль, ₽</label><input type="number" min="0" step="1" data-f="gp" value="8000000"></div>
+            <div class="field"><label>Выручка, ₽</label><input type="number" min="0" step="1" data-f="rev" value="25000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Валовая маржа, %</span><strong data-r="gm">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k4">
+        <h3>4. Рост продаж, %</h3>
+        <p class="desc">Что показывает: растут или падают продажи относительно прошлого периода.</p>
+        <div class="formula">Формула: Рост % = (Текущий период - Прошлый период) / Прошлый период × 100</div>
+        <div class="example">Пример: (25 000 000 - 20 000 000) / 20 000 000 × 100 = 25%.</div>
+        <table class="interp"><thead><tr><th>Рост</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt; 0%</td><td>Бизнес растет</td></tr><tr><td>0%</td><td>Без динамики</td></tr><tr><td>&lt; 0%</td><td>Падение</td></tr></tbody></table>
+        <div class="calc" data-kpi="growth">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Прошлый период, ₽</label><input type="number" min="0" step="1" data-f="prev" value="20000000"></div>
+            <div class="field"><label>Текущий период, ₽</label><input type="number" min="0" step="1" data-f="curr" value="25000000"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Рост продаж, %</span><strong data-r="growth">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k5">
+        <h3>5. Конверсия лидов, %</h3>
+        <p class="desc">Что показывает: какая доля входящих лидов стала продажами.</p>
+        <div class="formula">Формула: Конверсия лидов = Выигранные сделки / Всего лидов × 100</div>
+        <div class="example">Пример: 12 / 100 × 100 = 12%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Вывод</th></tr></thead><tbody><tr><td>Низкое</td><td>Проблема в качестве лидов или работе менеджеров</td></tr><tr><td>Высокое</td><td>Воронка лидов качественная</td></tr></tbody></table>
+        <div class="calc" data-kpi="leadconv">
+          <h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Всего лидов</label><input type="number" min="0" step="1" data-f="leads" value="100"></div><div class="field"><label>Выиграно сделок</label><input type="number" min="0" step="1" data-f="won" value="12"></div></div>
+          <div class="result"><div class="result-box"><span>Конверсия лидов, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k6">
+        <h3>6. Доля выигранных сделок, %</h3>
+        <p class="desc">Что показывает: доля выигранных сделок среди реальных возможностей.</p>
+        <div class="formula">Формула: Доля выигранных сделок = Выиграно / (Выиграно + Проиграно) × 100</div>
+        <div class="example">Пример: 18 / (18 + 32) × 100 = 36%.</div>
+        <table class="interp"><thead><tr><th>Доля выигрыша</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 25%</td><td>Слабая работа с шансами</td></tr><tr><td>25-40%</td><td>Нормально</td></tr><tr><td>&gt; 40%</td><td>Сильная продажа</td></tr></tbody></table>
+        <div class="calc" data-kpi="winrate">
+          <h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Выиграно</label><input type="number" min="0" step="1" data-f="won" value="18"></div><div class="field"><label>Проиграно</label><input type="number" min="0" step="1" data-f="lost" value="32"></div></div>
+          <div class="result"><div class="result-box"><span>Доля выигранных сделок, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k7">
+        <h3>7. Конверсия КП в продажу, %</h3>
+        <p class="desc">Что показывает: доля отправленных КП, завершившихся продажей.</p>
+        <div class="formula">Формула: Конверсия КП = Выиграно сделок / Отправлено КП × 100</div>
+        <div class="example">Пример: 10 / 40 × 100 = 25%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Вывод</th></tr></thead><tbody><tr><td>Низкое</td><td>Проблема в цене, условиях или закрытии</td></tr><tr><td>Высокое</td><td>КП работают эффективно</td></tr></tbody></table>
+        <div class="calc" data-kpi="proposalwin">
+          <h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Отправлено КП</label><input type="number" min="0" step="1" data-f="prop" value="40"></div><div class="field"><label>Выиграно сделок</label><input type="number" min="0" step="1" data-f="won" value="10"></div></div>
+          <div class="result"><div class="result-box"><span>Конверсия КП, %</span><strong data-r="v">0%</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k8">
+        <h3>8. Объем воронки, ₽</h3>
+        <p class="desc">Что показывает: сумму потенциальных продаж в активной работе.</p>
+        <div class="formula">Формула: Объем воронки = сумма всех активных сделок</div>
+        <div class="example">Пример: 10 000 000 ₽ + 25 000 000 ₽ + 8 000 000 ₽ = 43 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Важно</th><th>Комментарий</th></tr></thead><tbody><tr><td>Воронка</td><td>Это потенциальные, а не гарантированные деньги</td></tr></tbody></table>
+        <div class="calc" data-kpi="pipeline">
+          <h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Сделка 1, ₽</label><input type="number" min="0" step="1" data-f="a" value="10000000"></div><div class="field"><label>Сделка 2, ₽</label><input type="number" min="0" step="1" data-f="b" value="25000000"></div><div class="field"><label>Сделка 3, ₽</label><input type="number" min="0" step="1" data-f="c" value="8000000"></div></div>
+          <div class="result"><div class="result-box"><span>Объем воронки, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k9">
+        <h3>9. Взвешенная воронка, ₽</h3>
+        <p class="desc">Что показывает: реалистичный прогноз с учетом вероятности закрытия.</p>
+        <div class="formula">Формула: Взвешенная воронка = сумма (Сумма сделки × Вероятность)</div>
+        <div class="example">Пример: 10 000 000 × 70% + 25 000 000 × 40% + 8 000 000 × 20% = 18 600 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Важно</th><th>Комментарий</th></tr></thead><tbody><tr><td>Взвешенная</td><td>Ближе к реальности, чем обычная воронка</td></tr></tbody></table>
+        <div class="calc" data-kpi="weighted">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Сделка 1, ₽</label><input type="number" min="0" step="1" data-f="a" value="10000000"></div>
+            <div class="field"><label>Вероятность 1, %</label><input type="number" min="0" max="100" step="1" data-f="pa" value="70"></div>
+            <div class="field"><label>Сделка 2, ₽</label><input type="number" min="0" step="1" data-f="b" value="25000000"></div>
+            <div class="field"><label>Вероятность 2, %</label><input type="number" min="0" max="100" step="1" data-f="pb" value="40"></div>
+            <div class="field"><label>Сделка 3, ₽</label><input type="number" min="0" step="1" data-f="c" value="8000000"></div>
+            <div class="field"><label>Вероятность 3, %</label><input type="number" min="0" max="100" step="1" data-f="pc" value="20"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Взвешенная воронка, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k10">
+        <h3>10. Покрытие воронкой, раз</h3>
+        <p class="desc">Что показывает: хватает ли активных сделок для выполнения плана продаж.</p>
+        <div class="formula">Формула: Покрытие = Объем воронки / План продаж</div>
+        <div class="example">Пример: 90 000 000 ₽ / 30 000 000 ₽ = 3 раза.</div>
+        <table class="interp"><thead><tr><th>Покрытие</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 2 раз</td><td>Опасно</td></tr><tr><td>3 раз</td><td>Нормально</td></tr><tr><td>4 раз и выше</td><td>Хорошо</td></tr></tbody></table>
+        <div class="calc" data-kpi="coverage"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Воронка, ₽</label><input type="number" min="0" step="1" data-f="pipe" value="90000000"></div><div class="field"><label>План продаж, ₽</label><input type="number" min="0" step="1" data-f="target" value="30000000"></div></div><div class="result"><div class="result-box"><span>Покрытие, раз</span><strong data-r="v">0 раз</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k11">
+        <h3>11. Средний размер сделки, ₽</h3>
+        <p class="desc">Что показывает: средний чек по выигранным сделкам.</p>
+        <div class="formula">Формула: Средняя сделка = Общая выручка / Кол-во выигранных сделок</div>
+        <div class="example">Пример: 50 000 000 ₽ / 10 = 5 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Динамика</th><th>Вывод</th></tr></thead><tbody><tr><td>Растет</td><td>Выход на более крупных клиентов</td></tr><tr><td>Падает</td><td>Снижение качества сделок</td></tr></tbody></table>
+        <div class="calc" data-kpi="avgdeal"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Выручка, ₽</label><input type="number" min="0" step="1" data-f="rev" value="50000000"></div><div class="field"><label>Выиграно сделок</label><input type="number" min="0" step="1" data-f="won" value="10"></div></div><div class="result"><div class="result-box"><span>Средний чек, ₽</span><strong data-r="v">0 ₽</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k12">
+        <h3>12. Длина цикла продаж, дней</h3>
+        <p class="desc">Что показывает: время от первого контакта до закрытия сделки.</p>
+        <div class="formula">Формула: Цикл продаж = Дата закрытия - Дата первого контакта</div>
+        <div class="example">Пример: 01.03.2026 -> 20.04.2026 = 50 дней.</div>
+        <table class="interp"><thead><tr><th>Цикл</th><th>Оценка</th></tr></thead><tbody><tr><td>Сокращается</td><td>Быстрее оборот денег</td></tr><tr><td>Растет</td><td>Деньги дольше в переговорах</td></tr></tbody></table>
+        <div class="calc" data-kpi="cycle">
+          <h4>Поля для расчета</h4>
+          <div class="fields">
+            <div class="field"><label>Первый контакт</label><input type="date" data-f="start" value="2026-03-01"></div>
+            <div class="field"><label>Закрытие сделки</label><input type="date" data-f="close" value="2026-04-20"></div>
+          </div>
+          <div class="result"><div class="result-box"><span>Цикл продаж, дней</span><strong data-r="v">0</strong></div></div>
+        </div>
+      </article>
+
+      <article class="kpi" id="k13">
+        <h3>13. Точность прогноза, %</h3>
+        <p class="desc">Что показывает: насколько точны прогнозы продаж.</p>
+        <div class="formula">Формула: Точность = 100 - |(Прогноз - Факт) / Факт × 100|</div>
+        <div class="example">Пример: прогноз 100 000 000 ₽, факт 90 000 000 ₽ -> точность 88,9%.</div>
+        <table class="interp"><thead><tr><th>Точность</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt;= 90%</td><td>Можно доверять планированию</td></tr><tr><td>80-90%</td><td>Нормально</td></tr><tr><td>&lt; 80%</td><td>Высокий риск планирования</td></tr></tbody></table>
+        <div class="calc" data-kpi="forecast"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Прогноз, ₽</label><input type="number" min="0" step="1" data-f="forecast" value="100000000"></div><div class="field"><label>Факт, ₽</label><input type="number" min="0" step="1" data-f="actual" value="90000000"></div></div><div class="result"><div class="result-box"><span>Точность, %</span><strong data-r="v">0%</strong></div><div class="result-box"><span>Ошибка, %</span><strong data-r="err">0%</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k14">
+        <h3>14. Удержание клиентов, %</h3>
+        <p class="desc">Что показывает: сколько клиентов удалось удержать.</p>
+        <div class="formula">Формула: Удержание = (Клиенты в конце - Новые) / Клиенты в начале × 100</div>
+        <div class="example">Пример: (115 - 25) / 100 × 100 = 90%.</div>
+        <table class="interp"><thead><tr><th>Удержание</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt;= 90%</td><td>Хорошо</td></tr><tr><td>80-90%</td><td>Нормально</td></tr><tr><td>&lt; 80%</td><td>Риск потери базы</td></tr></tbody></table>
+        <div class="calc" data-kpi="retention"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Клиентов в начале</label><input type="number" min="0" step="1" data-f="start" value="100"></div><div class="field"><label>Клиентов в конце</label><input type="number" min="0" step="1" data-f="end" value="115"></div><div class="field"><label>Новых клиентов</label><input type="number" min="0" step="1" data-f="new" value="25"></div></div><div class="result"><div class="result-box"><span>Удержание, %</span><strong data-r="v">0%</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k15">
+        <h3>15. Доля повторных продаж, %</h3>
+        <p class="desc">Что показывает: какой процент клиентов покупает повторно.</p>
+        <div class="formula">Формула: Доля повторных продаж = Повторные клиенты / Всего клиентов × 100</div>
+        <div class="example">Пример: 52 / 80 × 100 = 65%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Вывод</th></tr></thead><tbody><tr><td>Высокое</td><td>Клиент доволен качеством и сервисом</td></tr><tr><td>Низкое</td><td>Нужна работа с повторными заказами</td></tr></tbody></table>
+        <div class="calc" data-kpi="repeat"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Всего клиентов</label><input type="number" min="0" step="1" data-f="total" value="80"></div><div class="field"><label>Повторно купили</label><input type="number" min="0" step="1" data-f="repeat" value="52"></div></div><div class="result"><div class="result-box"><span>Повторные продажи, %</span><strong data-r="v">0%</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k16">
+        <h3>16. Новые клиенты, шт.</h3>
+        <p class="desc">Что показывает: сколько новых клиентов привлек отдел продаж.</p>
+        <div class="formula">Формула: Новые клиенты = количество новых клиентов</div>
+        <div class="example">Пример: за месяц привлечено 12 новых клиентов.</div>
+        <table class="interp"><thead><tr><th>Важно</th><th>Комментарий</th></tr></thead><tbody><tr><td>Нельзя отдельно</td><td>Оценивайте вместе с маржой и платежной дисциплиной</td></tr></tbody></table>
+        <div class="calc" data-kpi="newcustomers"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Новые клиенты, шт.</label><input type="number" min="0" step="1" data-f="n" value="12"></div></div><div class="result"><div class="result-box"><span>Новые клиенты, шт.</span><strong data-r="v">0</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k17">
+        <h3>17. Выручка на менеджера, ₽</h3>
+        <p class="desc">Что показывает: сколько выручки приносит один менеджер.</p>
+        <div class="formula">Формула: Выручка на менеджера = Общая выручка / Кол-во менеджеров</div>
+        <div class="example">Пример: 100 000 000 ₽ / 5 = 20 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Динамика</th><th>Вывод</th></tr></thead><tbody><tr><td>Растет</td><td>Повышается продуктивность</td></tr><tr><td>Падает</td><td>Перегруз, слабая воронка или слабые продажи</td></tr></tbody></table>
+        <div class="calc" data-kpi="revper"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Общая выручка, ₽</label><input type="number" min="0" step="1" data-f="rev" value="100000000"></div><div class="field"><label>Менеджеров, шт.</label><input type="number" min="1" step="1" data-f="people" value="5"></div></div><div class="result"><div class="result-box"><span>Выручка на менеджера, ₽</span><strong data-r="v">0 ₽</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k18">
+        <h3>18. Валовая прибыль на менеджера, ₽</h3>
+        <p class="desc">Что показывает: реальный вклад менеджера через прибыль, а не оборот.</p>
+        <div class="formula">Формула: Валовая прибыль на менеджера = Валовая прибыль / Кол-во менеджеров</div>
+        <div class="example">Пример: 30 000 000 ₽ / 5 = 6 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Важно</th><th>Комментарий</th></tr></thead><tbody><tr><td>Лучше выручки</td><td>Показывает качество продаж по марже</td></tr></tbody></table>
+        <div class="calc" data-kpi="gpper"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Валовая прибыль, ₽</label><input type="number" min="0" step="1" data-f="gp" value="30000000"></div><div class="field"><label>Менеджеров, шт.</label><input type="number" min="1" step="1" data-f="people" value="5"></div></div><div class="result"><div class="result-box"><span>Валовая прибыль на менеджера, ₽</span><strong data-r="v">0 ₽</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k19">
+        <h3>19. Доля расходов на продажи, %</h3>
+        <p class="desc">Что показывает: сколько стоит отдел продаж относительно выручки.</p>
+        <div class="formula">Формула: Доля расходов на продажи = Расходы отдела продаж / Выручка × 100</div>
+        <div class="example">Пример: 9 000 000 ₽ / 100 000 000 ₽ × 100 = 9%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 10%</td><td>Эффективно</td></tr><tr><td>10-15%</td><td>Нормально</td></tr><tr><td>&gt; 15%</td><td>Высокая нагрузка</td></tr></tbody></table>
+        <div class="calc" data-kpi="expenseratio"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Расходы отдела продаж, ₽</label><input type="number" min="0" step="1" data-f="costs" value="9000000"></div><div class="field"><label>Выручка, ₽</label><input type="number" min="0" step="1" data-f="rev" value="100000000"></div></div><div class="result"><div class="result-box"><span>Доля расходов на продажи, %</span><strong data-r="v">0%</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k20">
+        <h3>20. Стоимость привлечения клиента, ₽</h3>
+        <p class="desc">Что показывает: стоимость привлечения одного нового клиента.</p>
+        <div class="formula">Формула: Стоимость привлечения клиента = (Расходы на продажи + Расходы на маркетинг) / Новые клиенты</div>
+        <div class="example">Пример: (6 000 000 ₽ + 0 ₽) / 20 = 300 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Стоимость привлечения</th><th>Вывод</th></tr></thead><tbody><tr><td>Ниже валовой прибыли на клиента</td><td>Окупаемо</td></tr><tr><td>Выше прибыли на клиента</td><td>Привлечение убыточно</td></tr></tbody></table>
+        <div class="calc" data-kpi="cac"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Расходы продаж + маркетинга, ₽</label><input type="number" min="0" step="1" data-f="cost" value="6000000"></div><div class="field"><label>Новые клиенты, шт.</label><input type="number" min="1" step="1" data-f="new" value="20"></div></div><div class="result"><div class="result-box"><span>Стоимость привлечения, ₽</span><strong data-r="v">0 ₽</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k21">
+        <h3>21. Пожизненная ценность клиента, ₽</h3>
+        <p class="desc">Что показывает: сколько валовой прибыли принесет клиент за весь срок работы.</p>
+        <div class="formula">Формула: Пожизненная ценность клиента = Годовая валовая прибыль от клиента × Средний срок жизни клиента</div>
+        <div class="example">Пример: 4 000 000 ₽ × 5 лет = 20 000 000 ₽.</div>
+        <table class="interp"><thead><tr><th>Пожизненная ценность</th><th>Оценка</th></tr></thead><tbody><tr><td>Растет</td><td>Усиление качества клиентской базы</td></tr><tr><td>Падает</td><td>Снижение ценности клиентов</td></tr></tbody></table>
+        <div class="calc" data-kpi="ltv"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Годовая валовая прибыль, ₽</label><input type="number" min="0" step="1" data-f="gp" value="4000000"></div><div class="field"><label>Срок жизни клиента, лет</label><input type="number" min="0" step="0.1" data-f="years" value="5"></div></div><div class="result"><div class="result-box"><span>Пожизненная ценность, ₽</span><strong data-r="v">0 ₽</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k22">
+        <h3>22. Соотношение ценности к стоимости привлечения, раз</h3>
+        <p class="desc">Что показывает: окупается ли привлечение клиента и насколько.</p>
+        <div class="formula">Формула: Соотношение ценности к стоимости привлечения = Пожизненная ценность клиента / Стоимость привлечения клиента</div>
+        <div class="example">Пример: 20 000 000 ₽ / 1 000 000 ₽ = 20.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 1</td><td>Вы теряете деньги</td></tr><tr><td>3+</td><td>Хорошо</td></tr><tr><td>10+</td><td>Отлично для В2В</td></tr></tbody></table>
+        <div class="calc" data-kpi="ltvcac"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Пожизненная ценность клиента, ₽</label><input type="number" min="0" step="1" data-f="ltv" value="20000000"></div><div class="field"><label>Стоимость привлечения клиента, ₽</label><input type="number" min="1" step="1" data-f="cac" value="1000000"></div></div><div class="result"><div class="result-box"><span>Соотношение ценности к стоимости привлечения, раз</span><strong data-r="v">0</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k23">
+        <h3>23. Отток клиентов, %</h3>
+        <p class="desc">Что показывает: какая доля клиентов ушла в периоде.</p>
+        <div class="formula">Формула: Отток = Потерянные клиенты / Клиенты в начале × 100</div>
+        <div class="example">Пример: 8 / 100 × 100 = 8%.</div>
+        <table class="interp"><thead><tr><th>Отток</th><th>Оценка</th></tr></thead><tbody><tr><td>&lt; 5%</td><td>Хорошо</td></tr><tr><td>5-10%</td><td>Нормально</td></tr><tr><td>&gt; 10%</td><td>Высокий риск потери базы</td></tr></tbody></table>
+        <div class="calc" data-kpi="churn"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Клиентов в начале</label><input type="number" min="0" step="1" data-f="start" value="100"></div><div class="field"><label>Потеряно клиентов</label><input type="number" min="0" step="1" data-f="lost" value="8"></div></div><div class="result"><div class="result-box"><span>Отток, %</span><strong data-r="v">0%</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k24">
+        <h3>24. Доля в закупках клиента, %</h3>
+        <p class="desc">Что показывает: какую долю потребности клиента вы закрываете.</p>
+        <div class="formula">Формула: Доля в закупках = Ваши продажи клиенту / Общие закупки клиента в категории × 100</div>
+        <div class="example">Пример: 25 000 000 ₽ / 100 000 000 ₽ × 100 = 25%.</div>
+        <table class="interp"><thead><tr><th>Доля в закупках</th><th>Вывод</th></tr></thead><tbody><tr><td>Низкая</td><td>Есть резерв для роста внутри клиента</td></tr><tr><td>Высокая</td><td>Клиент хорошо развит в портфеле</td></tr></tbody></table>
+        <div class="calc" data-kpi="wallet"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Ваши продажи клиенту, ₽</label><input type="number" min="0" step="1" data-f="yours" value="25000000"></div><div class="field"><label>Общие закупки клиента, ₽</label><input type="number" min="0" step="1" data-f="total" value="100000000"></div></div><div class="result"><div class="result-box"><span>Доля в закупках, %</span><strong data-r="v">0%</strong></div></div></div>
+      </article>
+
+      <article class="kpi" id="k25">
+        <h3>25. Оплата вовремя, %</h3>
+        <p class="desc">Что показывает: какой процент счетов клиенты оплачивают вовремя.</p>
+        <div class="formula">Формула: Оплата вовремя = Счета, оплаченные вовремя / Всего счетов × 100</div>
+        <div class="example">Пример: 82 / 100 × 100 = 82%.</div>
+        <table class="interp"><thead><tr><th>Значение</th><th>Оценка</th></tr></thead><tbody><tr><td>&gt;= 90%</td><td>Высокая финансовая дисциплина</td></tr><tr><td>75-90%</td><td>Нормально</td></tr><tr><td>&lt; 75%</td><td>Риск кассовых разрывов</td></tr></tbody></table>
+        <div class="calc" data-kpi="ontime"><h4>Поля для расчета</h4><div class="fields"><div class="field"><label>Всего счетов</label><input type="number" min="0" step="1" data-f="all" value="100"></div><div class="field"><label>Оплачено вовремя</label><input type="number" min="0" step="1" data-f="ontime" value="82"></div></div><div class="result"><div class="result-box"><span>Оплата вовремя, %</span><strong data-r="v">0%</strong></div></div></div>
+      </article>
+
+    </section>
+
+    <section class="addon-section">
+      <div class="addon-head">
+        <div class="addon-title">Дополнительные КПЭ продаж</div>
+        <div class="addon-copy">Здесь собраны метрики, которых не было в базовом наборе: ежедневный контроль активности, недельный обзор, ежемесячный финансовый обзор и квартальные стратегические показатели.</div>
+      </div>
+
+      <div class="addon-head">
+        <div class="addon-copy">Эти КПЭ показывают текущее состояние потока сделок, активности команды и входа новых денег.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>26. Обновления воронки</h3>
+          <p class="desc">Сколько активных изменений по сделкам внесено за день.</p>
+          <div class="formula">Формула: Коэффициент обновления = Обновленные сделки / Все активные сделки × 100</div>
+          <div class="example">Пример: 18 обновленных сделок из 45 активных дают 40% обновления воронки.</div>
+          <div class="calc" data-kpi="pipelineUpdatesRt">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Активные сделки</label><input type="number" min="1" step="1" data-f="active" value="45"></div>
+              <div class="field"><label>Обновленные сделки</label><input type="number" min="0" step="1" data-f="updated" value="18"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Обновление, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>27. Новые лиды</h3>
+          <p class="desc">Поток новых потенциальных клиентов за день.</p>
+          <div class="formula">Формула: Качество лидов = Квалифицированные лиды / Все новые лиды × 100</div>
+          <div class="example">Пример: 24 новых лида, из них 9 квалифицированных, дают качество 37,5%.</div>
+          <div class="calc" data-kpi="newLeadsRt">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Новые лиды</label><input type="number" min="0" step="1" data-f="leads" value="24"></div>
+              <div class="field"><label>Квалифицированные</label><input type="number" min="0" step="1" data-f="qualified" value="9"></div>
+            </div>
+            <div class="result">
+              <div class="result-box"><span>Новые лиды, шт.</span><strong data-r="count">0</strong></div>
+              <div class="result-box"><span>Качество, %</span><strong data-r="share">0%</strong></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>28. Активности менеджеров</h3>
+          <p class="desc">Контроль ежедневной активности команды продаж.</p>
+          <div class="formula">Формула: Активностей на менеджера = Все активности / Менеджеры</div>
+          <div class="example">Пример: 96 звонков, встреч и писем на 6 менеджеров дают 16 активностей на человека.</div>
+          <div class="calc" data-kpi="activitiesRt">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все активности</label><input type="number" min="0" step="1" data-f="acts" value="96"></div>
+              <div class="field"><label>Менеджеры</label><input type="number" min="1" step="1" data-f="people" value="6"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>На менеджера</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>29. Полученные заказы</h3>
+          <p class="desc">Деньги, которые вошли в отдел продаж за день.</p>
+          <div class="formula">Формула: Заказы = Сумма всех новых заказов</div>
+          <div class="example">Пример: 2,5 млн ₽ + 4,2 млн ₽ + 1,8 млн ₽ = 8,5 млн ₽ заказов.</div>
+          <div class="calc" data-kpi="ordersReceivedRt">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Заказ 1, ₽</label><input type="number" min="0" step="1" data-f="o1" value="2500000"></div>
+              <div class="field"><label>Заказ 2, ₽</label><input type="number" min="0" step="1" data-f="o2" value="4200000"></div>
+              <div class="field"><label>Заказ 3, ₽</label><input type="number" min="0" step="1" data-f="o3" value="1800000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Получено заказов, ₽</span><strong data-r="v">0 ₽</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>30. Просроченные возможности</h3>
+          <p class="desc">Сделки, которые зависли и требуют управленческого внимания.</p>
+          <div class="formula">Формула: Просроченные / Все возможности × 100</div>
+          <div class="example">Пример: 11 просроченных из 52 возможностей дают 21,2% зависших сделок.</div>
+          <div class="calc" data-kpi="overdueOpportunitiesRt">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Все возможности</label><input type="number" min="1" step="1" data-f="total" value="52"></div>
+              <div class="field"><label>Просроченные</label><input type="number" min="0" step="1" data-f="overdue" value="11"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Просроченные, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="addon-copy">Главный недельный обзор: хватает ли воронки, не тормозят ли сделки и как идет рост новых клиентов.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>31. Задержки цикла продаж</h3>
+          <p class="desc">Отклонение фактического цикла от целевого и потери времени в воронке.</p>
+          <div class="formula">Формула: Задержка = Фактический цикл - Целевой цикл</div>
+          <div class="example">Пример: фактический цикл 58 дней при целевом 42 днях дает задержку 16 дней.</div>
+          <div class="calc" data-kpi="salesCycleDelaysWeekly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Фактический цикл, дней</label><input type="number" min="0" step="1" data-f="actual" value="58"></div>
+              <div class="field"><label>Целевой цикл, дней</label><input type="number" min="0" step="1" data-f="target" value="42"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Задержка, дней</span><strong data-r="v">0</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>32. Прогресс по новым клиентам</h3>
+          <p class="desc">Насколько команда продвигается к недельной цели по новым клиентам.</p>
+          <div class="formula">Формула: Выполнение = Факт / Цель × 100</div>
+          <div class="example">Пример: 6 новых клиентов при цели 8 дают выполнение 75%.</div>
+          <div class="calc" data-kpi="newCustomerProgressWeekly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Новых клиентов, факт</label><input type="number" min="0" step="1" data-f="actual" value="6"></div>
+              <div class="field"><label>Цель недели</label><input type="number" min="1" step="1" data-f="target" value="8"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Выполнение, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="addon-head">
+        <div class="addon-copy">Стратегические КПЭ для удержания ключевых клиентов, роста географии и балансировки продуктового портфеля.</div>
+      </div>
+      <div class="addon-grid">
+        <article class="kpi mini-kpi">
+          <h3>33. Стратегические клиенты</h3>
+          <p class="desc">Доля стратегических клиентов, по которым выполнен квартальный план.</p>
+          <div class="formula">Формула: Выполненные стратегические клиенты / Все стратегические клиенты × 100</div>
+          <div class="example">Пример: план выполнен по 9 из 12 стратегических клиентов, что дает 75%.</div>
+          <div class="calc" data-kpi="strategicAccountsQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Стратегические клиенты</label><input type="number" min="1" step="1" data-f="total" value="12"></div>
+              <div class="field"><label>План выполнен</label><input type="number" min="0" step="1" data-f="done" value="9"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Выполнение, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>34. Расширение рынка</h3>
+          <p class="desc">Рост по новым регионам, сегментам или каналам сбыта.</p>
+          <div class="formula">Формула: Выручка новых рынков / Общая выручка × 100</div>
+          <div class="example">Пример: 18 млн ₽ из новых рынков при общей выручке 120 млн ₽ дают 15%.</div>
+          <div class="calc" data-kpi="marketExpansionQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Выручка новых рынков, ₽</label><input type="number" min="0" step="1" data-f="newrev" value="18000000"></div>
+              <div class="field"><label>Общая выручка, ₽</label><input type="number" min="1" step="1" data-f="totalrev" value="120000000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доля, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+
+        <article class="kpi mini-kpi">
+          <h3>35. Структура продуктового портфеля</h3>
+          <p class="desc">Доля целевого продуктового микса в квартальной выручке.</p>
+          <div class="formula">Формула: Выручка целевых продуктов / Общая выручка × 100</div>
+          <div class="example">Пример: 46 млн ₽ целевого микса при общей выручке 120 млн ₽ дают 38,3%.</div>
+          <div class="calc" data-kpi="productMixQuarterly">
+            <h4>Поля для расчета</h4>
+            <div class="fields">
+              <div class="field"><label>Целевой микс, ₽</label><input type="number" min="0" step="1" data-f="mixrev" value="46000000"></div>
+              <div class="field"><label>Общая выручка, ₽</label><input type="number" min="1" step="1" data-f="totalrev" value="120000000"></div>
+            </div>
+            <div class="result"><div class="result-box"><span>Доля микса, %</span><strong data-r="v">0%</strong></div></div>
+          </div>
+        </article>
+      </div>
+
+      <article class="kpi" id="k-main">
+        <h3>Ключевые КПЭ для директора</h3>
+        <p class="desc">Рекомендуемый фокус руководителя: валовая прибыль, валовая маржа, покрытие воронкой, доля выигранных сделок, удержание, точность прогноза и длина цикла продаж.</p>
+        <div class="formula">Почему именно они: эти показатели одновременно контролируют деньги, качество продаж, предсказуемость и устойчивость клиентской базы.</div>
+        <div class="calc" data-kpi="director">
+          <h4>Быстрый интегральный индекс (0-100)</h4>
+          <div class="fields">
+            <div class="field"><label>Валовая маржа, %</label><input type="number" min="0" step="0.1" data-f="gm" value="32"></div>
+            <div class="field"><label>Покрытие воронкой, раз</label><input type="number" min="0" step="0.1" data-f="cov" value="3"></div>
+            <div class="field"><label>Доля выигранных сделок, %</label><input type="number" min="0" step="0.1" data-f="win" value="36"></div>
+            <div class="field"><label>Удержание, %</label><input type="number" min="0" step="0.1" data-f="ret" value="90"></div>
+            <div class="field"><label>Точность прогноза, %</label><input type="number" min="0" step="0.1" data-f="acc" value="88.9"></div>
+            <div class="field"><label>Цикл продаж, дней</label><input type="number" min="0" step="1" data-f="cycle" value="50"></div>
+          </div>
+          <div class="result">
+            <div class="result-box"><span>Индекс коммерческого здоровья</span><strong data-r="score">0</strong></div>
+            <div class="result-box"><span>Статус</span><strong data-r="label">-</strong></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    function n(value) {
+      var x = Number(value);
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function pct(v, d) { return n(v).toFixed(d) + '%'; }
+    function num(v, d) { return n(v).toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    function rub(v) { return n(v).toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }); }
+
+    function input(scope, name) {
+      var el = scope.querySelector('[data-f="' + name + '"]');
+      return el ? n(el.value) : 0;
+    }
+
+    function out(scope, name, value) {
+      var el = scope.querySelector('[data-r="' + name + '"]');
+      if (el) el.textContent = value;
+    }
+
+    function ratio(numVal, denVal) { return denVal > 0 ? (numVal / denVal) : 0; }
+
+    var calculators = {
+      revenue: function(scope) {
+        var v = input(scope, 's1') + input(scope, 's2') + input(scope, 's3');
+        out(scope, 'rev', rub(v));
+      },
+      grossprofit: function(scope) {
+        out(scope, 'gp', rub(input(scope, 'rev') - input(scope, 'cogs')));
+      },
+      grossmargin: function(scope) {
+        var v = ratio(input(scope, 'gp'), input(scope, 'rev')) * 100;
+        out(scope, 'gm', pct(v, 2));
+      },
+      growth: function(scope) {
+        var prev = input(scope, 'prev');
+        var curr = input(scope, 'curr');
+        out(scope, 'growth', pct(ratio(curr - prev, prev) * 100, 2));
+      },
+      leadconv: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'won'), input(scope, 'leads')) * 100, 2));
+      },
+      winrate: function(scope) {
+        var won = input(scope, 'won');
+        var lost = input(scope, 'lost');
+        out(scope, 'v', pct(ratio(won, won + lost) * 100, 2));
+      },
+      proposalwin: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'won'), input(scope, 'prop')) * 100, 2));
+      },
+      pipeline: function(scope) {
+        out(scope, 'v', rub(input(scope, 'a') + input(scope, 'b') + input(scope, 'c')));
+      },
+      weighted: function(scope) {
+        var v = input(scope, 'a') * input(scope, 'pa') / 100
+          + input(scope, 'b') * input(scope, 'pb') / 100
+          + input(scope, 'c') * input(scope, 'pc') / 100;
+        out(scope, 'v', rub(v));
+      },
+      coverage: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'pipe'), input(scope, 'target')), 2) + ' раз');
+      },
+      avgdeal: function(scope) {
+        out(scope, 'v', rub(ratio(input(scope, 'rev'), input(scope, 'won'))));
+      },
+      cycle: function(scope) {
+        var s = scope.querySelector('[data-f="start"]');
+        var c = scope.querySelector('[data-f="close"]');
+        var start = s && s.value ? new Date(s.value) : null;
+        var close = c && c.value ? new Date(c.value) : null;
+        var days = 0;
+        if (start && close && !isNaN(start) && !isNaN(close)) {
+          days = Math.round((close - start) / 86400000);
+        }
+        out(scope, 'v', String(days));
+      },
+      forecast: function(scope) {
+        var forecast = input(scope, 'forecast');
+        var actual = input(scope, 'actual');
+        var err = Math.abs(ratio(forecast - actual, actual) * 100);
+        var acc = 100 - err;
+        out(scope, 'v', pct(acc, 2));
+        out(scope, 'err', pct(err, 2));
+      },
+      retention: function(scope) {
+        var start = input(scope, 'start');
+        var end = input(scope, 'end');
+        var nnew = input(scope, 'new');
+        out(scope, 'v', pct(ratio(end - nnew, start) * 100, 2));
+      },
+      repeat: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'repeat'), input(scope, 'total')) * 100, 2));
+      },
+      newcustomers: function(scope) {
+        out(scope, 'v', String(input(scope, 'n')));
+      },
+      revper: function(scope) {
+        out(scope, 'v', rub(ratio(input(scope, 'rev'), input(scope, 'people'))));
+      },
+      gpper: function(scope) {
+        out(scope, 'v', rub(ratio(input(scope, 'gp'), input(scope, 'people'))));
+      },
+      expenseratio: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'costs'), input(scope, 'rev')) * 100, 2));
+      },
+      cac: function(scope) {
+        out(scope, 'v', rub(ratio(input(scope, 'cost'), input(scope, 'new'))));
+      },
+      ltv: function(scope) {
+        out(scope, 'v', rub(input(scope, 'gp') * input(scope, 'years')));
+      },
+      ltvcac: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'ltv'), input(scope, 'cac')), 2));
+      },
+      churn: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'lost'), input(scope, 'start')) * 100, 2));
+      },
+      wallet: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'yours'), input(scope, 'total')) * 100, 2));
+      },
+      ontime: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'ontime'), input(scope, 'all')) * 100, 2));
+      },
+      pipelineUpdatesRt: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'updated'), input(scope, 'active')) * 100, 2));
+      },
+      newLeadsRt: function(scope) {
+        out(scope, 'count', String(input(scope, 'leads')));
+        out(scope, 'share', pct(ratio(input(scope, 'qualified'), input(scope, 'leads')) * 100, 2));
+      },
+      activitiesRt: function(scope) {
+        out(scope, 'v', num(ratio(input(scope, 'acts'), input(scope, 'people')), 1));
+      },
+      ordersReceivedRt: function(scope) {
+        out(scope, 'v', rub(input(scope, 'o1') + input(scope, 'o2') + input(scope, 'o3')));
+      },
+      overdueOpportunitiesRt: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'overdue'), input(scope, 'total')) * 100, 2));
+      },
+      salesCycleDelaysWeekly: function(scope) {
+        out(scope, 'v', String(input(scope, 'actual') - input(scope, 'target')));
+      },
+      newCustomerProgressWeekly: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'actual'), input(scope, 'target')) * 100, 2));
+      },
+      strategicAccountsQuarterly: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'done'), input(scope, 'total')) * 100, 2));
+      },
+      marketExpansionQuarterly: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'newrev'), input(scope, 'totalrev')) * 100, 2));
+      },
+      productMixQuarterly: function(scope) {
+        out(scope, 'v', pct(ratio(input(scope, 'mixrev'), input(scope, 'totalrev')) * 100, 2));
+      },
+      director: function(scope) {
+        var gm = input(scope, 'gm');
+        var cov = input(scope, 'cov');
+        var win = input(scope, 'win');
+        var ret = input(scope, 'ret');
+        var acc = input(scope, 'acc');
+        var cycle = input(scope, 'cycle');
+
+        var scoreGm = Math.min(100, gm * 2.5);
+        var scoreCov = Math.min(100, cov * 30);
+        var scoreWin = Math.min(100, win * 2);
+        var scoreRet = Math.min(100, ret);
+        var scoreAcc = Math.min(100, acc);
+        var scoreCycle = Math.max(0, 100 - cycle);
+
+        var score = (scoreGm + scoreCov + scoreWin + scoreRet + scoreAcc + scoreCycle) / 6;
+        var label = 'Требуется усиление';
+        if (score >= 75) label = 'Сильная коммерческая система';
+        else if (score >= 55) label = 'Рабочий уровень, есть потенциал';
+
+        out(scope, 'score', num(score, 1));
+        out(scope, 'label', label);
+      }
+    };
+
+    document.querySelectorAll('.calc').forEach(function(scope) {
+      var key = scope.getAttribute('data-kpi');
+      var run = calculators[key];
+      if (!run) return;
+      scope.querySelectorAll('input').forEach(function(i) {
+        i.addEventListener('input', function() { run(scope); });
+        i.addEventListener('change', function() { run(scope); });
+      });
+      run(scope);
+    });
+
+    // ── Фиксация периода (снапшот KPI) ──────────────────────────────
+    (function() {
+      var DEPT = 'commercial';
+      var SNAP_KEY = 'cloto_kpi_snapshots_v1';
+      var MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+      function periodKey() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+      function labelBtn() { var d = new Date(); return '📋 Отчёт ' + MONTHS_RU[d.getMonth()] + ' ' + d.getFullYear(); }
+      function saveSnapshot() {
+        var snap = { period: periodKey(), dept: DEPT, savedAt: new Date().toISOString(), inputs: {}, results: {}, resultLabels: {} };
+        document.querySelectorAll('.calc').forEach(function(sc) {
+          var k = sc.getAttribute('data-kpi') || '_';
+          snap.inputs[k] = {};
+          sc.querySelectorAll('input[data-f]').forEach(function(el) { snap.inputs[k][el.getAttribute('data-f')] = el.value; });
+          snap.results[k] = {};
+          sc.querySelectorAll('strong[data-r]').forEach(function(el) {
+            var rKey = el.getAttribute('data-r'); snap.results[k][rKey] = el.textContent;
+            var sib = el.previousElementSibling; if (sib && sib.tagName === 'SPAN') snap.resultLabels[k + '.' + rKey] = sib.textContent.trim();
+          });
+        });
+        try {
+          var all = JSON.parse(localStorage.getItem(SNAP_KEY) || '{}');
+          all[snap.period + '_' + DEPT] = snap;
+          localStorage.setItem(SNAP_KEY, JSON.stringify(all));
+          var btn = document.getElementById('snapBtn');
+          window.open('kpi-monthly-report.html?dept=' + DEPT + '&period=' + snap.period, '_blank');
+          if (btn) { btn.textContent = '✓ Отчёт открыт'; btn.style.cssText = 'background:#d4edda;color:#1f915e;border-color:#b8ddc4'; setTimeout(function() { btn.textContent = labelBtn(); btn.style.cssText = ''; }, 2000); }
+        } catch(e) { alert('Ошибка: ' + e.message); }
+      }
+      window.addEventListener('load', function() {
+        var btn = document.getElementById('snapBtn');
+        if (btn) { btn.textContent = labelBtn(); btn.addEventListener('click', saveSnapshot); }
+      });
+    })();
+  </script>
+</body>
+</html>

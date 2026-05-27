@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отдел закупок — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255, 255, 255, 0.9);
+      --surface2: rgba(255, 255, 255, 0.97);
+      --border: rgba(136,158,186,0.25);
+      --border2: rgba(94,143,199,0.38);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --red: #d96576;
+      --orange: #f6ad55;
+      --purple: #b07dff;
+      --radius: 16px;
+      --shadow: 0 12px 28px rgba(36,66,100,0.14);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(217, 101, 118, 0.12), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(176, 125, 255, 0.1), transparent 26%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px 20px 40px;
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all .2s;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border2); }
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+      transition: all .2s;
+    }
+    .card:hover { transform: translateY(-3px); border-color: var(--border2); background: var(--surface2); }
+    .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .i-red { background: rgba(217,101,118,.15); }
+    .i-orange { background: rgba(246,173,85,.15); }
+    .i-purple { background: rgba(176,125,255,.18); }
+    .name { font-size: 16px; font-weight: 700; }
+    .desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .foot {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    @media (max-width: 900px) {
+      .modules { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 class="title">Отдел закупок</h1>
+        <div class="sub">Основные модули закупочного блока: закупки, сырьё, поставщики и KPI по себестоимости, рискам и устойчивости снабжения.</div>
+      </div>
+      <a class="btn" href="portal.html">← На главную</a>
+    </div>
+
+    <div class="modules">
+      <a class="card" href="zakupki.html">
+        <div class="icon i-red">🛒</div>
+        <div class="name">Закупки</div>
+        <div class="desc">Заявки, заказы поставщикам, приёмка.</div>
+        <div class="foot">Открыть →</div>
+      </a>
+
+      <a class="card" href="syryo.html">
+        <div class="icon i-orange">🌾</div>
+        <div class="name">Сырьё</div>
+        <div class="desc">Запасы, нормы расхода и критичные остатки.</div>
+        <div class="foot">Открыть →</div>
+      </a>
+
+      <a class="card" href="suppliers.html">
+        <div class="icon i-purple">🤝</div>
+        <div class="name">Поставщики</div>
+        <div class="desc">Контрагенты, договоры, рейтинг и условия.</div>
+        <div class="foot">Открыть →</div>
+      </a>
+
+      <a class="card" href="procurement-kpi-finance.html">
+        <div class="icon i-red">📊</div>
+        <div class="name">Показатели и метрики закупок</div>
+        <div class="desc">Себестоимость, своевременность поставок, качество, отсутствие сырья, окупаемость и стратегические риски.</div>
+        <div class="foot">Открыть →</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

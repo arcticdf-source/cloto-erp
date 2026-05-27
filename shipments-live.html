@@ -230,6 +230,7 @@
       <button class="tab" type="button" data-key="Фев" onclick="selectSheet('Фев')">Февраль 2026</button>
       <button class="tab active" type="button" data-key="Мар" onclick="selectSheet('Мар')">Март 2026</button>
       <button class="tab" type="button" data-key="Апр" onclick="selectSheet('Апр')">Апрель 2026</button>
+      <button class="tab" type="button" data-key="Май" onclick="selectSheet('Май')">Май 2026</button>
     </section>
 
     <section class="summary">
@@ -247,10 +248,14 @@
     </div>
   </div>
 
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_shipments_workbook_edits_v1', 'cloto_sales_orders_shipped'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script src="shipments-workbook-data.js"></script>
   <script>
     var currentSheetKey = 'Мар';
-    var MONTH_NAMES = { 'Янв': 'Январь 2026', 'Фев': 'Февраль 2026', 'Мар': 'Март 2026', 'Апр': 'Апрель 2026' };
+    var MONTH_NAMES = { 'Янв': 'Январь 2026', 'Фев': 'Февраль 2026', 'Мар': 'Март 2026', 'Апр': 'Апрель 2026', 'Май': 'Май 2026' };
     var STORAGE_KEY = 'cloto_shipments_workbook_edits_v1';
     var SHIPPED_ORDERS_KEY = 'cloto_sales_orders_shipped';
     var workbookState = loadWorkbookState();
@@ -276,6 +281,7 @@
       if (lower.indexOf('феврал') === 0) return 'Фев';
       if (lower.indexOf('март') === 0) return 'Мар';
       if (lower.indexOf('апрел') === 0) return 'Апр';
+      if (lower.indexOf('май') === 0) return 'Май';
       return '';
     }
 
@@ -317,6 +323,31 @@
       }) || null;
     }
 
+    function getOrCreateSheet(monthKey) {
+      var existing = getSheetByKey(monthKey);
+      if (existing) return existing;
+
+      // clone header structure from first sheet
+      var template = getWorkbookSheets()[0];
+      var colWidths = template ? (template.colWidths || []).slice() : [];
+      var headerRows = template ? cloneData((template.rows || []).slice(0, 4)) : [];
+
+      // update date cell in row 0
+      var MONTH_DATE = { 'Янв': '01.01.2026', 'Фев': '01.02.2026', 'Мар': '01.03.2026', 'Апр': '01.04.2026', 'Май': '01.05.2026' };
+      if (headerRows[0] && headerRows[0].cells && headerRows[0].cells[2]) {
+        headerRows[0].cells[2].value = MONTH_DATE[monthKey] || '';
+      }
+
+      var newSheet = {
+        title: (MONTH_NAMES[monthKey] || monthKey).toLowerCase(),
+        colWidths: colWidths,
+        rows: headerRows
+      };
+
+      workbookState.sheets.push(newSheet);
+      return newSheet;
+    }
+
     function monthKeyFromDate(value) {
       if (!value) return currentSheetKey;
       var text = safeStr(value);
@@ -326,6 +357,7 @@
         if (month === 2) return 'Фев';
         if (month === 3) return 'Мар';
         if (month === 4) return 'Апр';
+        if (month === 5) return 'Май';
       }
       if (/^\d{2}\.\d{2}\.\d{4}$/.test(text)) {
         var monthFromRu = Number(text.slice(3, 5));
@@ -333,6 +365,7 @@
         if (monthFromRu === 2) return 'Фев';
         if (monthFromRu === 3) return 'Мар';
         if (monthFromRu === 4) return 'Апр';
+        if (monthFromRu === 5) return 'Май';
       }
       return currentSheetKey;
     }
@@ -433,7 +466,7 @@
       shippedOrders.forEach(function(order) {
         getOrderLines(order).forEach(function(line, lineIndex) {
           var monthKey = monthKeyFromDate(order && order.shippedAt ? order.shippedAt : line && line.deliveryDate);
-          var sheet = getSheetByKey(monthKey) || getSheetByKey(currentSheetKey) || getWorkbookSheets()[0];
+          var sheet = getOrCreateSheet(monthKey);
           if (!sheet) return;
 
           var shipmentKey = getShipmentRowKey(order, line, lineIndex);
@@ -672,7 +705,8 @@
     }
 
     function handleExternalShipmentSync(preferredSheetKey) {
-      if (preferredSheetKey && getSheetByKey(preferredSheetKey)) {
+      if (preferredSheetKey) {
+        // switch to the target sheet (creating it if needed)
         currentSheetKey = preferredSheetKey;
       }
       syncWorkbookWithShippedOrders();

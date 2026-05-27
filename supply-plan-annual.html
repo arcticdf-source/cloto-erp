@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Годовой план 2026 — Клото</title>
+  <style>
+    :root {
+      --bg: #eff4f2;
+      --surface: #ffffff;
+      --surface-soft: #f6faf8;
+      --line: rgba(101, 127, 120, 0.28);
+      --line-strong: rgba(53, 116, 99, 0.45);
+      --text: #1a2f2a;
+      --muted: #667f78;
+      --teal-soft: rgba(31, 154, 134, 0.14);
+      --shadow: 0 14px 34px rgba(26, 47, 42, 0.12);
+      --radius-lg: 18px;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Manrope, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(31, 154, 134, 0.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(198, 145, 69, 0.12), transparent 22%),
+        linear-gradient(180deg, #f8fbfa, var(--bg));
+    }
+
+    .shell {
+      padding: 14px;
+      width: min(1800px, 100%);
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: 30px; font-family: Sora, Manrope, sans-serif; }
+    .sub { margin: 0 0 14px; color: var(--muted); }
+
+    .toolbar { margin-bottom: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .btn:hover {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 3px var(--teal-soft);
+    }
+
+    .wrap-table {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th, td {
+      border-right: 1px solid rgba(101, 127, 120, 0.18);
+      border-bottom: 1px solid rgba(101, 127, 120, 0.18);
+      padding: 7px 6px;
+      font-size: 11px;
+      background: white;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #edf5f2;
+      color: #3e5f58;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: normal;
+    }
+
+    tbody tr:hover td {
+      background: #f9fcfb;
+    }
+
+    td:nth-child(1),
+    td:nth-child(2) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    tfoot td {
+      background: #ecf7f1;
+      font-weight: 800;
+      border-top: 2px solid #b8d7ca;
+    }
+
+    .empty {
+      padding: 16px;
+      color: var(--muted);
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="card">
+      <h1>Годовой план 2026</h1>
+      <p class="sub">Данные аккумулируются из Q2, Q3 и Q4.</p>
+      <div class="toolbar">
+        <a class="btn" href="supply-plan-hub.html">← К выбору квартала</a>
+        <a class="btn" href="quarterly-sales-supply-plan.html?quarter=2">Q2</a>
+        <a class="btn" href="quarterly-sales-supply-plan.html?quarter=3">Q3</a>
+        <a class="btn" href="quarterly-sales-supply-plan.html?quarter=4">Q4</a>
+      </div>
+      <div class="wrap-table">
+        <table>
+          <colgroup>
+            <col style="width: 14%" />
+            <col style="width: 12%" />
+            <col style="width: 6%" />
+            <col style="width: 6%" />
+            <col style="width: 6%" />
+            <col style="width: 8%" />
+            <col style="width: 8%" />
+            <col style="width: 8%" />
+            <col style="width: 9%" />
+            <col style="width: 10%" />
+            <col style="width: 6%" />
+            <col style="width: 7%" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Клиент</th>
+              <th>Продукт</th>
+              <th>Q2, т</th>
+              <th>Q3, т</th>
+              <th>Q4, т</th>
+              <th>Год план, т</th>
+              <th>Вероятность, %</th>
+              <th>Год forecast, т</th>
+              <th>Цена, ₽/т</th>
+              <th>Год forecast выручки, ₽</th>
+              <th>Маржа, %</th>
+              <th>Прогноз по марже, ₽</th>
+            </tr>
+          </thead>
+          <tbody id="annual-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2">ИТОГО</td>
+              <td class="num" id="sum-q2">0</td>
+              <td class="num" id="sum-q3">0</td>
+              <td class="num" id="sum-q4">0</td>
+              <td class="num" id="sum-plan">0</td>
+              <td class="num" id="sum-probability">0%</td>
+              <td class="num" id="sum-forecast">0</td>
+              <td class="num" id="sum-price">0 ₽</td>
+              <td class="num" id="sum-revenue">0 ₽</td>
+              <td class="num" id="sum-margin-pct">0%</td>
+              <td class="num" id="sum-margin-forecast">0 ₽</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script>
+    window.__sharedStateConfig = {
+      keys: [
+        'cloto_quarterly_supply_plan_v2_q2',
+        'cloto_quarterly_supply_plan_v2_q3',
+        'cloto_quarterly_supply_plan_v2_q4',
+        'cloto_quarterly_supply_plan_v1'
+      ]
+    };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
+    (function () {
+      var body = document.getElementById('annual-body');
+      var BASE_KEY = 'cloto_quarterly_supply_plan_v2_q';
+      var LEGACY_KEY = 'cloto_quarterly_supply_plan_v1';
+      var quarters = [2, 3, 4];
+      var aggregate = {};
+
+      function parseState(q) {
+        var raw = localStorage.getItem(BASE_KEY + String(q));
+        if (!raw && q === 2) raw = localStorage.getItem(LEGACY_KEY);
+        if (!raw) return null;
+        try {
+          var parsed = JSON.parse(raw);
+          if (!parsed || !Array.isArray(parsed.rows)) return null;
+          return parsed;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function keyOf(client, product) {
+        return String(client || '').trim().toLowerCase() + '::' + String(product || '').trim().toLowerCase();
+      }
+
+      quarters.forEach(function (q) {
+        var state = parseState(q);
+        if (!state) return;
+        state.rows.forEach(function (row) {
+          var client = String(row.client || '').trim();
+          var product = String(row.product || '').trim();
+          if (!client && !product) return;
+          var k = keyOf(client, product);
+          if (!aggregate[k]) {
+            aggregate[k] = {
+              client: client || '—',
+              product: product || '—',
+              q2: 0,
+              q3: 0,
+              q4: 0,
+              plan: 0,
+              forecast: 0,
+              revenue: 0,
+              marginForecast: 0
+            };
+          }
+          var m1 = Number(row.m1 || 0);
+          var m2 = Number(row.m2 || 0);
+          var m3 = Number(row.m3 || 0);
+          var plan = Math.max(0, m1) + Math.max(0, m2) + Math.max(0, m3);
+          var probability = Math.max(0, Math.min(100, Number(row.probability || 0))) / 100;
+          var forecast = plan * probability;
+          var price = Math.max(0, Number(row.pricePerTon || 0));
+          var marginPct = Number(row.marginPct || 0);
+          var revenue = forecast * price;
+          var marginForecast = revenue * (marginPct / 100);
+          aggregate[k]['q' + String(q)] += plan;
+          aggregate[k].plan += plan;
+          aggregate[k].forecast += forecast;
+          aggregate[k].revenue += revenue;
+          aggregate[k].marginForecast += marginForecast;
+        });
+      });
+
+      var rows = Object.keys(aggregate).map(function (k) { return aggregate[k]; }).sort(function (a, b) {
+        if (a.client === b.client) return a.product.localeCompare(b.product, 'ru');
+        return a.client.localeCompare(b.client, 'ru');
+      });
+
+      if (!rows.length) {
+        body.innerHTML = '<tr><td class="empty" colspan="12">Пока нет данных по кварталам. Заполните Q2, Q3 или Q4.</td></tr>';
+        return;
+      }
+
+      var totals = {
+        q2: 0,
+        q3: 0,
+        q4: 0,
+        plan: 0,
+        forecast: 0,
+        revenue: 0,
+        marginForecast: 0
+      };
+
+      body.innerHTML = rows.map(function (row) {
+        var probabilityPct = row.plan > 0 ? (row.forecast / row.plan) * 100 : 0;
+        var avgPrice = row.forecast > 0 ? (row.revenue / row.forecast) : 0;
+        var avgMarginPct = row.revenue > 0 ? (row.marginForecast / row.revenue) * 100 : 0;
+        totals.q2 += row.q2;
+        totals.q3 += row.q3;
+        totals.q4 += row.q4;
+        totals.plan += row.plan;
+        totals.forecast += row.forecast;
+        totals.revenue += row.revenue;
+        totals.marginForecast += row.marginForecast;
+        return '<tr>'
+          + '<td>' + escapeHtml(row.client) + '</td>'
+          + '<td>' + escapeHtml(row.product) + '</td>'
+          + '<td class="num">' + formatTon(row.q2) + '</td>'
+          + '<td class="num">' + formatTon(row.q3) + '</td>'
+          + '<td class="num">' + formatTon(row.q4) + '</td>'
+          + '<td class="num">' + formatTon(row.plan) + '</td>'
+          + '<td class="num">' + formatPercent(probabilityPct) + '</td>'
+          + '<td class="num">' + formatTon(row.forecast) + '</td>'
+          + '<td class="num">' + formatMoney(avgPrice) + '</td>'
+          + '<td class="num">' + formatMoney(row.revenue) + '</td>'
+          + '<td class="num">' + formatPercent(avgMarginPct) + '</td>'
+          + '<td class="num">' + formatMoney(row.marginForecast) + '</td>'
+          + '</tr>';
+      }).join('');
+
+      var totalProbability = totals.plan > 0 ? (totals.forecast / totals.plan) * 100 : 0;
+      var totalAvgPrice = totals.forecast > 0 ? (totals.revenue / totals.forecast) : 0;
+      var totalMarginPct = totals.revenue > 0 ? (totals.marginForecast / totals.revenue) * 100 : 0;
+
+      document.getElementById('sum-q2').textContent = formatTon(totals.q2);
+      document.getElementById('sum-q3').textContent = formatTon(totals.q3);
+      document.getElementById('sum-q4').textContent = formatTon(totals.q4);
+      document.getElementById('sum-plan').textContent = formatTon(totals.plan);
+      document.getElementById('sum-probability').textContent = formatPercent(totalProbability);
+      document.getElementById('sum-forecast').textContent = formatTon(totals.forecast);
+      document.getElementById('sum-price').textContent = formatMoney(totalAvgPrice);
+      document.getElementById('sum-revenue').textContent = formatMoney(totals.revenue);
+      document.getElementById('sum-margin-pct').textContent = formatPercent(totalMarginPct);
+      document.getElementById('sum-margin-forecast').textContent = formatMoney(totals.marginForecast);
+
+      function formatTon(value) {
+        return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 }).format(value);
+      }
+
+      function formatMoney(value) {
+        return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(value);
+      }
+
+      function formatPercent(value) {
+        return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 }).format(value) + '%';
+      }
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+    }());
+  </script>
+</body>
+</html>

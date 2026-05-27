@@ -1,0 +1,855 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Клиенты — Клото CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #eef4fb;
+      --surface: #ffffff;
+      --surface-strong: #f7fbff;
+      --border: rgba(140, 160, 183, 0.28);
+      --border-strong: rgba(95, 146, 206, 0.4);
+      --text: #1f2d3d;
+      --muted: #6f8299;
+      --cyan: #1fb9b2;
+      --blue: #3b91da;
+      --gold: #d9a83a;
+      --green: #3ba771;
+      --red: #d76577;
+      --shadow: 0 14px 34px rgba(33, 63, 98, 0.12);
+      --glass-bg: rgba(255, 255, 255, 0.72);
+      --card-grad: linear-gradient(180deg, #ffffff, #f5f9ff);
+      --accent-soft: rgba(31, 185, 178, 0.12);
+      --on-accent: #0f3d3a;
+      --crm-sidebar-grad: linear-gradient(180deg, #f4f9ff, #e9f2ff);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(76, 225, 198, 0.15), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(59, 145, 218, 0.12), transparent 36%),
+        var(--bg);
+    }
+
+    /* ── Sidebar ── */
+    .crm-sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 258px;
+      z-index: 500;
+      overflow-y: auto;
+      border-right: 1px solid rgba(120, 167, 255, 0.22);
+      background: var(--crm-sidebar-grad);
+      padding: 12px 10px;
+      color: var(--muted);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 10px;
+    }
+
+    .crm-menu-top {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 12px; font-weight: 700; padding: 4px 6px;
+    }
+
+    .crm-back-link {
+      text-decoration: none;
+      border: 1px solid rgba(163,199,255,0.22);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.9);
+      color: var(--muted);
+      padding: 8px 10px;
+      transition: border-color 0.16s, background 0.16s;
+    }
+
+    .crm-back-link:hover {
+      border-color: rgba(163,199,255,0.34);
+      background: rgba(255,255,255,0.96);
+    }
+
+    .crm-menu-title {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      border-radius: 10px; border: 1px solid rgba(163, 199, 255, 0.22);
+      background: rgba(255,255,255,0.9); padding: 8px 10px;
+      font-size: 13px; font-weight: 800; color: var(--text); cursor: pointer;
+      transition: border-color 0.16s, background 0.16s;
+    }
+    .crm-menu-title:hover { border-color: rgba(163,199,255,0.34); background: rgba(255,255,255,0.96); }
+    .crm-menu-title.open { border-color: rgba(163,199,255,0.38); background: rgba(255,255,255,0.98); }
+    .crm-menu-drop { opacity: 0.7; font-size: 11px; flex: 0 0 auto; }
+
+    .crm-menu-list { display: grid; gap: 3px; align-content: start; }
+
+    .crm-menu-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      border-radius: 9px; padding: 8px 10px;
+      color: var(--muted); font-size: 13px; font-weight: 600;
+      border: 1px solid transparent; cursor: pointer; text-decoration: none;
+    }
+    .crm-menu-item.active {
+      border-color: rgba(163,199,255,0.3); background: rgba(255,255,255,0.1); color: var(--text);
+    }
+    .crm-menu-item:hover {
+      border-color: rgba(163,199,255,0.24); background: rgba(255,255,255,0.92);
+    }
+    .crm-menu-left { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+    .crm-menu-icon { width: 16px; text-align: center; opacity: 0.88; font-size: 13px; flex: 0 0 auto; }
+    .crm-menu-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .crm-menu-footer {
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 10px; border: 1px solid rgba(235,172,255,0.4);
+      background: linear-gradient(90deg, rgba(255,130,190,0.42), rgba(196,132,255,0.4));
+      color: #fff; font-size: 12px; font-weight: 700; min-height: 30px;
+    }
+
+    /* ── Flyout ── */
+    .crm-flyout {
+      position: fixed; left: calc(258px + 12px); top: 70px;
+      width: 360px; max-height: calc(100vh - 92px); overflow: auto;
+      z-index: 540; border-radius: 18px;
+      border: 1px solid rgba(182,215,255,0.32);
+      background: rgba(17,47,128,0.54); backdrop-filter: blur(14px);
+      box-shadow: 0 24px 58px rgba(2,9,40,0.42);
+      padding: 12px; display: grid; gap: 10px;
+      opacity: 0; transform: translateX(-12px) scale(0.98);
+      pointer-events: none; transition: opacity 0.18s, transform 0.18s;
+    }
+    .crm-flyout.open { opacity: 1; transform: translateX(0) scale(1); pointer-events: auto; }
+
+    .crm-flyout-card {
+      border-radius: 14px; border: 1px solid rgba(176,206,255,0.28);
+      background: linear-gradient(180deg,rgba(31,69,155,0.6),rgba(22,53,128,0.58));
+      padding: 14px 14px 12px; color: #e7f2ff;
+    }
+    .crm-flyout-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px;
+    }
+    .crm-flyout-title { font-size: 16px; font-weight: 800; line-height: 1.1; margin-bottom: 4px; }
+    .crm-flyout-sub { font-size: 13px; color: rgba(219,234,255,0.8); line-height: 1.4; }
+    .crm-flyout-close {
+      width: 24px; height: 24px; border-radius: 8px;
+      border: 1px solid rgba(178,211,255,0.32); background: rgba(255,255,255,0.08);
+      color: #f2f8ff; font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer; flex: 0 0 auto;
+    }
+
+    .crm-contact-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+    .crm-contact-tool {
+      display: inline-flex; align-items: center; gap: 7px; min-height: 30px;
+      border-radius: 9px; border: 1px solid rgba(172,204,255,0.24);
+      background: rgba(255,255,255,0.07); padding: 6px 10px; color: #eaf4ff;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+    }
+    .crm-flyout-list { display: grid; gap: 6px; margin-top: 4px; padding-left: 2px; }
+    .crm-flyout-item {
+      display: inline-flex; align-items: center; gap: 8px; color: #eaf4ff;
+      font-size: 13px; line-height: 1.35; cursor: pointer; padding: 6px 8px; border-radius: 8px;
+    }
+    .crm-flyout-foot { margin-top: 10px; display: flex; justify-content: flex-end; }
+    .crm-flyout-action {
+      border: 1px solid rgba(142,222,255,0.42);
+      background: linear-gradient(135deg,rgba(82,218,255,0.32),rgba(104,179,255,0.28));
+      color: #f3fbff; min-height: 30px; border-radius: 10px; padding: 0 14px;
+      font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 1440px; margin: 0 auto;
+      padding: 26px 24px 48px;
+      padding-left: calc(258px + 24px);
+    }
+
+    /* ── Page header ── */
+    .page-topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      margin-bottom: 22px; flex-wrap: wrap;
+    }
+    .page-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(28px, 3.5vw, 42px);
+      line-height: 1.06; letter-spacing: -0.03em; color: var(--text);
+    }
+    .page-title span { color: var(--cyan); }
+    .page-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--glass-bg);
+      color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 700;
+      transition: transform 0.18s, border-color 0.18s;
+    }
+    .page-back:hover { transform: translateY(-1px); border-color: var(--border-strong); }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 16px; border-radius: 14px; border: 1px solid var(--border);
+      background: var(--glass-bg); color: var(--text); text-decoration: none;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      transition: transform 0.18s, border-color 0.18s, background 0.18s;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: var(--border-strong); background: rgba(255,255,255,0.92); }
+    .btn-primary {
+      color: var(--on-accent); background: linear-gradient(135deg,#84efe7,#5ddfd6);
+      border-color: rgba(93,223,214,0.42); box-shadow: 0 12px 24px rgba(31,185,178,0.2);
+    }
+    .btn-primary:hover { background: linear-gradient(135deg,#8dfbe3,#5ce8ce); }
+
+    /* ── Company toolbar ── */
+    .company-toolbar {
+      display: grid;
+      grid-template-columns: minmax(280px,420px) 1fr auto auto;
+      align-items: center; gap: 12px; margin-bottom: 18px;
+    }
+
+    .search-shell { position: relative; }
+    .search-shell input {
+      width: 100%; padding: 14px 16px 14px 48px;
+      border-radius: 16px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.86); color: var(--text);
+      font: inherit; font-size: 14px; outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    .search-shell input:focus {
+      border-color: rgba(76,225,198,0.42); box-shadow: 0 0 0 4px rgba(76,225,198,0.1);
+    }
+    .search-shell::before {
+      content: '⌕'; position: absolute; left: 18px; top: 50%;
+      transform: translateY(-50%); color: var(--muted); font-size: 16px;
+    }
+
+    .segment-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .segment-btn {
+      padding: 10px 14px; font-size: 12px; border-radius: 999px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.9);
+      color: var(--muted); font: inherit; cursor: pointer; font-size: 12px; font-weight: 700;
+      transition: all 0.18s;
+    }
+    .segment-btn:hover, .segment-btn.active {
+      color: var(--text);
+      background: linear-gradient(135deg,rgba(76,225,198,0.18),rgba(125,200,255,0.14));
+    }
+
+    .result-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--glass-bg);
+      color: var(--muted); font-size: 12px; font-weight: 700;
+    }
+
+    /* ── Table ── */
+    .table-shell {
+      border-radius: 24px; border: 1px solid rgba(140,160,183,0.22);
+      background: var(--card-grad);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .table-wrap { overflow: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 1180px; }
+
+    th {
+      padding: 14px 16px; text-align: left;
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--muted); font-weight: 800; border-bottom: 1px solid var(--border);
+      background: rgba(240,246,255,0.8); position: sticky; top: 0; z-index: 1;
+    }
+    td {
+      padding: 16px; border-bottom: 1px solid rgba(140,160,183,0.14);
+      vertical-align: top; font-size: 13px; line-height: 1.55; background: #fff;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(236,245,255,0.7); }
+
+    .account-cell {
+      display: grid; grid-template-columns: 48px 1fr; gap: 12px; align-items: start;
+    }
+    .avatar {
+      width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center;
+      font-size: 15px; font-weight: 800; color: var(--on-accent);
+      background: linear-gradient(135deg,#bff8f1,#73ddd2);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+      overflow: hidden;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #fff;
+    }
+    .account-main, .owner-card, .next-step, .momentum { display: grid; gap: 4px; }
+    .account-link { color: var(--text); text-decoration: none; font-size: 15px; font-weight: 800; }
+    .account-link:hover { color: var(--cyan); }
+    .account-sub, .muted { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    .badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 800;
+      letter-spacing: 0.04em; white-space: nowrap;
+    }
+    .b-active { color: var(--green); background: rgba(129,230,168,0.14); }
+    .b-warm   { color: var(--gold);  background: rgba(255,207,102,0.14); }
+    .b-cold   { color: var(--blue);  background: rgba(125,200,255,0.14); }
+    .b-risk   { color: var(--red);   background: rgba(255,140,147,0.14); }
+    .b-plan   { color: var(--cyan);  background: rgba(76,225,198,0.14); }
+
+    .value { font-family: 'Sora', sans-serif; font-size: 18px; margin-bottom: 4px; }
+    .owner-card strong, .next-step strong, .momentum strong { font-size: 13px; }
+
+    .trend {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: fit-content; padding: 7px 10px; font-size: 11px; font-weight: 800;
+      border-radius: 999px;
+    }
+    .trend.up   { color: var(--green); background: rgba(129,230,168,0.14); }
+    .trend.mid  { color: var(--gold);  background: rgba(255,207,102,0.14); }
+    .trend.down { color: var(--red);   background: rgba(255,140,147,0.14); }
+
+    .row-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .row-delete-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid rgba(215, 101, 119, 0.3);
+      background: rgba(215, 101, 119, 0.12);
+      color: var(--red);
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 0.18s, background 0.18s, border-color 0.18s;
+    }
+    .row-delete-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(215, 101, 119, 0.45);
+      background: rgba(215, 101, 119, 0.2);
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      padding: 32px 18px; text-align: center; color: var(--muted);
+      font-size: 13px; line-height: 1.7; background: #fff;
+    }
+
+    /* ── Add-client modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 600;
+      background: rgba(15, 30, 50, 0.48); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      width: min(480px, 92vw); border-radius: 26px;
+      background: var(--card-grad); border: 1px solid var(--border);
+      box-shadow: 0 28px 64px rgba(15,30,55,0.22); padding: 32px;
+    }
+    .modal-title { font-family: 'Sora',sans-serif; font-size: 26px; margin-bottom: 10px; }
+    .modal-copy { color: var(--muted); font-size: 14px; line-height: 1.65; margin-bottom: 24px; }
+    .modal-field { margin-bottom: 20px; }
+    .modal-label { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+    .modal-input {
+      width: 100%; padding: 14px 16px; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--surface-strong);
+      color: var(--text); font: inherit; font-size: 14px; outline: none;
+    }
+    .modal-input:focus { border-color: rgba(76,225,198,0.42); box-shadow: 0 0 0 4px rgba(76,225,198,0.1); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Left sidebar ── -->
+  <aside class="crm-sidebar" aria-label="Левое меню CRM">
+    <a class="crm-menu-top crm-back-link" href="commercial.html">← Назад</a>
+
+    <div class="crm-menu-list">
+      <a class="crm-menu-item active" href="companies.html">
+        <span class="crm-menu-left"><span class="crm-menu-icon">🏢</span><span class="crm-menu-text">Клиенты</span></span>
+      </a>
+      <a class="crm-menu-item" href="contacts.html">
+        <span class="crm-menu-left"><span class="crm-menu-icon">👤</span><span class="crm-menu-text">Контакты</span></span>
+      </a>
+      <a class="crm-menu-item" href="leads-deals.html">
+        <span class="crm-menu-left"><span class="crm-menu-icon">🤝</span><span class="crm-menu-text">Лиды/сделки</span></span>
+      </a>
+      <a class="crm-menu-item" href="supply-plan-hub.html">
+        <span class="crm-menu-left"><span class="crm-menu-icon">📈</span><span class="crm-menu-text">План поставок</span></span>
+      </a>
+      <a class="crm-menu-item" href="sales-orders.html">
+        <span class="crm-menu-left"><span class="crm-menu-icon">📡</span><span class="crm-menu-text">Каналы продаж</span></span>
+      </a>
+      <a class="crm-menu-item" href="sales-new-orders.html">
+        <span class="crm-menu-left"><span class="crm-menu-icon">📊</span><span class="crm-menu-text">Отчет о продажах</span></span>
+      </a>
+      <a class="crm-menu-item" href="clients.html#calendar">
+        <span class="crm-menu-left"><span class="crm-menu-icon">📅</span><span class="crm-menu-text">Календарь</span></span>
+      </a>
+      <a class="crm-menu-item" href="clients.html#tasks" id="menu-tasks">
+        <span class="crm-menu-left"><span class="crm-menu-icon">☑</span><span class="crm-menu-text">Задачи и Проекты</span></span>
+      </a>
+      <a class="crm-menu-item" href="clients.html#collaboration">
+        <span class="crm-menu-left"><span class="crm-menu-icon">👥</span><span class="crm-menu-text">Совместная работа</span></span>
+      </a>
+      <a class="crm-menu-item" href="clients.html#team" id="menu-employees">
+        <span class="crm-menu-left"><span class="crm-menu-icon">👤</span><span class="crm-menu-text">Команда</span></span>
+      </a>
+      <a class="crm-menu-item" href="clients.html#signature">
+        <span class="crm-menu-left"><span class="crm-menu-icon">✍</span><span class="crm-menu-text">Подпись</span></span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── CRM flyout ── -->
+  <div class="crm-flyout" id="crm-flyout" aria-hidden="true">
+    <section class="crm-flyout-card">
+      <div class="crm-flyout-head">
+        <div>
+          <div class="crm-flyout-title">Контакт-центр</div>
+          <div class="crm-flyout-sub">Автоматическое добавление сделок</div>
+        </div>
+        <button class="crm-flyout-close" type="button" id="crm-flyout-close" aria-label="Закрыть">×</button>
+      </div>
+      <div class="crm-contact-tools" id="crm-channels-container"></div>
+    </section>
+    <section class="crm-flyout-card">
+      <div class="crm-flyout-head">
+        <div>
+          <div class="crm-flyout-title">Отраслевые CRM</div>
+          <div class="crm-flyout-sub">CRM для вашего бизнеса</div>
+        </div>
+      </div>
+      <div class="crm-flyout-list" id="crm-templates-container"></div>
+      <div class="crm-flyout-foot">
+        <button class="crm-flyout-action" type="button">Настроить</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── Main content ── -->
+  <div class="wrap">
+    <div class="page-topbar">
+      <div>
+        <div class="page-title">Клиенты <span>/ CRM</span></div>
+      </div>
+      <a class="page-back" href="commercial.html">← В CRM</a>
+    </div>
+
+    <!-- Toolbar: search, filters, add -->
+    <div class="company-toolbar">
+      <label class="search-shell">
+        <input id="clients-search" type="search" placeholder="Поиск по названию клиента, менеджеру или следующему шагу">
+      </label>
+      <div class="segment-filters" id="segment-filters">
+        <button class="segment-btn active" data-segment="all">Все аккаунты</button>
+        <button class="segment-btn" data-segment="active">Активные</button>
+        <button class="segment-btn" data-segment="warm">Теплые</button>
+        <button class="segment-btn" data-segment="cold">Разовые</button>
+      </div>
+      <button class="btn btn-primary" type="button" id="add-client-button">Добавить клиента</button>
+      <div class="result-pill" id="companies-count">1 аккаунт</div>
+    </div>
+
+    <!-- Companies table -->
+    <div class="table-shell">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Аккаунт</th>
+              <th>Сегмент</th>
+              <th>Q1 выручка</th>
+              <th>Владелец</th>
+              <th>Следующий шаг</th>
+              <th>Динамика</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="companies-body">
+            <tr data-segment="active" data-company="Халлибуртон / БурСервис" data-search="халлибуртон бурсервис контракт q2 и. петров">
+              <td><div class="account-cell"><div class="avatar" data-initials="HB">HB</div><div class="account-main"><a class="account-link" href="client-card.html?company=%D0%A5%D0%B0%D0%BB%D0%BB%D0%B8%D0%B1%D1%83%D1%80%D1%82%D0%BE%D0%BD%20%2F%20%D0%91%D1%83%D1%80%D0%A1%D0%B5%D1%80%D0%B2%D0%B8%D1%81">Халлибуртон / БурСервис</a></div></div></td>
+              <td><div class="badges"><span class="badge b-active">Активный</span><span class="badge b-plan">Q2 renewal</span></div></td>
+              <td><div class="value">21,0 млн ₽</div><div class="muted">Лидер квартала</div></td>
+              <td><div class="owner-card"><strong>И. Петров</strong><div class="muted">Enterprise account owner</div></div></td>
+              <td><div class="next-step"><strong>Договор до 15.04</strong><div class="muted">Закрыть продление и поднять объемы по новой спецификации</div></div></td>
+              <td><div class="momentum"><span class="trend up">↑ +18% к базе</span><div class="muted">Очень высокая вероятность</div></div></td>
+              <td><div class="row-actions"><button class="row-delete-btn" type="button" title="Удалить компанию" aria-label="Удалить компанию">🗑</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="empty-state" id="companies-empty" hidden>Нет клиентов по текущему фильтру. Снимите фильтр или измените поисковый запрос.</div>
+  </div>
+
+  <!-- ── Add-client modal ── -->
+  <div class="modal-overlay" id="add-client-modal">
+    <div class="modal-card">
+      <div class="modal-title">Добавить клиента</div>
+      <div class="modal-copy">Введите название нового клиента. После добавления клиент появится в таблице.</div>
+      <div class="modal-field">
+        <label class="modal-label" for="new-client-name">Название клиента</label>
+        <input class="modal-input" id="new-client-name" type="text" placeholder="Например, Новая буровая компания">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cancel-add-client-button">Отмена</button>
+        <button class="btn btn-primary" type="button" id="confirm-add-client-button">Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.__sharedStateConfig = {
+      keys: [
+        'cloto_client_cards_v2',
+        'cloto_companies_list_v1',
+        'cloto_deleted_companies_v1'
+      ]
+    };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
+    (function () {
+      var searchInput = document.getElementById('clients-search');
+      var segmentButtons = document.querySelectorAll('.segment-btn');
+      var companyRows = document.querySelectorAll('#companies-body tr');
+      var companiesBody = document.getElementById('companies-body');
+      var companiesCount = document.getElementById('companies-count');
+      var emptyState = document.getElementById('companies-empty');
+      var addClientButton = document.getElementById('add-client-button');
+      var addClientModal = document.getElementById('add-client-modal');
+      var newClientNameInput = document.getElementById('new-client-name');
+      var cancelAddClientButton = document.getElementById('cancel-add-client-button');
+      var confirmAddClientButton = document.getElementById('confirm-add-client-button');
+      var crmMenuToggle = document.getElementById('menu-crm-toggle');
+      var crmFlyout = document.getElementById('crm-flyout');
+      var crmFlyoutClose = document.getElementById('crm-flyout-close');
+      var activeSegment = 'all';
+      var CLIENT_STORAGE_KEY = 'cloto_client_cards_v2';
+      var COMPANIES_LIST_KEY = 'cloto_companies_list_v1';
+      var DELETED_COMPANIES_KEY = 'cloto_deleted_companies_v1';
+
+      function readClientStore() {
+        try {
+          var parsed = JSON.parse(localStorage.getItem(CLIENT_STORAGE_KEY) || '{}');
+          return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveClientStore(store) {
+        localStorage.setItem(CLIENT_STORAGE_KEY, JSON.stringify(store));
+      }
+
+      function readCompaniesList() {
+        try {
+          var parsed = JSON.parse(localStorage.getItem(COMPANIES_LIST_KEY) || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveCompaniesList(list) {
+        localStorage.setItem(COMPANIES_LIST_KEY, JSON.stringify(list));
+      }
+
+      function readDeletedCompanies() {
+        try {
+          var parsed = JSON.parse(localStorage.getItem(DELETED_COMPANIES_KEY) || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveDeletedCompanies(list) {
+        localStorage.setItem(DELETED_COMPANIES_KEY, JSON.stringify(list));
+      }
+
+      function normalizeCompanyName(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/ё/g, 'е')
+          .replace(/\s+/g, '')
+          .replace(/["'`«».,/\\()_-]/g, '');
+      }
+
+      function findClientDataByCompany(store, company) {
+        if (!store || typeof store !== 'object') return null;
+        if (store[company]) return store[company];
+        var target = normalizeCompanyName(company);
+        var keys = Object.keys(store);
+        for (var i = 0; i < keys.length; i += 1) {
+          if (normalizeCompanyName(keys[i]) === target) return store[keys[i]];
+        }
+        return null;
+      }
+
+      function isCompanyDeleted(name) {
+        var target = normalizeCompanyName(name);
+        return readDeletedCompanies().some(function(entry) {
+          return normalizeCompanyName(entry) === target;
+        });
+      }
+
+      function markCompanyDeleted(name) {
+        var list = readDeletedCompanies();
+        if (!list.some(function(entry) { return normalizeCompanyName(entry) === normalizeCompanyName(name); })) {
+          list.push(name);
+          saveDeletedCompanies(list);
+        }
+      }
+
+      function unmarkCompanyDeleted(name) {
+        var target = normalizeCompanyName(name);
+        var list = readDeletedCompanies().filter(function(entry) { return normalizeCompanyName(entry) !== target; });
+        saveDeletedCompanies(list);
+      }
+
+      function applyClientLogos() {
+        var store = readClientStore();
+        companyRows.forEach(function (row) {
+          var company = row.getAttribute('data-company') || '';
+          var avatar = row.querySelector('.avatar');
+          if (!company || !avatar) return;
+          var clientData = findClientDataByCompany(store, company);
+          var logoData = clientData && clientData.logoData;
+          if (logoData) {
+            avatar.innerHTML = '<img src="' + logoData + '" alt="Логотип ' + company.replace(/"/g, '&quot;') + '">';
+          } else {
+            avatar.textContent = avatar.getAttribute('data-initials') || avatar.textContent || '';
+          }
+        });
+      }
+
+      function normalize(v) { return String(v || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+
+      function toSearchText(v) {
+        return String(v || '').toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim();
+      }
+
+      function getAvatarInitials(name) {
+        var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+        if (!parts.length) return 'CL';
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+
+      function hasCompanyInTable(name) {
+        var target = normalizeCompanyName(name);
+        return Array.from(document.querySelectorAll('#companies-body tr')).some(function (row) {
+          return normalizeCompanyName(row.getAttribute('data-company') || '') === target;
+        });
+      }
+
+      function createCompanyRow(name) {
+        var row = document.createElement('tr');
+        var initials = getAvatarInitials(name);
+        row.setAttribute('data-segment', 'cold');
+        row.setAttribute('data-company', name);
+        row.setAttribute('data-search', toSearchText(name));
+        row.innerHTML =
+          '<td><div class="account-cell"><div class="avatar" data-initials="' + initials + '">' + initials + '</div><div class="account-main"><a class="account-link" href="client-card.html?company=' + encodeURIComponent(name) + '">' + name + '</a></div></div></td>' +
+          '<td><div class="badges"><span class="badge b-cold">Новый</span></div></td>' +
+          '<td><div class="value">—</div><div class="muted">Пока без данных</div></td>' +
+          '<td><div class="owner-card"><strong>—</strong><div class="muted">Не назначен</div></div></td>' +
+          '<td><div class="next-step"><strong>—</strong><div class="muted">Добавьте план действий</div></div></td>' +
+          '<td><div class="momentum"><span class="trend mid">→ new</span><div class="muted">Новый клиент</div></div></td>' +
+          '<td><div class="row-actions"><button class="row-delete-btn" type="button" title="Удалить компанию" aria-label="Удалить компанию">🗑</button></div></td>';
+        return row;
+      }
+
+      function removeCompanyByName(name) {
+        if (!name || !companiesBody) return;
+        var target = normalizeCompanyName(name);
+
+        Array.from(companiesBody.querySelectorAll('tr')).forEach(function(row) {
+          if (normalizeCompanyName(row.getAttribute('data-company') || '') === target) {
+            row.remove();
+          }
+        });
+
+        var list = readCompaniesList().filter(function(entry) {
+          return normalizeCompanyName(entry) !== target;
+        });
+        saveCompaniesList(list);
+
+        markCompanyDeleted(name);
+        companyRows = document.querySelectorAll('#companies-body tr');
+        updateCompanyView();
+      }
+
+      function ensureClientCardDefaults(name) {
+        var store = readClientStore();
+        if (!store[name]) {
+          store[name] = {
+            turnover: '',
+            statusText: '',
+            potential: '',
+            info: '',
+            address: '',
+            events: [],
+            contacts: [],
+            products: [],
+            logoData: ''
+          };
+          saveClientStore(store);
+        }
+      }
+
+      function appendCompanyToTable(name, persist) {
+        if (!name || !companiesBody || hasCompanyInTable(name)) return false;
+        unmarkCompanyDeleted(name);
+        companiesBody.appendChild(createCompanyRow(name));
+        companyRows = document.querySelectorAll('#companies-body tr');
+        ensureClientCardDefaults(name);
+        if (persist) {
+          var list = readCompaniesList();
+          if (!list.some(function (entry) { return normalizeCompanyName(entry) === normalizeCompanyName(name); })) {
+            list.push(name);
+            saveCompaniesList(list);
+          }
+        }
+        applyClientLogos();
+        updateCompanyView();
+        return true;
+      }
+
+      function renderSavedCompanies() {
+        readCompaniesList().forEach(function (name) {
+          if (!isCompanyDeleted(name)) appendCompanyToTable(name, false);
+        });
+      }
+
+      function removeDeletedRowsFromMarkup() {
+        if (!companiesBody) return;
+        var deleted = readDeletedCompanies();
+        if (!deleted.length) return;
+        Array.from(companiesBody.querySelectorAll('tr')).forEach(function(row) {
+          var rowCompany = row.getAttribute('data-company') || '';
+          var removed = deleted.some(function(entry) {
+            return normalizeCompanyName(entry) === normalizeCompanyName(rowCompany);
+          });
+          if (removed) row.remove();
+        });
+        companyRows = document.querySelectorAll('#companies-body tr');
+      }
+
+      function updateCompanyView() {
+        var query = normalize(searchInput ? searchInput.value : '');
+        var visible = 0;
+        companyRows.forEach(function (row) {
+          var segment = row.getAttribute('data-segment') || 'all';
+          var haystack = normalize(row.getAttribute('data-search') || row.textContent);
+          var bySegment = activeSegment === 'all' || segment === activeSegment;
+          var bySearch = !query || haystack.indexOf(query) !== -1;
+          var show = bySegment && bySearch;
+          row.style.display = show ? '' : 'none';
+          if (show) visible += 1;
+        });
+        companiesCount.textContent = visible + ' аккаунтов';
+        emptyState.hidden = visible !== 0;
+      }
+
+      segmentButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          segmentButtons.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          activeSegment = btn.getAttribute('data-segment') || 'all';
+          updateCompanyView();
+        });
+      });
+
+      if (searchInput) searchInput.addEventListener('input', updateCompanyView);
+
+      if (companiesBody) {
+        companiesBody.addEventListener('click', function (e) {
+          var btn = e.target.closest('.row-delete-btn');
+          if (!btn) return;
+          var row = btn.closest('tr');
+          if (!row) return;
+          var companyName = row.getAttribute('data-company') || '';
+          if (!companyName) return;
+          if (!window.confirm('Удалить компанию «' + companyName + '» из списка?')) return;
+          removeCompanyByName(companyName);
+        });
+      }
+
+      function openModal() {
+        addClientModal.classList.add('open');
+        newClientNameInput.value = '';
+        newClientNameInput.focus();
+      }
+      function closeModal() { addClientModal.classList.remove('open'); }
+
+      if (addClientButton) addClientButton.addEventListener('click', openModal);
+      if (cancelAddClientButton) cancelAddClientButton.addEventListener('click', closeModal);
+      addClientModal.addEventListener('click', function (e) { if (e.target === addClientModal) closeModal(); });
+
+      if (confirmAddClientButton) {
+        confirmAddClientButton.addEventListener('click', function () {
+          var name = (newClientNameInput.value || '').trim();
+          if (!name) { newClientNameInput.focus(); return; }
+          appendCompanyToTable(name, true);
+          closeModal();
+        });
+      }
+      if (newClientNameInput) {
+        newClientNameInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') confirmAddClientButton.click();
+          if (e.key === 'Escape') closeModal();
+        });
+      }
+
+      /* CRM flyout */
+      if (crmMenuToggle && crmFlyout) {
+        crmMenuToggle.addEventListener('click', function () {
+          var open = crmFlyout.classList.toggle('open');
+          crmMenuToggle.classList.toggle('open', open);
+          crmMenuToggle.setAttribute('aria-expanded', String(open));
+          crmFlyout.setAttribute('aria-hidden', String(!open));
+        });
+        if (crmFlyoutClose) crmFlyoutClose.addEventListener('click', function () {
+          crmFlyout.classList.remove('open');
+          crmMenuToggle.classList.remove('open');
+          crmMenuToggle.setAttribute('aria-expanded', 'false');
+          crmFlyout.setAttribute('aria-hidden', 'true');
+        });
+        document.addEventListener('click', function (e) {
+          if (crmFlyout.classList.contains('open') && !crmFlyout.contains(e.target) && !crmMenuToggle.contains(e.target)) {
+            crmFlyout.classList.remove('open');
+            crmMenuToggle.classList.remove('open');
+            crmMenuToggle.setAttribute('aria-expanded', 'false');
+            crmFlyout.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }
+
+      removeDeletedRowsFromMarkup();
+      renderSavedCompanies();
+      applyClientLogos();
+      updateCompanyView();
+    })();
+  </script>
+</body>
+</html>
+
+

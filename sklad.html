@@ -9,15 +9,15 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:#080c14; --bg2:#0d1320;
-      --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07);
-      --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
-      --cyan:#3de8c7; --gold:#f5c842; --red:#ff5e7d;
-      --green:#48bb78; --blue:#63b3ed; --orange:#f6ad55; --pink:#ed64a6;
-      --text:#e8eaf0; --muted:#6b7491; --radius:16px;
+      --bg:#eef4fb; --bg2:#e3edf8;
+      --surface:rgba(255,255,255,.86); --surface2:rgba(255,255,255,.97);
+      --border:rgba(136,158,186,.25); --border2:rgba(94,143,199,.38);
+      --cyan:#24b7ad; --gold:#d9a83a; --red:#d96576;
+      --green:#3ea66d; --blue:#3b91da; --orange:#f6ad55; --pink:#d96aa4;
+      --text:#1e2c3c; --muted:#6f839c; --radius:16px;
     }
     html { scroll-behavior:smooth; }
-    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+    body { background:linear-gradient(180deg,var(--bg),var(--bg2)); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
     .bg-grid { position:fixed; inset:0; z-index:0;
       background-image:linear-gradient(rgba(99,179,237,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,179,237,.03) 1px,transparent 1px);
       background-size:48px 48px; pointer-events:none; }
@@ -27,7 +27,7 @@
     @keyframes o1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,70px)} }
     @keyframes o2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(70px,-50px)} }
     .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
-    .sidebar { width:250px; min-height:100vh; background:rgba(13,19,32,.9); backdrop-filter:blur(24px);
+    .sidebar { width:250px; min-height:100vh; background:rgba(255,255,255,.84); backdrop-filter:blur(24px);
       border-right:1px solid var(--border); display:flex; flex-direction:column; padding:28px 0;
       position:sticky; top:0; height:100vh; flex-shrink:0; overflow-y:auto; }
     .logo { display:flex; align-items:center; gap:12px; padding:0 22px 28px; border-bottom:1px solid var(--border); }
@@ -57,7 +57,7 @@
     .main { flex:1; padding:36px 40px; overflow-y:auto; display:flex; flex-direction:column; gap:24px; min-width:0; }
     .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
     .page-title { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;
-      background:linear-gradient(135deg,#fff 30%,var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+      background:linear-gradient(135deg,#2a3d54 30%,var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     .page-sub { color:var(--muted); font-size:13px; margin-top:4px; }
     .date-nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .dnav-btn { width:32px; height:32px; border-radius:8px; background:var(--surface); border:1px solid var(--border);
@@ -89,7 +89,7 @@
     .sum-sub { font-size:11px; color:var(--muted); margin-top:4px; }
     .sc-all .sum-val { color:var(--blue); }  .sc-prod .sum-val { color:var(--gold); }
     .sc-syryo .sum-val { color:var(--green); } .sc-mat .sum-val { color:var(--orange); }
-    .toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; position:relative; z-index:40; overflow:visible; }
     .search-box { position:relative; flex:1; min-width:200px; max-width:350px; }
     .search-box input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:9px 14px 9px 36px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none; transition:border-color .2s; }
     .search-box input:focus { border-color:rgba(99,179,237,.4); }
@@ -101,19 +101,84 @@
     .filter-btn.tab-prod.active  { border-color:rgba(245,200,66,.4); background:rgba(245,200,66,.09); color:var(--gold); }
     .filter-btn.tab-syryo.active { border-color:rgba(72,187,120,.4); background:rgba(72,187,120,.09); color:var(--green); }
     .filter-btn.tab-mat.active   { border-color:rgba(246,173,85,.4); background:rgba(246,173,85,.09); color:var(--orange); }
-    .tbl-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
-    .tbl-card-header { display:flex; align-items:center; justify-content:space-between; padding:16px 22px; border-bottom:1px solid var(--border); gap:10px; flex-wrap:wrap; }
+    .add-dropdown { position:relative; margin-left:auto; z-index:50; }
+    .add-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:8px 14px; border-radius:9px; font-size:12.5px; font-weight:700;
+      border:1px solid rgba(72,187,120,.4); background:rgba(72,187,120,.12);
+      color:var(--green); cursor:pointer; transition:all .15s; white-space:nowrap;
+      font-family:inherit;
+    }
+    .add-btn:hover { background:rgba(72,187,120,.22); border-color:rgba(72,187,120,.6); }
+    .add-menu {
+      position:absolute; top:100%; right:0; margin-top:4px;
+      background:var(--surface); border:1px solid var(--border); border-radius:10px;
+      box-shadow:0 10px 24px rgba(24,33,44,.22); min-width:180px; z-index:5000;
+      display:none; flex-direction:column; overflow:hidden;
+    }
+    .add-menu.open { display:flex; }
+    .add-menu-item {
+      padding:10px 14px; font-size:13px; color:var(--text); cursor:pointer;
+      transition:background .1s; border:none; background:none;
+      text-align:left; font-family:inherit; font-weight:500; width:100%;
+    }
+    .add-menu-item:hover { background:var(--bg); }
+    /* ADD ITEM MODAL */
+    .add-item-overlay {
+      position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,.4);
+      display:none; align-items:center; justify-content:center; padding:20px;
+    }
+    .add-item-overlay.open { display:flex; }
+    .add-item-modal-box {
+      width:min(500px, 96vw); max-height:90vh; overflow:auto;
+      border-radius:20px; border:1px solid rgba(24,33,44,.1);
+      background:#fff; box-shadow:0 24px 60px rgba(24,33,44,.22);
+      display:flex; flex-direction:column;
+    }
+    .add-item-modal-hdr {
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:12px; padding:18px 20px;
+      border-bottom:1px solid rgba(24,33,44,.08);
+      background:rgba(227,237,248,.4); border-radius:20px 20px 0 0;
+    }
+    .add-item-modal-title { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; }
+    .add-item-modal-sub { font-size:12px; color:var(--muted); margin-top:4px; }
+    .add-item-modal-close {
+      min-width:80px; padding:8px 14px; border-radius:10px;
+      border:1px solid rgba(24,33,44,.14); background:#f6f8fb;
+      font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:inherit;
+    }
+    .add-item-modal-close:hover { background:#eef2f7; }
+    .add-item-modal-body { padding:20px; overflow:auto; }
+    .add-item-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+    .add-item-field { margin-bottom:16px; }
+    .add-item-field label {
+      display:block; font-size:12px; font-weight:600; color:var(--muted);
+      text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;
+    }
+    .add-item-ctrl {
+      width:100%; padding:9px 14px; border-radius:10px; border:1px solid var(--border);
+      background:var(--surface); font-size:13.5px; font-family:inherit; outline:none; color:var(--text);
+    }
+    .add-item-ctrl:focus { border-color:rgba(99,179,237,.45); }
+    .cat-fields { display:none; margin-bottom:16px; }
+    .cat-fields.open { display:block; }
+    .cat-hint {
+      border:1px dashed var(--border2); background:rgba(99,179,237,.07);
+      border-radius:10px; padding:10px 12px; font-size:12px; color:var(--muted); margin-bottom:14px;
+    }
+    .add-menu-item:active { background:rgba(72,187,120,.1); }
     .tbl-card-title { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
     .tbl-card-count { font-size:12px; color:var(--muted); }
     .tbl-wrap { overflow-x:auto; }
     table.sk { width:100%; border-collapse:collapse; min-width:920px; }
     table.sk thead th { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
       padding:10px 10px 10px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap;
-      position:sticky; top:0; background:rgba(8,12,20,.95); z-index:2; }
+      position:sticky; top:0; background:var(--surface2); z-index:2; }
     table.sk thead th.r { text-align:right; }
     table.sk thead th.c { text-align:center; }
     table.sk thead .th-sub { font-size:9px; color:var(--muted); opacity:.5; font-weight:400; display:block; letter-spacing:0; text-transform:none; margin-top:2px; }
-    table.sk tbody td { padding:7px 10px; font-size:13px; border-bottom:1px solid rgba(255,255,255,.03); vertical-align:middle; }
+    table.sk tbody td { padding:7px 10px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
     table.sk tbody tr:last-child td { border-bottom:none; }
     table.sk tbody tr:hover td { background:rgba(255,255,255,.016); }
     .nv { text-align:right; font-family:'Space Grotesk',sans-serif; font-weight:600; }
@@ -162,7 +227,7 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="logo">
-      <a class="logo-back" href="portal.html">←</a>
+      <a class="logo-back" href="warehouse-dashboard.html">←</a>
       <div>
         <div class="logo-text">Склад · Клото</div>
         <div class="logo-sub">Центральный склад</div>
@@ -238,6 +303,14 @@
       <button class="filter-btn tab-prod"        id="btn-prod"  onclick="setTab('prod')">🏷️ Продукция</button>
       <button class="filter-btn tab-syryo"       id="btn-syryo" onclick="setTab('syryo')">🧪 Сырьё</button>
       <button class="filter-btn tab-mat"         id="btn-mat"   onclick="setTab('mat')">🔩 Материалы</button>
+      <div class="add-dropdown">
+        <button class="add-btn" onclick="toggleAddMenu()">+ Добавить</button>
+        <div class="add-menu" id="add-menu">
+          <button class="add-menu-item" onclick="openAddCategory('prod')">🏷️ Продукция</button>
+          <button class="add-menu-item" onclick="openAddCategory('syryo')">🧪 Сырьё</button>
+          <button class="add-menu-item" onclick="openAddCategory('mat')">🔩 Материалы</button>
+        </div>
+      </div>
     </div>
 
     <div class="tbl-card fade-up du-4">
@@ -250,6 +323,7 @@
           <thead>
             <tr>
               <th style="width:38px">№</th>
+              <th style="width:120px">SKU</th>
               <th>Наименование</th>
               <th class="c" style="width:52px">Ед.</th>
               <th class="r" style="width:115px">На начало<span class="th-sub" id="th-open-date">—</span></th>
@@ -262,13 +336,96 @@
             </tr>
           </thead>
           <tbody id="sk-tbody">
-            <tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">Загрузка...</td></tr>
+            <tr><td colspan="11" style="text-align:center;padding:40px;color:var(--muted)">Загрузка...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </main>
 </div>
+
+<!-- ADD ITEM MODAL -->
+<div id="add-item-overlay" class="add-item-overlay" onclick="handleAddItemOverlayClick(event)">
+  <div class="add-item-modal-box">
+    <div class="add-item-modal-hdr">
+      <div>
+        <div class="add-item-modal-title">Добавить товар</div>
+        <div class="add-item-modal-sub" id="add-item-modal-sub">Заполните детали товара</div>
+      </div>
+      <button type="button" class="add-item-modal-close" onclick="closeAddItemModal()">✕ Закрыть</button>
+    </div>
+    <div class="add-item-modal-body">
+      <form id="add-item-form" onsubmit="saveAddItem(event)">
+        <div class="cat-hint" id="add-item-hint">Выберите категорию из меню, затем заполните данные позиции.</div>
+        <div class="add-item-field">
+          <label>Наименование</label>
+          <input id="add-item-name" class="add-item-ctrl" type="text" placeholder="Например: Пентаэритрил моноолеат (ПЭМО)" required />
+        </div>
+        <div class="add-item-row">
+          <div class="add-item-field">
+            <label>Единица измерения</label>
+            <select id="add-item-unit" class="add-item-ctrl" required></select>
+          </div>
+          <div class="add-item-field">
+            <label>Начальное количество</label>
+            <input id="add-item-qty" class="add-item-ctrl" type="number" placeholder="0" min="0" step="any" required />
+          </div>
+        </div>
+
+        <div id="cat-fields-prod" class="cat-fields">
+          <div class="add-item-row">
+            <div class="add-item-field">
+              <label>Тип упаковки</label>
+              <select id="prod-pack" class="add-item-ctrl">
+                <option value="">— выберите —</option>
+                <option value="мешок">мешок</option>
+                <option value="бочка">бочка</option>
+                <option value="канистра">канистра</option>
+                <option value="короб">короб</option>
+              </select>
+            </div>
+            <div class="add-item-field">
+              <label>Вес единицы, кг</label>
+              <input id="prod-pack-weight" class="add-item-ctrl" type="number" min="0" step="any" placeholder="Например: 25" />
+            </div>
+          </div>
+        </div>
+
+        <div id="cat-fields-syryo" class="cat-fields">
+          <div class="add-item-row">
+            <div class="add-item-field">
+              <label>Поставщик</label>
+              <input id="syryo-supplier" class="add-item-ctrl" type="text" placeholder="Например: Nouryon" />
+            </div>
+            <div class="add-item-field">
+              <label>Марка / сорт</label>
+              <input id="syryo-grade" class="add-item-ctrl" type="text" placeholder="Например: Технический" />
+            </div>
+          </div>
+        </div>
+
+        <div id="cat-fields-mat" class="cat-fields">
+          <div class="add-item-row">
+            <div class="add-item-field">
+              <label>Назначение</label>
+              <input id="mat-purpose" class="add-item-ctrl" type="text" placeholder="Например: Упаковка" />
+            </div>
+            <div class="add-item-field">
+              <label>Мин. остаток</label>
+              <input id="mat-min" class="add-item-ctrl" type="number" min="0" step="any" placeholder="Например: 100" />
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" class="btn btn-ghost" onclick="closeAddItemModal()">Отмена</button>
+          <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -415,7 +572,8 @@ var BASE_CLOSE = [
 //  STATE
 // ═══════════════════════════════════════════════
 var PFXK = 'cloto_sklad_';
-var currentData = null;  // {date, rows:[{cat,idx,name,unit,open,inc,cons,ship,note}]}
+var RAW_MATERIALS_KEY = 'cloto_raw_materials_v2';
+var currentData = null;  // {date, rows:[{cat,idx,sku,name,unit,open,inc,cons,ship,note}]}
 var currentTab  = 'all';
 var saveTimer   = null;
 
@@ -474,7 +632,7 @@ function debounceSave() {
 //  DATA CREATION
 // ═══════════════════════════════════════════════
 function makeRow(b, openVal) {
-  return {cat:b.cat, idx:b.idx, name:b.name, unit:b.unit, open:openVal, inc:0, cons:0, ship:0, note:''};
+  return normalizeRow({cat:b.cat, idx:b.idx, sku:b.sku, name:b.name, unit:b.unit, open:openVal, inc:0, cons:0, ship:0, note:''});
 }
 function createFromBase(iso) {
   return {date:iso, rows:BASE_CLOSE.map(function(b) { return makeRow(b, b.c); })};
@@ -487,17 +645,180 @@ function createFromPrev(prevData, iso) {
 }
 function loadOrCreate(iso) {
   var saved = tryLoad(iso);
-  if (saved) return saved;
+  if (saved && Array.isArray(saved.rows)) {
+    saved.rows = saved.rows.map(normalizeRow);
+    return saved;
+  }
   var prev = findPrevSaved(iso);
   if (prev) { var pd = tryLoad(prev); if (pd) return createFromPrev(pd, iso); }
   return createFromBase(iso);
 }
 
 // ═══════════════════════════════════════════════
+//  ADD ITEM FUNCTIONS
+// ═══════════════════════════════════════════════
+function toggleAddMenu() {
+  var menu = document.getElementById('add-menu');
+  if (menu) menu.classList.toggle('open');
+}
+
+function setAddItemUnits(cat) {
+  var sel = document.getElementById('add-item-unit');
+  if (!sel) return;
+  var byCat = {
+    prod: ['мешок', 'бочка', 'канистра', 'шт', 'упаковка'],
+    syryo: ['кг', 'л', 'т', 'мешок', 'бочка'],
+    mat: ['шт', 'упаковка', 'комплект', 'кг', 'л']
+  };
+  var arr = byCat[cat] || ['кг', 'шт'];
+  sel.innerHTML = '<option value="">— выберите —</option>' + arr.map(function(u) {
+    return '<option value="' + u + '">' + u + '</option>';
+  }).join('');
+}
+
+function setCategoryFields(cat) {
+  var prod = document.getElementById('cat-fields-prod');
+  var syryo = document.getElementById('cat-fields-syryo');
+  var mat = document.getElementById('cat-fields-mat');
+  if (prod) prod.classList.toggle('open', cat === 'prod');
+  if (syryo) syryo.classList.toggle('open', cat === 'syryo');
+  if (mat) mat.classList.toggle('open', cat === 'mat');
+}
+
+function openAddCategory(cat) {
+  var catName = cat === 'prod' ? 'Продукция' : cat === 'syryo' ? 'Сырьё' : 'Материалы';
+  var catSub = cat === 'prod' ? 'Готовая продукция, упаковки, мешки' : 
+               cat === 'syryo' ? 'Сырьевые материалы и компоненты' : 
+               'Расходные материалы, упаковка, прочее';
+  
+  toggleAddMenu();
+  
+  document.querySelector('.add-item-modal-title').textContent = 'Добавить: ' + catName;
+  document.getElementById('add-item-modal-sub').textContent = catSub;
+  document.getElementById('add-item-hint').textContent = cat === 'prod'
+    ? 'Форма продукции: добавьте позицию, упаковку и при необходимости вес одной единицы.'
+    : cat === 'syryo'
+      ? 'Форма сырья: добавьте сырьё, укажите поставщика и марку для идентификации.'
+      : 'Форма материалов: добавьте расходный материал и желаемый минимальный остаток.';
+  document.getElementById('add-item-form').dataset.category = cat;
+  document.getElementById('add-item-name').value = '';
+  document.getElementById('add-item-qty').value = '';
+  document.getElementById('prod-pack').value = '';
+  document.getElementById('prod-pack-weight').value = '';
+  document.getElementById('syryo-supplier').value = '';
+  document.getElementById('syryo-grade').value = '';
+  document.getElementById('mat-purpose').value = '';
+  document.getElementById('mat-min').value = '';
+
+  setAddItemUnits(cat);
+  setCategoryFields(cat);
+  
+  document.getElementById('add-item-overlay').classList.add('open');
+  document.getElementById('add-item-name').focus();
+}
+
+function closeAddItemModal() {
+  document.getElementById('add-item-overlay').classList.remove('open');
+  document.getElementById('add-item-form').reset();
+  setCategoryFields('');
+}
+
+function handleAddItemOverlayClick(e) {
+  if (e.target === document.getElementById('add-item-overlay')) {
+    closeAddItemModal();
+  }
+}
+
+function saveAddItem(event) {
+  event.preventDefault();
+  
+  var name = document.getElementById('add-item-name').value.trim();
+  var unit = document.getElementById('add-item-unit').value;
+  var qty = parseFloat(document.getElementById('add-item-qty').value) || 0;
+  var cat = document.getElementById('add-item-form').dataset.category;
+  var noteParts = ['Добавлено вручную'];
+
+  if (cat === 'prod') {
+    var pack = document.getElementById('prod-pack').value.trim();
+    var packWeight = parseFloat(document.getElementById('prod-pack-weight').value) || 0;
+    if (pack) noteParts.push('упаковка: ' + pack);
+    if (packWeight > 0) noteParts.push('вес ед.: ' + packWeight + ' кг');
+  }
+  if (cat === 'syryo') {
+    var supplier = document.getElementById('syryo-supplier').value.trim();
+    var grade = document.getElementById('syryo-grade').value.trim();
+    if (supplier) noteParts.push('поставщик: ' + supplier);
+    if (grade) noteParts.push('марка: ' + grade);
+  }
+  if (cat === 'mat') {
+    var purpose = document.getElementById('mat-purpose').value.trim();
+    var minStock = parseFloat(document.getElementById('mat-min').value) || 0;
+    if (purpose) noteParts.push('назначение: ' + purpose);
+    if (minStock > 0) noteParts.push('мин. остаток: ' + minStock);
+  }
+  
+  if (!name || !unit) {
+    alert('Пожалуйста, заполните все поля');
+    return;
+  }
+  
+  // Find today's date
+  var today = new Date();
+  var iso = today.getFullYear() + '-' + 
+            String(today.getMonth() + 1).padStart(2, '0') + '-' +
+            String(today.getDate()).padStart(2, '0');
+  
+  // Load or create today's data
+  var data = loadOrCreate(iso);
+  
+  // Get next index for this category
+  var maxIdx = 0;
+  data.rows.forEach(function(r) {
+    if (r.cat === cat) {
+      var idxNum = parseInt(r.idx) || 0;
+      if (idxNum > maxIdx) maxIdx = idxNum;
+    }
+  });
+  var newIdx = maxIdx + 1;
+  
+  // Add new row
+  data.rows.push({
+    idx: String(newIdx),
+    name: name,
+    unit: unit,
+    cat: cat,
+    sku: '',
+    open: qty,
+    inc: 0,
+    cons: 0,
+    ship: 0,
+    note: noteParts.join(' | ')
+  });
+  data.rows[data.rows.length - 1] = normalizeRow(data.rows[data.rows.length - 1]);
+  
+  // Update current data and save
+  currentData = data;
+  saveData(data);
+  renderTable();
+  
+  closeAddItemModal();
+  showToast('✓ Товар добавлен успешно');
+}
+
+
+document.addEventListener('click', function(e) {
+  var dropdown = document.querySelector('.add-dropdown');
+  if (dropdown && !dropdown.contains(e.target)) {
+    var menu = document.getElementById('add-menu');
+    if (menu) menu.classList.remove('open');
+  }
+});
+
+// ═══════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════
 function esc(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function fmtN(n) {
   var v = +n;
@@ -518,6 +839,62 @@ function inpCls(v, type) {
   if (type === 'ship') return 'num-inp has-v-ship';
   return 'num-inp has-v';
 }
+function normalizeTextKey(value) {
+  return String(value || '').trim().toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ');
+}
+function hashKey(value) {
+  var text = String(value || '');
+  var hash = 0;
+  for (var i = 0; i < text.length; i += 1) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36).toUpperCase();
+}
+function readRawMaterialSkuMap() {
+  var map = {};
+  try {
+    var parsed = JSON.parse(localStorage.getItem(RAW_MATERIALS_KEY) || '[]');
+    if (!Array.isArray(parsed)) return map;
+    parsed.forEach(function(item) {
+      var nameKey = normalizeTextKey(item && item.name);
+      var sku = String(item && item.sku || '').trim();
+      if (nameKey && sku && !map[nameKey]) map[nameKey] = sku;
+    });
+  } catch (e) {}
+  return map;
+}
+function buildFallbackSku(row) {
+  var prefix = row.cat === 'syryo' ? 'RM' : (row.cat === 'prod' ? 'PRD' : 'MAT');
+  var base = hashKey((row.cat || '') + '|' + (row.idx || '') + '|' + (row.name || ''));
+  return prefix + '-' + base.slice(0, 6);
+}
+function resolveRowSku(row) {
+  var current = String(row && row.sku || '').trim();
+  if (current) return current;
+  if (row && row.cat === 'syryo') {
+    var skuMap = readRawMaterialSkuMap();
+    var byName = skuMap[normalizeTextKey(row.name)];
+    if (byName) return byName;
+  }
+  return buildFallbackSku(row || {});
+}
+function normalizeRow(row) {
+  var base = row && typeof row === 'object' ? row : {};
+  var normalized = {
+    cat: base.cat,
+    idx: base.idx,
+    name: base.name,
+    unit: base.unit,
+    open: base.open,
+    inc: base.inc,
+    cons: base.cons,
+    ship: base.ship,
+    note: base.note
+  };
+  normalized.sku = resolveRowSku(normalized);
+  return normalized;
+}
 
 // ═══════════════════════════════════════════════
 //  RENDER
@@ -525,10 +902,12 @@ function inpCls(v, type) {
 function renderTable() {
   var html = '';
   currentData.rows.forEach(function(r, i) {
+    r.sku = resolveRowSku(r);
     var cl = (r.open||0) + (r.inc||0) - (r.cons||0) - (r.ship||0);
     html +=
       '<tr data-i="'+i+'" data-cat="'+r.cat+'">' +
       '<td><span class="idx-b">'+esc(r.idx)+'</span></td>' +
+      '<td style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;color:var(--muted);white-space:nowrap">'+esc(r.sku || '')+'</td>' +
       '<td style="font-weight:500;max-width:280px;word-break:break-word">'+esc(r.name)+'</td>' +
       '<td style="text-align:center;font-size:11.5px;color:var(--muted)">'+esc(r.unit)+'</td>' +
       '<td class="nv '+openCls(r.open||0)+'">'+fmtN(r.open)+'</td>' +
@@ -541,7 +920,7 @@ function renderTable() {
       '</tr>';
   });
   var tb = document.getElementById('sk-tbody');
-  tb.innerHTML = html || '<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">—</td></tr>';
+  tb.innerHTML = html || '<tr><td colspan="11" style="text-align:center;padding:40px;color:var(--muted)">—</td></tr>';
   applyFilter();
   updateSummary();
 }
@@ -570,7 +949,7 @@ function applyFilter() {
   rows.forEach(function(tr) {
     var i = parseInt(tr.dataset.i);
     var r = currentData.rows[i];
-    var show = (currentTab === 'all' || r.cat === currentTab) && (!q || r.name.toLowerCase().indexOf(q) !== -1);
+    var show = (currentTab === 'all' || r.cat === currentTab) && (!q || r.name.toLowerCase().indexOf(q) !== -1 || String(r.sku || '').toLowerCase().indexOf(q) !== -1);
     tr.style.display = show ? '' : 'none';
     if (show) vis++;
   });
@@ -650,12 +1029,12 @@ function manualSave() {
 function exportCSV() {
   if (!currentData) return;
   var catN = {prod:'Продукция', syryo:'Сырьё', mat:'Материалы'};
-  var hdr = ['№','Наименование','Ед.','Начало','Приход','Расход пр-во','Отгрузка','Конец','Раздел','Примечание'];
+  var hdr = ['№','SKU','Наименование','Ед.','Начало','Приход','Расход пр-во','Отгрузка','Конец','Раздел','Примечание'];
   var rows = currentData.rows.filter(function(r) { return currentTab === 'all' || r.cat === currentTab; });
   var lines = [hdr.join(';')];
   rows.forEach(function(r) {
     var cl = (r.open||0)+(r.inc||0)-(r.cons||0)-(r.ship||0);
-    lines.push([r.idx,'"'+r.name+'"',r.unit,r.open||0,r.inc||0,r.cons||0,r.ship||0,cl,catN[r.cat]||r.cat,'"'+(r.note||'')+'"'].join(';'));
+    lines.push([r.idx,r.sku||resolveRowSku(r),'"'+r.name+'"',r.unit,r.open||0,r.inc||0,r.cons||0,r.ship||0,cl,catN[r.cat]||r.cat,'"'+(r.note||'')+'"'].join(';'));
   });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\r\n')], {type:'text/csv;charset=utf-8'}));
@@ -670,9 +1049,208 @@ function showToast(msg, type) {
 }
 
 // ═══════════════════════════════════════════════
-//  INIT — открываем сегодняшний день
+//  WAREHOUSE NOTIFICATIONS
 // ═══════════════════════════════════════════════
+var WH_NOTIF_KEY = 'cloto_warehouse_notifications';
+
+function parseVolume(volumeStr) {
+  var result = { tons: 0, units: 0, unitLabel: '' };
+  if (!volumeStr) return result;
+  var parts = String(volumeStr).split('/').map(function(part) { return String(part || '').trim(); }).filter(Boolean);
+  if (!parts.length) parts = [String(volumeStr)];
+
+  parts.forEach(function(part) {
+    var numberMatch = part.match(/([\d]+(?:[,.][\d]+)?)/);
+    if (!numberMatch) return;
+    var num = parseFloat(numberMatch[1].replace(',', '.')) || 0;
+    var tail = part.slice(part.indexOf(numberMatch[1]) + numberMatch[1].length).trim().toLowerCase();
+
+    if (/(^|\s)т($|\s|\.)|тонн|тонна|тонны/.test(tail)) {
+      result.tons = num;
+      return;
+    }
+
+    if (num > 0) {
+      result.units = Math.round(num);
+      result.unitLabel = tail || result.unitLabel;
+    }
+  });
+
+  if (!result.units) {
+    var unitsFallback = String(volumeStr).match(/([\d]+)\s*([^\d\/]+)/);
+    if (unitsFallback) {
+      result.units = parseInt(unitsFallback[1], 10) || 0;
+      result.unitLabel = String(unitsFallback[2] || '').trim().toLowerCase();
+    }
+  }
+  return result;
+}
+
+function normName(s) {
+  return normalizeTextKey(s);
+}
+
+function checkWarehouseNotifications() {
+  var overlay = document.getElementById('wh-notif-overlay');
+  if (!overlay) return;
+
+  var list = [];
+  try { list = JSON.parse(localStorage.getItem(WH_NOTIF_KEY) || '[]'); } catch(e) {}
+  if (!Array.isArray(list)) return;
+  var pending = list.filter(function(n) { return !n.accepted; });
+  if (!pending.length) {
+    overlay.style.display = 'none';
+    return;
+  }
+  var notif = pending[0];
+  var parsed = parseVolume(notif.volume);
+  var qtyHtml = '';
+  if (parsed.tons > 0) qtyHtml += '<span style="font-size:22px;font-weight:800;color:#1e5f8a;">' + parsed.tons.toLocaleString('ru') + ' т</span>';
+  if (parsed.units > 0) qtyHtml += (qtyHtml ? ' <span style="color:#6f839c;font-size:18px;">/</span> ' : '') + '<span style="font-size:22px;font-weight:800;color:#146e69;">' + parsed.units.toLocaleString('ru') + ' ' + (notif.packageType || parsed.unitLabel || 'ед.') + '</span>';
+  if (!qtyHtml && notif.volume) qtyHtml = '<span style="font-size:18px;font-weight:700;color:#1e2c3c;">' + notif.volume + '</span>';
+
+  var productNameEl = document.getElementById('wh-product-name');
+  var qtyEl = document.getElementById('wh-qty-display');
+  var requestNumEl = document.getElementById('wh-request-num');
+  if (!productNameEl || !qtyEl || !requestNumEl) return;
+
+  productNameEl.textContent = notif.productName || '—';
+  qtyEl.innerHTML = qtyHtml || '—';
+  requestNumEl.textContent = notif.requestNumber ? ('Заявка №' + notif.requestNumber) : '';
+  overlay.style.display = 'flex';
+  overlay.dataset.notifTimestamp = notif.timestamp || '';
+}
+
+function dismissWarehouseNotif() {
+  var overlay = document.getElementById('wh-notif-overlay');
+  if (!overlay) return;
+  var ts = overlay.dataset.notifTimestamp;
+  var list = [];
+  try { list = JSON.parse(localStorage.getItem(WH_NOTIF_KEY) || '[]'); } catch(e) {}
+  if (!Array.isArray(list)) return;
+  list = list.map(function(n) {
+    if (n.timestamp === ts) return Object.assign({}, n, { accepted: true });
+    return n;
+  });
+  localStorage.setItem(WH_NOTIF_KEY, JSON.stringify(list));
+  overlay.style.display = 'none';
+}
+
+function acceptToWarehouse() {
+  var overlay = document.getElementById('wh-notif-overlay');
+  if (!overlay) return;
+  var ts = overlay.dataset.notifTimestamp;
+  var list = [];
+  try { list = JSON.parse(localStorage.getItem(WH_NOTIF_KEY) || '[]'); } catch(e) {}
+  if (!Array.isArray(list)) return;
+  var notif = list.filter(function(n) { return n.timestamp === ts; })[0];
+  if (!notif) { dismissWarehouseNotif(); return; }
+
+  var parsed = parseVolume(notif.volume);
+  var addQty = parsed.units > 0 ? parsed.units : parsed.tons;
+
+  if (currentData && currentData.rows && addQty > 0) {
+    var targetNorm = normName(notif.productName);
+    var rowIdx = -1;
+    for (var i = 0; i < currentData.rows.length; i++) {
+      var r = currentData.rows[i];
+      if (r.cat === 'prod' && normName(r.name) === targetNorm) { rowIdx = i; break; }
+    }
+    if (rowIdx < 0) {
+      for (var j = 0; j < currentData.rows.length; j++) {
+        var rr = currentData.rows[j];
+        if (rr.cat === 'prod' && (normName(rr.name).indexOf(targetNorm) >= 0 || targetNorm.indexOf(normName(rr.name)) >= 0)) {
+          rowIdx = j; break;
+        }
+      }
+    }
+    if (rowIdx >= 0) {
+      currentData.rows[rowIdx].inc = (currentData.rows[rowIdx].inc || 0) + addQty;
+      saveData(currentData);
+      renderTable();
+      showToast('✓ Принято на склад: +' + addQty.toLocaleString('ru') + ' ' + (parsed.units > 0 ? (notif.packageType || parsed.unitLabel || 'ед.') : 'т') + ' · ' + notif.productName, 'ok');
+    } else {
+      var prodRows = currentData.rows.filter(function(r) { return r.cat === 'prod'; });
+      var maxIdx = prodRows.reduce(function(max, r) {
+        var n = Number(r && r.idx || 0);
+        return n > max ? n : max;
+      }, 0);
+      var unitName = parsed.units > 0 ? (notif.packageType || parsed.unitLabel || 'ед.') : 'т';
+      currentData.rows.push({
+        cat: 'prod',
+        idx: String(maxIdx + 1),
+        sku: '',
+        name: notif.productName || 'Новый товар из производства',
+        unit: unitName,
+        open: 0,
+        inc: addQty,
+        cons: 0,
+        ship: 0,
+        note: 'Автодобавлено из заявки производства №' + (notif.requestNumber || '—')
+      });
+      currentData.rows[currentData.rows.length - 1] = normalizeRow(currentData.rows[currentData.rows.length - 1]);
+      saveData(currentData);
+      renderTable();
+      showToast('✓ Принято на склад: создана новая позиция и добавлено +' + addQty.toLocaleString('ru') + ' ' + unitName, 'ok');
+    }
+  }
+
+  list = list.map(function(n) {
+    if (n.timestamp === ts) return Object.assign({}, n, { accepted: true });
+    return n;
+  });
+  localStorage.setItem(WH_NOTIF_KEY, JSON.stringify(list));
+  overlay.style.display = 'none';
+  var remaining = list.filter(function(n) { return !n.accepted; });
+  if (remaining.length) setTimeout(checkWarehouseNotifications, 400);
+}
+
 gotoDate(todayISO());
+window.addEventListener('DOMContentLoaded', function() {
+  checkWarehouseNotifications();
+});
+
+window.addEventListener('storage', function(e) {
+  if (e.key === 'cloto_warehouse_notifications') checkWarehouseNotifications();
+  if (e.key === RAW_MATERIALS_KEY && currentData && Array.isArray(currentData.rows)) {
+    currentData.rows = currentData.rows.map(normalizeRow);
+    saveData(currentData);
+    renderTable();
+  }
+  if (currentData && e.key === dKey(currentData.date)) {
+    var refreshed = tryLoad(currentData.date);
+    if (refreshed && Array.isArray(refreshed.rows)) {
+      refreshed.rows = refreshed.rows.map(normalizeRow);
+      currentData = refreshed;
+      renderTable();
+    }
+  }
+});
 </script>
+<!-- Warehouse incoming notification modal -->
+<div id="wh-notif-overlay" style="display:none;position:fixed;inset:0;background:rgba(20,40,60,.55);backdrop-filter:blur(10px);z-index:8000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#f4f9ff;border-radius:24px;padding:32px 36px;width:min(520px,96vw);box-shadow:0 32px 64px rgba(36,66,100,.30);border:1px solid rgba(36,183,173,.28);position:relative;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,rgba(36,183,173,.22),rgba(59,145,218,.16));border:1px solid rgba(36,183,173,.30);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📦</div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:#1e2c3c;line-height:1.1;">Поступление с производства</div>
+        <div style="font-size:12px;color:#6f839c;margin-top:2px;" id="wh-request-num"></div>
+      </div>
+    </div>
+    <div style="height:1px;background:rgba(136,158,186,.2);margin:16px 0;"></div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#6f839c;margin-bottom:8px;">Продукция</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#1e2c3c;margin-bottom:18px;" id="wh-product-name">—</div>
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#6f839c;margin-bottom:8px;">Количество</div>
+    <div style="margin-bottom:24px;line-height:1.3;" id="wh-qty-display">—</div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+      <button onclick="dismissWarehouseNotif()" style="padding:11px 20px;border-radius:12px;border:1px solid rgba(136,158,186,.3);background:rgba(255,255,255,.8);color:#6f839c;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Закрыть</button>
+      <button onclick="acceptToWarehouse()" style="padding:11px 24px;border-radius:12px;border:1px solid rgba(36,183,173,.40);background:linear-gradient(135deg,rgba(36,183,173,.22),rgba(59,145,218,.14));color:#0f5f5a;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(36,183,173,.20);">✓ Принять на склад</button>
+    </div>
+  </div>
+</div>
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_sales_orders_new', 'cloto_shipments_workbook_edits_v1', 'cloto_production_orders'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
 </body>
 </html>

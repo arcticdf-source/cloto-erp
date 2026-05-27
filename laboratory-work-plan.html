@@ -10,23 +10,23 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #07111b;
-      --bg2: #0d1a2a;
-      --surface: rgba(255, 255, 255, 0.05);
-      --surface-strong: rgba(255, 255, 255, 0.08);
-      --surface-soft: rgba(255, 255, 255, 0.03);
-      --border: rgba(255, 255, 255, 0.08);
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255, 255, 255, 0.86);
+      --surface-strong: rgba(255, 255, 255, 0.97);
+      --surface-soft: rgba(255, 255, 255, 0.78);
+      --border: rgba(136, 158, 186, 0.25);
       --border-strong: rgba(71, 224, 194, 0.28);
-      --text: #e8f0f7;
-      --muted: #7d92a7;
-      --cyan: #47e0c2;
-      --blue: #78bcff;
-      --gold: #f2cb6f;
-      --red: #ff7c87;
-      --violet: #9f8cff;
-      --green: #5fda93;
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --cyan: #24b7ad;
+      --blue: #3b91da;
+      --gold: #d9a83a;
+      --red: #d96576;
+      --violet: #7d8fd8;
+      --green: #3ea66d;
       --radius: 18px;
-      --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+      --shadow: 0 14px 30px rgba(36, 66, 100, 0.14);
     }
 
     body {
@@ -102,12 +102,9 @@
 
     .hero {
       padding: 22px 24px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 420px);
-      gap: 18px;
       margin-bottom: 14px;
       background:
-        linear-gradient(135deg, rgba(71, 224, 194, 0.14), rgba(7, 17, 27, 0.4)),
+        linear-gradient(135deg, rgba(71, 224, 194, 0.14), rgba(255, 255, 255, 0.92)),
         var(--surface);
     }
 
@@ -119,7 +116,7 @@
       padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid rgba(71, 224, 194, 0.24);
-      background: rgba(7, 17, 27, 0.45);
+      background: rgba(255, 255, 255, 0.7);
       color: var(--cyan);
       font-size: 11px;
       font-weight: 800;
@@ -153,6 +150,13 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .modal-head-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .hero-actions { margin-top: 16px; }
@@ -200,8 +204,8 @@
     .side-box {
       padding: 18px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
     }
 
     .side-box + .side-box { margin-top: 12px; }
@@ -256,8 +260,8 @@
     .kpi {
       padding: 14px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
     }
 
     .kpi-value {
@@ -279,6 +283,285 @@
       margin-top: 8px;
       color: var(--muted);
       font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .command-center {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .alert-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .alert-card,
+    .command-card {
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface-strong);
+      box-shadow: 0 10px 26px rgba(36, 66, 100, 0.08);
+    }
+
+    .alert-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      border-radius: 18px 0 0 18px;
+      background: #d96576;
+    }
+
+    .alert-card.warning::before { background: #d9a83a; }
+    .alert-card.info::before { background: #3b91da; }
+    .alert-card.teal::before { background: #24b7ad; }
+
+    .alert-label {
+      color: #556b86;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .alert-value {
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+      color: #1e2c3c;
+    }
+
+    .alert-meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .command-card.wide {
+      grid-column: 1 / -1;
+    }
+
+    .command-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.08;
+    }
+
+    .command-copy {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .mini-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .mini-metric {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(239, 246, 255, 0.9);
+      border: 1px solid rgba(123, 151, 182, 0.18);
+    }
+
+    .mini-metric strong,
+    .panel-subtitle {
+      display: block;
+      color: #44566e;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mini-metric span {
+      display: block;
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: #1e2c3c;
+    }
+
+    .metrics-row,
+    .split-panels {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .metric-box {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(250, 252, 255, 0.98);
+      border: 1px solid rgba(123, 151, 182, 0.18);
+    }
+
+    .metric-box .metric-big {
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #1e2c3c;
+    }
+
+    .metric-box .metric-note {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .table-compact {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid rgba(123, 151, 182, 0.16);
+      background: #fff;
+    }
+
+    .table-compact th,
+    .table-compact td {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(123, 151, 182, 0.12);
+    }
+
+    .table-compact th {
+      color: #58708c;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(237, 245, 255, 0.92);
+    }
+
+    .table-compact tr:last-child td { border-bottom: none; }
+
+    .priority-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .priority-item {
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 247, 247, 0.98);
+      border: 1px solid rgba(217, 101, 118, 0.16);
+    }
+
+    .priority-item.warning {
+      background: rgba(255, 251, 239, 0.98);
+      border-color: rgba(217, 168, 58, 0.18);
+    }
+
+    .priority-item .icon {
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .priority-item strong {
+      display: block;
+      color: #1e2c3c;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .priority-item span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .pipeline-track {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .pipeline-stage {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(244, 248, 253, 0.96);
+      border: 1px solid rgba(123, 151, 182, 0.16);
+    }
+
+    .pipeline-stage strong {
+      display: block;
+      color: #435971;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pipeline-stage span {
+      display: block;
+      margin-top: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: #1e2c3c;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .metric-chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(238, 245, 255, 0.98);
+      border: 1px solid rgba(123, 151, 182, 0.18);
+      color: #48607b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .empty-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
       line-height: 1.5;
     }
 
@@ -320,9 +603,71 @@
     .gantt-head,
     .gantt-row {
       display: grid;
-      grid-template-columns: 320px repeat(13, minmax(56px, 1fr));
+      grid-template-columns: 280px repeat(13, minmax(44px, 1fr));
       gap: 8px;
     }
+
+    .month-gantt-head,
+    .month-gantt-row {
+      display: grid;
+      grid-template-columns: 280px repeat(4, minmax(96px, 1fr));
+      gap: 8px;
+    }
+
+    .month-gantt-head {
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 10px;
+    }
+
+    .month-gantt-head div {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .month-gantt-row {
+      position: relative;
+      align-items: start;
+      padding: 12px 0 14px;
+      min-height: calc(var(--track-height, 34px) + 28px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .month-gantt-row:last-child { border-bottom: none; }
+
+    .year-gantt-head,
+    .year-gantt-row {
+      display: grid;
+      grid-template-columns: 320px repeat(12, minmax(72px, 1fr));
+      gap: 8px;
+    }
+
+    .year-gantt-head {
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 10px;
+    }
+
+    .year-gantt-head div {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .year-gantt-row {
+      position: relative;
+      align-items: start;
+      padding: 12px 0 14px;
+      min-height: calc(var(--track-height, 34px) + 28px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .year-gantt-row:last-child { border-bottom: none; }
 
     .gantt-head {
       padding-bottom: 10px;
@@ -402,6 +747,11 @@
       pointer-events: none;
     }
 
+    .gantt-row .gantt-track,
+    .month-gantt-row .gantt-track {
+      left: calc(280px + 8px);
+    }
+
     .gantt-bar {
       position: absolute;
       top: 0;
@@ -419,6 +769,118 @@
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
       cursor: pointer;
       pointer-events: auto;
+    }
+
+    .week-gantt-bar {
+      cursor: grab;
+      touch-action: none;
+      padding: 0 18px;
+    }
+
+    .week-gantt-bar,
+    .period-gantt-bar {
+      touch-action: none;
+    }
+
+    .week-gantt-bar-label,
+    .timeline-bar-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .week-gantt-handle,
+    .timeline-handle {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      width: 10px;
+      border-radius: 8px;
+      background: rgba(4, 40, 33, 0.26);
+      opacity: 0.74;
+      cursor: ew-resize;
+      z-index: 2;
+    }
+
+    .week-gantt-handle.left,
+    .timeline-handle.left { left: 4px; }
+    .week-gantt-handle.right,
+    .timeline-handle.right { right: 4px; }
+
+    body.dragging-week-gantt {
+      user-select: none;
+      cursor: grabbing;
+    }
+
+    body.dragging-week-gantt .week-gantt-bar {
+      cursor: grabbing;
+    }
+
+    body.dragging-week-gantt .week-gantt-handle {
+      opacity: 1;
+    }
+
+    .period-gantt-bar {
+      cursor: grab;
+      padding: 0 18px;
+    }
+
+    body.dragging-period-gantt {
+      user-select: none;
+      cursor: grabbing;
+    }
+
+    body.dragging-period-gantt .period-gantt-bar {
+      cursor: grabbing;
+    }
+
+    body.dragging-period-gantt .timeline-handle {
+      opacity: 1;
+    }
+
+    .week-gantt-track {
+      pointer-events: auto;
+    }
+
+    .week-gantt-head,
+    .week-gantt-row {
+      display: grid;
+      grid-template-columns: 320px repeat(7, minmax(74px, 1fr));
+      gap: 8px;
+    }
+
+    .week-gantt-head {
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 10px;
+    }
+
+    .week-gantt-head div {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .week-gantt-row {
+      position: relative;
+      align-items: start;
+      padding: 12px 0 14px;
+      min-height: calc(var(--track-height, 34px) + 28px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .week-gantt-row:last-child { border-bottom: none; }
+
+    .week-range {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.02em;
     }
 
     .gantt-bar-main {
@@ -453,8 +915,8 @@
     .note-item {
       padding: 12px 13px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
     }
 
     .note-item strong {
@@ -509,14 +971,70 @@
     .table-wrap {
       overflow: auto;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 251, 255, 0.88));
     }
 
     table {
       width: 100%;
       min-width: 1280px;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.94);
+    }
+
+    #table-week,
+    #table-month,
+    #table-quarter,
+    #table-year {
+      min-width: 0;
+      table-layout: fixed;
+    }
+
+    #table-week th,
+    #table-week td,
+    #table-month th,
+    #table-month td,
+    #table-quarter th,
+    #table-quarter td,
+    #table-year th,
+    #table-year td {
+      word-break: break-word;
+    }
+
+    #table-month,
+    #table-quarter {
+      min-width: 0;
+      table-layout: fixed;
+    }
+
+    #table-month th,
+    #table-month td,
+    #table-quarter th,
+    #table-quarter td {
+      padding: 9px 8px;
+      font-size: 11px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    #table-month .row-actions,
+    #table-quarter .row-actions {
+      white-space: normal;
+    }
+
+    #table-month .btn-open,
+    #table-quarter .btn-open {
+      min-width: 64px;
+      height: 30px;
+      padding: 0 8px;
+      font-size: 10px;
+    }
+
+    #table-month .btn-delete,
+    #table-quarter .btn-delete {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
     }
 
     th {
@@ -524,9 +1042,9 @@
       top: 0;
       z-index: 1;
       padding: 12px;
-      background: rgba(7, 17, 27, 0.95);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      color: var(--muted);
+      background: linear-gradient(180deg, rgba(235, 244, 252, 0.98), rgba(227, 238, 249, 0.94));
+      border-bottom: 1px solid rgba(116, 145, 177, 0.35);
+      color: #4c6380;
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
@@ -536,13 +1054,14 @@
 
     td {
       padding: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(133, 161, 190, 0.18);
       vertical-align: top;
       font-size: 12px;
       line-height: 1.55;
+      color: #27374a;
     }
 
-    tr:hover td { background: rgba(255, 255, 255, 0.03); }
+    tr:hover td { background: rgba(120, 188, 255, 0.08); }
 
     .task-num {
       font-family: 'Space Grotesk', sans-serif;
@@ -574,9 +1093,41 @@
     .period-week { color: var(--cyan); background: rgba(71, 224, 194, 0.12); }
     .period-month { color: var(--blue); background: rgba(120, 188, 255, 0.12); }
     .period-quarter { color: var(--violet); background: rgba(159, 140, 255, 0.12); }
+    .period-year { color: var(--gold); background: rgba(242, 203, 111, 0.14); }
 
     .row-actions {
-      white-space: nowrap;
+      white-space: normal;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .row-actions-main {
+      justify-content: flex-start;
+    }
+
+    .task-main-row td {
+      border-bottom: none;
+      padding-bottom: 6px;
+    }
+
+    .task-footer-row td {
+      padding-top: 2px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(133, 161, 190, 0.18);
+      background: rgba(241, 247, 254, 0.4);
+    }
+
+    .task-footer-row:hover td {
+      background: rgba(120, 188, 255, 0.08);
+    }
+
+    .row-actions-bottom {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .btn-delete {
@@ -624,6 +1175,40 @@
       transform: translateY(-1px);
     }
 
+    .btn-report,
+    .btn-shift {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 132px;
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(123, 151, 182, 0.2);
+      background: rgba(237, 245, 255, 0.86);
+      color: #44607d;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 800;
+      transition: all 0.18s ease;
+    }
+
+    .btn-report:hover,
+    .btn-shift:hover {
+      background: rgba(221, 237, 255, 0.96);
+      border-color: rgba(120, 156, 194, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .task-title-cell strong {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.35;
+      max-height: 2.7em;
+    }
+
     .desc,
     .notes-cell {
       color: var(--muted);
@@ -643,8 +1228,8 @@
       z-index: 30;
       padding: 10px 14px;
       border-radius: 12px;
-      background: #182437;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
       color: var(--text);
       font-size: 12px;
       opacity: 0;
@@ -663,26 +1248,34 @@
       inset: 0;
       z-index: 40;
       display: none;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 18px;
       background: rgba(2, 8, 14, 0.78);
       backdrop-filter: blur(14px);
+      overflow: auto;
     }
 
     .modal-backdrop.open { display: flex; }
 
     .modal {
-      width: min(760px, 100%);
-      padding: 18px;
+      width: min(1700px, calc(100vw - 36px));
+      max-width: none;
+      margin: 0 auto;
+      padding: 22px;
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      background: var(--surface-strong) !important;
     }
 
     .modal-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
       margin-top: 14px;
     }
+
+    .field.wide { grid-column: span 2; }
 
     .field {
       display: flex;
@@ -690,10 +1283,17 @@
       gap: 6px;
     }
 
+    .field-inline {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 116px;
+      gap: 8px;
+      align-items: center;
+    }
+
     .field label {
-      color: var(--muted);
+      color: #4f6784;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
@@ -704,20 +1304,29 @@
       width: 100%;
       padding: 10px 11px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
+      border: 1px solid rgba(123, 151, 182, 0.38);
+      background: rgba(255, 255, 255, 0.95);
+      color: #1f2d3d;
       font: inherit;
       outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .input:focus,
+    .textarea:focus,
+    .select:focus {
+      border-color: rgba(59, 145, 218, 0.7);
+      box-shadow: 0 0 0 3px rgba(59, 145, 218, 0.18);
+      background: #fff;
     }
 
     .select option {
-      background: #0d1320;
+      background: var(--surface-strong);
       color: var(--text);
     }
 
     .textarea {
-      min-height: 86px;
+      min-height: 96px;
       resize: vertical;
     }
 
@@ -730,6 +1339,157 @@
       line-height: 1.45;
     }
 
+    .btn-add-result {
+      background: none;
+      border: 1px dashed #7b97b6;
+      border-radius: 6px;
+      color: #1a5fa8;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 4px 12px;
+      margin-top: 4px;
+      transition: background .15s;
+    }
+    .btn-add-result:hover { background: #e8f0fb; }
+    .btn-remove-result {
+      background: none;
+      border: 1px solid #dde4ee;
+      border-radius: 5px;
+      color: #7b97b6;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 2px 7px;
+      flex-shrink: 0;
+      transition: background .15s, color .15s;
+    }
+    .btn-remove-result:hover { background: #fde8e8; color: #c0392b; border-color: #c0392b; }
+
+    .attachments-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 14px;
+      border: 1px solid rgba(123, 151, 182, 0.22);
+      border-radius: 14px;
+      background: rgba(247, 251, 255, 0.95);
+    }
+
+    .attachment-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid rgba(123, 151, 182, 0.18);
+    }
+
+    .attachment-meta {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .attachment-name {
+      color: #1f2d3d;
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .attachment-size {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .attachment-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-link-lite {
+      border: 1px solid rgba(123, 151, 182, 0.28);
+      background: #fff;
+      color: #1a5fa8;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-link-lite:hover {
+      background: #eef6ff;
+    }
+
+    .report-kpi {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(123, 151, 182, 0.24);
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(245, 250, 255, 0.95);
+      color: #486582;
+    }
+
+    .report-kpi.good {
+      border-color: rgba(39, 174, 96, 0.45);
+      background: rgba(39, 174, 96, 0.12);
+      color: #1f7d47;
+    }
+
+    .report-kpi.bad {
+      border-color: rgba(220, 53, 69, 0.45);
+      background: rgba(220, 53, 69, 0.12);
+      color: #a02333;
+    }
+
+    .report-tech-row {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) minmax(220px, 1fr);
+      align-items: start;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(123, 151, 182, 0.2);
+      background: #fff;
+      margin-bottom: 8px;
+    }
+
+    .report-tech-reason {
+      min-height: 40px;
+      line-height: 1.45;
+      resize: none;
+      overflow: hidden;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .report-tech-row .reason-input[disabled] {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .report-modal {
+      width: min(1320px, calc(100vw - 36px));
+    }
+
+    .report-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
     body.modal-open { overflow: hidden; }
 
     @media (max-width: 1320px) {
@@ -738,6 +1498,7 @@
       .kpi-grid {
         grid-template-columns: 1fr;
       }
+      .modal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .gantt-scroll { overflow-x: auto; }
       .gantt-head,
       .gantt-row { min-width: 1120px; }
@@ -769,18 +1530,6 @@
         </div>
       </div>
 
-      <div>
-        <div class="side-box">
-          <div class="mini-title">Формат плана</div>
-          <strong>Excel-like</strong>
-          <p>Опорная структура взята из старого файла: `% готовности`, задача, описание, отчет, статус, срок и примечания. Поверх этого добавлены часы, KPI и задачи по периодам.</p>
-        </div>
-        <div class="side-box">
-          <div class="mini-title">Управленческий режим</div>
-          <strong id="side-focus">Q2 / W07</strong>
-          <p>План рассчитан на еженедельный контроль, месячные срезы и квартальный горизонт с ресурсными ограничениями.</p>
-        </div>
-      </div>
     </section>
 
     <section class="toolbar">
@@ -792,58 +1541,11 @@
         <button class="btn primary" type="button" onclick="openTaskModal('week')">+ Новая задача на неделю</button>
         <button class="btn blue" type="button" onclick="openTaskModal('month')">+ Новая задача на месяц</button>
         <button class="btn gold" type="button" onclick="openTaskModal('quarter')">+ Новая задача на квартал</button>
+        <button class="btn" type="button" onclick="openTaskModal('year')">+ Новая задача на год</button>
       </div>
     </section>
 
-    <section class="kpi-grid">
-      <article class="kpi">
-        <div class="mini-title">Всего задач</div>
-        <div class="kpi-value" id="k-total">0</div>
-        <div class="kpi-meta">Сумма задач всех горизонтов: недельный, месячный и квартальный план.</div>
-      </article>
-      <article class="kpi">
-        <div class="mini-title">В работе</div>
-        <div class="kpi-value" id="k-in-work">0</div>
-        <div class="kpi-meta">Активные задачи, которые сейчас держат загрузку лаборатории.</div>
-      </article>
-      <article class="kpi">
-        <div class="mini-title">Часы в плане</div>
-        <div class="kpi-value" id="k-hours">0</div>
-        <div class="kpi-meta">Оценка трудозатрат по всем задачам, включая подготовку, тесты и отчетность.</div>
-      </article>
-      <article class="kpi">
-        <div class="mini-title">Средняя готовность</div>
-        <div class="kpi-value" id="k-progress">0%</div>
-        <div class="kpi-meta">Средний процент исполнения по активному плану.</div>
-      </article>
-      <article class="kpi">
-        <div class="mini-title">Выполнено в срок</div>
-        <div class="kpi-value" id="k-done">0</div>
-        <div class="kpi-meta">Число задач со статусом “Завершено”.</div>
-      </article>
-      <article class="kpi">
-        <div class="mini-title">Задачи риска</div>
-        <div class="kpi-value" id="k-risk">0</div>
-        <div class="kpi-meta">Задачи со статусом “Риск” или с критичным дедлайном.</div>
-      </article>
-    </section>
-
-    <section class="split">
-      <article class="gantt-card">
-        <div class="section-head">
-          <div>
-            <div class="section-title">Гант всех задач</div>
-            <div class="section-copy">Здесь видны недельные, месячные и квартальные задачи на одной оси. Квартальные задачи выступают базовыми контурами, а связанные по теме короткие задачи вкладываются в них прямо на шкале.</div>
-          </div>
-        </div>
-        <div class="gantt-scroll">
-          <div class="gantt-head" id="gantt-head"></div>
-          <div id="gantt-body"></div>
-        </div>
-      </article>
-    </section>
-
-    <section class="tables">
+    <section class="tables" style="margin-bottom:14px">
       <div class="tables-grid">
         <article class="sheet">
           <div class="sheet-head">
@@ -856,8 +1558,29 @@
             </div>
           </div>
           <div class="table-wrap"><table id="table-week"></table></div>
+          <div class="gantt-card" style="margin-top:14px">
+            <div class="section-head">
+              <div>
+                <div class="section-title">График ганта недельных задач</div>
+                <div class="section-copy">Шкала на 1 неделю. Перетаскивай бары по дням.</div>
+              </div>
+              <div class="sheet-actions">
+                <button class="btn" type="button" onclick="shiftWeekGanttRange(-1)">← Пред. неделя</button>
+                <div class="week-range" id="week-gantt-range">—</div>
+                <button class="btn" type="button" onclick="shiftWeekGanttRange(1)">След. неделя →</button>
+              </div>
+            </div>
+            <div class="gantt-scroll">
+              <div class="week-gantt-head" id="week-gantt-head"></div>
+              <div id="week-gantt-body"></div>
+            </div>
+          </div>
         </article>
+      </div>
+    </section>
 
+    <section class="tables">
+      <div class="tables-grid">
         <article class="sheet">
           <div class="sheet-head">
             <div>
@@ -869,6 +1592,23 @@
             </div>
           </div>
           <div class="table-wrap"><table id="table-month"></table></div>
+          <div class="gantt-card" style="margin-top:14px">
+            <div class="section-head">
+              <div>
+                <div class="section-title">Месячный Гант</div>
+                <div class="section-copy">Перетаскивай бары и меняй их длину за ручки слева/справа.</div>
+              </div>
+              <div class="sheet-actions">
+                <button class="btn" type="button" onclick="shiftPeriodGanttRange('month', -1)">← Пред. месяц</button>
+                <div class="week-range" id="month-gantt-range">—</div>
+                <button class="btn" type="button" onclick="shiftPeriodGanttRange('month', 1)">След. месяц →</button>
+              </div>
+            </div>
+            <div class="gantt-scroll">
+              <div class="month-gantt-head" id="month-gantt-head"></div>
+              <div id="month-gantt-body"></div>
+            </div>
+          </div>
         </article>
 
         <article class="sheet">
@@ -882,6 +1622,53 @@
             </div>
           </div>
           <div class="table-wrap"><table id="table-quarter"></table></div>
+          <div class="gantt-card" style="margin-top:14px">
+            <div class="section-head">
+              <div>
+                <div class="section-title">Квартальный Гант</div>
+                <div class="section-copy">График квартальных задач с изменением позиции и длительности баров.</div>
+              </div>
+              <div class="sheet-actions">
+                <button class="btn" type="button" onclick="shiftPeriodGanttRange('quarter', -1)">← Пред. квартал</button>
+                <div class="week-range" id="quarter-gantt-range">—</div>
+                <button class="btn" type="button" onclick="shiftPeriodGanttRange('quarter', 1)">След. квартал →</button>
+              </div>
+            </div>
+            <div class="gantt-scroll">
+              <div class="gantt-head" id="quarter-gantt-head"></div>
+              <div id="quarter-gantt-body"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="sheet">
+          <div class="sheet-head">
+            <div>
+              <div class="sheet-title">Годовые задачи</div>
+              <div class="sheet-copy">Стратегические инициативы и крупные программы на весь год.</div>
+            </div>
+            <div class="sheet-actions">
+              <button class="btn" type="button" onclick="openTaskModal('year')">Добавить</button>
+            </div>
+          </div>
+          <div class="table-wrap"><table id="table-year"></table></div>
+          <div class="gantt-card" style="margin-top:14px">
+            <div class="section-head">
+              <div>
+                <div class="section-title">Годовой Гант</div>
+                <div class="section-copy">Годовой график задач по месяцам.</div>
+              </div>
+              <div class="sheet-actions">
+                <button class="btn" type="button" onclick="shiftPeriodGanttRange('year', -1)">← Пред. год</button>
+                <div class="week-range" id="year-gantt-range">—</div>
+                <button class="btn" type="button" onclick="shiftPeriodGanttRange('year', 1)">След. год →</button>
+              </div>
+            </div>
+            <div class="gantt-scroll">
+              <div class="year-gantt-head" id="year-gantt-head"></div>
+              <div id="year-gantt-body"></div>
+            </div>
+          </div>
         </article>
       </div>
     </section>
@@ -894,17 +1681,23 @@
           <div class="section-title" id="modal-title">Новая задача</div>
           <div class="section-copy">Добавь задачу в соответствующий горизонт. Она сразу появится в таблицах и KPI, а теги темы помогут встроить её в квартальный контур на Ганте.</div>
         </div>
-        <button class="btn" type="button" onclick="closeTaskModal()">Закрыть</button>
+        <div class="modal-head-actions">
+          <button class="btn" type="button" onclick="triggerTaskFileUpload()">Прикрепить файл</button>
+          <button class="btn" type="button" onclick="closeTaskModal()">Закрыть</button>
+        </div>
       </div>
+      <input id="task-file-input" type="file" hidden multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,.jpg,.jpeg,.png,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/jpeg,image/png,image/webp">
 
       <div class="modal-grid">
         <input id="task-id" type="hidden">
+        <input id="task-created-at" type="hidden">
         <div class="field">
           <label for="task-period">Период</label>
           <select class="select" id="task-period">
             <option value="week">Неделя</option>
             <option value="month">Месяц</option>
             <option value="quarter">Квартал</option>
+            <option value="year">Год</option>
           </select>
         </div>
         <div class="field">
@@ -924,7 +1717,14 @@
 
         <div class="field full">
           <label for="task-description">Описание</label>
-          <textarea class="textarea" id="task-description" placeholder="Что именно должно быть сделано и какой результат нужен"></textarea>
+          <textarea class="textarea" id="task-description" placeholder="Что именно должно быть сделано"></textarea>
+        </div>
+
+        <div class="field full" id="technical-results-field">
+          <label>Ожидаемые технические результаты</label>
+          <div class="field-note" style="margin-bottom:8px">Добавь измеримые технические результаты: параметры, тесты, подтверждения, протоколы. Для каждого результата отдельная строка.</div>
+          <div id="technical-results-list"></div>
+          <button class="btn-add-result" type="button" onclick="addTechnicalResultRow()">+ Добавить технический результат</button>
         </div>
 
         <div class="field full">
@@ -933,13 +1733,95 @@
           <div class="field-note">Используй запятые: по этим тегам недельные и месячные задачи будут привязываться к квартальным на Ганте.</div>
         </div>
 
+        <div class="field full" id="parent-goal-field">
+          <label for="task-parent-id">Родительская цель / связанная инициатива</label>
+          <select class="select" id="task-parent-id"></select>
+          <div class="field-note" id="task-parent-note">Недельная задача должна быть привязана минимум к месячной цели (а дальше по цепочке к кварталу и году).</div>
+        </div>
+
+        <div class="field">
+          <label for="task-client">Клиент / направление</label>
+          <input class="input" id="task-client" placeholder="Например: Halliburton, Роснефть, Внутренний R&D">
+        </div>
+        <div class="field">
+          <label for="task-business-value">Коммерческая ценность</label>
+          <select class="select" id="task-business-value">
+            <option value="низкий">Потенциал выручки: низкий</option>
+            <option value="средний" selected>Потенциал выручки: средний</option>
+            <option value="высокий">Потенциал выручки: высокий</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="task-strategic-priority">Стратегический приоритет</label>
+          <select class="select" id="task-strategic-priority">
+            <option value="срочно">Срочно</option>
+            <option value="важно" selected>Важно</option>
+            <option value="исследование">Исследование</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="task-commercial-driver">Причина запуска задачи</label>
+          <select class="select" id="task-commercial-driver">
+            <option value="запрос клиента">Запрос клиента</option>
+            <option value="тендер">Тендер</option>
+            <option value="проблема производства">Проблема производства</option>
+            <option value="новая технология">Новая технология</option>
+          </select>
+        </div>
+
+        <div class="field full" id="expected-results-field">
+          <label>Ожидаемые финансовые результаты</label>
+          <div class="field-note" style="margin-bottom:8px">Сформулируй каждый ожидаемый результат отдельно — потом можно сравнить с фактическими. Примеры: «Выручка от нового продукта — 40 млн/год», «Снижение себестоимости на 8%», «Повышение качества продукта».</div>
+          <div id="expected-results-list"></div>
+          <button class="btn-add-result" type="button" onclick="addExpectedResultRow()">+ Добавить результат</button>
+        </div>
+        <div class="field">
+          <label for="task-probability-success">Вероятность успеха, %</label>
+          <input class="input" id="task-probability-success" type="number" min="0" max="100" step="1" value="50">
+        </div>
+        <div class="field">
+          <label for="task-commercialization-stage">Стадия коммерциализации</label>
+          <select class="select" id="task-commercialization-stage">
+            <option value="идея">Идея</option>
+            <option value="лаборатория">Лаборатория</option>
+            <option value="пилот">Пилот</option>
+            <option value="полевые тесты">Полевые тесты</option>
+            <option value="клиентские тесты">Клиентские тесты</option>
+            <option value="коммерциализация">Коммерциализация</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="task-stage-progress">Готовность текущей стадии, %</label>
+          <input class="input" id="task-stage-progress" type="number" min="0" max="100" value="0">
+          <div class="field-note">0% — стадия только началась, 100% — можно переходить к следующей стадии. Не путать с «Готовность задачи» выше — это именно продвижение внутри выбранной стадии коммерциализации.</div>
+        </div>
+        <div class="field">
+          <label for="task-expected-roi">Ожидаемый ROI</label>
+          <input class="input" id="task-expected-roi" placeholder="Например: 2.8x или 180%">
+        </div>
+
+        <div class="field">
+          <label for="task-complexity">Сложность</label>
+          <select class="select" id="task-complexity">
+            <option value="low">Низкая</option>
+            <option value="medium" selected>Средняя</option>
+            <option value="high">Высокая</option>
+          </select>
+        </div>
+
+
         <div class="field">
           <label for="task-owner">Исполнитель</label>
           <input class="input" id="task-owner" placeholder="ФИО или роль">
         </div>
         <div class="field">
-          <label for="task-due-date">Срок</label>
-          <input class="input" id="task-due-date" type="date">
+          <label for="task-start-date">Срок: Начало</label>
+          <input class="input" id="task-start-date" type="date">
+        </div>
+
+        <div class="field">
+          <label for="task-end-date">Срок: Конец</label>
+          <input class="input" id="task-end-date" type="date">
         </div>
 
         <div class="field">
@@ -947,17 +1829,33 @@
           <input class="input" id="task-progress" type="number" min="0" max="100" value="0">
         </div>
         <div class="field">
-          <label for="task-hours">Время на выполнение, ч</label>
-          <input class="input" id="task-hours" type="number" min="1" value="8">
+          <label for="task-hours">Время на выполнение</label>
+          <div class="field-inline">
+            <input class="input" id="task-hours" type="number" min="1" value="8">
+            <select class="select" id="task-hours-unit">
+              <option value="hours" selected>ч</option>
+              <option value="days">дни</option>
+              <option value="weeks">недели</option>
+              <option value="months">месяцы</option>
+            </select>
+          </div>
         </div>
 
         <div class="field">
           <label for="task-report">Отчет / ссылка</label>
           <input class="input" id="task-report" placeholder="Например: Отчет № 9.13">
         </div>
-        <div class="field">
+        <div class="field full">
           <label for="task-notes">Примечания</label>
-          <input class="input" id="task-notes" placeholder="Риски, комментарии, ожидания">
+          <textarea class="textarea" id="task-notes" placeholder="Риски, комментарии, ожидания. Можно писать столько текста, сколько нужно."></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Прикрепленные документы</label>
+          <div class="attachments-box">
+            <div class="field-note">Можно приложить протокол, расчет, коммерческое обоснование, таблицу или другой документ по задаче.</div>
+            <div id="task-attachments-list"></div>
+          </div>
         </div>
 
         <div class="field">
@@ -979,12 +1877,116 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="task-report-modal-backdrop">
+    <div class="modal report-modal">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="task-report-modal-title">Отчет по задаче</div>
+          <div class="section-copy">Заполни фактические показатели, отметь достигнутые техрезультаты и сохрани отчет.</div>
+        </div>
+        <div class="modal-head-actions">
+          <button class="btn" type="button" onclick="triggerTaskReportFileUpload()">Прикрепить файл</button>
+          <button class="btn" type="button" onclick="closeTaskReportModal()">Закрыть</button>
+        </div>
+      </div>
+
+      <input id="task-report-file-input" type="file" hidden multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx,.jpg,.jpeg,.png,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv,text/plain,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/jpeg,image/png,image/webp">
+
+      <div class="modal-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr));">
+        <div class="field full">
+          <label>Задача</label>
+          <input class="input" id="task-report-title" readonly>
+        </div>
+
+        <div class="field">
+          <label for="task-report-spent-value">Время выполнения (факт)</label>
+          <div class="field-inline" style="grid-template-columns:minmax(0,1fr) 130px;">
+            <input class="input" id="task-report-spent-value" type="number" min="0" step="0.1">
+            <select class="select" id="task-report-spent-unit">
+              <option value="hours">ч</option>
+              <option value="days">дней</option>
+              <option value="months">месяцы</option>
+              <option value="quarters">квартал</option>
+              <option value="years">год</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Сравнение с планом</label>
+          <div id="task-report-effort-kpi" class="report-kpi">План: 0 ч · Факт: 0 ч</div>
+        </div>
+
+        <div class="field">
+          <label for="task-report-owner">Исполнитель</label>
+          <input class="input" id="task-report-owner" readonly>
+        </div>
+
+        <div class="field">
+          <label for="task-report-progress">Факт готовности, %</label>
+          <input class="input" id="task-report-progress" type="number" min="0" max="100" step="1">
+        </div>
+
+        <div class="field">
+          <label for="task-report-kpi">Ключевой KPI (факт)</label>
+          <input class="input" id="task-report-kpi" placeholder="Например: 2 из 3 протоколов закрыты">
+        </div>
+
+        <div class="field full">
+          <label for="task-report-delay-reason">Причины отставания (если факт времени выше плана)</label>
+          <textarea class="textarea" id="task-report-delay-reason" placeholder="Что именно вызвало перерасход времени"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Ожидаемые технические результаты</label>
+          <div class="field-note">Отметь выполненные результаты. Для невыполненных укажи причину.</div>
+          <div id="task-report-technical-list"></div>
+          <div class="field-note" id="task-report-tech-kpi">Выполнено: 0/0</div>
+        </div>
+
+        <div class="field full">
+          <label for="task-report-next-steps">Следующие шаги</label>
+          <textarea class="textarea" id="task-report-next-steps" placeholder="Короткий план следующих действий"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Файлы отчета</label>
+          <div class="attachments-box">
+            <div class="field-note">Можно приложить детальный отчет, протоколы, скриншоты и другие подтверждения.</div>
+            <div id="task-report-attachments-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-actions">
+        <button class="btn" type="button" onclick="moveTaskToNextPeriodFromReport()">Перенести на следующий период</button>
+        <button class="btn primary" type="button" onclick="completeTaskFromReport()">Завершить задачу</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
+    window.__sharedStateConfig = { keys: ['cloto_laboratory_work_plan_v2', 'cloto_laboratory_task_reports_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
+  <script>
     var STORAGE_KEY = 'cloto_laboratory_work_plan_v2';
+    var REPORTS_STORAGE_KEY = 'cloto_laboratory_task_reports_v1';
     var currentModalPeriod = 'week';
     var currentEditTaskId = null;
+    var currentTaskAttachments = [];
+    var currentReportTaskId = null;
+    var currentReportAttachments = [];
+    var weekGanttDragState = null;
+    var weekGanttClickBlockUntil = 0;
+    var weekGanttOffsetWeeks = 0;
+    var monthGanttOffsetMonths = 0;
+    var quarterGanttOffsetQuarters = 0;
+    var yearGanttOffsetYears = 0;
+    var periodGanttDragState = null;
+    var periodGanttClickBlockUntil = 0;
 
     var DEFAULT_TASKS = [
       {
@@ -1068,6 +2070,116 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
     }
 
+    function loadTaskReports() {
+      try {
+        var raw = localStorage.getItem(REPORTS_STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (error) {}
+      return [];
+    }
+
+    function saveTaskReports(reports) {
+      localStorage.setItem(REPORTS_STORAGE_KEY, JSON.stringify(reports));
+    }
+
+    function effortToHours(value, unit) {
+      var numericValue = Math.max(0, Number(value || 0));
+      var multipliers = {
+        hours: 1,
+        days: 8,
+        weeks: 40,
+        months: 160,
+        quarters: 480,
+        years: 1920
+      };
+      return numericValue * (multipliers[unit] || 1);
+    }
+
+    function getTaskPlannedHours(task) {
+      if (!task) return 0;
+      if (task.effortValue != null && task.effortUnit) {
+        return effortToHours(task.effortValue, task.effortUnit);
+      }
+      return Number(task.hours || 0);
+    }
+
+    function formatFileSize(bytes) {
+      var size = Number(bytes || 0);
+      if (!size) return '0 КБ';
+      if (size >= 1024 * 1024) return (size / (1024 * 1024)).toFixed(1) + ' МБ';
+      return Math.max(1, Math.round(size / 1024)) + ' КБ';
+    }
+
+    function triggerTaskFileUpload() {
+      var input = document.getElementById('task-file-input');
+      if (input) input.click();
+    }
+
+    function renderTaskAttachments() {
+      var list = document.getElementById('task-attachments-list');
+      if (!list) return;
+      if (!currentTaskAttachments.length) {
+        list.innerHTML = '<div class="field-note">Пока нет прикрепленных документов.</div>';
+        return;
+      }
+      list.innerHTML = currentTaskAttachments.map(function(file, index) {
+        return '<div class="attachment-item">' +
+          '<div class="attachment-meta">' +
+            '<div class="attachment-name">' + escapeHtml(file.name || 'Документ') + '</div>' +
+            '<div class="attachment-size">' + escapeHtml(formatFileSize(file.size)) + '</div>' +
+          '</div>' +
+          '<div class="attachment-actions">' +
+            '<button class="btn-link-lite" type="button" onclick="openTaskAttachment(' + index + ')">Открыть</button>' +
+            '<button class="btn-link-lite" type="button" onclick="removeTaskAttachment(' + index + ')">Удалить</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function removeTaskAttachment(index) {
+      currentTaskAttachments = currentTaskAttachments.filter(function(_, itemIndex) {
+        return itemIndex !== index;
+      });
+      renderTaskAttachments();
+    }
+
+    function openTaskAttachment(index) {
+      var file = currentTaskAttachments[index];
+      if (!file || !file.dataUrl) return;
+      var link = document.createElement('a');
+      link.href = file.dataUrl;
+      link.download = file.name || 'document';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function handleTaskFileInput(event) {
+      var files = Array.prototype.slice.call((event.target && event.target.files) || []);
+      if (!files.length) return;
+      Promise.all(files.map(function(file) {
+        return new Promise(function(resolve) {
+          var reader = new FileReader();
+          reader.onload = function(loadEvent) {
+            resolve({
+              name: file.name,
+              type: file.type || '',
+              size: file.size || 0,
+              dataUrl: loadEvent.target.result
+            });
+          };
+          reader.onerror = function() { resolve(null); };
+          reader.readAsDataURL(file);
+        });
+      })).then(function(items) {
+        currentTaskAttachments = currentTaskAttachments.concat(items.filter(Boolean));
+        renderTaskAttachments();
+        showToast(files.length > 1 ? 'Файлы прикреплены' : 'Файл прикреплен');
+      });
+      event.target.value = '';
+    }
+
     function getTasks() {
       return loadTasks().sort(function(a, b) {
         return String(a.dueDate).localeCompare(String(b.dueDate)) || String(a.title).localeCompare(String(b.title), 'ru');
@@ -1091,12 +2203,14 @@
     function periodClass(period) {
       if (period === 'month') return 'period-month';
       if (period === 'quarter') return 'period-quarter';
+      if (period === 'year') return 'period-year';
       return 'period-week';
     }
 
     function periodLabel(period) {
       if (period === 'month') return 'Месяц';
       if (period === 'quarter') return 'Квартал';
+      if (period === 'year') return 'Год';
       return 'Неделя';
     }
 
@@ -1167,6 +2281,432 @@
       };
     }
 
+    function toDateValue(raw) {
+      if (!raw) return null;
+      var parts = String(raw).split('-');
+      if (parts.length !== 3) return null;
+      var y = Number(parts[0]);
+      var m = Number(parts[1]) - 1;
+      var d = Number(parts[2]);
+      if (!y || m < 0 || m > 11 || !d) return null;
+      return new Date(y, m, d);
+    }
+
+    function toISODate(date) {
+      var y = date.getFullYear();
+      var m = String(date.getMonth() + 1).padStart(2, '0');
+      var d = String(date.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + d;
+    }
+
+    function addDays(date, days) {
+      var copy = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      copy.setDate(copy.getDate() + days);
+      return copy;
+    }
+
+    function daysDiff(dateA, dateB) {
+      var a = new Date(dateA.getFullYear(), dateA.getMonth(), dateA.getDate());
+      var b = new Date(dateB.getFullYear(), dateB.getMonth(), dateB.getDate());
+      return Math.round((a - b) / 86400000);
+    }
+
+    function getWeekStart(date) {
+      var d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      var day = d.getDay();
+      var shift = day === 0 ? -6 : (1 - day);
+      d.setDate(d.getDate() + shift);
+      return d;
+    }
+
+    function addMonths(date, months) {
+      return new Date(date.getFullYear(), date.getMonth() + Number(months || 0), date.getDate());
+    }
+
+    function getMonthPeriodStart() {
+      var today = new Date();
+      return new Date(today.getFullYear(), today.getMonth() + monthGanttOffsetMonths, 1);
+    }
+
+    function getMonthGanttWindowStart() {
+      return getWeekStart(getMonthPeriodStart());
+    }
+
+    function getQuarterPeriodStart() {
+      var today = new Date();
+      var baseQuarterStartMonth = Math.floor(today.getMonth() / 3) * 3;
+      return new Date(today.getFullYear(), baseQuarterStartMonth + (quarterGanttOffsetQuarters * 3), 1);
+    }
+
+    function getQuarterGanttWindowStart() {
+      return getWeekStart(getQuarterPeriodStart());
+    }
+
+    function getYearGanttWindowStart() {
+      var currentYear = new Date().getFullYear();
+      return new Date(currentYear + yearGanttOffsetYears, 0, 1);
+    }
+
+    function formatShortRuDate(date) {
+      var month = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'][date.getMonth()];
+      return String(date.getDate()).padStart(2, '0') + ' ' + month;
+    }
+
+    function getWeekGanttStart() {
+      return addDays(getWeekStart(new Date()), weekGanttOffsetWeeks * 7);
+    }
+
+    function getTaskWeekSpanDays(task) {
+      if (task.weekSpanDays != null && task.weekSpanDays !== '') {
+        return Math.max(1, Math.min(7, Number(task.weekSpanDays)));
+      }
+      var byWeeks = Math.max(1, Math.round(Number(task.durationWeeks || 1) * 7));
+      var byHours = Math.max(1, Math.min(7, Math.ceil(Number(task.hours || 8) / 8)));
+      return Math.max(1, Math.min(7, Math.min(byWeeks, byHours)));
+    }
+
+    function getEffortHours(value, unit) {
+      var numericValue = Math.max(0, Number(value || 0));
+      var multipliers = {
+        hours: 1,
+        days: 8,
+        weeks: 40,
+        months: 160
+      };
+      return Math.round(numericValue * (multipliers[unit] || 1));
+    }
+
+    function formatTaskEffort(task) {
+      var unit = task.effortUnit || 'hours';
+      var value = task.effortValue != null && task.effortValue !== ''
+        ? Number(task.effortValue)
+        : Number(task.hours || 0);
+      var labels = {
+        hours: 'ч',
+        days: 'дни',
+        weeks: 'недели',
+        months: 'месяцы'
+      };
+      return value + ' ' + (labels[unit] || 'ч');
+    }
+
+    function getTaskDateRange(task) {
+      var start = toDateValue(task.startDate);
+      var end = toDateValue(task.endDate || task.dueDate);
+
+      if (!start && !end) {
+        var now = new Date();
+        var fallbackDurationDays = Math.max(1, Math.round(Number(task.durationWeeks || 1) * 7));
+        end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        start = addDays(end, -fallbackDurationDays + 1);
+      } else if (!start && end) {
+        if (task.period === 'year' && Number(task.durationMonths || 0) > 0) {
+          start = new Date(end.getFullYear(), end.getMonth() - Number(task.durationMonths || 1) + 1, 1);
+        } else {
+          var durationDaysFromEnd = Math.max(1, Math.round(Number(task.durationWeeks || 1) * 7));
+          start = addDays(end, -durationDaysFromEnd + 1);
+        }
+      } else if (start && !end) {
+        if (task.period === 'year' && Number(task.durationMonths || 0) > 0) {
+          end = new Date(start.getFullYear(), start.getMonth() + Number(task.durationMonths || 1), 0);
+        } else {
+          var durationDaysFromStart = Math.max(1, Math.round(Number(task.durationWeeks || 1) * 7));
+          end = addDays(start, durationDaysFromStart - 1);
+        }
+      }
+
+      if (start && end && start > end) {
+        var swap = start;
+        start = end;
+        end = swap;
+      }
+
+      return {
+        start: start,
+        end: end
+      };
+    }
+
+    function inferTaskDueDate(task) {
+      var range = getTaskDateRange(task);
+      if (range.end) return range.end;
+      return addDays(getWeekGanttStart(), 6);
+    }
+
+    function getQuarterStart(date) {
+      var y = date.getFullYear();
+      var startMonth = Math.floor(date.getMonth() / 3) * 3;
+      return new Date(y, startMonth, 1);
+    }
+
+    function computeStartWeekByDate(date) {
+      var qStart = getQuarterStart(date);
+      var value = Math.floor(daysDiff(date, qStart) / 7) + 1;
+      return Math.max(1, Math.min(13, value));
+    }
+
+    function computeDueDateByWeekRange(task, startWeek, durationWeeks) {
+      var baseDate = toDateValue(task.dueDate) || new Date();
+      var quarterStart = getQuarterStart(baseDate);
+      var endOffsetDays = ((startWeek + durationWeeks - 2) * 7) + 6;
+      return toISODate(addDays(quarterStart, endOffsetDays));
+    }
+
+    function clampPercent(value) {
+      return Math.max(0, Math.min(100, Number(value || 0)));
+    }
+
+    function stagePercent(task) {
+      if (task && task.stageProgress != null && task.stageProgress !== '') {
+        return clampPercent(task.stageProgress);
+      }
+      return clampPercent(task && task.progress);
+    }
+
+    function parsePercentFromText(raw) {
+      var match = String(raw || '').replace(',', '.').match(/(-?\d+(?:\.\d+)?)\s*%/);
+      return match ? Number(match[1]) : 0;
+    }
+
+    function parseMillions(raw) {
+      var normalized = String(raw || '').toLowerCase().replace(',', '.');
+      var match = normalized.match(/(-?\d+(?:\.\d+)?)\s*(млн|million|mio)/);
+      if (match) return Number(match[1]);
+      return 0;
+    }
+
+    function formatMillions(value) {
+      var rounded = Math.round(Number(value || 0) * 10) / 10;
+      return rounded.toLocaleString('ru-RU') + ' млн';
+    }
+
+    function getTaskResultsText(task) {
+      var list = Array.isArray(task.expectedResults) ? task.expectedResults : [];
+      if (list.length) return list.join(' ; ');
+      return [task.revenuePotential, task.expectedOutcome, task.notes].filter(Boolean).join(' ; ');
+    }
+
+    function getTaskRevenueMillions(task) {
+      var explicit = parseMillions(getTaskResultsText(task));
+      if (explicit > 0) return explicit;
+      if (task.businessValue === 'высокий') return 40;
+      if (task.businessValue === 'средний') return 12;
+      if (task.businessValue === 'низкий') return 4;
+      return 0;
+    }
+
+    function formatPercent(value) {
+      return Math.round(Number(value || 0)) + '%';
+    }
+
+    function getParentPeriods(period) {
+      if (period === 'week') return ['month', 'quarter', 'year'];
+      if (period === 'month') return ['quarter', 'year'];
+      if (period === 'quarter') return ['year'];
+      return [];
+    }
+
+    function getTaskById(taskId, list) {
+      var source = list || getTasks();
+      return source.find(function(task) { return task.id === taskId; }) || null;
+    }
+
+    function formatTraceability(task, tasks) {
+      if (!task) return '—';
+      var source = tasks || getTasks();
+      var chain = [];
+      var cursor = task;
+      var guard = 0;
+      while (cursor && cursor.parentId && guard < 5) {
+        var parent = getTaskById(cursor.parentId, source);
+        if (!parent) break;
+        chain.push(periodLabel(parent.period) + ': ' + parent.title);
+        cursor = parent;
+        guard += 1;
+      }
+      return chain.length ? chain.join(' -> ') : 'Без привязки';
+    }
+
+    function renderParentGoalOptions(selectedParentId) {
+      var select = document.getElementById('task-parent-id');
+      var field = document.getElementById('parent-goal-field');
+      var note = document.getElementById('task-parent-note');
+      var periodSelect = document.getElementById('task-period');
+      if (!select || !field || !periodSelect) return;
+
+      var period = periodSelect.value || 'week';
+      var parentPeriods = getParentPeriods(period);
+      var source = getTasks().filter(function(task) {
+        return task.id !== currentEditTaskId && parentPeriods.indexOf(task.period) !== -1;
+      });
+
+      if (!parentPeriods.length) {
+        field.style.display = 'none';
+        select.innerHTML = '<option value="">Годовая задача не требует родителя</option>';
+        select.value = '';
+        return;
+      }
+
+      field.style.display = '';
+      select.innerHTML = '<option value="">Без привязки</option>' + source.map(function(task) {
+        return '<option value="' + escapeHtml(task.id) + '">' + escapeHtml(periodLabel(task.period) + ' · ' + task.title) + '</option>';
+      }).join('');
+      if (selectedParentId) select.value = selectedParentId;
+      if (note) {
+        note.textContent =
+          period === 'week'
+            ? 'Недельная задача должна быть связана с месячной целью (и далее по цепочке к кварталу и году).'
+            : period === 'month'
+              ? 'Месячная задача должна быть связана с квартальной инициативой.'
+              : 'Квартальная задача должна быть связана с годовой стратегией.';
+      }
+    }
+
+    function formatBusinessCell(task) {
+      var stage = task.commercializationStage || '—';
+      var roi = task.expectedRoi || '—';
+      var probability = Number(task.probabilitySuccess || 0);
+      var results = Array.isArray(task.expectedResults) && task.expectedResults.length
+        ? task.expectedResults
+        : (task.revenuePotential || task.expectedOutcome || task.costReduction
+          ? [task.revenuePotential, task.expectedOutcome, task.costReduction ? 'Снижение себ-ти: ' + task.costReduction + '%' : ''].filter(Boolean)
+          : []);
+      var resultsText = results.length ? results.join('; ') : '—';
+      return 'Ценность: ' + (task.businessValue || '—') +
+        ' · Стадия: ' + stage + ' (' + stagePercent(task) + '%)' +
+        ' · Вероятность: ' + (probability ? probability + '%' : '—') +
+        ' · ROI: ' + roi +
+        ' · Результаты: ' + resultsText;
+    }
+
+    function renderExpectedResults(results) {
+      var list = document.getElementById('expected-results-list');
+      if (!list) return;
+      if (!results || results.length === 0) results = ['', '', ''];
+      list.innerHTML = results.map(function(val, i) {
+        var showRemove = results.length > 1;
+        var placeholders = [
+          'Увеличить продажи продукта на 8%',
+          'Снизить себестоимость продукта на 8%',
+          'Выручка от нового продукта — 40 млн руб/год'
+        ];
+        var ph = placeholders[i] || ('Результат ' + (i + 1));
+        return '<div class="result-row" style="display:flex;gap:6px;margin-bottom:6px">' +
+          '<input class="input expected-result-input" type="text" placeholder="' + ph + '" value="' + escapeHtml(String(val || '')) + '" style="flex:1">' +
+          (showRemove ? '<button type="button" class="btn-remove-result" onclick="removeExpectedResultRow(this)" title="Удалить">×</button>' : '') +
+          '</div>';
+      }).join('');
+    }
+
+    function addExpectedResultRow() {
+      var list = document.getElementById('expected-results-list');
+      if (!list) return;
+      var rows = list.querySelectorAll('.result-row');
+      var count = rows.length;
+      // Ensure all existing rows have a remove button now that there will be > 1
+      rows.forEach(function(r) {
+        if (!r.querySelector('.btn-remove-result')) {
+          var btn = document.createElement('button');
+          btn.type = 'button'; btn.className = 'btn-remove-result'; btn.title = 'Удалить'; btn.textContent = '×';
+          btn.onclick = function() { removeExpectedResultRow(btn); };
+          r.appendChild(btn);
+        }
+      });
+      var row = document.createElement('div');
+      row.className = 'result-row';
+      row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px';
+      var inp = document.createElement('input');
+      inp.className = 'input expected-result-input'; inp.type = 'text'; inp.placeholder = 'Результат ' + (count + 1); inp.style.flex = '1';
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button'; removeBtn.className = 'btn-remove-result'; removeBtn.title = 'Удалить'; removeBtn.textContent = '×';
+      removeBtn.onclick = function() { removeExpectedResultRow(removeBtn); };
+      row.appendChild(inp); row.appendChild(removeBtn);
+      list.appendChild(row);
+      inp.focus();
+    }
+
+    function removeExpectedResultRow(btn) {
+      var list = document.getElementById('expected-results-list');
+      var row = btn.closest ? btn.closest('.result-row') : btn.parentNode;
+      if (list && row && list.querySelectorAll('.result-row').length > 1) {
+        row.remove();
+        // If only one row left, hide its remove button
+        var remaining = list.querySelectorAll('.result-row');
+        if (remaining.length === 1) {
+          var lastBtn = remaining[0].querySelector('.btn-remove-result');
+          if (lastBtn) lastBtn.remove();
+        }
+      }
+    }
+
+    function getExpectedResults() {
+      var inputs = document.querySelectorAll('#expected-results-list .expected-result-input');
+      return Array.from(inputs).map(function(inp) { return inp.value.trim(); }).filter(function(v) { return v !== ''; });
+    }
+
+    function renderTechnicalResults(results) {
+      var list = document.getElementById('technical-results-list');
+      if (!list) return;
+      if (!results || results.length === 0) results = ['', '', ''];
+      list.innerHTML = results.map(function(val, i) {
+        var showRemove = results.length > 1;
+        var placeholders = [
+          'Подтвердить параметр вязкости в целевом диапазоне',
+          'Закрыть протокол лабораторных испытаний',
+          'Подтвердить стабильность формулы по серии тестов'
+        ];
+        var ph = placeholders[i] || ('Технический результат ' + (i + 1));
+        return '<div class="technical-result-row" style="display:flex;gap:6px;margin-bottom:6px">' +
+          '<input class="input technical-result-input" type="text" placeholder="' + ph + '" value="' + escapeHtml(String(val || '')) + '" style="flex:1">' +
+          (showRemove ? '<button type="button" class="btn-remove-result" onclick="removeTechnicalResultRow(this)" title="Удалить">×</button>' : '') +
+          '</div>';
+      }).join('');
+    }
+
+    function addTechnicalResultRow() {
+      var list = document.getElementById('technical-results-list');
+      if (!list) return;
+      var rows = list.querySelectorAll('.technical-result-row');
+      var count = rows.length;
+      rows.forEach(function(r) {
+        if (!r.querySelector('.btn-remove-result')) {
+          var btn = document.createElement('button');
+          btn.type = 'button'; btn.className = 'btn-remove-result'; btn.title = 'Удалить'; btn.textContent = '×';
+          btn.onclick = function() { removeTechnicalResultRow(btn); };
+          r.appendChild(btn);
+        }
+      });
+      var row = document.createElement('div');
+      row.className = 'technical-result-row';
+      row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px';
+      var inp = document.createElement('input');
+      inp.className = 'input technical-result-input'; inp.type = 'text'; inp.placeholder = 'Технический результат ' + (count + 1); inp.style.flex = '1';
+      var removeBtn = document.createElement('button');
+      removeBtn.type = 'button'; removeBtn.className = 'btn-remove-result'; removeBtn.title = 'Удалить'; removeBtn.textContent = '×';
+      removeBtn.onclick = function() { removeTechnicalResultRow(removeBtn); };
+      row.appendChild(inp); row.appendChild(removeBtn);
+      list.appendChild(row);
+      inp.focus();
+    }
+
+    function removeTechnicalResultRow(btn) {
+      var list = document.getElementById('technical-results-list');
+      var row = btn.closest ? btn.closest('.technical-result-row') : btn.parentNode;
+      if (list && row && list.querySelectorAll('.technical-result-row').length > 1) {
+        row.remove();
+        var remaining = list.querySelectorAll('.technical-result-row');
+        if (remaining.length === 1) {
+          var lastBtn = remaining[0].querySelector('.btn-remove-result');
+          if (lastBtn) lastBtn.remove();
+        }
+      }
+    }
+
+    function getTechnicalResults() {
+      var inputs = document.querySelectorAll('#technical-results-list .technical-result-input');
+      return Array.from(inputs).map(function(inp) { return inp.value.trim(); }).filter(function(v) { return v !== ''; });
+    }
+
     function sharedTopics(taskA, taskB) {
       var topicsA = getTaskTopics(taskA);
       var topicsB = getTaskTopics(taskB);
@@ -1183,7 +2723,7 @@
     }
 
     function sortTasksForGantt(taskA, taskB) {
-      var periodRank = { quarter: 0, month: 1, week: 2 };
+      var periodRank = { year: 0, quarter: 1, month: 2, week: 3 };
       var rangeA = getTaskRange(taskA);
       var rangeB = getTaskRange(taskB);
       return (periodRank[taskA.period] || 9) - (periodRank[taskB.period] || 9) ||
@@ -1239,30 +2779,245 @@
     }
 
     function renderKPIs(tasks) {
-      var total = tasks.length;
-      var inWork = tasks.filter(function(task) { return task.status === 'В работе'; }).length;
-      var hours = tasks.reduce(function(sum, task) { return sum + Number(task.hours || 0); }, 0);
-      var avgProgress = total ? Math.round(tasks.reduce(function(sum, task) { return sum + Number(task.progress || 0); }, 0) / total) : 0;
-      var done = tasks.filter(function(task) { return task.status === 'Завершено'; }).length;
-      var risk = tasks.filter(function(task) { return task.status === 'Риск'; }).length;
-
-      document.getElementById('k-total').textContent = total;
-      document.getElementById('k-in-work').textContent = inWork;
-      document.getElementById('k-hours').textContent = hours;
-      document.getElementById('k-progress').textContent = avgProgress + '%';
-      document.getElementById('k-done').textContent = done;
-      document.getElementById('k-risk').textContent = risk;
-
-      var ownerMap = {};
-      tasks.forEach(function(task) {
-        ownerMap[task.owner] = (ownerMap[task.owner] || 0) + Number(task.hours || 0);
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      var currentQuarter = Math.floor(today.getMonth() / 3);
+      var openTasks = tasks.filter(function(task) { return task.status !== 'Завершено'; });
+      var overdueTasks = openTasks.filter(function(task) {
+        var due = toDateValue(task.dueDate);
+        return due && due < today;
       });
-      var topOwner = Object.keys(ownerMap).sort(function(a, b) { return ownerMap[b] - ownerMap[a]; })[0] || '—';
-      var nearestTask = tasks
-        .filter(function(task) { return task.status !== 'Завершено' && task.dueDate; })
-        .sort(function(a, b) { return String(a.dueDate).localeCompare(String(b.dueDate)); })[0];
+      var criticalTasks = openTasks.filter(function(task) {
+        return task.status === 'Риск' || task.strategicPriority === 'срочно' || task.businessValue === 'высокий';
+      });
+      var urgentTests = openTasks.filter(function(task) {
+        var due = toDateValue(task.dueDate);
+        var daysToDue = due ? daysDiff(due, today) : 999;
+        var haystack = [task.title, task.description, task.topic, task.report].join(' ').toLowerCase();
+        return daysToDue >= 0 && daysToDue <= 7 && /(тест|испыт|analysis|анализ|протокол|pilot|sample|образц)/.test(haystack);
+      });
 
-      document.getElementById('side-focus').textContent = (topOwner !== '—' ? topOwner + ' / ' : 'Q2 / ') + (nearestTask ? formatDate(nearestTask.dueDate) : 'W07');
+      var activeHours = openTasks.reduce(function(sum, task) { return sum + Number(task.hours || 0); }, 0);
+      var reactiveHours = openTasks
+        .filter(function(task) { return task.status === 'Риск' || task.commercialDriver === 'проблема производства'; })
+        .reduce(function(sum, task) { return sum + Number(task.hours || 0); }, 0);
+      var plannedHours = Math.max(0, activeHours - reactiveHours);
+      var capacityLimit = 160;
+      var overloadPct = capacityLimit ? Math.round((activeHours / capacityLimit) * 100) : 0;
+
+      var timeToCommercialization = tasks
+        .filter(function(task) { return task.commercializationStage === 'коммерциализация' && task.dueDate; })
+        .map(function(task) {
+          var start = toDateValue(task.createdAt);
+          var end = toDateValue(task.dueDate);
+          if (!start && end) {
+            start = addDays(end, -Math.max(1, Number(task.durationWeeks || 1)) * 7);
+          }
+          if (!start || !end) return 0;
+          return Math.max(0, daysDiff(end, start));
+        })
+        .filter(function(value) { return value > 0; });
+      var avgTtc = timeToCommercialization.length
+        ? Math.round(timeToCommercialization.reduce(function(sum, value) { return sum + value; }, 0) / timeToCommercialization.length)
+        : 0;
+
+      var ownerLoads = {};
+      openTasks.forEach(function(task) {
+        var owner = String(task.owner || 'Не назначен');
+        if (!ownerLoads[owner]) ownerLoads[owner] = 0;
+        ownerLoads[owner] += Number(task.hours || 0);
+      });
+
+      var clientLoads = {};
+      tasks.forEach(function(task) {
+        var client = String(task.client || 'Без клиента');
+        if (!clientLoads[client]) clientLoads[client] = 0;
+        clientLoads[client] += Number(task.hours || 0);
+      });
+
+      var projectValues = tasks.map(function(task) {
+        return {
+          title: task.title,
+          revenue: getTaskRevenueMillions(task)
+        };
+      }).filter(function(item) { return item.revenue > 0; });
+
+      var stageOrder = [
+        { key: 'идея', label: 'Идея' },
+        { key: 'лаборатория', label: 'Лаба' },
+        { key: 'пилот', label: 'Пилот' },
+        { key: 'полевые тесты', label: 'Полевые Тесты' },
+        { key: 'клиентские тесты', label: 'Клиентские Тесты' },
+        { key: 'коммерциализация', label: 'Коммерциализация' }
+      ];
+      var stageCounts = {};
+      stageOrder.forEach(function(stage) { stageCounts[stage.key] = 0; });
+      tasks.forEach(function(task) {
+        var stage = task.commercializationStage || 'идея';
+        if (stageCounts[stage] == null) stageCounts[stage] = 0;
+        stageCounts[stage] += 1;
+      });
+
+      var stuckFieldTasks = openTasks.filter(function(task) {
+        return (task.commercializationStage === 'полевые тесты' || task.commercializationStage === 'клиентские тесты') && (stagePercent(task) < 70 || overdueTasks.indexOf(task) !== -1);
+      });
+
+      var weeklyTasks = tasks.filter(function(task) { return task.period === 'week'; });
+      var weeklyCompleted = weeklyTasks.filter(function(task) { return task.status === 'Завершено'; }).length;
+      var weeklyInProgress = weeklyTasks.filter(function(task) { return task.status === 'В работе'; }).length;
+      var weeklyDelayed = weeklyTasks.filter(function(task) {
+        var due = toDateValue(task.dueDate);
+        return task.status !== 'Завершено' && due && due < today;
+      }).length;
+
+      var quarterDeliverables = tasks.filter(function(task) {
+        var due = toDateValue(task.dueDate);
+        return due && due.getFullYear() === today.getFullYear() && Math.floor(due.getMonth() / 3) === currentQuarter && task.period !== 'week';
+      });
+      var q2Progress = quarterDeliverables.length
+        ? Math.round(quarterDeliverables.reduce(function(sum, task) { return sum + Number(task.progress || 0); }, 0) / quarterDeliverables.length)
+        : 0;
+
+      var blockers = openTasks.map(function(task) {
+        var revenue = getTaskRevenueMillions(task);
+        var hasCommercialLink = task.client || task.commercialDriver === 'тендер' || revenue > 0 || task.businessValue === 'высокий' || task.period !== 'week';
+        var isBlocked = task.status === 'Риск' || overdueTasks.indexOf(task) !== -1 || (task.commercializationStage === 'полевые тесты' && stagePercent(task) < 70);
+        if (!hasCommercialLink || !isBlocked) return null;
+        return {
+          title: task.title,
+          client: task.client || (task.commercialDriver === 'тендер' ? 'Тендер / продажи' : 'Коммерческий контур'),
+          revenue: revenue,
+          overdue: overdueTasks.indexOf(task) !== -1,
+          reason: task.commercialDriver === 'тендер'
+            ? 'тендер ждет завершения лабораторной части'
+            : task.status === 'Риск'
+              ? 'есть риск срыва клиентского результата'
+              : 'срок уже просрочен'
+        };
+      }).filter(Boolean).sort(function(a, b) {
+        return (b.revenue - a.revenue) || (Number(b.overdue) - Number(a.overdue));
+      }).slice(0, 4);
+
+      if (!blockers.length) {
+        blockers = openTasks.slice().sort(function(a, b) {
+          return getTaskRevenueMillions(b) - getTaskRevenueMillions(a);
+        }).slice(0, 3).map(function(task) {
+          return {
+            title: task.title,
+            client: task.client || 'Коммерческий контур',
+            revenue: getTaskRevenueMillions(task),
+            overdue: false,
+            reason: 'задача влияет на клиентский контур и требует внимания'
+          };
+        });
+      }
+
+      var revenueAtRisk = blockers.reduce(function(sum, item) { return sum + Number(item.revenue || 0); }, 0);
+
+      var ageBuckets = { fresh: 0, mid: 0, old: 0 };
+      openTasks.forEach(function(task) {
+        var created = toDateValue(task.createdAt);
+        if (!created) return;
+        var age = Math.max(0, daysDiff(today, created));
+        if (age <= 3) ageBuckets.fresh += 1;
+        else if (age <= 14) ageBuckets.mid += 1;
+        else ageBuckets.old += 1;
+      });
+
+      var bottleneckCounters = {
+        'Солевые тесты': 0,
+        'Тесты стабильности': 0,
+        'Согласование упаковки': 0
+      };
+      openTasks.forEach(function(task) {
+        var raw = [task.title, task.description, task.topic, task.notes].join(' ').toLowerCase();
+        if (/(salt|сол|соль|солеуст)/.test(raw)) bottleneckCounters['Солевые тесты'] += 1;
+        if (/(stabil|стабил|устойчив)/.test(raw)) bottleneckCounters['Тесты стабильности'] += 1;
+        if (/(packag|упаков|approval|согласован)/.test(raw)) bottleneckCounters['Согласование упаковки'] += 1;
+      });
+
+      var setText = function(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+      var setHtml = function(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = value;
+      };
+
+      setText('cc-overdue-sla', String(overdueTasks.length));
+      setText('cc-critical-tasks', String(criticalTasks.length));
+      setText('cc-urgent-tests', String(urgentTests.length));
+      setText('cc-overload', overloadPct + '%');
+      setText('cc-planned-share', activeHours ? formatPercent((plannedHours / activeHours) * 100) : '0%');
+      setText('cc-reactive-share', activeHours ? formatPercent((reactiveHours / activeHours) * 100) : '0%');
+      setText('cc-capacity-limit', capacityLimit + ' ч');
+      setText('cc-assigned-hours', activeHours + ' ч');
+      setText('cc-revenue-risk', revenueAtRisk ? formatMillions(revenueAtRisk) : '0 млн');
+      setText('cc-stuck-field', String(stuckFieldTasks.length));
+      setText('cc-time-to-commercial', avgTtc ? (avgTtc + ' дн') : '—');
+      setText('cc-weekly-total', String(weeklyTasks.length));
+      setText('cc-q2-deliverables', q2Progress + '%');
+
+      setHtml('cc-sales-blockers', blockers.length
+        ? blockers.map(function(item) {
+            return '<div class="priority-item ' + (item.overdue ? '' : 'warning') + '">' +
+              '<div class="icon">⚠</div>' +
+              '<div><strong>' + escapeHtml(item.client + ' · ' + item.title) + '</strong><span>' + escapeHtml(item.reason + (item.revenue ? ' · под риском ' + formatMillions(item.revenue) : '')) + '</span></div>' +
+            '</div>';
+          }).join('')
+        : '<div class="empty-note">Критических коммерческих блокеров сейчас не видно.</div>');
+
+      var ownerRows = Object.keys(ownerLoads)
+        .sort(function(a, b) { return ownerLoads[b] - ownerLoads[a]; })
+        .slice(0, 6)
+        .map(function(owner) {
+          var pct = Math.round((ownerLoads[owner] / 40) * 100);
+          return '<tr><td>' + escapeHtml(owner) + '</td><td>' + ownerLoads[owner] + ' ч</td><td>' + pct + '%</td></tr>';
+        }).join('');
+      setHtml('cc-owner-loads', '<thead><tr><th>Сотрудник</th><th>Часы</th><th>Загрузка</th></tr></thead><tbody>' + (ownerRows || '<tr><td colspan="3">Нет данных</td></tr>') + '</tbody>');
+
+      var projectRows = projectValues
+        .sort(function(a, b) { return b.revenue - a.revenue; })
+        .slice(0, 5)
+        .map(function(item) {
+          return '<tr><td>' + escapeHtml(item.title) + '</td><td>' + formatMillions(item.revenue) + '</td></tr>';
+        }).join('');
+      setHtml('cc-top-projects', '<thead><tr><th>Проект</th><th>Потенциал</th></tr></thead><tbody>' + (projectRows || '<tr><td colspan="2">Нет проектов с денежным потенциалом</td></tr>') + '</tbody>');
+
+      var clientRows = Object.keys(clientLoads)
+        .sort(function(a, b) { return clientLoads[b] - clientLoads[a]; })
+        .slice(0, 5)
+        .map(function(client) {
+          return '<tr><td>' + escapeHtml(client) + '</td><td>' + clientLoads[client] + ' ч</td></tr>';
+        }).join('');
+      setHtml('cc-top-clients', '<thead><tr><th>Клиент</th><th>Часы</th></tr></thead><tbody>' + (clientRows || '<tr><td colspan="2">Нет данных по клиентам</td></tr>') + '</tbody>');
+
+      var bottleneckChips = Object.keys(bottleneckCounters)
+        .sort(function(a, b) { return bottleneckCounters[b] - bottleneckCounters[a]; })
+        .filter(function(name) { return bottleneckCounters[name] > 0; })
+        .slice(0, 3)
+        .map(function(name) {
+          return '<div class="metric-chip">' + escapeHtml(name + ' · ' + bottleneckCounters[name]) + '</div>';
+        }).join('');
+      setHtml('cc-bottlenecks', bottleneckChips || '<div class="metric-chip">Явных бутылочных горлышек нет</div>');
+
+      setHtml('cc-pipeline-stages', stageOrder.map(function(stage) {
+        return '<div class="pipeline-stage"><strong>' + escapeHtml(stage.label) + '</strong><span>' + (stageCounts[stage.key] || 0) + '</span></div>';
+      }).join(''));
+
+      setHtml('cc-weekly-breakdown', [
+        'Завершено: ' + weeklyCompleted,
+        'В работе: ' + weeklyInProgress,
+        'Просрочено: ' + weeklyDelayed,
+        'Открыто: ' + Math.max(0, weeklyTasks.length - weeklyCompleted)
+      ].map(function(text) { return '<div class="metric-chip">' + escapeHtml(text) + '</div>'; }).join(''));
+
+      setHtml('cc-aging', [
+        '0-3 дня: ' + ageBuckets.fresh,
+        '4-14 дней: ' + ageBuckets.mid,
+        '>14 дней: ' + ageBuckets.old
+      ].map(function(text) { return '<div class="metric-chip">' + escapeHtml(text) + '</div>'; }).join(''));
     }
 
     function renderTable(period, tableId) {
@@ -1270,40 +3025,373 @@
       var table = document.getElementById(tableId);
 
       table.innerHTML =
+        '<colgroup>' +
+          '<col style="width:4%">' +
+          '<col style="width:8%">' +
+          '<col style="width:8%">' +
+          '<col style="width:10%">' +
+          '<col style="width:28%">' +
+          '<col style="width:9%">' +
+          '<col style="width:8%">' +
+          '<col style="width:8%">' +
+          '<col style="width:7%">' +
+          '<col style="width:10%">' +
+          '<col style="width:18%">' +
+        '</colgroup>' +
         '<thead><tr>' +
           '<th>№</th>' +
           '<th>% готовности</th>' +
           '<th>Период</th>' +
           '<th>Контур</th>' +
           '<th>Задача</th>' +
-          '<th>Описание</th>' +
           '<th>Отчет</th>' +
           '<th>Статус</th>' +
           '<th>Срок</th>' +
-          '<th>Часы</th>' +
+          '<th>Время</th>' +
           '<th>Исполнитель</th>' +
-          '<th>Примечания</th>' +
           '<th>Действия</th>' +
         '</tr></thead>' +
         '<tbody>' +
         (tasks.length ? tasks.map(function(task, index) {
-          return '<tr>' +
+          return '<tr class="task-main-row">' +
             '<td><div class="task-num">' + (index + 1) + '</div></td>' +
             '<td><span class="progress-pill">' + Number(task.progress || 0) + '%</span></td>' +
             '<td><span class="period-pill ' + periodClass(task.period) + '">' + periodLabel(task.period) + '</span></td>' +
             '<td>' + escapeHtml(formatTaskTopics(task)) + '</td>' +
-            '<td><strong>' + escapeHtml(task.title) + '</strong></td>' +
-            '<td><div class="desc">' + escapeHtml(task.description || '—') + '</div></td>' +
+            '<td class="task-title-cell"><strong>' + escapeHtml(task.title) + '</strong></td>' +
             '<td>' + escapeHtml(task.report || '—') + '</td>' +
             '<td><span class="status-pill ' + statusClass(task.status) + '">' + escapeHtml(task.status || 'Открыто') + '</span></td>' +
-            '<td>' + formatDate(task.dueDate) + '</td>' +
-            '<td>' + Number(task.hours || 0) + ' ч</td>' +
+            '<td><div>Начало: ' + formatDate(task.startDate || task.dueDate) + '</div><div>Конец: ' + formatDate(task.endDate || task.dueDate) + '</div></td>' +
+            '<td>' + escapeHtml(formatTaskEffort(task)) + '</td>' +
             '<td><span class="owner">' + escapeHtml(task.owner || '—') + '</span></td>' +
-            '<td><div class="notes-cell">' + escapeHtml(task.notes || '—') + '</div></td>' +
-            '<td class="row-actions"><button class="btn-open" type="button" title="Открыть задачу" onclick="openExistingTask(\'' + escapeHtml(task.id) + '\')">Открыть</button> <button class="btn-delete" type="button" title="Удалить задачу" onclick="deleteTask(\'' + escapeHtml(task.id) + '\')">×</button></td>' +
+            '<td class="row-actions row-actions-main"><button class="btn-open" type="button" title="Открыть задачу" onclick="openExistingTask(\'' + escapeHtml(task.id) + '\')">Открыть</button> <button class="btn-delete" type="button" title="Удалить задачу" onclick="deleteTask(\'' + escapeHtml(task.id) + '\')">×</button></td>' +
+          '</tr>' +
+          '<tr class="task-footer-row">' +
+            '<td colspan="11"><div class="row-actions-bottom"><button class="btn-report" type="button" title="Сформировать отчет" onclick="generateTaskReport(\'' + escapeHtml(task.id) + '\')">Сформировать отчет</button> <button class="btn-shift" type="button" title="Перенести на следующий период" onclick="moveTaskToNextPeriod(\'' + escapeHtml(task.id) + '\')">Перенести на следующий период</button></div></td>' +
           '</tr>';
-        }).join('') : '<tr><td colspan="13">Пока нет задач этого горизонта</td></tr>') +
+        }).join('') : '<tr><td colspan="11">Пока нет задач этого горизонта</td></tr>') +
         '</tbody>';
+    }
+
+    function generateTaskReport(taskId) {
+      openTaskReportModal(taskId);
+    }
+
+    function openTaskReportModal(taskId) {
+      var task = getTaskById(taskId);
+      if (!task) return;
+
+      currentReportTaskId = task.id;
+      currentReportAttachments = [];
+
+      var reports = loadTaskReports();
+      var previous = reports.filter(function(item) { return item.taskId === task.id; }).slice(-1)[0] || null;
+
+      document.getElementById('task-report-modal-title').textContent = 'Отчет по задаче: ' + (task.title || '—');
+      document.getElementById('task-report-title').value = task.title || '';
+      document.getElementById('task-report-owner').value = task.owner || 'Не назначен';
+      document.getElementById('task-report-progress').value = Number(previous ? previous.progress : task.progress || 0);
+      document.getElementById('task-report-kpi').value = previous ? (previous.keyKpi || '') : '';
+      document.getElementById('task-report-next-steps').value = previous ? (previous.nextSteps || '') : '';
+      document.getElementById('task-report-delay-reason').value = previous ? (previous.delayReason || '') : '';
+
+      var plannedHours = getTaskPlannedHours(task);
+      var spentValue = previous ? Number(previous.spentValue || 0) : Number(task.effortValue != null ? task.effortValue : task.hours || 0);
+      var spentUnit = previous ? (previous.spentUnit || (task.effortUnit || 'hours')) : (task.effortUnit || 'hours');
+      document.getElementById('task-report-spent-value').value = spentValue;
+      document.getElementById('task-report-spent-unit').value = spentUnit;
+
+      var techResults = Array.isArray(task.technicalResults) && task.technicalResults.length
+        ? task.technicalResults.slice()
+        : [];
+      var previousTech = previous && Array.isArray(previous.technicalChecklist) ? previous.technicalChecklist : [];
+      renderTaskReportTechnicalList(techResults, previousTech);
+
+      currentReportAttachments = previous && Array.isArray(previous.attachments)
+        ? previous.attachments.slice()
+        : [];
+      renderTaskReportAttachments();
+      updateTaskReportEffortKpi();
+
+      document.getElementById('task-report-modal-backdrop').classList.add('open');
+      document.body.classList.add('modal-open');
+    }
+
+    function closeTaskReportModal() {
+      currentReportTaskId = null;
+      currentReportAttachments = [];
+      document.getElementById('task-report-modal-backdrop').classList.remove('open');
+      document.body.classList.remove('modal-open');
+    }
+
+    function renderTaskReportTechnicalList(results, previousChecklist) {
+      var list = document.getElementById('task-report-technical-list');
+      if (!list) return;
+      if (!results || !results.length) {
+        list.innerHTML = '<div class="field-note">Для этой задачи технические результаты не заданы.</div>';
+        updateTaskReportTechKpi();
+        return;
+      }
+      list.innerHTML = results.map(function(result, index) {
+        var prevItem = previousChecklist[index] || {};
+        var checked = Boolean(prevItem.done);
+        var reason = prevItem.reason || '';
+        return '<div class="report-tech-row">' +
+          '<input type="checkbox" class="report-tech-done" data-index="' + index + '" ' + (checked ? 'checked' : '') + '>' +
+          '<div>' + escapeHtml(result) + '</div>' +
+          '<textarea class="input reason-input report-tech-reason" data-index="' + index + '" rows="1" placeholder="Причина, почему результат не достигнут" ' + (checked ? 'disabled' : '') + '>' + escapeHtml(reason) + '</textarea>' +
+        '</div>';
+      }).join('');
+
+      list.querySelectorAll('.report-tech-done').forEach(function(box) {
+        box.addEventListener('change', function() {
+          var index = box.getAttribute('data-index');
+          var reasonInput = list.querySelector('.report-tech-reason[data-index="' + index + '"]');
+          if (!reasonInput) return;
+          reasonInput.disabled = box.checked;
+          if (box.checked) {
+            reasonInput.value = '';
+            reasonInput.style.height = '40px';
+          }
+          updateTaskReportTechKpi();
+        });
+      });
+
+      list.querySelectorAll('.report-tech-reason').forEach(function(textarea) {
+        autoGrowReportReason(textarea);
+        textarea.addEventListener('input', function() {
+          autoGrowReportReason(textarea);
+        });
+      });
+
+      updateTaskReportTechKpi();
+    }
+
+    function autoGrowReportReason(textarea) {
+      if (!textarea) return;
+      textarea.style.height = '40px';
+      textarea.style.height = Math.max(40, textarea.scrollHeight) + 'px';
+    }
+
+    function updateTaskReportTechKpi() {
+      var rows = Array.from(document.querySelectorAll('#task-report-technical-list .report-tech-done'));
+      var total = rows.length;
+      var done = rows.filter(function(item) { return item.checked; }).length;
+      var el = document.getElementById('task-report-tech-kpi');
+      if (el) el.textContent = 'Выполнено: ' + done + '/' + total;
+    }
+
+    function updateTaskReportEffortKpi() {
+      var task = getTaskById(currentReportTaskId);
+      var kpiEl = document.getElementById('task-report-effort-kpi');
+      if (!task || !kpiEl) return;
+
+      var plannedHours = getTaskPlannedHours(task);
+      var spentValue = Number(document.getElementById('task-report-spent-value').value || 0);
+      var spentUnit = document.getElementById('task-report-spent-unit').value || 'hours';
+      var spentHours = effortToHours(spentValue, spentUnit);
+
+      kpiEl.classList.remove('good', 'bad');
+      if (spentHours > plannedHours) kpiEl.classList.add('bad');
+      else kpiEl.classList.add('good');
+      kpiEl.textContent = 'План: ' + Math.round(plannedHours) + ' ч · Факт: ' + Math.round(spentHours) + ' ч';
+    }
+
+    function triggerTaskReportFileUpload() {
+      var input = document.getElementById('task-report-file-input');
+      if (input) input.click();
+    }
+
+    function handleTaskReportFileInput(event) {
+      var files = Array.prototype.slice.call((event.target && event.target.files) || []);
+      if (!files.length) return;
+      Promise.all(files.map(function(file) {
+        return new Promise(function(resolve) {
+          var reader = new FileReader();
+          reader.onload = function(loadEvent) {
+            resolve({
+              name: file.name,
+              type: file.type || '',
+              size: file.size || 0,
+              dataUrl: loadEvent.target.result
+            });
+          };
+          reader.onerror = function() { resolve(null); };
+          reader.readAsDataURL(file);
+        });
+      })).then(function(items) {
+        currentReportAttachments = currentReportAttachments.concat(items.filter(Boolean));
+        renderTaskReportAttachments();
+        showToast(files.length > 1 ? 'Файлы отчета прикреплены' : 'Файл отчета прикреплен');
+      });
+      event.target.value = '';
+    }
+
+    function renderTaskReportAttachments() {
+      var list = document.getElementById('task-report-attachments-list');
+      if (!list) return;
+      if (!currentReportAttachments.length) {
+        list.innerHTML = '<div class="field-note">Файлы отчета пока не прикреплены.</div>';
+        return;
+      }
+      list.innerHTML = currentReportAttachments.map(function(file, index) {
+        return '<div class="attachment-item">' +
+          '<div class="attachment-meta">' +
+            '<div class="attachment-name">' + escapeHtml(file.name || 'Файл') + '</div>' +
+            '<div class="attachment-size">' + escapeHtml(formatFileSize(file.size)) + '</div>' +
+          '</div>' +
+          '<div class="attachment-actions">' +
+            '<button class="btn-link-lite" type="button" onclick="openTaskReportAttachment(' + index + ')">Открыть</button>' +
+            '<button class="btn-link-lite" type="button" onclick="removeTaskReportAttachment(' + index + ')">Удалить</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function openTaskReportAttachment(index) {
+      var file = currentReportAttachments[index];
+      if (!file || !file.dataUrl) return;
+      var link = document.createElement('a');
+      link.href = file.dataUrl;
+      link.download = file.name || 'report-file';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function removeTaskReportAttachment(index) {
+      currentReportAttachments = currentReportAttachments.filter(function(_, i) { return i !== index; });
+      renderTaskReportAttachments();
+    }
+
+    function collectTaskReportPayload() {
+      var task = getTaskById(currentReportTaskId);
+      if (!task) return null;
+
+      var spentValue = Number(document.getElementById('task-report-spent-value').value || 0);
+      var spentUnit = document.getElementById('task-report-spent-unit').value || 'hours';
+      var spentHours = effortToHours(spentValue, spentUnit);
+      var plannedHours = getTaskPlannedHours(task);
+
+      var technicalChecklist = Array.from(document.querySelectorAll('#task-report-technical-list .report-tech-row')).map(function(row, index) {
+        var doneBox = row.querySelector('.report-tech-done');
+        var reasonInput = row.querySelector('.report-tech-reason');
+        var resultName = (Array.isArray(task.technicalResults) && task.technicalResults[index]) || ('Результат ' + (index + 1));
+        return {
+          result: resultName,
+          done: Boolean(doneBox && doneBox.checked),
+          reason: reasonInput ? reasonInput.value.trim() : ''
+        };
+      });
+
+      return {
+        id: 'report-' + Date.now(),
+        taskId: task.id,
+        taskTitle: task.title || '',
+        period: task.period || 'week',
+        owner: document.getElementById('task-report-owner').value.trim() || task.owner || 'Не назначен',
+        progress: Math.max(0, Math.min(100, Number(document.getElementById('task-report-progress').value || 0))),
+        keyKpi: document.getElementById('task-report-kpi').value.trim(),
+        spentValue: spentValue,
+        spentUnit: spentUnit,
+        spentHours: spentHours,
+        plannedHours: plannedHours,
+        delayReason: document.getElementById('task-report-delay-reason').value.trim(),
+        technicalChecklist: technicalChecklist,
+        nextSteps: document.getElementById('task-report-next-steps').value.trim(),
+        attachments: currentReportAttachments.slice(),
+        createdAt: toISODate(new Date()),
+        taskStartDate: task.startDate || task.dueDate || '',
+        taskEndDate: task.endDate || task.dueDate || ''
+      };
+    }
+
+    function saveTaskReport(reportPayload) {
+      var reports = loadTaskReports();
+      reports.push(reportPayload);
+      saveTaskReports(reports);
+    }
+
+    function completeTaskFromReport() {
+      var task = getTaskById(currentReportTaskId);
+      if (!task) return;
+
+      var reportPayload = collectTaskReportPayload();
+      if (!reportPayload) return;
+
+      var spentOverPlan = reportPayload.spentHours > reportPayload.plannedHours;
+      if (spentOverPlan && !reportPayload.delayReason) {
+        showToast('Укажи причину отставания: факт времени выше плана');
+        return;
+      }
+
+      var missedTech = reportPayload.technicalChecklist.some(function(item) {
+        return !item.done && !item.reason;
+      });
+      if (missedTech) {
+        showToast('Для недостигнутых техрезультатов укажи причины');
+        return;
+      }
+
+      saveTaskReport(reportPayload);
+
+      var tasks = getTasks().filter(function(item) {
+        return item.id !== task.id;
+      });
+      closeTaskReportModal();
+      saveTasks(tasks);
+      renderAll();
+      showToast('Отчет сохранен, задача завершена и убрана из плана');
+    }
+
+    function moveTaskToNextPeriodFromReport() {
+      if (!currentReportTaskId) return;
+      var reportPayload = collectTaskReportPayload();
+      if (reportPayload) saveTaskReport(reportPayload);
+      var taskId = currentReportTaskId;
+      closeTaskReportModal();
+      moveTaskToNextPeriod(taskId);
+    }
+
+    function moveTaskToNextPeriod(taskId) {
+      var tasks = getTasks();
+      var moved = false;
+
+      var nextTasks = tasks.map(function(task) {
+        if (task.id !== taskId) return task;
+        moved = true;
+        var range = getTaskDateRange(task);
+        var start = range.start || new Date();
+        var end = range.end || new Date();
+        var shiftedStart;
+        var shiftedEnd;
+        if (task.period === 'week') {
+          shiftedStart = addDays(start, 7);
+          shiftedEnd = addDays(end, 7);
+        } else if (task.period === 'month') {
+          shiftedStart = new Date(start.getFullYear(), start.getMonth() + 1, start.getDate());
+          shiftedEnd = new Date(end.getFullYear(), end.getMonth() + 1, end.getDate());
+        } else if (task.period === 'quarter') {
+          shiftedStart = new Date(start.getFullYear(), start.getMonth() + 3, start.getDate());
+          shiftedEnd = new Date(end.getFullYear(), end.getMonth() + 3, end.getDate());
+        } else {
+          shiftedStart = new Date(start.getFullYear() + 1, start.getMonth(), start.getDate());
+          shiftedEnd = new Date(end.getFullYear() + 1, end.getMonth(), end.getDate());
+        }
+
+        return Object.assign({}, task, {
+          startDate: toISODate(shiftedStart),
+          endDate: toISODate(shiftedEnd),
+          dueDate: toISODate(shiftedEnd),
+          status: task.status === 'Завершено' ? 'Открыто' : task.status
+        });
+      });
+
+      if (!moved) return;
+      saveTasks(nextTasks);
+      renderAll();
+      showToast('Задача перенесена на следующий период');
     }
 
     function renderGantt() {
@@ -1343,22 +3431,565 @@
             (childLinks ? '<div class="gantt-links">' + childLinks + '</div>' : '') +
           '</div>' +
           Array.from({ length: 13 }).map(function() { return '<div class="week-cell"></div>'; }).join('') +
-          '<div class="gantt-track"><button class="gantt-bar gantt-bar-main ' + colorClass + '" type="button" onclick="openExistingTask(\'' + escapeHtml(task.id) + '\')" style="left:calc(' + left + '% + 4px); width:calc(' + width + '% - 8px)">' + escapeHtml(task.status) + ' · ' + Number(task.progress || 0) + '% · ' + escapeHtml(task.title) + '</button>' + childBars + '</div>' +
+          '<div class="gantt-track"><button class="gantt-bar gantt-bar-main ' + colorClass + '" type="button" onclick="openExistingTask(\'' + escapeHtml(task.id) + '\')" style="left:calc(' + left + '% + 4px); width:calc(' + width + '% - 8px)">' + escapeHtml(task.status) + ' · ' + Number(task.progress || 0) + '% · Этап ' + stagePercent(task) + '% · ' + escapeHtml(task.title) + '</button>' + childBars + '</div>' +
         '</div>';
       }).join('');
     }
 
+    function renderWeekGantt() {
+      var head = document.getElementById('week-gantt-head');
+      var body = document.getElementById('week-gantt-body');
+      var rangeEl = document.getElementById('week-gantt-range');
+      if (!head || !body) return;
+
+      var weekStart = getWeekGanttStart();
+      var weekEnd = addDays(weekStart, 6);
+      if (rangeEl) {
+        rangeEl.textContent = formatShortRuDate(weekStart) + ' - ' + formatShortRuDate(weekEnd);
+      }
+
+      var dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+      head.innerHTML = ['Поток'].concat(dayNames.map(function(name, index) {
+        var date = addDays(weekStart, index);
+        return name + ' ' + String(date.getDate()).padStart(2, '0') + '.' + String(date.getMonth() + 1).padStart(2, '0');
+      })).map(function(label) {
+        return '<div>' + label + '</div>';
+      }).join('');
+
+      var weekTasks = getTasks()
+        .filter(function(task) { return task.period === 'week'; })
+        .sort(sortTasksForGantt)
+        .map(function(task) {
+          var range = getTaskDateRange(task);
+          var startDate = range.start;
+          var dueDate = range.end;
+          var spanDays = Math.max(1, daysDiff(dueDate, startDate) + 1);
+          var startOffset = daysDiff(startDate, weekStart);
+          var endOffset = daysDiff(dueDate, weekStart);
+          var clipStart = Math.max(0, startOffset);
+          var clipEnd = Math.min(6, endOffset);
+          var visible = clipStart <= clipEnd;
+          return {
+            task: task,
+            dueDate: dueDate,
+            spanDays: spanDays,
+            startOffset: startOffset,
+            endOffset: endOffset,
+            clipStart: clipStart,
+            clipEnd: clipEnd,
+            visible: visible
+          };
+        })
+        .filter(function(item) { return item.visible; });
+
+      if (!weekTasks.length) {
+        body.innerHTML = '<div class="week-gantt-row" style="--track-height:34px">' +
+          '<div class="gantt-meta"><strong>На этой неделе нет недельных задач</strong><span>Переключи неделю или добавь задачу на нужную дату.</span></div>' +
+          Array.from({ length: 7 }).map(function() { return '<div class="week-cell"></div>'; }).join('') +
+          '<div class="gantt-track week-gantt-track"></div>' +
+        '</div>';
+        return;
+      }
+
+      body.innerHTML = weekTasks.map(function(task) {
+        var data = task;
+        var left = (data.clipStart / 7) * 100;
+        var width = ((data.clipEnd - data.clipStart + 1) / 7) * 100;
+
+        return '<div class="week-gantt-row" style="--track-height:34px">' +
+          '<div class="gantt-meta"><strong>' + escapeHtml(data.task.title) + '</strong><span>' + escapeHtml(data.task.owner || '—') + ' · ' + Number(data.task.hours || 0) + ' ч · до ' + formatDate(toISODate(data.dueDate)) + '</span></div>' +
+          Array.from({ length: 7 }).map(function() { return '<div class="week-cell"></div>'; }).join('') +
+          '<div class="gantt-track week-gantt-track">' +
+            '<button class="gantt-bar gantt-bar-main c-cyan week-gantt-bar" data-task-id="' + escapeHtml(data.task.id) + '" data-span-days="' + data.spanDays + '" data-day-start="' + data.clipStart + '" type="button" style="left:calc(' + left + '% + 4px); width:calc(' + width + '% - 8px)">' +
+              '<span class="timeline-handle left" data-handle="left"></span>' +
+              '<span class="week-gantt-bar-label">' + escapeHtml(data.task.status) + ' · ' + Number(data.task.progress || 0) + '% · Этап ' + stagePercent(data.task) + '% · ' + escapeHtml(data.task.title) + '</span>' +
+              '<span class="timeline-handle right" data-handle="right"></span>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      body.querySelectorAll('.week-gantt-bar').forEach(function(bar) {
+        bar.addEventListener('pointerdown', function(event) {
+          startWeekGanttDrag(event, bar.getAttribute('data-task-id'));
+        });
+        bar.addEventListener('mousedown', function(event) {
+          startWeekGanttDrag(event, bar.getAttribute('data-task-id'));
+        });
+        bar.addEventListener('dblclick', function() {
+          openWeekGanttTask(bar.getAttribute('data-task-id'));
+        });
+        bar.querySelectorAll('.timeline-handle').forEach(function(handle) {
+          handle.addEventListener('pointerdown', function(event) {
+            event.stopPropagation();
+            startWeekGanttDrag(event, bar.getAttribute('data-task-id'), handle.getAttribute('data-handle'));
+          });
+          handle.addEventListener('mousedown', function(event) {
+            event.stopPropagation();
+            startWeekGanttDrag(event, bar.getAttribute('data-task-id'), handle.getAttribute('data-handle'));
+          });
+        });
+      });
+    }
+
+    function renderPeriodGantt(period, headId, bodyId) {
+      var head = document.getElementById(headId);
+      var body = document.getElementById(bodyId);
+      var rangeEl = document.getElementById(period + '-gantt-range');
+      if (!head || !body) return;
+
+      var unitCount = period === 'month' ? 4 : period === 'year' ? 12 : 13;
+      var monthNames = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+      var windowStart =
+        period === 'month' ? getMonthGanttWindowStart() :
+        period === 'quarter' ? getQuarterGanttWindowStart() :
+        getYearGanttWindowStart();
+
+      if (period === 'month') {
+        var monthStart = getMonthPeriodStart();
+        if (rangeEl) rangeEl.textContent = monthNames[monthStart.getMonth()] + ' ' + monthStart.getFullYear();
+        var monthLabels = ['Поток'];
+        for (var wi = 0; wi < 4; wi++) {
+          var ws = addDays(windowStart, wi * 7);
+          var we = addDays(ws, 6);
+          monthLabels.push('W' + String(wi + 1).padStart(2, '0') + ' ' +
+            String(ws.getDate()).padStart(2, '0') + '.' + String(ws.getMonth() + 1).padStart(2, '0') +
+            '-' +
+            String(we.getDate()).padStart(2, '0') + '.' + String(we.getMonth() + 1).padStart(2, '0'));
+        }
+        head.innerHTML = monthLabels.map(function(label) {
+          return '<div>' + label + '</div>';
+        }).join('');
+      } else if (period === 'year') {
+        if (rangeEl) rangeEl.textContent = String(windowStart.getFullYear());
+        var yearLabels = ['Поток', 'Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+        head.innerHTML = yearLabels.map(function(label) {
+          return '<div>' + label + '</div>';
+        }).join('');
+      } else {
+        var quarterAnchor = getQuarterPeriodStart();
+        var quarterMonth = Math.floor(quarterAnchor.getMonth() / 3) + 1;
+        if (rangeEl) rangeEl.textContent = 'Q' + quarterMonth + ' ' + quarterAnchor.getFullYear();
+        var weeks = ['Поток'];
+        for (var qw = 0; qw < 13; qw++) {
+          var qDate = addDays(windowStart, qw * 7);
+          weeks.push('W' + String(qw + 1).padStart(2, '0') + ' ' + String(qDate.getDate()).padStart(2, '0') + '.' + String(qDate.getMonth() + 1).padStart(2, '0'));
+        }
+        head.innerHTML = weeks.map(function(label) {
+          return '<div>' + label + '</div>';
+        }).join('');
+      }
+
+      var tasks = getTasks()
+        .filter(function(task) { return task.period === period; })
+        .sort(sortTasksForGantt)
+        .map(function(task) {
+          var range = getTaskDateRange(task);
+          var taskStart = range.start;
+          var taskEnd = range.end;
+          if (!taskStart || !taskEnd) return { visible: false };
+
+          if (period === 'year') {
+            var yearStart = windowStart;
+            var yearEnd = new Date(windowStart.getFullYear(), 11, 31);
+            if (taskEnd < yearStart || taskStart > yearEnd) return { visible: false };
+
+            var startMonthIndex = taskStart < yearStart ? 0 : taskStart.getMonth();
+            var endMonthIndex = taskEnd > yearEnd ? 11 : taskEnd.getMonth();
+            var clipDurationMonths = (endMonthIndex - startMonthIndex) + 1;
+
+            return {
+              task: task,
+              visible: true,
+              clipStart: startMonthIndex + 1,
+              clipDuration: clipDurationMonths,
+              windowStartISO: toISODate(yearStart)
+            };
+          }
+
+          var maxUnit = period === 'month' ? 4 : 13;
+          var startOffset = Math.floor(daysDiff(taskStart, windowStart) / 7);
+          var endOffset = Math.floor(daysDiff(taskEnd, windowStart) / 7);
+          var clipStart = Math.max(0, startOffset);
+          var clipEnd = Math.min(maxUnit - 1, endOffset);
+          var visible = clipStart <= clipEnd;
+
+          return {
+            task: task,
+            visible: visible,
+            clipStart: clipStart + 1,
+            clipDuration: (clipEnd - clipStart + 1),
+            windowStartISO: toISODate(windowStart)
+          };
+        })
+        .filter(function(item) { return item.visible; });
+
+      if (!tasks.length) {
+        body.innerHTML = '<div class="' + (period === 'month' ? 'month-gantt-row' : period === 'year' ? 'year-gantt-row' : 'gantt-row') + '" style="--track-height:34px">' +
+          '<div class="gantt-meta"><strong>Нет задач этого горизонта</strong><span>Добавь задачу, чтобы увидеть её на графике.</span></div>' +
+          Array.from({ length: unitCount }).map(function() { return '<div class="week-cell"></div>'; }).join('') +
+          '<div class="gantt-track"></div>' +
+        '</div>';
+        return;
+      }
+
+      body.innerHTML = tasks.map(function(item) {
+        var left = ((item.clipStart - 1) / unitCount) * 100;
+        var width = (item.clipDuration / unitCount) * 100;
+        var colorClass = period === 'month' ? 'c-blue' : period === 'year' ? 'c-violet' : 'c-gold';
+        var range = getTaskDateRange(item.task);
+        var rangeLabel = formatDate(toISODate(range.start)) + ' - ' + formatDate(toISODate(range.end));
+
+        return '<div class="' + (period === 'month' ? 'month-gantt-row' : period === 'year' ? 'year-gantt-row' : 'gantt-row') + '" style="--track-height:34px">' +
+          '<div class="gantt-meta"><strong>' + escapeHtml(item.task.title) + '</strong><span>' + escapeHtml(periodLabel(item.task.period)) + ' · ' + escapeHtml(item.task.owner || '—') + ' · ' + Number(item.task.hours || 0) + ' ч · ' + rangeLabel + '</span></div>' +
+          Array.from({ length: unitCount }).map(function() { return '<div class="week-cell"></div>'; }).join('') +
+          '<div class="gantt-track">' +
+            '<button class="gantt-bar gantt-bar-main ' + colorClass + ' period-gantt-bar" data-period="' + escapeHtml(period) + '" data-task-id="' + escapeHtml(item.task.id) + '" data-start-unit="' + item.clipStart + '" data-duration-units="' + item.clipDuration + '" data-window-start="' + escapeHtml(item.windowStartISO) + '" data-editable="1" type="button" style="left:calc(' + left + '% + 4px); width:calc(' + width + '% - 8px)">' +
+              '<span class="timeline-handle left" data-handle="left"></span>' +
+              '<span class="timeline-bar-label">' + escapeHtml(item.task.status) + ' · ' + Number(item.task.progress || 0) + '% · Этап ' + stagePercent(item.task) + '% · ' + escapeHtml(item.task.title) + '</span>' +
+              '<span class="timeline-handle right" data-handle="right"></span>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      body.querySelectorAll('.period-gantt-bar[data-editable="1"]').forEach(function(bar) {
+        bar.addEventListener('pointerdown', function(event) {
+          startPeriodGanttDrag(event, bar.getAttribute('data-period'), bar.getAttribute('data-task-id'));
+        });
+        bar.addEventListener('mousedown', function(event) {
+          startPeriodGanttDrag(event, bar.getAttribute('data-period'), bar.getAttribute('data-task-id'));
+        });
+        bar.addEventListener('dblclick', function() {
+          openPeriodGanttTask(bar.getAttribute('data-period'), bar.getAttribute('data-task-id'));
+        });
+        bar.querySelectorAll('.timeline-handle').forEach(function(handle) {
+          handle.addEventListener('pointerdown', function(event) {
+            event.stopPropagation();
+            startPeriodGanttDrag(event, bar.getAttribute('data-period'), bar.getAttribute('data-task-id'), handle.getAttribute('data-handle'));
+          });
+          handle.addEventListener('mousedown', function(event) {
+            event.stopPropagation();
+            startPeriodGanttDrag(event, bar.getAttribute('data-period'), bar.getAttribute('data-task-id'), handle.getAttribute('data-handle'));
+          });
+        });
+      });
+    }
+
+    function shiftWeekGanttRange(delta) {
+      weekGanttOffsetWeeks += Number(delta || 0);
+      renderWeekGantt();
+    }
+
+    function shiftPeriodGanttRange(period, delta) {
+      var step = Number(delta || 0);
+      if (period === 'month') monthGanttOffsetMonths += step;
+      else if (period === 'quarter') quarterGanttOffsetQuarters += step;
+      else if (period === 'year') yearGanttOffsetYears += step;
+      renderPeriodGantt(period, period === 'month' ? 'month-gantt-head' : period === 'quarter' ? 'quarter-gantt-head' : 'year-gantt-head', period + '-gantt-body');
+    }
+
+    function openWeekGanttTask(taskId) {
+      if (Date.now() < weekGanttClickBlockUntil) return;
+      openExistingTask(taskId);
+    }
+
+    function openPeriodGanttTask(period, taskId) {
+      if (Date.now() < periodGanttClickBlockUntil) return;
+      openExistingTask(taskId);
+    }
+
+    function startWeekGanttDrag(event, taskId, dragMode) {
+      if (!event || event.button !== 0) return;
+      var bar = event.currentTarget;
+      if (bar && bar.classList && bar.classList.contains('week-gantt-handle')) {
+        bar = bar.closest('.week-gantt-bar');
+      }
+      var track = bar && bar.closest ? bar.closest('.gantt-track') : null;
+      if (!bar || !track) return;
+
+      var task = getTasks().find(function(item) { return item.id === taskId; });
+      if (!task || task.period !== 'week') return;
+
+      var range = getTaskRange(task);
+      var rect = track.getBoundingClientRect();
+      if (!rect.width) return;
+
+      var spanDays = Math.max(1, Math.min(7, Number(bar.getAttribute('data-span-days') || 1)));
+      var dayStart = Math.max(0, Math.min(6, Number(bar.getAttribute('data-day-start') || 0)));
+
+      var mode = dragMode === 'left' ? 'resize-left' : dragMode === 'right' ? 'resize-right' : 'move';
+
+      weekGanttDragState = {
+        taskId: taskId,
+        bar: bar,
+        startX: event.clientX,
+        startDay: dayStart,
+        spanDays: spanDays,
+        weekStartDate: getWeekGanttStart(),
+        dayWidth: rect.width / 7,
+        mode: mode,
+        moved: false
+      };
+
+      document.body.classList.add('dragging-week-gantt');
+      document.addEventListener('pointermove', onWeekGanttDragMove);
+      document.addEventListener('pointerup', onWeekGanttDragEnd);
+      document.addEventListener('mousemove', onWeekGanttDragMove);
+      document.addEventListener('mouseup', onWeekGanttDragEnd);
+      if (bar.setPointerCapture) {
+        try { bar.setPointerCapture(event.pointerId); } catch (error) {}
+      }
+      event.preventDefault();
+    }
+
+    function onWeekGanttDragMove(event) {
+      if (!weekGanttDragState) return;
+      var deltaDays = Math.round((event.clientX - weekGanttDragState.startX) / weekGanttDragState.dayWidth);
+      var startDay = weekGanttDragState.startDay;
+      var spanDays = weekGanttDragState.spanDays;
+      var nextStartDay = startDay;
+      var nextSpanDays = spanDays;
+
+      if (weekGanttDragState.mode === 'resize-left') {
+        nextStartDay = Math.max(0, Math.min(startDay + spanDays - 1, startDay + deltaDays));
+        nextSpanDays = (startDay + spanDays) - nextStartDay;
+      } else if (weekGanttDragState.mode === 'resize-right') {
+        var nextEndDay = Math.max(startDay, Math.min(6, startDay + spanDays - 1 + deltaDays));
+        nextSpanDays = nextEndDay - startDay + 1;
+      } else {
+        var maxStartDay = Math.max(0, 7 - spanDays);
+        nextStartDay = Math.max(0, Math.min(maxStartDay, startDay + deltaDays));
+      }
+
+      if (nextStartDay !== startDay || nextSpanDays !== spanDays) weekGanttDragState.moved = true;
+
+      var left = (nextStartDay / 7) * 100;
+      var width = (nextSpanDays / 7) * 100;
+      weekGanttDragState.previewStartDay = nextStartDay;
+      weekGanttDragState.previewSpanDays = nextSpanDays;
+      weekGanttDragState.bar.style.left = 'calc(' + left + '% + 4px)';
+      weekGanttDragState.bar.style.width = 'calc(' + width + '% - 8px)';
+      event.preventDefault();
+    }
+
+    function onWeekGanttDragEnd() {
+      if (!weekGanttDragState) return;
+
+      document.body.classList.remove('dragging-week-gantt');
+      document.removeEventListener('pointermove', onWeekGanttDragMove);
+      document.removeEventListener('pointerup', onWeekGanttDragEnd);
+      document.removeEventListener('mousemove', onWeekGanttDragMove);
+      document.removeEventListener('mouseup', onWeekGanttDragEnd);
+
+      var taskId = weekGanttDragState.taskId;
+      var startDay = weekGanttDragState.startDay;
+      var nextStartDay = weekGanttDragState.previewStartDay;
+      if (typeof nextStartDay !== 'number') nextStartDay = startDay;
+      var spanDays = weekGanttDragState.spanDays;
+      var nextSpanDays = weekGanttDragState.previewSpanDays;
+      if (typeof nextSpanDays !== 'number') nextSpanDays = spanDays;
+      var weekStartDate = weekGanttDragState.weekStartDate;
+      var moved = weekGanttDragState.moved && (nextStartDay !== startDay || nextSpanDays !== spanDays);
+      weekGanttDragState = null;
+
+      if (!moved) return;
+
+      weekGanttClickBlockUntil = Date.now() + 240;
+      var nextDueDate = addDays(weekStartDate, nextStartDay + nextSpanDays - 1);
+      var nextStartDate = addDays(nextDueDate, -nextSpanDays + 1);
+      var nextStartWeek = computeStartWeekByDate(nextStartDate);
+      var tasks = getTasks().map(function(task) {
+        if (task.id !== taskId) return task;
+        return Object.assign({}, task, {
+          startWeek: nextStartWeek,
+          durationWeeks: 1,
+          weekSpanDays: nextSpanDays,
+          startDate: toISODate(nextStartDate),
+          endDate: toISODate(nextDueDate),
+          dueDate: toISODate(nextDueDate)
+        });
+      });
+
+      saveTasks(tasks);
+      renderAll();
+      showToast('Недельная задача: ' + nextSpanDays + ' дн., до ' + formatDate(toISODate(nextDueDate)));
+    }
+
+    function startPeriodGanttDrag(event, period, taskId, dragMode) {
+      if (!event || event.button !== 0) return;
+      var bar = event.currentTarget;
+      if (bar && bar.classList && bar.classList.contains('timeline-handle')) {
+        bar = bar.closest('.period-gantt-bar');
+      }
+      var track = bar && bar.closest ? bar.closest('.gantt-track') : null;
+      if (!bar || !track) return;
+
+      var task = getTasks().find(function(item) { return item.id === taskId; });
+      if (!task || task.period !== period) return;
+
+      var rect = track.getBoundingClientRect();
+      if (!rect.width) return;
+
+      var unitCount = period === 'month' ? 4 : period === 'year' ? 12 : 13;
+      var startUnit = Math.max(1, Math.min(unitCount, Number(bar.getAttribute('data-start-unit') || 1)));
+      var durationUnits = Math.max(1, Math.min(unitCount, Number(bar.getAttribute('data-duration-units') || 1)));
+      var windowStartDate = toDateValue(bar.getAttribute('data-window-start'));
+      var mode = dragMode === 'left' ? 'resize-left' : dragMode === 'right' ? 'resize-right' : 'move';
+
+      periodGanttDragState = {
+        period: period,
+        taskId: taskId,
+        bar: bar,
+        startX: event.clientX,
+        startUnit: startUnit,
+        durationUnits: durationUnits,
+        unitCount: unitCount,
+        unitWidth: rect.width / unitCount,
+        windowStartDate: windowStartDate,
+        mode: mode,
+        moved: false
+      };
+
+      document.body.classList.add('dragging-period-gantt');
+      document.addEventListener('pointermove', onPeriodGanttDragMove);
+      document.addEventListener('pointerup', onPeriodGanttDragEnd);
+      document.addEventListener('mousemove', onPeriodGanttDragMove);
+      document.addEventListener('mouseup', onPeriodGanttDragEnd);
+      if (bar.setPointerCapture) {
+        try { bar.setPointerCapture(event.pointerId); } catch (error) {}
+      }
+      event.preventDefault();
+    }
+
+    function onPeriodGanttDragMove(event) {
+      if (!periodGanttDragState) return;
+      var delta = Math.round((event.clientX - periodGanttDragState.startX) / periodGanttDragState.unitWidth);
+      var startUnit = periodGanttDragState.startUnit;
+      var durationUnits = periodGanttDragState.durationUnits;
+      var unitCount = periodGanttDragState.unitCount;
+      var nextStartUnit = startUnit;
+      var nextDurationUnits = durationUnits;
+
+      if (periodGanttDragState.mode === 'resize-left') {
+        nextStartUnit = Math.max(1, Math.min(startUnit + durationUnits - 1, startUnit + delta));
+        nextDurationUnits = (startUnit + durationUnits) - nextStartUnit;
+      } else if (periodGanttDragState.mode === 'resize-right') {
+        var nextEndUnit = Math.max(startUnit, Math.min(unitCount, startUnit + durationUnits - 1 + delta));
+        nextDurationUnits = nextEndUnit - startUnit + 1;
+      } else {
+        var maxStartUnit = Math.max(1, unitCount - durationUnits + 1);
+        nextStartUnit = Math.max(1, Math.min(maxStartUnit, startUnit + delta));
+      }
+
+      if (nextStartUnit !== startUnit || nextDurationUnits !== durationUnits) periodGanttDragState.moved = true;
+
+      var left = ((nextStartUnit - 1) / unitCount) * 100;
+      var width = (nextDurationUnits / unitCount) * 100;
+      periodGanttDragState.previewStartUnit = nextStartUnit;
+      periodGanttDragState.previewDurationUnits = nextDurationUnits;
+      periodGanttDragState.bar.style.left = 'calc(' + left + '% + 4px)';
+      periodGanttDragState.bar.style.width = 'calc(' + width + '% - 8px)';
+      event.preventDefault();
+    }
+
+    function onPeriodGanttDragEnd() {
+      if (!periodGanttDragState) return;
+
+      document.body.classList.remove('dragging-period-gantt');
+      document.removeEventListener('pointermove', onPeriodGanttDragMove);
+      document.removeEventListener('pointerup', onPeriodGanttDragEnd);
+      document.removeEventListener('mousemove', onPeriodGanttDragMove);
+      document.removeEventListener('mouseup', onPeriodGanttDragEnd);
+
+      var period = periodGanttDragState.period;
+      var taskId = periodGanttDragState.taskId;
+      var startUnit = periodGanttDragState.startUnit;
+      var durationUnits = periodGanttDragState.durationUnits;
+      var nextStartUnit = periodGanttDragState.previewStartUnit;
+      if (typeof nextStartUnit !== 'number') nextStartUnit = startUnit;
+      var nextDurationUnits = periodGanttDragState.previewDurationUnits;
+      if (typeof nextDurationUnits !== 'number') nextDurationUnits = durationUnits;
+      var moved = periodGanttDragState.moved && (nextStartUnit !== startUnit || nextDurationUnits !== durationUnits);
+      var windowStartDate = periodGanttDragState.windowStartDate;
+      periodGanttDragState = null;
+
+      if (!moved) return;
+
+      periodGanttClickBlockUntil = Date.now() + 240;
+      var nextStartWeek;
+      var nextDurationWeeks;
+      var nextStartDate;
+      var nextEndDate;
+      if (period === 'month') {
+        nextStartDate = addDays(windowStartDate, (nextStartUnit - 1) * 7);
+        nextEndDate = addDays(nextStartDate, (nextDurationUnits * 7) - 1);
+        nextStartWeek = computeStartWeekByDate(nextStartDate);
+        nextDurationWeeks = nextDurationUnits;
+      } else if (period === 'year') {
+        var yearRef = windowStartDate || getYearGanttWindowStart();
+        nextStartDate = new Date(yearRef.getFullYear(), nextStartUnit - 1, 1);
+        nextEndDate = new Date(yearRef.getFullYear(), nextStartUnit - 1 + nextDurationUnits, 0);
+        nextStartWeek = 1;
+        nextDurationWeeks = nextDurationUnits * 4;
+      } else {
+        nextStartWeek = nextStartUnit;
+        nextDurationWeeks = nextDurationUnits;
+        nextStartDate = addDays(windowStartDate, (nextStartUnit - 1) * 7);
+        nextEndDate = addDays(nextStartDate, (nextDurationUnits * 7) - 1);
+      }
+
+      var tasks = getTasks().map(function(task) {
+        if (task.id !== taskId) return task;
+        var nextDueDate = toISODate(nextEndDate);
+        return Object.assign({}, task, {
+          startWeek: nextStartWeek,
+          durationWeeks: nextDurationWeeks,
+          startMonth: period === 'year' ? nextStartUnit : task.startMonth,
+          durationMonths: period === 'year' ? nextDurationUnits : task.durationMonths,
+          startDate: toISODate(nextStartDate),
+          endDate: toISODate(nextEndDate),
+          dueDate: nextDueDate
+        });
+      });
+
+      saveTasks(tasks);
+      renderAll();
+      if (period === 'year') {
+        showToast('Годовая задача: M' + String(nextStartUnit).padStart(2, '0') + ' - M' + String(nextStartUnit + nextDurationUnits - 1).padStart(2, '0'));
+      } else {
+        showToast((period === 'month' ? 'Месячная' : 'Квартальная') + ' задача: W' + String(nextStartWeek).padStart(2, '0') + ' - W' + String(nextStartWeek + nextDurationWeeks - 1).padStart(2, '0'));
+      }
+    }
+
     function resetTaskForm() {
       currentEditTaskId = null;
+      currentTaskAttachments = [];
       document.getElementById('task-id').value = '';
+      document.getElementById('task-created-at').value = '';
       document.querySelectorAll('.input, .textarea').forEach(function(el) { el.value = ''; });
       document.getElementById('task-progress').value = 0;
+      document.getElementById('task-stage-progress').value = 0;
       document.getElementById('task-hours').value = 8;
+      document.getElementById('task-hours-unit').value = 'hours';
       document.getElementById('task-start-week').value = 1;
       document.getElementById('task-duration-weeks').value = 2;
       document.getElementById('task-status').value = 'Открыто';
       document.getElementById('task-topic').value = '';
+      document.getElementById('task-parent-id').value = '';
+      document.getElementById('task-client').value = '';
+      document.getElementById('task-business-value').value = 'средний';
+      document.getElementById('task-strategic-priority').value = 'важно';
+      document.getElementById('task-commercial-driver').value = 'запрос клиента';
+      renderExpectedResults([]);
+      renderTechnicalResults([]);
+      document.getElementById('task-probability-success').value = '50';
+      document.getElementById('task-commercialization-stage').value = 'идея';
+      document.getElementById('task-expected-roi').value = '';
+      document.getElementById('task-complexity').value = 'medium';
       document.getElementById('task-submit-btn').textContent = 'Сохранить задачу';
+      renderParentGoalOptions('');
+      renderTaskAttachments();
     }
 
     function renderAll() {
@@ -1367,7 +3998,11 @@
       renderTable('week', 'table-week');
       renderTable('month', 'table-month');
       renderTable('quarter', 'table-quarter');
-      renderGantt();
+      renderTable('year', 'table-year');
+      renderPeriodGantt('month', 'month-gantt-head', 'month-gantt-body');
+      renderPeriodGantt('quarter', 'quarter-gantt-head', 'quarter-gantt-body');
+      renderPeriodGantt('year', 'year-gantt-head', 'year-gantt-body');
+      renderWeekGantt();
     }
 
     function escapeHtml(value) {
@@ -1384,10 +4019,12 @@
       currentModalPeriod = period || 'week';
       document.getElementById('task-period').value = currentModalPeriod;
       document.getElementById('modal-title').textContent =
+        currentModalPeriod === 'year' ? 'Новая годовая задача' :
         currentModalPeriod === 'quarter' ? 'Новая квартальная задача' :
         currentModalPeriod === 'month' ? 'Новая месячная задача' :
         'Новая недельная задача';
       document.getElementById('task-submit-btn').textContent = 'Сохранить задачу';
+      renderParentGoalOptions('');
       document.getElementById('task-modal-backdrop').classList.add('open');
       document.body.classList.add('modal-open');
     }
@@ -1400,20 +4037,44 @@
 
       currentEditTaskId = task.id;
       currentModalPeriod = task.period;
+      currentTaskAttachments = Array.isArray(task.attachments) ? task.attachments.slice() : [];
       document.getElementById('task-id').value = task.id;
+      document.getElementById('task-created-at').value = task.createdAt || '';
       document.getElementById('task-period').value = task.period;
       document.getElementById('task-status').value = task.status || 'Открыто';
       document.getElementById('task-title').value = task.title || '';
       document.getElementById('task-description').value = task.description || '';
+      var taskRange = getTaskDateRange(task);
       document.getElementById('task-owner').value = task.owner || '';
-      document.getElementById('task-due-date').value = task.dueDate || '';
+      document.getElementById('task-start-date').value = task.startDate || toISODate(taskRange.start);
+      document.getElementById('task-end-date').value = task.endDate || task.dueDate || toISODate(taskRange.end);
       document.getElementById('task-progress').value = Number(task.progress || 0);
-      document.getElementById('task-hours').value = Number(task.hours || 0);
+      document.getElementById('task-hours').value = Number(task.effortValue != null ? task.effortValue : (task.hours || 0));
+      document.getElementById('task-hours-unit').value = task.effortUnit || 'hours';
       document.getElementById('task-report').value = task.report || '';
       document.getElementById('task-notes').value = task.notes || '';
       document.getElementById('task-topic').value = task.topic || '';
       document.getElementById('task-start-week').value = Number(task.startWeek || 1);
       document.getElementById('task-duration-weeks').value = Number(task.durationWeeks || 1);
+      document.getElementById('task-parent-id').value = task.parentId || '';
+      document.getElementById('task-client').value = task.client || '';
+      document.getElementById('task-business-value').value = task.businessValue || 'средний';
+      document.getElementById('task-strategic-priority').value = (task.strategicPriority === 'exploratory' ? 'исследование' : (task.strategicPriority || 'важно'));
+      document.getElementById('task-commercial-driver').value = task.commercialDriver || 'запрос клиента';
+      // migrate legacy fields to expectedResults array
+      var legacyResults = [];
+      if (task.revenuePotential) legacyResults.push(task.revenuePotential);
+      if (task.expectedOutcome) legacyResults.push(task.expectedOutcome);
+      if (task.costReduction) legacyResults.push('Снижение себестоимости: ' + task.costReduction + '%');
+      renderExpectedResults(Array.isArray(task.expectedResults) && task.expectedResults.length ? task.expectedResults : legacyResults);
+      renderTechnicalResults(Array.isArray(task.technicalResults) && task.technicalResults.length ? task.technicalResults : []);
+      document.getElementById('task-probability-success').value = String(task.probabilitySuccess || 50);
+      document.getElementById('task-commercialization-stage').value = task.commercializationStage || 'идея';
+      document.getElementById('task-stage-progress').value = Number(task.stageProgress || 0);
+      document.getElementById('task-expected-roi').value = task.expectedRoi || '';
+      document.getElementById('task-complexity').value = task.complexity || 'medium';
+      renderParentGoalOptions(task.parentId || '');
+      renderTaskAttachments();
       document.getElementById('modal-title').textContent = 'Карточка задачи';
       document.getElementById('task-submit-btn').textContent = 'Сохранить изменения';
       document.getElementById('task-modal-backdrop').classList.add('open');
@@ -1430,13 +4091,45 @@
       var isEditing = Boolean(currentEditTaskId);
       var period = document.getElementById('task-period').value;
       var title = document.getElementById('task-title').value.trim();
+      var parentId = document.getElementById('task-parent-id').value;
       if (!title) {
         showToast('Нужно указать название задачи');
         return;
       }
 
+      if (period === 'week' && !parentId) {
+        showToast('Рекомендуется привязать недельную задачу к родительской цели');
+      }
+
+      var existingTask = currentEditTaskId ? getTaskById(currentEditTaskId, tasks) : null;
+      var startDateRaw = document.getElementById('task-start-date').value;
+      var endDateRaw = document.getElementById('task-end-date').value;
+      var fallbackToday = toISODate(new Date());
+      if (!startDateRaw && !endDateRaw) {
+        startDateRaw = fallbackToday;
+        endDateRaw = fallbackToday;
+      } else if (!startDateRaw) {
+        startDateRaw = endDateRaw;
+      } else if (!endDateRaw) {
+        endDateRaw = startDateRaw;
+      }
+
+      var startDateObj = toDateValue(startDateRaw);
+      var endDateObj = toDateValue(endDateRaw);
+      if (startDateObj && endDateObj && startDateObj > endDateObj) {
+        var tmpDate = startDateObj;
+        startDateObj = endDateObj;
+        endDateObj = tmpDate;
+      }
+      var startDateIso = toISODate(startDateObj || new Date());
+      var endDateIso = toISODate(endDateObj || startDateObj || new Date());
+      var durationWeeksByDates = Math.max(1, Math.ceil((daysDiff(toDateValue(endDateIso), toDateValue(startDateIso)) + 1) / 7));
+      var effortValue = Number(document.getElementById('task-hours').value || 0);
+      var effortUnit = document.getElementById('task-hours-unit').value || 'hours';
+
       var taskPayload = {
         id: currentEditTaskId || ('task-' + Date.now()),
+        createdAt: document.getElementById('task-created-at').value || (existingTask && existingTask.createdAt) || toISODate(new Date()),
         period: period,
         progress: Number(document.getElementById('task-progress').value || 0),
         title: title,
@@ -1444,13 +4137,39 @@
         report: document.getElementById('task-report').value.trim(),
         status: document.getElementById('task-status').value,
         owner: document.getElementById('task-owner').value.trim() || 'Не назначен',
-        dueDate: document.getElementById('task-due-date').value,
-        hours: Number(document.getElementById('task-hours').value || 0),
+        startDate: startDateIso,
+        endDate: endDateIso,
+        dueDate: endDateIso,
+        hours: getEffortHours(effortValue, effortUnit),
+        effortValue: effortValue,
+        effortUnit: effortUnit,
+        attachments: currentTaskAttachments.slice(),
         notes: document.getElementById('task-notes').value.trim(),
         topic: document.getElementById('task-topic').value.trim(),
-        startWeek: Number(document.getElementById('task-start-week').value || 1),
-        durationWeeks: Number(document.getElementById('task-duration-weeks').value || 1)
+        startWeek: computeStartWeekByDate(toDateValue(startDateIso)),
+        durationWeeks: durationWeeksByDates,
+        weekSpanDays: Math.max(1, Math.min(7, daysDiff(toDateValue(endDateIso), toDateValue(startDateIso)) + 1)),
+        parentId: parentId || '',
+        client: document.getElementById('task-client').value.trim(),
+        businessValue: document.getElementById('task-business-value').value,
+        strategicPriority: document.getElementById('task-strategic-priority').value,
+        commercialDriver: document.getElementById('task-commercial-driver').value,
+        expectedResults: getExpectedResults(),
+        technicalResults: getTechnicalResults(),
+        probabilitySuccess: Number(document.getElementById('task-probability-success').value || 0),
+        commercializationStage: document.getElementById('task-commercialization-stage').value,
+        stageProgress: Number(document.getElementById('task-stage-progress').value || 0),
+        expectedRoi: document.getElementById('task-expected-roi').value.trim(),
+        complexity: document.getElementById('task-complexity').value
       };
+
+      if (taskPayload.period === 'year') {
+        var startYearDate = toDateValue(taskPayload.startDate) || new Date();
+        var endYearDate = toDateValue(taskPayload.endDate) || startYearDate;
+        var durationMonths = Math.max(1, (endYearDate.getFullYear() * 12 + endYearDate.getMonth()) - (startYearDate.getFullYear() * 12 + startYearDate.getMonth()) + 1);
+        taskPayload.startMonth = Math.max(1, Math.min(12, startYearDate.getMonth() + 1));
+        taskPayload.durationMonths = durationMonths;
+      }
 
       if (currentEditTaskId) {
         tasks = tasks.map(function(task) {
@@ -1482,11 +4201,43 @@
 
     (function init() {
       renderAll();
+      setInterval(function() {
+        renderPeriodGantt('month', 'month-gantt-head', 'month-gantt-body');
+      }, 60 * 60 * 1000);
+      var periodSelect = document.getElementById('task-period');
+      if (periodSelect) {
+        periodSelect.addEventListener('change', function() {
+          currentModalPeriod = periodSelect.value;
+          renderParentGoalOptions('');
+        });
+      }
+      var taskFileInput = document.getElementById('task-file-input');
+      if (taskFileInput) {
+        taskFileInput.addEventListener('change', handleTaskFileInput);
+      }
+      var taskReportFileInput = document.getElementById('task-report-file-input');
+      if (taskReportFileInput) {
+        taskReportFileInput.addEventListener('change', handleTaskReportFileInput);
+      }
+      var reportSpentValue = document.getElementById('task-report-spent-value');
+      if (reportSpentValue) {
+        reportSpentValue.addEventListener('input', updateTaskReportEffortKpi);
+      }
+      var reportSpentUnit = document.getElementById('task-report-spent-unit');
+      if (reportSpentUnit) {
+        reportSpentUnit.addEventListener('change', updateTaskReportEffortKpi);
+      }
       document.getElementById('task-modal-backdrop').addEventListener('click', function(event) {
         if (event.target.id === 'task-modal-backdrop') closeTaskModal();
       });
+      document.getElementById('task-report-modal-backdrop').addEventListener('click', function(event) {
+        if (event.target.id === 'task-report-modal-backdrop') closeTaskReportModal();
+      });
       document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') closeTaskModal();
+        if (event.key === 'Escape') {
+          closeTaskModal();
+          closeTaskReportModal();
+        }
       });
     })();
   </script>

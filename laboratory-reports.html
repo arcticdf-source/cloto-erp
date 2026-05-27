@@ -10,21 +10,21 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #08111c;
-      --bg2: #111a2b;
-      --surface: rgba(255,255,255,.05);
-      --surface2: rgba(255,255,255,.08);
-      --border: rgba(255,255,255,.08);
-      --text: #e8eef7;
-      --muted: #7e8fa8;
-      --cyan: #47e0c2;
-      --blue: #78bcff;
-      --violet: #b39cff;
-      --gold: #f2cb6f;
-      --green: #6dd9a0;
-      --red: #ff7c87;
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255,255,255,.86);
+      --surface2: rgba(255,255,255,.97);
+      --border: rgba(136,158,186,.25);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --cyan: #24b7ad;
+      --blue: #3b91da;
+      --violet: #7d8fd8;
+      --gold: #d9a83a;
+      --green: #3ea66d;
+      --red: #d96576;
       --radius: 18px;
-      --shadow: 0 24px 64px rgba(0,0,0,.34);
+      --shadow: 0 14px 30px rgba(36,66,100,.14);
     }
 
     body {
@@ -76,7 +76,7 @@
       padding: 22px 24px;
       margin-bottom: 14px;
       background:
-        linear-gradient(135deg, rgba(179,156,255,.14), rgba(8,17,28,.4)),
+        linear-gradient(135deg, rgba(179,156,255,.14), rgba(255,255,255,.92)),
         var(--surface);
     }
 
@@ -157,15 +157,15 @@
     }
 
     .select option {
-      background: #0d1320;
+      background: var(--surface2);
       color: var(--text);
     }
 
     .side-card {
       padding: 16px;
       border-radius: 16px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.05);
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--border);
     }
 
     .side-card + .side-card { margin-top: 12px; }
@@ -204,8 +204,8 @@
     .panel {
       padding: 14px;
       border-radius: 16px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.05);
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--border);
     }
 
     .panel-value {
@@ -261,7 +261,7 @@
 
     .table-wrap {
       overflow: auto;
-      border: 1px solid rgba(255,255,255,.06);
+      border: 1px solid var(--border);
       border-radius: 16px;
     }
 
@@ -273,8 +273,8 @@
 
     th {
       padding: 12px;
-      background: rgba(8,17,28,.96);
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
       color: var(--muted);
       font-size: 10px;
       text-transform: uppercase;
@@ -379,8 +379,8 @@
     .list-item {
       padding: 12px 13px;
       border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.05);
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--border);
     }
 
     .list-item strong {
@@ -416,7 +416,7 @@
       padding: 18px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: rgba(17,26,43,.96);
+      background: var(--surface2);
       box-shadow: var(--shadow);
     }
 
@@ -474,8 +474,8 @@
       z-index: 40;
       padding: 10px 14px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: #182437;
+      border: 1px solid var(--border);
+      background: var(--surface2);
       color: var(--text);
       font-size: 12px;
       opacity: 0;
@@ -695,6 +695,10 @@
 
   <div class="toast" id="toast"></div>
 
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_laboratory_reports_v1'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script>
     var STORAGE_KEY = 'cloto_laboratory_reports_v1';
     var currentReportId = null;

@@ -11,42 +11,42 @@
     .actions{margin:0 auto 18px;width:210mm;display:flex;justify-content:flex-end;gap:10px;padding:24px 8px 0}
     .print-btn,.back-btn{border:none;border-radius:12px;background:#0d63ff;color:#fff;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
     .back-btn{background:#24415f}
-    .page{width:210mm;min-height:297mm;margin:0 auto 24px;background:#fff;padding:18mm 16mm 18mm;box-shadow:0 24px 60px rgba(16,32,56,.12)}
+    .page{width:210mm;min-height:297mm;margin:0 auto 24px;background:#fff;padding:14mm 16mm 18mm;box-shadow:0 24px 60px rgba(16,32,56,.12)}
     .topbar{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
-    .brand{display:flex;align-items:center;gap:16px}
-    .brand-mark{width:74px;height:74px;position:relative;display:flex;align-items:center;justify-content:center}
-    .brand-mark::before{content:'';position:absolute;inset:0;border-radius:50%;background:#214e94}
-    .brand-mark::after{content:'';position:absolute;inset:8px;border-radius:50%;background:repeating-linear-gradient(to bottom,#ffffff 0 5px,#214e94 5px 11px)}
-    .brand-text{display:grid;gap:2px}
-    .brand-name{font-size:34px;font-weight:800;letter-spacing:.16em;color:#214e94;line-height:1}
-    .brand-copy{font-size:13px;color:#214e94;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-    .brand-sub{font-size:12px;color:#214e94;font-weight:700}
-    .doc-meta{text-align:right;display:grid;gap:6px;padding-top:6px}
-    .doc-type{font-size:26px;font-weight:800;color:#214e94;text-transform:uppercase;letter-spacing:.1em}
+    .brand{display:flex;align-items:flex-start;gap:14px}
+    .brand-logo{width:180px;height:auto;max-height:180px;object-fit:contain;border-radius:6px}
+    .doc-meta{text-align:right;display:grid;gap:4px;padding-top:4px}
     .doc-num{font-size:13px;color:#60779c}
-    .lead{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .doc-heading{text-align:center;font-size:20px;font-weight:800;letter-spacing:.18em;color:#214e94;text-transform:uppercase;margin:18px 0 16px;padding:14px 0;border-top:2px solid #214e94;border-bottom:2px solid #214e94}
+    .lead{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .box{border:1px solid #cfd9ea;border-radius:14px;padding:14px 16px;background:#ffffff}
     .box-title{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#6d7f97;margin-bottom:8px;font-weight:700}
-    .box strong{display:block;font-size:16px;margin-bottom:4px;color:#214e94}
-    .lead-row{margin-top:3px;font-size:13px;color:#32445f;line-height:1.45}
-    .intro{margin-top:16px;padding:14px 16px;border-radius:14px;background:#f4f7fc;color:#1d3150;line-height:1.55;border:1px solid #dce5f2}
-    table{width:100%;border-collapse:collapse;margin-top:18px}
-    th,td{border:1px solid #cfd9ea;padding:10px 10px;vertical-align:top;text-align:left}
+    .box strong{display:block;font-size:15px;margin-bottom:4px;color:#214e94}
+    .lead-row{margin-top:3px;font-size:12px;color:#32445f;line-height:1.45}
+    .intro{margin-top:16px;padding:12px 16px;border-radius:14px;background:#f4f7fc;color:#1d3150;line-height:1.55;border:1px solid #dce5f2;font-size:13px}
+    table{width:100%;border-collapse:collapse;margin-top:16px}
+    th,td{border:1px solid #cfd9ea;padding:9px 10px;vertical-align:top;text-align:left}
     th{background:#f3f7fd;color:#557198;font-size:10px;text-transform:uppercase;letter-spacing:.12em}
     td{font-size:13px;line-height:1.45}
-    .cell-copy{margin-top:4px;color:#6d7f97;font-size:11px;line-height:1.45}
-    .field-grid{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .field-block{display:flex;flex-direction:column;gap:8px}
-    .field-label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#6d7f97;font-weight:700}
-    .editable-field{min-height:46px;border:none;border-bottom:1px solid #bfd0e9;padding:6px 0;color:#214e94;font-size:16px;outline:none}
-    .editable-field.signature-field{font-family:"Segoe Script","Brush Script MT",cursive;font-size:44px;line-height:1.05;color:#1d5cff;min-height:58px}
-    .hint{font-size:11px;color:#6d7f97}
+    .cell-copy{margin-top:3px;color:#6d7f97;font-size:11px;line-height:1.45}
+    .conditions{margin-top:16px;border:1px solid #cfd9ea;border-radius:14px;overflow:hidden}
+    .conditions table{margin-top:0}
+    .conditions td{font-size:13px}
+    .conditions td:first-child{color:#557198;font-weight:700;width:240px;background:#f9fafd}
+    .sign-block{margin-top:20px;font-family:Inter,Arial,sans-serif;color:#111;font-size:14px}
+    .sign-polite{font-size:14px;line-height:1.7}
+    .sign-line-row{display:flex;align-items:flex-end;gap:6px;margin-top:0;font-size:14px;line-height:1.7}
+    .sign-role{white-space:nowrap}
+    .sign-line{flex:1 1 auto;max-width:280px;height:1px;background:#111;margin-bottom:5px}
+    .sign-fio{white-space:nowrap}
+    .exec-meta{margin-top:22px;color:#111;font-size:12px;line-height:1.6}
+    .exec-meta-line{display:block}
     .empty{max-width:760px;margin:48px auto;padding:32px;border-radius:20px;background:#fff;box-shadow:0 24px 60px rgba(16,32,56,.12);text-align:center}
     .empty h1{margin:0 0 12px;font-size:28px;color:#0d63ff}
     .empty p{margin:0;color:#4d6280;line-height:1.7}
-    @media print{body{background:#fff}.actions{display:none}.page{box-shadow:none;margin:0;width:auto;min-height:auto;padding:0}.empty{box-shadow:none;margin:0;max-width:none}}
+    @media print{body{background:#fff}.actions{display:none}.page{box-shadow:none;margin:0;width:auto;min-height:auto;padding:10mm 14mm}.empty{display:none}}
     @media (max-width:900px){.actions,.page{width:auto;margin-left:12px;margin-right:12px}}
-    @media (max-width:760px){.page{padding:20px}.topbar,.lead,.field-grid{display:block}.doc-meta{margin-top:18px;text-align:left}.field-block+.field-block{margin-top:16px}}
+    @media (max-width:760px){.page{padding:20px}.topbar,.lead{display:block}.doc-meta{margin-top:18px;text-align:left}.sign-line{max-width:none;min-width:80px}}
   </style>
 </head>
 <body>
@@ -59,19 +59,32 @@
     function formatDate(value){if(!value)return '—';if(/^\d{4}-\d{2}-\d{2}T/.test(value))return formatDate(value.slice(0,10));if(/^\d{4}-\d{2}-\d{2}$/.test(value)){const parts=value.split('-');return parts[2]+'.'+parts[1]+'.'+parts[0];}return value;}
     function readPayload(){try{return JSON.parse(localStorage.getItem(GENERATED_QUOTE_KEY)||'null');}catch(error){return null;}}
 
+    function shortName(value){
+      const parts=String(value||'').trim().split(/\s+/).filter(Boolean);
+      if(parts.length>=3){return (parts[1][0]||'').toUpperCase()+'.'+(parts[2][0]||'').toUpperCase()+'. '+parts[0];}
+      if(parts.length===2){return (parts[1][0]||'').toUpperCase()+'. '+parts[0];}
+      return String(value||'');
+    }
+
     function buildRows(products){
       const rows=[];
-      products.forEach((product)=>{
-        const options=(Array.isArray(product.deliveryOptions)?product.deliveryOptions:[]).filter((option)=>String(option&&option.location||'').trim()&&String(option&&option.price||'').trim());
-        if(!options.length){
-          rows.push({productName:product.name||'Новый продукт',productCopy:product.notes||product.recipe||'Коммерческое предложение по выбранному продукту клиента.',location:'—',price:'—'});
+      let n=0;
+      products.forEach((p)=>{
+        const opts=(Array.isArray(p.deliveryOptions)?p.deliveryOptions:[]).filter((o)=>o&&String(o.location||'').trim());
+        const copy=escapeHtml(p.notes||p.recipe||'');
+        if(!opts.length){
+          n++;
+          rows.push('<tr><td>'+n+'</td><td><strong>'+escapeHtml(p.name||'Новый продукт')+'</strong>'+(copy?'<div class="cell-copy">'+copy+'</div>':'')+'</td><td>EXW Архангельск</td><td>—</td></tr>');
           return;
         }
-        options.forEach((option)=>{
-          rows.push({productName:product.name||'Новый продукт',productCopy:product.notes||product.recipe||'Коммерческое предложение по выбранному продукту клиента.',location:option.location||'—',price:formatRub(option.price||0)});
+        opts.forEach((o)=>{
+          n++;
+          const locCell=escapeHtml(o.location||'—')+(o.transport?'<div class="cell-copy">'+escapeHtml(o.transport)+'</div>':'');
+          const priceCell=o.price?formatRub(o.price):'—';
+          rows.push('<tr><td>'+n+'</td><td><strong>'+escapeHtml(p.name||'Новый продукт')+'</strong>'+(copy?'<div class="cell-copy">'+copy+'</div>':'')+'</td><td>'+locCell+'</td><td>'+priceCell+'</td></tr>');
         });
       });
-      return rows.map((row,index)=>'<tr><td>'+(index+1)+'</td><td><strong>'+escapeHtml(row.productName)+'</strong><div class="cell-copy">'+escapeHtml(row.productCopy)+'</div></td><td>'+escapeHtml(row.location)+'</td><td>'+escapeHtml(row.price)+'</td></tr>').join('');
+      return rows.join('');
     }
 
     function renderEmpty(){
@@ -81,7 +94,59 @@
     function renderProposal(payload){
       const rows=buildRows(Array.isArray(payload.products)?payload.products:[]);
       document.title=(payload.number||'КП')+' — КЛОТО';
-      document.getElementById('app').innerHTML='<div class="actions"><a class="back-btn" href="client-card.html?company='+encodeURIComponent(payload.buyer&&payload.buyer.name||'')+'">Назад к клиенту</a><button class="print-btn" type="button" onclick="window.print()">Печать КП</button></div><main class="page"><section class="topbar"><div class="brand"><div class="brand-mark"></div><div class="brand-text"><div class="brand-name">КЛОТО</div><div class="brand-copy">Коммерческое предложение</div><div class="brand-sub">основана в 1991 году</div></div></div><div class="doc-meta"><div class="doc-type">КП</div><div class="doc-num">№ '+escapeHtml(payload.number||'—')+' от '+escapeHtml(formatDate(payload.date))+'</div></div></section><section class="lead"><div class="box"><div class="box-title">Продавец</div><strong>'+escapeHtml(payload.seller&&payload.seller.name||'—')+'</strong><div class="lead-row">ИНН '+escapeHtml(payload.seller&&payload.seller.inn||'—')+' / КПП '+escapeHtml(payload.seller&&payload.seller.kpp||'—')+'</div><div class="lead-row">'+escapeHtml(payload.seller&&payload.seller.address||'—')+'</div><div class="lead-row">Тел.: '+escapeHtml(payload.seller&&payload.seller.phone||'—')+'</div></div><div class="box"><div class="box-title">Клиент</div><strong>'+escapeHtml(payload.buyer&&payload.buyer.name||'—')+'</strong><div class="lead-row">Адрес: '+escapeHtml(payload.buyer&&payload.buyer.address||'—')+'</div><div class="lead-row">Контакт: '+escapeHtml(payload.buyer&&payload.buyer.contact||'—')+'</div><div class="lead-row">Тел.: '+escapeHtml(payload.buyer&&payload.buyer.phone||'—')+'</div><div class="lead-row">E-mail: '+escapeHtml(payload.buyer&&payload.buyer.email||'—')+'</div></div></section><section class="intro">Предлагаем к рассмотрению следующие продукты ООО "КЛОТО". Ниже указаны цены за 1 тонну без НДС с доставкой до выбранных локаций.</section><table><thead><tr><th style="width:44px">№</th><th>Продукт</th><th style="width:180px">Локация доставки</th><th style="width:180px">Цена за 1 тонну без НДС</th></tr></thead><tbody>'+rows+'</tbody></table><section class="field-grid"><div class="field-block"><div class="field-label">Исполнитель</div><div class="editable-field" contenteditable="true">'+escapeHtml(payload.executor||'Коммерческий отдел ООО "КЛОТО"')+'</div><div class="hint">Поле можно редактировать перед печатью.</div></div><div class="field-block"><div class="field-label">Подпись</div><div class="editable-field signature-field" contenteditable="true">'+escapeHtml(payload.signature||'Klotto')+'</div><div class="hint">Синяя подпись редактируется прямо в документе.</div></div></section></main>';
+      const condRows=[
+        payload.paymentTerms?'<tr><td>Условия оплаты</td><td>'+escapeHtml(payload.paymentTerms)+'</td></tr>':'',
+        payload.deliveryTime?'<tr><td>Срок поставки</td><td>'+escapeHtml(payload.deliveryTime)+'</td></tr>':'',
+        payload.withDelivery?'<tr><td>Условия поставки</td><td>С доставкой до локации покупателя</td></tr>':'<tr><td>Условия поставки</td><td>EXW Архангельск</td></tr>'
+      ].filter(Boolean).join('');
+      const backUrl='client-card.html?company='+encodeURIComponent(payload.buyer&&payload.buyer.name||'');
+      document.getElementById('app').innerHTML=
+        '<div class="actions"><a class="back-btn" href="'+backUrl+'">← Назад к клиенту</a><button class="print-btn" type="button" onclick="window.print()">Печать / PDF</button></div>'+
+        '<main class="page">'+
+          '<section class="topbar">'+
+            '<div class="brand">'+
+              '<img src="pics/Снимок.JPG" class="brand-logo" alt="Клото" onerror="this.style.display=\'none\'">'+
+            '</div>'+
+            '<div class="doc-meta">'+
+              '<div class="doc-num">№&nbsp;'+escapeHtml(payload.number||'—')+'&nbsp;&nbsp;от&nbsp;'+escapeHtml(formatDate(payload.date))+'</div>'+
+            '</div>'+
+          '</section>'+
+          '<div class="doc-heading">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</div>'+
+          '<section class="lead">'+
+            '<div class="box"><div class="box-title">Продавец</div>'+
+              '<strong>'+escapeHtml(payload.seller&&payload.seller.name||'—')+'</strong>'+
+              '<div class="lead-row">ИНН '+escapeHtml(payload.seller&&payload.seller.inn||'—')+' / КПП '+escapeHtml(payload.seller&&payload.seller.kpp||'—')+'</div>'+
+              '<div class="lead-row">'+escapeHtml(payload.seller&&payload.seller.address||'—')+'</div>'+
+              '<div class="lead-row">Тел.: '+escapeHtml(payload.seller&&payload.seller.phone||'—')+'</div>'+
+            '</div>'+
+            '<div class="box"><div class="box-title">Покупатель</div>'+
+              '<strong>'+escapeHtml(payload.buyer&&payload.buyer.name||'—')+'</strong>'+
+              '<div class="lead-row">Адрес: '+escapeHtml(payload.buyer&&payload.buyer.address||'—')+'</div>'+
+              '<div class="lead-row">Контакт: '+escapeHtml(payload.buyer&&payload.buyer.contact||'—')+'</div>'+
+              '<div class="lead-row">Тел.: '+escapeHtml(payload.buyer&&payload.buyer.phone||'—')+'</div>'+
+              '<div class="lead-row">E-mail: '+escapeHtml(payload.buyer&&payload.buyer.email||'—')+'</div>'+
+            '</div>'+
+          '</section>'+
+          '<section class="intro">Предлагаем к рассмотрению следующие продукты ООО "КЛОТО". Цены указаны за 1 тонну без НДС'+
+            (payload.withDelivery?' с доставкой до выбранных пунктов назначения.':' на условиях EXW г. Архангельск.')+
+          '</section>'+
+          '<table><thead><tr><th style="width:36px">№</th><th>Продукт</th><th style="width:190px">Пункт назначения</th><th style="width:180px">Цена за 1 т без НДС</th></tr></thead>'+
+          '<tbody>'+rows+'</tbody></table>'+
+          (condRows?'<section class="conditions"><table><tbody>'+condRows+'</tbody></table></section>':'')+
+          '<section class="sign-block">'+
+            '<div class="sign-polite">С уважением,</div>'+
+            '<div class="sign-line-row">'+
+              '<span class="sign-role">'+escapeHtml(payload.executorTitle||'Руководитель ООО «Клото»')+'</span>'+
+              '<span class="sign-line"></span>'+
+              '<span class="sign-fio">/'+escapeHtml(shortName(payload.signature||payload.executor||''))+'/ </span>'+
+            '</div>'+
+            '<div class="exec-meta">'+
+              '<span class="exec-meta-line">Исп. '+escapeHtml(payload.executor||'')+'</span>'+
+              (payload.executorPhone?'<span class="exec-meta-line">Телефон: '+escapeHtml(payload.executorPhone)+'</span>':'')+
+              (payload.executorEmail?'<span class="exec-meta-line">Электронная почта: '+escapeHtml(payload.executorEmail)+'</span>':'')+
+            '</div>'+
+          '</section>'+
+        '</main>';
     }
 
     const payload=readPayload();

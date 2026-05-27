@@ -9,17 +9,17 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:#080c14; --bg2:#0d1320;
-      --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07);
-      --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
+      --bg:#eef4fb; --bg2:#e3edf8;
+      --surface:rgba(255,255,255,.86); --surface2:rgba(255,255,255,.97);
+      --border:rgba(136,158,186,.25); --border2:rgba(94,143,199,.38);
       --accent:#3de8c7; --accent2:#7fffea;
-      --cyan:#3de8c7; --gold:#f5c842; --red:#ff5e7d;
-      --green:#48bb78; --blue:#63b3ed; --orange:#f6ad55; --pink:#ed64a6;
+      --cyan:#24b7ad; --gold:#d9a83a; --red:#d96576;
+      --green:#3ea66d; --blue:#3b91da; --orange:#f6ad55; --pink:#ed64a6;
       --act:var(--cyan);
-      --text:#e8eaf0; --muted:#6b7491; --radius:16px;
+      --text:#1e2c3c; --muted:#6f839c; --radius:16px;
     }
     html { scroll-behavior:smooth; }
-    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+    body { background:linear-gradient(180deg,var(--bg),var(--bg2)); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
 
     .bg-grid { position:fixed; inset:0; z-index:0;
       background-image: linear-gradient(rgba(61,232,199,.03) 1px,transparent 1px), linear-gradient(90deg,rgba(61,232,199,.03) 1px,transparent 1px);
@@ -33,7 +33,7 @@
     .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
 
     /* sidebar */
-    .sidebar { width:250px; min-height:100vh; background:rgba(13,19,32,.9); backdrop-filter:blur(24px);
+    .sidebar { width:250px; min-height:100vh; background:rgba(255,255,255,.84); backdrop-filter:blur(24px);
       border-right:1px solid var(--border); display:flex; flex-direction:column; padding:28px 0;
       position:sticky; top:0; height:100vh; flex-shrink:0; overflow-y:auto; }
     .logo { display:flex; align-items:center; gap:12px; padding:0 22px 28px; border-bottom:1px solid var(--border); }
@@ -63,7 +63,7 @@
     /* topbar */
     .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
     .page-title { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;
-      background:linear-gradient(135deg,#fff 30%,var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+      background:linear-gradient(135deg,#2a3d54 30%,var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     .page-sub { color:var(--muted); font-size:13px; margin-top:4px; }
 
     /* buttons */
@@ -107,7 +107,7 @@
 
     /* table inputs */
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
-    input[type=number] { -moz-appearance:textfield; }
+    input[type=number] { appearance:textfield; -moz-appearance:textfield; }
     .t-name { background:transparent; border:none; border-bottom:1px solid transparent; padding:3px 0; font-size:13.5px; color:var(--text); font-family:inherit; width:100%; outline:none; transition:border-color .2s; min-width:120px; }
     .t-name:focus { border-bottom-color:rgba(61,232,199,.4); }
     .t-unit { background:transparent; border:none; border-bottom:1px solid transparent; padding:3px 4px; font-size:12px; color:var(--muted); font-family:inherit; width:60px; outline:none; transition:border-color .2s; }
@@ -146,6 +146,8 @@
     .fin-label { font-size:10px; color:var(--muted); font-weight:600; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; }
     .fin-value { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; line-height:1; }
     .fin-sub { font-size:11px; color:var(--muted); margin-top:5px; }
+    .fin-price-input { width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(245,200,66,.22); border-radius:10px; padding:10px 12px; color:var(--gold); font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; line-height:1; outline:none; transition:border-color .2s, box-shadow .2s, background .2s; }
+    .fin-price-input:focus { border-color:rgba(245,200,66,.55); box-shadow:0 0 0 3px rgba(245,200,66,.1); background:rgba(255,255,255,.07); }
 
     /* margin bar */
     .mg-header { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin:14px 0 5px; }
@@ -351,8 +353,8 @@
         </div>
         <div class="fin-item">
           <div class="fin-label">Цена продажи</div>
-          <div class="fin-value" id="fin-price" style="color:var(--gold)">13.13</div>
-          <div class="fin-sub" id="fin-price-sub">₽ / кг (из прайса)</div>
+          <input class="fin-price-input" id="fin-price" type="number" min="0" step="0.01" value="13.13" oninput="onSalePriceInput(this.value)" />
+          <div class="fin-sub" id="fin-price-sub">₽ / кг (вводится вручную) = 13 130 ₽/т</div>
         </div>
         <div class="fin-item mg">
           <div class="fin-label">Маржа</div>
@@ -378,6 +380,7 @@
 <script>
 var SK = 'cloto_cost_uschr';
 var PK = 'cloto_pricelist';
+var DEFAULT_SALE_PRICE = 13.13;
 
 // Данные из расчёта:
 // Уголь бурый: расход 1,180 т/т → 1180 кг, цена 7131,15 ₽/т
@@ -405,11 +408,15 @@ var DEF_PROD = [
 ];
 
 var rawRows = [], packRows = [], prodRows = [], indRows = [];
+var salePriceKg = DEFAULT_SALE_PRICE;
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmt(n){ return Math.round(n||0).toLocaleString('ru'); }
 function fmtD(n,d){ return (+(n||0)).toFixed(d||2); }
 function setEl(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+function normalizeSalePrice(value){ var parsed=parseFloat(value); return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0; }
+function syncSalePriceInput(){ var input=document.getElementById('fin-price'); if(input && document.activeElement !== input) input.value=salePriceKg.toFixed(2); }
+function onSalePriceInput(value){ salePriceKg=normalizeSalePrice(value); recalcAll(); }
 
 /* ════ RAW ════ */
 function renderRaw(){
@@ -420,7 +427,7 @@ function renderRaw(){
     var priceTitle = r._fromSyryo ? ' title="Из справочника сырья: '+esc(r.name)+'"' : '';
     return '<tr>'+
       '<td><button class="del-btn" onclick="delRaw('+i+')">×</button></td>'+
-      '<td><input class="t-name" list="syryo-dl" value="'+esc(r.name)+'" oninput="rawRows['+i+'].name=this.value;chkSyryo('+i+')" /></td>'+
+      '<td><input class="t-name" list="syryo-dl" placeholder="Начните вводить название сырья" value="'+esc(r.name)+'" oninput="rawRows['+i+'].name=this.value;chkSyryo('+i+')" /></td>'+
       '<td class="pct" id="rp'+i+'">'+pct+'%</td>'+
       '<td class="r"><input class="t-num" value="'+(+r.qty||'')+'" oninput="rawRows['+i+'].qty=+this.value;updRaw()" /></td>'+
       '<td class="r"><input class="'+priceCls+'"'+priceTitle+' type="number" value="'+(+r.price||'')+'" oninput="rawRows['+i+'].price=+this.value;rawRows['+i+']._fromSyryo=false;this.className=\'t-num\';updRaw()" /></td>'+
@@ -542,7 +549,7 @@ function recalcAll(){
   var direct  = rawSum + packSum + prodSum;
   var total   = direct + indSum;
   var perKg   = total / 1000;
-  var saleKg  = getSalePrice();
+  var saleKg  = normalizeSalePrice(salePriceKg);
   var saleT   = saleKg * 1000;
   var mg      = saleT > 0 ? (saleT - total) / saleT * 100 : null;
 
@@ -556,8 +563,8 @@ function recalcAll(){
   setEl('fin-total',    fmt(total));
   setEl('fin-total-sub','₽ / тонна = '+fmtD(perKg)+' ₽/кг');
   setEl('fin-per-kg',   fmtD(perKg));
-  setEl('fin-price',    saleKg.toFixed(2));
-  setEl('fin-price-sub','₽ / кг (из прайса) = '+fmt(saleT)+' ₽/т');
+  syncSalePriceInput();
+  setEl('fin-price-sub','₽ / кг (вводится вручную) = '+fmt(saleT)+' ₽/т');
 
   if(mg !== null){
     var el = document.getElementById('fin-margin');
@@ -575,6 +582,7 @@ function recalcAll(){
 }
 
 function getSalePrice(){
+  if(Number.isFinite(salePriceKg)) return salePriceKg;
   try {
     var raw = localStorage.getItem(PK);
     if(raw){
@@ -582,11 +590,10 @@ function getSalePrice(){
       var entry = Array.isArray(pl)
         ? pl.find(function(r){ return r.sku==='UShR-001' || r.name==='УЩР' || r.name==='УЩР (собственный)'; })
         : (pl['UShR-001'] || pl['УЩР'] || pl['УЩР (собственный)']);
-      if(entry && entry.price) return parseFloat(entry.price);
+      if(entry && entry.price) return normalizeSalePrice(entry.price);
     }
   } catch(e){}
-  // Дефолтная цена = priceCloto «УЩР (собственный) СУХОЙ» из справочника: 13128,82 ₽/т = 13.13 ₽/кг
-  return 13.1288;
+  return DEFAULT_SALE_PRICE;
 }
 
 /* ════ SYRYO AUTOCOMPLETE ════ */
@@ -617,7 +624,9 @@ function renderSyryoDatalist(){
   var dl = document.getElementById('syryo-dl');
   if(!dl) return;
   dl.innerHTML = syryoData.map(function(r){
-    return '<option value="'+esc(r.name)+'">';
+    var value = String(r.name || '');
+    var priceLabel = Number(r.priceCloto || 0) > 0 ? ' · ' + fmt(r.priceCloto) + ' ₽/т' : '';
+    return '<option value="'+esc(value)+'" label="'+esc(value + priceLabel)+'"></option>';
   }).join('');
 }
 
@@ -661,7 +670,7 @@ function collectInputNames(){
 
 function saveCalc(){
   collectInputNames();
-  localStorage.setItem(SK, JSON.stringify({rawRows:rawRows,packRows:packRows,prodRows:prodRows,indRows:indRows}));
+  localStorage.setItem(SK, JSON.stringify({rawRows:rawRows,packRows:packRows,prodRows:prodRows,indRows:indRows,salePriceKg:salePriceKg}));
   var t=document.getElementById('toast'); t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },2500);
 }
 
@@ -671,6 +680,7 @@ function resetCalc(){
   packRows = DEF_PACK.map(function(r){ return Object.assign({},r); });
   prodRows = DEF_PROD.map(function(r){ return Object.assign({},r); });
   indRows  = [];
+  salePriceKg = getSalePrice();
   renderRaw(); renderPack(); renderProd(); renderIndirect();
 }
 
@@ -683,6 +693,7 @@ function loadCalc(){
       if(d.packRows) packRows = d.packRows;
       if(d.prodRows) prodRows = d.prodRows;
       if(d.indRows)  indRows  = d.indRows;
+      salePriceKg = d.salePriceKg != null ? normalizeSalePrice(d.salePriceKg) : getSalePrice();
       return;
     }
   } catch(e){}
@@ -690,6 +701,7 @@ function loadCalc(){
   packRows = DEF_PACK.map(function(r){ return Object.assign({},r); });
   prodRows = DEF_PROD.map(function(r){ return Object.assign({},r); });
   indRows  = [];
+  salePriceKg = getSalePrice();
 }
 
 loadSyryoData();

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Планы закупок 2026 — Клото</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f2f7fb;
+      --surface: #ffffff;
+      --line: rgba(108, 134, 161, 0.3);
+      --text: #1f2f40;
+      --muted: #617589;
+      --accent: #f3a447;
+      --accent-dark: #d2852c;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Manrope', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(243, 164, 71, 0.16), transparent 28%),
+        radial-gradient(circle at 90% 100%, rgba(77, 132, 186, 0.16), transparent 30%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: min(640px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 20px 45px rgba(28, 44, 61, 0.14);
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .back-link:hover { color: var(--accent-dark); }
+
+    h1 {
+      margin: 0;
+      font-family: 'Sora', sans-serif;
+      letter-spacing: -0.03em;
+      font-size: clamp(28px, 5vw, 40px);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .quarter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .quarter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      border-radius: 12px;
+      border: 1px solid rgba(243, 164, 71, 0.4);
+      background: linear-gradient(135deg, #ffd7a7, #ffc27d);
+      color: #4b2c07;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 12px 10px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .quarter-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(243, 164, 71, 0.3);
+    }
+
+    @media (max-width: 640px) {
+      .quarter-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <section class="card">
+    <a class="back-link" href="syryo.html">← Назад к сырью</a>
+    <h1>2026 г.</h1>
+    <p class="subtitle">Выберите квартал плана закупок.</p>
+
+    <div class="quarter-grid">
+      <a class="quarter-btn" href="procurement-plan-q2.html">Q2 (2 квартал)</a>
+      <a class="quarter-btn" href="#">Q3 (3 квартал)</a>
+      <a class="quarter-btn" href="#">Q4 (4 квартал)</a>
+    </div>
+  </section>
+</body>
+</html>

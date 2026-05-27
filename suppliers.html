@@ -10,27 +10,27 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #080c14;
-      --bg2: #0d1320;
-      --surface: rgba(255,255,255,0.04);
-      --surface2: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.08);
-      --border2: rgba(255,255,255,0.14);
-      --text: #e8eaf0;
-      --muted: #7f89a8;
-      --gold: #f5c842;
-      --cyan: #3de8c7;
-      --blue: #63b3ed;
-      --red: #ff5e7d;
+      --bg: #eef4fb;
+      --bg2: #e3edf8;
+      --surface: rgba(255,255,255,0.86);
+      --surface2: rgba(255,255,255,0.97);
+      --border: rgba(136,158,186,0.25);
+      --border2: rgba(94,143,199,0.38);
+      --text: #1e2c3c;
+      --muted: #6f839c;
+      --gold: #d9a83a;
+      --cyan: #24b7ad;
+      --blue: #3b91da;
+      --red: #d96576;
       --purple: #b07dff;
       --orange: #f6ad55;
-      --green: #48bb78;
+      --green: #3ea66d;
       --radius: 18px;
     }
 
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
+      background: linear-gradient(180deg, var(--bg), var(--bg2));
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -74,7 +74,7 @@
     .sidebar {
       width: 250px;
       min-height: 100vh;
-      background: rgba(13,19,32,.9);
+      background: rgba(255,255,255,.84);
       backdrop-filter: blur(24px);
       border-right: 1px solid var(--border);
       padding: 28px 0;
@@ -109,7 +109,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
       font-size: 15px;
-      background: linear-gradient(135deg, #fff 15%, var(--purple) 80%);
+      background: linear-gradient(135deg, #2a3d54 15%, var(--blue) 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -296,89 +296,138 @@
     }
     .panel-meta { color: var(--muted); font-size: 13px; }
 
-    .suppliers-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      padding: 20px;
-    }
-    .supplier-card {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      padding: 18px;
-      border-radius: 18px;
-      text-decoration: none;
-      color: inherit;
-      border: 1px solid rgba(176,125,255,.14);
-      background:
-        linear-gradient(135deg, rgba(176,125,255,.08), rgba(13,19,32,.96)),
-        rgba(255,255,255,.03);
-      transition: transform .2s, border-color .2s, box-shadow .2s;
-      min-height: 230px;
-    }
-    .supplier-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(176,125,255,.28);
-      box-shadow: 0 20px 40px rgba(5,10,20,.35);
-    }
-    .supplier-top {
+    .list-toolbar {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px 0;
+      flex-wrap: wrap;
+    }
+    .list-toolbar-title {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .list-toolbar .search-box {
+      min-width: min(460px, 100%);
+      padding: 10px 14px;
+    }
+    .suppliers-list {
+      padding: 18px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .list-head,
+    .supplier-row {
+      display: grid;
+      grid-template-columns: minmax(240px, 1.4fr) minmax(170px, .9fr) minmax(170px, .9fr) minmax(100px, .45fr) minmax(220px, 1.2fr) 34px;
+      gap: 14px;
+      align-items: center;
+    }
+    .list-head {
+      padding: 0 16px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .supplier-row {
+      padding: 16px;
+      border-radius: 16px;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(176,125,255,.12);
+      background:
+        linear-gradient(135deg, rgba(176,125,255,.08), rgba(255,255,255,.92)),
+        rgba(255,255,255,.03);
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+    .supplier-row:hover {
+      transform: translateY(-1px);
+      border-color: rgba(176,125,255,.26);
+      box-shadow: 0 16px 36px rgba(5,10,20,.28);
+    }
+    .supplier-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
     }
     .supplier-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 22px;
       background: rgba(176,125,255,.16);
       border: 1px solid rgba(176,125,255,.22);
       color: #f4eaff;
       flex-shrink: 0;
     }
+    .supplier-main-copy { min-width: 0; }
     .supplier-arrow {
       color: var(--muted);
       font-size: 18px;
+      text-align: right;
     }
     .supplier-name {
-      font-size: 22px;
+      font-size: 17px;
       line-height: 1.2;
       font-weight: 700;
-      color: #f2eeff;
+      color: var(--text);
     }
     .supplier-sub {
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 12px;
+      line-height: 1.45;
     }
-    .supplier-stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+    .supplier-cell {
+      min-width: 0;
     }
-    .stat-chip {
-      padding: 10px 11px;
-      border-radius: 14px;
+    .cell-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 5px;
+    }
+    .cell-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sku-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 76px;
+      padding: 10px 12px;
+      border-radius: 12px;
       background: rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.06);
+      font-size: 15px;
+      font-weight: 700;
     }
-    .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
-    .stat-value { margin-top: 5px; font-size: 15px; font-weight: 700; }
     .supplier-products {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: auto;
+      gap: 6px;
+      min-width: 0;
     }
     .prod-pill {
-      padding: 7px 10px;
+      padding: 6px 9px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11px;
       background: rgba(61,232,199,.1);
       color: var(--cyan);
       border: 1px solid rgba(61,232,199,.18);
@@ -412,7 +461,11 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 1180px) {
-      .kpi-row, .suppliers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .list-head,
+      .supplier-row {
+        grid-template-columns: minmax(220px, 1.2fr) minmax(150px, .9fr) minmax(150px, .9fr) minmax(90px, .45fr) minmax(180px, 1fr) 28px;
+      }
     }
     @media (max-width: 940px) {
       .layout { flex-direction: column; }
@@ -426,11 +479,19 @@
       }
       .main { padding: 24px 18px 32px; }
       .search-box { min-width: 100%; }
+      .list-head { display: none; }
+      .supplier-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .supplier-arrow { display: none; }
     }
     @media (max-width: 700px) {
-      .kpi-row, .suppliers-grid { grid-template-columns: 1fr; }
-      .supplier-name { font-size: 19px; }
-      .supplier-stats { grid-template-columns: 1fr; }
+      .kpi-row { grid-template-columns: 1fr; }
+      .list-toolbar { padding-top: 16px; }
+      .suppliers-list { padding: 16px; }
+      .supplier-name { font-size: 16px; }
+      .supplier-products { gap: 5px; }
     }
   </style>
 </head>
@@ -507,6 +568,13 @@
           <div class="panel-title">Реестр поставщиков</div>
           <div class="panel-meta" id="results-meta">Загрузка данных…</div>
         </div>
+        <div class="list-toolbar">
+          <div class="list-toolbar-title">Список поставщиков</div>
+          <label class="search-box">
+            <span>🔎</span>
+            <input id="panel-search-input" type="text" placeholder="Быстрый поиск по поставщику, SKU, городу, категории" />
+          </label>
+        </div>
         <div id="content-area">
           <div class="empty-state">
             <div class="loading"><span class="spinner"></span>Читаю данные из Сырья…</div>
@@ -516,6 +584,10 @@
     </main>
   </div>
 
+  <script>
+    window.__sharedStateConfig = { keys: ['cloto_raw_materials_v2'] };
+  </script>
+  <script src="shared-state-sync.js"></script>
   <script>
     var STORAGE_KEY = 'cloto_raw_materials_v2';
     var suppliersIndex = [];
@@ -575,7 +647,7 @@
         }
       } catch (error) {}
 
-      return fetch('syryo.html')
+      return fetch(window.location.origin + '/syryo.html')
         .then(function(response) { return response.text(); })
         .then(function(html) {
           var match = html.match(/var\s+DEFAULT_DATA\s*=\s*\[([\s\S]*?)\];/);
@@ -662,29 +734,46 @@
         return;
       }
 
-      var html = '<div class="suppliers-grid">';
+      var html = '' +
+        '<div class="suppliers-list">' +
+          '<div class="list-head">' +
+            '<div>Поставщик</div>' +
+            '<div>Локации</div>' +
+            '<div>Категории</div>' +
+            '<div>SKU</div>' +
+            '<div>Товары</div>' +
+            '<div></div>' +
+          '</div>';
       filtered.forEach(function(item) {
-        var locationsLabel = item.locations.length ? item.locations.slice(0, 2).join(' · ') : 'Локация не указана';
-        var categoriesLabel = item.categories.length ? item.categories.slice(0, 2).join(' · ') : 'Категория не указана';
+        var locationsLabel = item.locations.length ? item.locations.slice(0, 3).join(' · ') : 'Локация не указана';
+        var categoriesLabel = item.categories.length ? item.categories.slice(0, 3).join(' · ') : 'Категория не указана';
         html += '' +
-          '<a class="supplier-card" href="supplier-profile.html#supplier=' + encodeURIComponent(item.name) + '">' +
-            '<div class="supplier-top">' +
+          '<a class="supplier-row" href="supplier-profile.html#supplier=' + encodeURIComponent(item.name) + '">' +
+            '<div class="supplier-main">' +
               '<div class="supplier-icon">' + item.icon + '</div>' +
-              '<div class="supplier-arrow">↗</div>' +
+              '<div class="supplier-main-copy">' +
+                '<div class="supplier-name">' + escapeHtml(item.name) + '</div>' +
+                '<div class="supplier-sub">' + escapeHtml(item.statuses.join(' · ') || 'Без статуса') + '</div>' +
+              '</div>' +
             '</div>' +
-            '<div>' +
-              '<div class="supplier-name">' + escapeHtml(item.name) + '</div>' +
-              '<div class="supplier-sub">' + escapeHtml(locationsLabel) + '</div>' +
+            '<div class="supplier-cell">' +
+              '<div class="cell-label">Локации</div>' +
+              '<div class="cell-value" title="' + escapeHtml(locationsLabel) + '">' + escapeHtml(locationsLabel) + '</div>' +
             '</div>' +
-            '<div class="supplier-stats">' +
-              '<div class="stat-chip"><div class="stat-label">Номенклатура</div><div class="stat-value">' + item.itemCount + ' SKU</div></div>' +
-              '<div class="stat-chip"><div class="stat-label">Категории</div><div class="stat-value">' + escapeHtml(categoriesLabel) + '</div></div>' +
+            '<div class="supplier-cell">' +
+              '<div class="cell-label">Категории</div>' +
+              '<div class="cell-value" title="' + escapeHtml(categoriesLabel) + '">' + escapeHtml(categoriesLabel) + '</div>' +
+            '</div>' +
+            '<div class="supplier-cell">' +
+              '<div class="cell-label">Номенклатура</div>' +
+              '<div class="sku-badge">' + item.itemCount + ' SKU</div>' +
             '</div>' +
             '<div class="supplier-products">' +
               item.productsPreview.map(function(product) {
                 return '<span class="prod-pill" title="' + escapeHtml(product) + '">' + escapeHtml(product) + '</span>';
               }).join('') +
             '</div>' +
+            '<div class="supplier-arrow">↗</div>' +
           '</a>';
       });
       html += '</div>';
@@ -693,7 +782,18 @@
     }
 
     function initPage() {
-      document.getElementById('search-input').addEventListener('input', renderSuppliers);
+      var searchInput = document.getElementById('search-input');
+      var panelSearchInput = document.getElementById('panel-search-input');
+
+      function syncSearch(event) {
+        var nextValue = event.target.value;
+        if (searchInput.value !== nextValue) searchInput.value = nextValue;
+        if (panelSearchInput.value !== nextValue) panelSearchInput.value = nextValue;
+        renderSuppliers();
+      }
+
+      searchInput.addEventListener('input', syncSearch);
+      panelSearchInput.addEventListener('input', syncSearch);
 
       loadRawMaterialsData()
         .then(function(rows) {

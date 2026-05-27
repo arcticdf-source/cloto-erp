@@ -9,15 +9,15 @@
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     :root {
-      --bg:#080c14; --bg2:#0d1320;
-      --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07);
-      --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
-      --cyan:#3de8c7; --gold:#f5c842; --red:#ff5e7d;
-      --green:#48bb78; --blue:#63b3ed; --orange:#f6ad55; --purple:#9f7aea; --pink:#ed64a6;
-      --text:#e8eaf0; --muted:#6b7491; --radius:16px;
+      --bg:#eef4fb; --bg2:#e3edf8;
+      --surface:rgba(255,255,255,.86); --surface2:rgba(255,255,255,.97);
+      --border:rgba(136,158,186,.25); --border2:rgba(94,143,199,.38);
+      --cyan:#24b7ad; --gold:#d9a83a; --red:#d96576;
+      --green:#3ea66d; --blue:#3b91da; --orange:#f6ad55; --purple:#7d8fd8; --pink:#d96aa4;
+      --text:#1e2c3c; --muted:#6f839c; --radius:16px;
     }
     html { scroll-behavior:smooth; }
-    body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+    body { background:linear-gradient(180deg,var(--bg),var(--bg2)); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
     .bg-grid { position:fixed; inset:0; z-index:0;
       background-image:linear-gradient(rgba(159,122,234,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(159,122,234,.03) 1px,transparent 1px);
       background-size:48px 48px; pointer-events:none; }
@@ -29,7 +29,7 @@
 
     /* ── LAYOUT ── */
     .layout { display:flex; min-height:100vh; position:relative; z-index:1; }
-    .sidebar { width:250px; min-height:100vh; background:rgba(13,19,32,.9); backdrop-filter:blur(24px);
+    .sidebar { width:250px; min-height:100vh; background:rgba(255,255,255,.84); backdrop-filter:blur(24px);
       border-right:1px solid var(--border); display:flex; flex-direction:column; padding:28px 0;
       position:sticky; top:0; height:100vh; flex-shrink:0; overflow-y:auto; }
     .logo { display:flex; align-items:center; gap:12px; padding:0 22px 28px; border-bottom:1px solid var(--border); }
@@ -57,7 +57,7 @@
     .main { flex:1; padding:36px 40px; overflow-y:auto; display:flex; flex-direction:column; gap:22px; min-width:0; }
     .topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
     .page-title { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700;
-      background:linear-gradient(135deg,#fff 30%,var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+      background:linear-gradient(135deg,#2a3d54 30%,var(--blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     .page-sub { color:var(--muted); font-size:13px; margin-top:4px; }
 
     /* ── CARD ── */
@@ -72,7 +72,7 @@
     table.rt { width:100%; border-collapse:collapse; min-width:700px; }
     table.rt thead th { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
       padding:10px 14px; text-align:left; border-bottom:1px solid var(--border);
-      position:sticky; top:0; background:rgba(8,12,20,.95); z-index:2; white-space:nowrap; }
+      position:sticky; top:0; background:var(--surface2); z-index:2; white-space:nowrap; }
     table.rt thead th.r { text-align:right; }
     table.rt thead .th-sub { font-size:9px; font-weight:400; display:block; letter-spacing:0; text-transform:none; margin-top:2px; opacity:.5; }
     table.rt tbody tr { transition:background .12s; }
@@ -113,7 +113,7 @@
     .sel-input { background:var(--surface2); border:1px solid var(--border2); border-radius:10px;
       padding:10px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none; transition:border-color .2s; width:100%; }
     .sel-input:focus { border-color:rgba(159,122,234,.5); }
-    .sel-input option { background:#0d1320; color:var(--text); }
+    .sel-input option { background:var(--surface2); color:var(--text); }
     .num-field { background:rgba(255,255,255,.04); border:1px solid var(--border2); border-radius:10px;
       padding:10px 14px; color:var(--text); font-size:14px; font-family:'Space Grotesk',sans-serif; font-weight:600;
       outline:none; transition:all .2s; width:100%; -moz-appearance:textfield; }
@@ -256,7 +256,7 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="logo">
-      <a class="logo-back" href="portal.html">←</a>
+      <a class="logo-back" href="logistics-dashboard.html">←</a>
       <div>
         <div class="logo-text">Логистика · Клото</div>
         <div class="logo-sub">Расчёт доставки</div>
@@ -679,6 +679,10 @@
 </div>
 <div class="toast" id="toast"></div>
 
+<script>
+window.__sharedStateConfig = { keys: ['cloto_logistic_rates', 'cloto_logistic_ratedate'], prefixes: ['cloto_product_'] };
+</script>
+<script src="shared-state-sync.js"></script>
 <script>
 // ═══════════════════════════════════════════════
 //  PRODUCTS (defaults, overwritten from product-card localStorage)
