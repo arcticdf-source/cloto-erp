@@ -3,10 +3,9 @@ chcp 65001 > nul
 cd /d "%~dp0"
 
 git add .
-for /f "tokens=1-5 delims=:/ " %%a in ("%date% %time%") do set DT=%%c-%%b-%%a %%d:%%e
-git commit -m "Update %DT%"
+git commit -m "Update %date% %time%"
 git push origin main
 
 echo.
-echo Готово! Сайт обновится через минуту.
+echo Done! Site will update in ~1 minute.
 timeout /t 3 /nobreak > nul
